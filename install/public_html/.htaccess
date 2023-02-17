@@ -1,0 +1,78 @@
+# Define some error documents
+ErrorDocument 401 "Unauthorized"
+ErrorDocument 403 "Forbidden"
+ErrorDocument 404 "Not Found"
+ErrorDocument 410 "Gone"
+ErrorDocument 500 "Internal Server Error"
+
+# Deny showing indexes for directory content - Uncomment if supported by you web host
+Options -Indexes
+
+# URL-rewriting
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+
+  # Tell PHP that the mod_rewrite module is enabled
+  <IfModule mod_env.c>
+    SetEnv HTTP_MOD_REWRITE On
+  </IfModule>
+
+  # Redirect from any alias domain to primary domain
+  #RewriteCond %{HTTP_HOST} !^www\.mydomain\.com
+  #RewriteCond %{REQUEST_METHOD} !=POST
+  #RewriteRule ^ http://www.mydomain.com%{REQUEST_URI} [R=301,L]
+
+  # Redirect non-www to www
+  #RewriteCond %{HTTP_HOST} !^www\.
+  #RewriteCond %{REQUEST_METHOD} !=POST
+  #RewriteRule ^ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Force HTTPS (Standard SSL)
+  #RewriteCond %{HTTPS} off
+  #RewriteCond %{REQUEST_METHOD} !=POST
+  #RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Web path to catalog root
+  RewriteBase /
+
+  # Favicons
+  RewriteCond %{REQUEST_URI} /favicon\.ico$
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ /storage/images/favicons/favicon.ico [L]
+
+  RewriteCond %{REQUEST_URI} /(android-chrome|android-icon|apple-icon|apple-touch-icon|favicon)(\-\d{2,3}x\d{2,3})?(-precomposed)?\.png$
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ /storage/images/favicons/favicon-256x256.png [L]
+
+  # No rewrite logic for physical files
+  RewriteCond %{REQUEST_FILENAME} -d [OR]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -l
+  RewriteRule ^ - [L]
+
+  # Resolve some storage content
+  RewriteRule ^(cache|images)/ /storage/%{REQUEST_URI} [L]
+
+  RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Deny access to content
+<FilesMatch "\.(htaccess|htpasswd|inc\.php)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# Cacheable external content
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|eot|gif|ico|jpg|jpeg|js|map|otf|pdf|png|svg|ttf|woff2?)$">
+    Header set Cache-Control "max-age=604800, public, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# GZip compress external content
+<IfModule mod_deflate.c>
+  <FilesMatch "\.(css|js|svg)$">
+    SetOutputFilter DEFLATE
+  </FilesMatch>
+</IfModule>

@@ -1,0 +1,42 @@
+{
+	"name": "litecart",
+	"title": "LiteCart",
+	"description": "Lightweight e-commerce platform built with PHP, jQuery and HTML.",
+	"version": "1.0.0",
+	"author": {
+		"name": "T. Almroth",
+		"url": "https://www.litecart.net/"
+	},
+	"license": "CC-BY-ND-4.0",
+	"homepage": "https://www.litecart.net/",
+	"download": "https://www.litecart.net/download",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/litecart/litecart.git"
+	},
+	"bugs": {
+		"url": "https://github.com/litecart/litecart/issues"
+	},
+	"devDependencies": {
+		"grunt": "^1.5.3",
+		"grunt-cli": "^1.4.3",
+		"grunt-contrib-less": "^3.0.0",
+		"grunt-contrib-uglify": "^5.2.2",
+		"grunt-contrib-watch": "^1.1.0",
+		"grunt-dart-sass": "^2.0.1",
+		"grunt-phplint": "^0.1.0",
+		"grunt-text-replace": "^0.4.0",
+		"phplint": "^2.0.5",
+		"sass": "^1.55.0"
+	},
+	"scripts": {
+		"build": "grunt",
+		"hash": "php .git-hooks/pre-commit.d/calculate_checksums.php",
+		"less": "grunt less",
+		"phplint": "grunt phplint",
+		"test": "grunt test",
+		"uglify": "grunt replace",
+		"watch": "grunt watch",
+		"update": "ncu -u && npm install"
+	}
+}
