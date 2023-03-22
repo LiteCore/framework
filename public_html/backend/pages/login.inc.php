@@ -1,6 +1,8 @@
 <?php
 
   document::$layout = 'login';
+  
+  document::$snippets['head_tags'][] = '<meta name="viewport" content="width=device-width, initial-scale=1" />';
 
   header('X-Robots-Tag: noindex');
 
