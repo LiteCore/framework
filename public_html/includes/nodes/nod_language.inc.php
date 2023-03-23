@@ -140,13 +140,20 @@
       if (isset($_COOKIE['language_code']) && in_array($_COOKIE['language_code'], $all_languages)) return $_COOKIE['language_code'];
 
     // Return language from country (TLD)
-      if (preg_match('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
-        $country = database::query(
-          "select * from ". DB_TABLE_PREFIX ."countries
-          where iso_code_2 = '". database::input(strtoupper($matches[1])) ."'
-          limit 1;"
-        )->fetch();
-        if (!empty($country['language_code']) && in_array($country['language_code'], $enabled_languages)) return $country['language_code'];
+      if (!database::query(
+        "select table_name from information_schema.tables
+        where table_schema = '". database::input(DB_DATABASE) ."'
+        and table_name = '". database::input(DB_TABLE_PREFIX .'countries') ."'
+        limit 1;")->fetch()
+      ) {
+        if (preg_match('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
+          $country = database::query(
+            "select * from ". DB_TABLE_PREFIX ."countries
+            where iso_code_2 = '". database::input(strtoupper($matches[1])) ."'
+            limit 1;"
+          )->fetch();
+          if (!empty($country['language_code']) && in_array($country['language_code'], $enabled_languages)) return $country['language_code'];
+        }
       }
 
     // Return language from browser request headers
