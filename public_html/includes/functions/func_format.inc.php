@@ -1,21 +1,5 @@
 <?php
 
-  function format_address($address) {
-
-    $country = database::query(
-      "select * from ". DB_TABLE_PREFIX ."countries
-      where iso_code_2 = '". database::input($address['country_code']) ."'
-      limit 1;"
-    )->fetch();
-
-    if (!$country) {
-      trigger_error('Invalid country code for address format', E_USER_WARNING);
-      return;
-    }
-
-    return reference::country($address['country_code'])->format_address($address);
-  }
-
   function format_mysql_fulltext($string) {
     $string = strip_tags($string);
     return preg_replace('#[+\-<>\(\)~*\"@;]+#', ' ', $string);
