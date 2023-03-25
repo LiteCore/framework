@@ -40,7 +40,7 @@
       ]);
       self::$snippets['head_tags']['manifest'] = '<link rel="manifest" href="'. WS_DIR_APP . 'manifest.json" />';
       self::$snippets['head_tags']['fontawesome'] = '<link rel="stylesheet" href="'. document::href_rlink('app://assets/fontawesome/font-awesome.min.css') .'" />';
-      self::$snippets['foot_tags']['jquery'] = '<script src="'. document::href_rlink('app://assets/jquery/jquery-3.6.3.min.js') .'"></script>';
+      self::$snippets['foot_tags']['jquery'] = '<script src="'. document::href_rlink('app://assets/jquery/jquery-3.6.4.min.js') .'"></script>';
 
     // Hreflang
       if (!empty(route::$selected['controller'])) {
