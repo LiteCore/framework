@@ -1,8 +1,19 @@
+<style>
+.page-title {
+  font-size: 2em;
+  margin: 1em 0 ;
+}
+</style>
+
 <div id="content">
   {{notices}}
 
+  <div class="page-title">
+    <?php echo PLATFORM_NAME; ?>/<?php echo PLATFORM_VERSION; ?>
+  </div>
+
   <section class="twelve-eighty">
-    <h1>LiteCart CSS Framework</h1>
+    <h1>CSS Framework</h1>
   </section>
 
   <section class="twelve-eighty">
