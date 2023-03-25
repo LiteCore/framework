@@ -87,16 +87,6 @@ module.exports = function(grunt) {
     },
 
     'dart-sass': {
-      chartist_minified: {
-        options: {
-          sourceMap: false,
-          outputStyle: 'compressed',
-          compass: false
-        },
-        files: {
-          'public_html/assets/chartist/chartist.min.css': 'public_html/assets/chartist/chartist.scss'
-        }
-      },
       trumbowyg_minified: {
         options: {
           sourceMap: false,
