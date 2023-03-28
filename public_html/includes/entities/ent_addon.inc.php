@@ -359,7 +359,7 @@
       $tmp_file = functions::file_create_tempfile();
       file_put_contents($tmp_file, (string)$this);
 
-      vmod::parse($tmp_file);
+      vmod::parse_xml($tmp_file, $this->data['location'] .'vmod.xml');
 
       foreach ($this->data['files'] as $file) {
         foreach (explode(',', $file['name']) as $pattern) {
@@ -428,10 +428,7 @@
 
       $errors = [];
 
-      $tmp_file = functions::file_create_tempfile();
-      file_put_contents($tmp_file, (string)$this);
-
-      $vmod = vmod::parse($tmp_file);
+      $vmod = vmod::parse_xml((string)$this, $this->data['location'] .'vmod.xml');
 
       foreach (array_keys($vmod['files']) as $key) {
         $patterns = explode(',', $vmod['files'][$key]['name']);
