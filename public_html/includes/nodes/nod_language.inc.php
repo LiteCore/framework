@@ -140,7 +140,7 @@
       if (isset($_COOKIE['language_code']) && in_array($_COOKIE['language_code'], $all_languages)) return $_COOKIE['language_code'];
 
     // Return language from country (TLD)
-      if (!database::query(
+      if (database::query(
         "select table_name from information_schema.tables
         where table_schema = '". database::input(DB_DATABASE) ."'
         and table_name = '". database::input(DB_TABLE_PREFIX .'countries') ."'
