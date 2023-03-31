@@ -2,7 +2,10 @@
   header('X-Robots-Tag: noindex');
   header('Content-type: text/plain; charset='. language::$selected['code']);
 
-  if (strtotime(settings::get('jobs_last_run')) > strtotime('-'. settings::get('jobs_interval') .' minutes')) die('Already did my duty!');
+  $last_run = strtotime(settings::get('jobs_last_run'));
+  if (date('Ymdh', $last_run) == date('Ymdh') && floor(date('i', $last_run)/5) == floor(date('i')/5)) {
+    die('Zzz...');
+  }
 
   session::close();
 
