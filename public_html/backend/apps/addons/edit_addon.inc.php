@@ -304,7 +304,9 @@ html.dark-mode .operation {
   padding: .5em 1em;
   border-radius: 0 0 4px 4px;
   background: #fff3;
-  color: #fffc
+  backdrop-filter: blur(2px);
+  font-size: .8em;
+  color: #fffc;
 }
 
 #settings .setting:not(:first-child) {
