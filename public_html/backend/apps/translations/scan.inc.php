@@ -118,7 +118,7 @@
     while ($translation = database::fetch($translations_query)) {
       if (empty($translation['date_accessed']) || strtotime($translation['date_accessed']) < strtotime('-12 months')) {
         if (mb_strlen($translation['text_'.language::$selected['code']]) > 100) {
-          $translation['text_'.language::$selected['code']] = mb_substr($row['text_'.language::$selected['code']], 0, 100) . '...';
+          $translation['text_'.language::$selected['code']] = mb_substr($translation['text_'.language::$selected['code']], 0, 100) . '...';
         }
         $orphan[] = $translation;
       }
