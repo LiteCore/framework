@@ -109,6 +109,8 @@
 
   foreach (functions::file_search('storage://addons/*/') as $folder) {
 
+    if (preg_match('#/.cache/#', $folder)) continue;
+
     $folder_name = preg_replace('#^storage://addons/#', '', $folder);
     $vmod = new ent_addon($folder_name);
 
