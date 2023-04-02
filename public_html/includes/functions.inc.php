@@ -1,8 +1,5 @@
 <?php
 
-  define('SQL_DATE', 'Y-m-d');
-  define('SQL_DATETIME', 'Y-m-d H:i:s');
-
 /*
  * Output any variable to the browser console
  * Only works in a HTML environment
@@ -22,20 +19,6 @@
     return (empty($var) || (is_numeric($var) && (float)$var == 0));
   }
 
-  /*
-  function nil(&...$args) { // ... as of PHP 5.6
-    foreach ($args as $arg) {
-      if (is_array($arg)) {
-        foreach ($arg as $node) {
-          if (!nil($node)) return !1;
-        }
-      }
-      if (!empty($arg) || (is_numeric($arg) && (float)$arg != 0)) return !1;
-    }
-    return !0;
-  }
-  */
-
 // Returns value for variable or falls back to a substituting value on nil(). Similar to $var ?? $fallback
   function fallback(&$var, $fallback=null) {
     if (!nil($var)) return $var;
@@ -48,15 +31,6 @@
       if (!nil($arg)) return $arg;
     }
   }
-
-/*
-// Checks if variable is equal(ish) to brother. Interprets null, (string)"", (array)[] and false as the same
-  function equalish(mixed &$var, mixed &$brother):bool {
-    if (nil($var) && nil($brother)) return true;
-    if ($var == $brother) return true;
-    return false;
-  }
-*/
 
 // Check if variable or string indicates true
   function is_true($string) {
