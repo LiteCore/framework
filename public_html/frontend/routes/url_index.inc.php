@@ -3,9 +3,9 @@
   return [
     '' => [
       'pattern' => '#^(?:index\.php)?$#',
-      'controller' => 'index',
-      'params' => '',
       'endpoint' => 'frontend',
+      'controller' => 'app://frontend/pages/index.inc.php',
+      'params' => '',
       'options' => [
         'redirect' => true,
       ],
