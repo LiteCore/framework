@@ -144,16 +144,7 @@
       if (!empty(self::$selected['controller']) && is_string(self::$selected['controller'])) {
 
         if (is_file(self::$selected['controller'])) {
-          $page = self::$selected['controller'];
-        } else {
-          if (!empty(self::$selected['endpoint']) && self::$selected['endpoint'] == 'backend') {
-            $page = 'app://backend/pages/' . self::$selected['controller'] .'.inc.php';
-          } else {
-            $page = 'app://frontend/pages/' . self::$selected['controller'] .'.inc.php';
-          }
-        }
 
-        if (is_file($page)) {
           (function(){
             include func_get_arg(0);
           })($page);
