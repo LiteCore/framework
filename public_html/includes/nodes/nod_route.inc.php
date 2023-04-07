@@ -140,12 +140,6 @@
         }
       }
 
-    // Execute a callable controller
-      if (is_callable(self::$selected['controller'])) {
-        call_user_func(self::$selected['controller']);
-        return;
-      }
-
     // Execute a file controller
       if (!empty(self::$selected['controller']) && is_string(self::$selected['controller'])) {
 
