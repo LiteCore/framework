@@ -35,6 +35,7 @@
       foreach (functions::file_search($path) as $file) {
 
         $routes = include $file;
+        if (!$routes) continue;
 
         foreach ($routes as $i => $route) {
           self::add($i, $route);
