@@ -192,6 +192,7 @@
 
     foreach (scandir($directory) as $file) {
       if (in_array($file, ['.', '..'])) continue;
+
       if ($directory == 'storage://addons/'.$addon->data['id'].'/' && $file == 'vmod.xml') continue;
       $relative_path = preg_replace('#^'. preg_quote('storage://addons/'.$addon->data['id'].'/', '#') .'#', '', $directory . $file);
       if (is_dir($directory.$file)) {

@@ -170,6 +170,7 @@
       sort($lines);
 
       if (count($lines) >= 100) {
+
         $email = new ent_email();
         $email->add_recipient(settings::get('site_email'))
               ->set_subject('[Not Found Report] '. settings::get('site_name'))
@@ -179,7 +180,9 @@
                   implode("\r\n", $lines)
                 )
               ->send();
+
         file_put_contents($not_found_file, '');
+
       } else {
         file_put_contents($not_found_file, implode(PHP_EOL, $lines) . PHP_EOL);
       }
@@ -223,6 +226,7 @@
           if (in_array($key, ['country', 'currency', 'language'])) continue;
           $link->set_query($key, $value);
         }
+
       } else if (is_array($inherit_params)) {
         foreach ($_GET as $key => $value) {
           if (in_array($key, $inherit_params)) {
@@ -233,6 +237,7 @@
 
     // Unset params that are to be skipped from the link
       if (is_string($skip_params)) $skip_params = [$skip_params];
+
       foreach ($skip_params as $key) {
         if (isset($link->query[$key])) $link->unset_query($key);
       }
@@ -245,11 +250,9 @@
       }
 
     // Rewrite URL
-      if ($rewrite) {
-        if ($link->host == $_SERVER['HTTP_HOST']) {
-          if (preg_match('#^'. WS_DIR_APP .'#', $link->path)) {
-            return self::rewrite($link, $language_code);
-          }
+      if ($rewrite && $link->host == $_SERVER['HTTP_HOST']) {
+        if (preg_match('#^'. WS_DIR_APP .'#', $link->path)) {
+          return self::rewrite($link, $language_code);
         }
       }
 
