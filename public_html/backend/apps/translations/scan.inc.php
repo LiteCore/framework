@@ -8,7 +8,7 @@
 
     ob_start();
 
-    $dir_iterator = new RecursiveDirectoryIterator('app://');
+    $dir_iterator = new RecursiveDirectoryIterator('app:///'); // Root needs an additional / with RecursiveDirectoryIterator
     $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
     $files = 0;
