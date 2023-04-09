@@ -15,7 +15,7 @@
 
 <div id="page" class="container">
 
-  <?php include 'app://frontend/boxes/box_site_menu.inc.php'; ?>
+  <?php include 'app://frontend/partials/box_site_menu.inc.php'; ?>
 
   <main id="main">
     {{content}}
@@ -23,7 +23,7 @@
 
   <?php include FS_DIR_TEMPLATE . 'partials/box_cookie_notice.inc.php'; ?>
 
-  <?php include 'app://frontend/boxes/box_site_footer.inc.php'; ?>
+  <?php include 'app://frontend/partials/box_site_footer.inc.php'; ?>
 </div>
 
 <a id="scroll-up" class="hidden-print" href="#">
