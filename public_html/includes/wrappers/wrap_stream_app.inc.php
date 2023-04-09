@@ -16,9 +16,11 @@
       }
 
       foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*', GLOB_BRACE) as $file) {
+
         $file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
         $basename = basename($file) . (is_dir($file) ? '/' : '');
 
+        if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.cache/#', $file)) continue;
         if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
         if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+/vmod\.xml$#', $file)) continue;
 
@@ -33,13 +35,6 @@
 
         return is_dir($a) ? -1 : 1;
       });
-
-      if (!preg_match('#^([a-z]:)?/$#', $path)) {
-        $this->_directory = [
-          './' => $path . './',
-          '../' => $path . '../',
-        ] + $this->_directory;
-      }
 
       return true;
     }
@@ -94,7 +89,7 @@
     }
 
     public function stream_metadata(string $path, int $option, mixed $value): bool {
-      $path = self::resolve_path($path);
+      $path = $this->_resolve_path($path);
 
       switch ($option) {
         case STREAM_META_TOUCH:
