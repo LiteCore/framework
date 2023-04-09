@@ -147,7 +147,7 @@
 
           (function(){
             include func_get_arg(0);
-          })($page);
+          })(self::$selected['controller']);
 
           return;
         }
