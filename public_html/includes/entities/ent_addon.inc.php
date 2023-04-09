@@ -217,7 +217,17 @@
 
     // Aliases
       foreach ($this->data['aliases'] as $alias) {
-        $vmod_node->appendChild( $dom->createElement('alias', $alias) );
+        $alias_node = $dom->createElement('alias');
+
+        $attribute = $dom->createAttribute('key');
+        $attribute->value = $alias['key'];
+        $alias_node->appendChild( $attribute );
+
+        $attribute = $dom->createAttribute('value');
+        $attribute->value = $alias['value'];
+        $alias_node->appendChild( $attribute );
+
+        $vmod_node->appendChild( $alias_node );
       }
 
     // Install
@@ -251,18 +261,14 @@
 
         $file_node = $dom->createElement('file');
 
-        foreach (['path', 'name'] as $attribute_name) {
-          if (!empty($file[$attribute_name])) {
-            $attribute = $dom->createAttribute($attribute_name);
-            $attribute->value = $file[$attribute_name];
-            $file_node->appendChild($attribute);
-          }
-        }
+        $attribute = $dom->createAttribute('name');
+        $attribute->value = $file['name'];
+        $file_node->appendChild($attribute);
 
         foreach ($file['operations'] as $operation) {
           $operation_node = $dom->createElement('operation');
 
-          foreach (['onerror'] as $attribute_name) {
+          foreach (['method', 'type', 'onerror'] as $attribute_name) {
             if (!empty($operation[$attribute_name])) {
               $attribute = $dom->createAttribute($attribute_name);
               $attribute->value = $operation[$attribute_name];
@@ -271,72 +277,37 @@
           }
 
         // Find
-          $find_node = $dom->createElement('find');
+          if (!in_array($operation['method'], ['top', 'bottom'])) {
 
-          foreach (['regex', 'trim'] as $attribute_name) {
-            if (!empty($operation['find'][$attribute_name])) {
-              $attribute = $dom->createAttribute($attribute_name);
-              $attribute->value = !empty($operation['find'][$attribute_name]) ? 'true' : 'false';
-              $find_node->appendChild($attribute);
+            $find_node = $dom->createElement('find');
+
+            foreach (['offset-before', 'offset-after', 'index'] as $attribute_name) {
+              if (!empty($operation['find'][$attribute_name])) {
+                $attribute = $dom->createAttribute($attribute_name);
+                $attribute->value = $operation['find'][$attribute_name];
+                $find_node->appendChild($attribute);
+              }
             }
-          }
 
-          foreach (['offset-before', 'offset-after', 'index'] as $attribute_name) {
-            if (!empty($operation['find'][$attribute_name])) {
-              $attribute = $dom->createAttribute($attribute_name);
-              $attribute->value = $operation['find'][$attribute_name];
-              $find_node->appendChild($attribute);
+            if (in_array($operation['type'], ['inline', 'regex'])) {
+              $find_node->appendChild( $dom->createCDATASection($operation['find']['content']) );
+            } else {
+              $find_node->appendChild( $dom->createCDATASection(PHP_EOL . $operation['find']['content'] . PHP_EOL . str_repeat(' ', 6)) );
             }
-          }
 
-          if ($operation['type'] == 'regex') {
-            $find_node->appendChild( $dom->createCDATASection($operation['find']['content']) );
-          } else {
-            $find_node->appendChild( $dom->createCDATASection(PHP_EOL . $operation['find']['content'] . PHP_EOL . str_repeat(' ', 6)) );
+            $operation_node->appendChild($find_node);
           }
-
-          $operation_node->appendChild( $find_node );
 
         // Insert
           $insert_node = $dom->createElement('insert');
 
-          foreach (['regex', 'trim', 'position'] as $attribute_name) {
-            if (!empty($operation['insert'][$attribute_name])) {
-              $attribute = $dom->createAttribute($attribute_name);
-              $attribute->value = $operation['insert'][$attribute_name];
-              $insert_node->appendChild($attribute);
-            }
-          }
-
-          if ($operation['type'] == 'regex') {
-            $insert_node->appendChild( $dom->createCDATASection(@$operation['insert']['content']) );
+          if (in_array($operation['type'], ['inline', 'regex'])) {
+            $insert_node->appendChild( $dom->createCDATASection($operation['insert']['content']) );
           } else {
             $insert_node->appendChild( $dom->createCDATASection(PHP_EOL . $operation['insert']['content'] . PHP_EOL . str_repeat(' ', 6)) );
           }
 
           $operation_node->appendChild( $insert_node );
-
-        // Ignore If
-          if (!empty($operation['ignoreif']['content'])) {
-
-            $ignoreif_node = $dom->createElement('ignoreif');
-
-            foreach (['regex', 'trim'] as $attribute_name) {
-              if (!empty($operation['ignoreif'][$attribute_name])) {
-                $attribute = $dom->createAttribute($attribute_name);
-                $attribute->value = $operation['ignoreif'][$attribute_name];
-                $ignoreif_node->appendChild($attribute);
-              }
-            }
-
-            if (@$operation['ignoreif']['regex'] == 'true') {
-              $ignoreif_node->appendChild( $dom->createCDATASection($operation['ignoreif']['content']) );
-            } else {
-              $ignoreif_node->appendChild( $dom->createCDATASection(PHP_EOL . $operation['ignoreif']['content'] . PHP_EOL . str_repeat(' ', 6)) );
-            }
-
-            $operation_node->appendChild( $ignoreif_node );
-          }
 
           $file_node->appendChild($operation_node);
         }
