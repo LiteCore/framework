@@ -759,6 +759,9 @@ END;
 
       case 'password':
         return functions::form_password_field($name, $input);
+        
+      case 'phone':
+        return functions::form_phone_field($name, $input);
 
       case 'radio':
         $html = '';
