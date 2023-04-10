@@ -6,7 +6,7 @@
   position: relative;
   color: var(--input-text-color);
   background: var(--input-background-color);
-  border: 1px solid var(--input-border-color);
+  border: var(--input-border-size) solid var(--input-border-color);
   border-radius: var(--border-radius);
   &:focus {
     border-color: var(--input-border-color-focus);
@@ -19,6 +19,8 @@ fieldset {
   border-radius: var(--border-radius);
   > legend {
     padding: .25em .5em;
+    font-weight: 700;
+    font-size: 1.25em;
   }
   &:disabled {
     opacity: 0.5;
@@ -91,9 +93,14 @@ label.form-check {
     }
   }
 }
-
-.table tr:hover td:first-child > .form-check > input[type="checkbox"]:not([disabled]),
-.table tr:hover td:first-child > .form-check > input[type="radio"]:not([disabled]) {
+label.form-check:hover > input[type="checkbox"]:not([disabled]),
+label.form-check:hover > input[type="radio"]:not([disabled]),
+input[type="checkbox"].form-check:not([disabled]):hover,
+input[type="radio"].form-check:not([disabled]):hover,
+.table tr:hover td:first-child > label.form-check > input[type="checkbox"]:not([disabled]),
+.table tr:hover td:first-child > label.form-check > input[type="radio"]:not([disabled]),
+.table tr:hover td:first-child > input[type="checkbox"].form-check:not([disabled]),
+.table tr:hover td:first-child > input[type="radio"].form-check:not([disabled]) {
   box-shadow: 0 0 0 .25rem #ccc;
 }
 
@@ -146,7 +153,7 @@ label.form-check {
   }
 }
 
-html[dir="rtl"] select.form-control {
+html[dir="rtl"] .form-select {
   background-position: left 1em center;
 }
 
@@ -238,7 +245,6 @@ html[dir="rtl"] select.form-control {
   .input-group-icon {
     flex: 0 1 auto;
     padding: var(--input-padding-y) var(--input-padding-x);
-    margin-inline-end: -12px;
   }
   .btn {
     border-right: 0;
@@ -295,7 +301,7 @@ html[dir="rtl"] select.form-control {
 .form-group > .input-group + .form-input,
 .form-group > .input-group + .form-select,
 .form-group > .input-group + .input-group {
-  margin-top: -1px; // Compensate for border
+  margin-top: .25em;
 }
 
 .table .form-check {

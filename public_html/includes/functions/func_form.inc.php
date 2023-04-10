@@ -121,7 +121,7 @@
       foreach ($columns as $column) {
         $html .= '      <td contenteditable>'. $row[$column] .'</td>' . PHP_EOL;
       }
-      $html .= '      <td><a class="remove" href="#">'. functions::draw_fonticon('fa-times-circle', 'style="color: #d33"') .'</a></td>' . PHP_EOL
+      $html .= '      <td><a class="btn btn-default btn-sm remove" href="#">'. functions::draw_fonticon('fa-times', 'style="color: #d33"') .'</a></td>' . PHP_EOL
              . '    </tr>' . PHP_EOL;
     }
 
@@ -148,7 +148,7 @@ $('table[data-toggle="csv"] .add-row').click(function(e) {
   e.preventDefault();
   let n = $(this).closest('table').find('thead th:not(:last-child)').length;
   $(this).closest('table').find('tbody').append(
-    '<tr>' + ('<td contenteditable></td>'.repeat(n)) + '<td><a class="remove" href="#"><i class="fa fa-times-circle" style="color: #d33;"></i></a></td>' +'</tr>'
+    '<tr>' + ('<td contenteditable></td>'.repeat(n)) + '<td><a class="btn btn-default btn-sm remove" href="#"><i class="fa fa-times" style="color: #d33;"></i></a></td>' +'</tr>'
   ).trigger('keyup');
 });
 

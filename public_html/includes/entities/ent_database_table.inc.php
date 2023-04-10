@@ -73,7 +73,7 @@
       }
 
     // Indexes
-      $this->_data['indexes'] = [];
+      $this->data['indexes'] = [];
 
       $index_query = database::query(
         "show index from `". database::input($name) ."`;"

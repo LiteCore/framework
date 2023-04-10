@@ -19,6 +19,7 @@
     $orphan = [];
 
     foreach ($iterator as $file) {
+
       if (!preg_match('#\.php$#', $file)) continue;
 
       $files++;
@@ -41,11 +42,13 @@
 
       if (!empty($matches)) {
         for ($i=0; $i<count($matches[1]); $i++) {
+
           if ($matches[1][$i]) {
             $key = substr(pathinfo($file, PATHINFO_BASENAME), 0, strpos(pathinfo($file, PATHINFO_BASENAME), '.')) . $matches[2][$i];
           } else {
             $key = $matches[2][$i];
           }
+
           $translations[$key] = str_replace(["\\r", "\\n"], ["\r", "\n"], $matches[3][$i]);
           $translation_keys[] = $key;
         }
