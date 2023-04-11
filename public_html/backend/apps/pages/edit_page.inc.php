@@ -21,14 +21,12 @@
       if (empty($_POST['title'])) throw new Exception(language::translate('error_missing_title', 'You must enter a title.'));
 
       if (empty($_POST['status'])) $_POST['status'] = 0;
-      if (empty($_POST['dock'])) $_POST['dock'] = [];
 
       $fields = [
         'status',
         'parent_id',
         'title',
         'content',
-        'dock',
         'priority',
         'head_title',
         'meta_description',
@@ -87,14 +85,6 @@
       </div>
 
       <div class="row">
-        <div class="form-group col-md-6">
-          <label><?php echo language::translate('title_dock', 'Dock'); ?></label>
-          <div>
-            <?php echo functions::form_checkbox('dock[]', ['menu', language::translate('text_dock_in_site_menu', 'Dock in site menu')], true); ?>
-            <?php echo functions::form_checkbox('dock[]', ['information', language::translate('text_dock_in_information', 'Dock in information')], true); ?>
-          </div>
-        </div>
-
         <div class="form-group col-md-6">
           <label><?php echo language::translate('title_parent', 'Parent'); ?></label>
           <?php echo functions::form_pages_list('parent_id', true); ?>

@@ -69,12 +69,6 @@
       notices::add('errors', $e->getMessage());
     }
   }
-
-  $dock_options = [
-    '' => '-- '. language::translate('title_all', 'All') .' --',
-    'menu' => language::translate('title_site_menu', 'Site Menu'),
-    'information' => language::translate('title_information', 'Information'),
-  ];
 ?>
 <style>
 table tbody .toggle {
@@ -98,7 +92,6 @@ table tbody .toggle {
   <?php echo functions::form_begin('search_form', 'get'); ?>
     <div class="card-filter">
       <div class="expandable"><?php echo functions::form_search_field('query', true, 'placeholder="'. language::translate('text_search_phrase_or_keyword', 'Search phrase or keyword').'"'); ?></div>
-      <div class="max-width: max-content;"><?php echo functions::form_select_field('dock', $dock_options, true); ?></div>
       <?php echo functions::form_button('filter', language::translate('title_search', 'Search'), 'submit'); ?>
     </div>
   <?php echo functions::form_end(); ?>
@@ -112,8 +105,6 @@ table tbody .toggle {
           <th></th>
           <th><?php echo language::translate('title_id', 'ID'); ?></th>
           <th class="main" style="padding-inline-start: 30px;"><?php echo language::translate('title_title', 'Title'); ?></th>
-          <th><?php echo language::translate('title_site_menu', 'Site Menu'); ?></th>
-          <th><?php echo language::translate('title_information', 'Information'); ?></th>
           <th></th>
         </tr>
       </thead>
@@ -137,12 +128,10 @@ table tbody .toggle {
       where p.id
       ". (empty($_GET['query']) ? "and parent_id = 0" : "") ."
       ". (!empty($sql_where_query) ? "and (". implode(" or ", $sql_where_query) .")" : "") ."
-      ". (!empty($_GET['dock']) ? "and find_in_set('". database::input($_GET['dock']) ."', p.dock)" : "") ."
       order by p.priority, pi.title;"
     )->fetch_page($_GET['page'], null, $num_rows, $num_pages);
 
     foreach ($pages as $page) {
-      $page['dock'] = explode(',', $page['dock']);
 
 ?>
         <tr class="<?php echo empty($page['status']) ? 'semi-transparent' : ''; ?>">
@@ -150,8 +139,6 @@ table tbody .toggle {
           <td><?php echo functions::draw_fonticon($page['status'] ? 'on' : 'off'); ?></td>
           <td><?php echo $page['id']; ?></td>
           <td><?php echo functions::draw_fonticon('fa-file-o fa-fw'); ?> <a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>"><?php echo $page['title']; ?></a></td>
-          <td class="text-center"><?php echo in_array('menu', $page['dock']) ? functions::draw_fonticon('fa-check') : ''; ?></td>
-          <td class="text-center"><?php echo in_array('information', $page['dock']) ? functions::draw_fonticon('fa-check') : ''; ?></td>
           <td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
         </tr>
 <?php
@@ -170,7 +157,6 @@ table tbody .toggle {
           from ". DB_TABLE_PREFIX ."pages
         ) p2 on (p2.id = p.id)
         where p.parent_id = ". (int)$parent_id ."
-        ". ((!empty($_GET['dock']) && empty($depth)) ? "and find_in_set('". database::input($_GET['dock']) ."', p.dock)" : "") ."
         order by p.priority, pi.title;"
       );
 
@@ -181,7 +167,6 @@ table tbody .toggle {
 
       $page_items = 0;
       while ($page = database::fetch($pages_query)) {
-        $page['dock'] = explode(',', $page['dock']);
 
         if ($page['num_subpages']) {
           if (!in_array($page['id'], $_GET['expanded'])) {
@@ -205,8 +190,6 @@ table tbody .toggle {
             <?php echo $icon; ?>
             <a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>"><?php echo $page['title']; ?></a>
           </td>
-          <td class="text-center"><?php echo in_array('menu', $page['dock']) ? functions::draw_fonticon('fa-check') : ''; ?></td>
-          <td class="text-center"><?php echo in_array('information', $page['dock']) ? functions::draw_fonticon('fa-check') : ''; ?></td>
           <td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
         </tr>
 <?php
@@ -230,7 +213,7 @@ table tbody .toggle {
 
       <tfoot>
         <tr>
-          <td colspan="7"><?php echo language::translate('title_pages', 'Pages'); ?>: <?php echo language::number_format($num_rows); ?></td>
+          <td colspan="5"><?php echo language::translate('title_pages', 'Pages'); ?>: <?php echo language::number_format($num_rows); ?></td>
         </tr>
       </tfoot>
     </table>

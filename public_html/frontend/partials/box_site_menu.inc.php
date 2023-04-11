@@ -17,7 +17,6 @@
       "select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
       left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
       where status
-      and find_in_set('menu', dock)
       order by p.priority, pi.title;"
     );
 
