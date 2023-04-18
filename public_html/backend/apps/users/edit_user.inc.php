@@ -88,11 +88,11 @@
   </div>
 
   <div class="card-body">
-    <?php echo functions::form_begin('user_form', 'post', false, false, 'autocomplete="off" style="max-width: 960px;"'); ?>
+    <?php echo functions::form_begin('user_form', 'post', false, false, 'autocomplete="off"'); ?>
 
       <div class="row">
 
-        <div class="col-md-8">
+        <div class="col-md-6">
           <div class="row">
             <div class="form-group col-md-6">
               <label><?php echo language::translate('title_status', 'Status'); ?></label>
@@ -163,7 +163,7 @@
           <?php } ?>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div id="app-permissions" class="form-group">
             <?php echo functions::form_checkbox('apps_toggle', ['1', language::translate('title_apps', 'Apps')]); ?>
             <div class="form-input" style="height: 400px; overflow-y: scroll;">
@@ -186,7 +186,9 @@
               </ul>
             </div>
           </div>
+        </div>
 
+        <div class="col-md-3">
           <div id="widget-permissions" class="form-group">
             <?php echo functions::form_checkbox('widgets_toggle', ['1', language::translate('title_widgets', 'Widgets')]); ?>
             <div class="form-input" style="height: 150px; overflow-y: scroll;">

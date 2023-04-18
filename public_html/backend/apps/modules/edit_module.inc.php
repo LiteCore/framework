@@ -124,9 +124,9 @@
     <?php echo functions::form_end(); ?>
 
     <?php if (!empty($module->data['last_log'])) { ?>
-    <div id="box-last-log">
+    <div id="box-last-log" style="margin-top: 2em">
       <h2><?php echo language::translate('title_last_log', 'Last Log'); ?></h2>
-      <pre class="form-input"><?php echo $module->data['last_log']; ?></pre>
+      <pre class="form-input" style="margin-bottom: 0;"><?php echo $module->data['last_log']; ?></pre>
     </div>
     <?php } ?>
   </div>

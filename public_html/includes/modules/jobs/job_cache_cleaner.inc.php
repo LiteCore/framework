@@ -13,7 +13,7 @@
 
       if (empty($this->settings['status'])) return;
 
-      if (empty($force)) {
+      if (!empty($last_run) && empty($force)) {
         if (strtotime($last_run) > strtotime('-1 hour')) return;
       }
 

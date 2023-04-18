@@ -37,6 +37,6 @@
     ],
   ];
 
-  header('Content-Type: application/manifest+json; charset='. language::$selected['charset']);
+  header('Content-Type: application/manifest+json; charset=UTF-8');
   echo json_encode($manifest,  JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
   exit;

@@ -24,8 +24,8 @@
   <div id="sidebar" class="hidden-print">
 
     <a class="logotype" href="<?php echo document::href_ilink(''); ?>">
-        <img class="center-block responsive" src="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'images/logotype.svg'); ?>" alt="<?php echo settings::get('site_name'); ?>" />
-      </a>
+      <img class="center-block responsive" src="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'images/logotype.svg'); ?>" alt="<?php echo settings::get('site_name'); ?>" />
+    </a>
 
     <div id="search">
       <?php echo functions::form_search_field('query', false, 'placeholder="'. functions::escape_html(language::translate('title_search', 'Search')) .'&hellip;" autocomplete="off"'); ?>
