@@ -10,6 +10,8 @@
       $path = $this->_resolve_path($path);
       $relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $path);
 
+      $this->_directory = [];
+
       foreach (glob($path.'*') as $file) {
         $basename = basename($file) . (is_dir($file) ? '/' : '');
         $this->_directory[$basename] = $file . (is_dir($file) ? '/' : '');
