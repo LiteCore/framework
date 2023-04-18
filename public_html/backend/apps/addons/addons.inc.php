@@ -112,20 +112,76 @@
     if (preg_match('#/.cache/#', $folder)) continue;
 
     $folder_name = preg_replace('#^storage://addons/#', '', $folder);
-    $vmod = new ent_addon($folder_name);
+    $addon = new ent_addon($folder_name);
 
-    $addons[] = [
-      'id' => $vmod->data['id'],
-      'folder' => $vmod->data['folder'],
-      'status' => $vmod->data['status'],
-      'installed' => $vmod->data['installed'],
-      'location' => $vmod->data['location'],
-      'name' => $vmod->data['name'],
-      'version' => $vmod->data['version'],
-      'author' => $vmod->data['author'],
+    $current_addon = [
+      'id' => $addon->data['id'],
+      'folder' => $addon->data['folder'],
+      'status' => $addon->data['status'],
+      'installed' => $addon->data['installed'],
+      'location' => $addon->data['location'],
+      'name' => $addon->data['name'],
+      'version' => $addon->data['version'],
+      'author' => $addon->data['author'],
       'configurable' => !empty($this->data['settings']),
-      'errors' => $vmod->check(),
+      'errors' => null,
     ];
+
+    $vmod = vmod::parse_xml(file_get_contents($addon->data['location'] . 'vmod.xml'), $addon->data['location'] . 'vmod.xml');
+
+	// Check for errors
+    try {
+
+      foreach (array_keys($vmod['files']) as $key) {
+
+        foreach (glob(FS_DIR_APP . $vmod['files'][$key]['name'], GLOB_BRACE) as $file) {
+
+          $buffer = file_get_contents($file);
+
+          foreach ($vmod['files'][$key]['operations'] as $i => $operation) {
+
+            $found = preg_match_all($operation['find']['pattern'], $buffer, $matches, PREG_OFFSET_CAPTURE);
+
+            if (!$found) {
+              switch ($operation['onerror']) {
+                case 'ignore':
+                  continue 2;
+                case 'abort':
+                case 'warning':
+                default:
+                  throw new Exception('Operation #'. ($i+1) .' failed in '. preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $file), E_USER_WARNING);
+                  continue 2;
+              }
+            }
+
+            if (!empty($operation['find']['indexes'])) {
+              rsort($operation['find']['indexes']);
+
+              foreach ($operation['find']['indexes'] as $index) {
+                $index = $index - 1; // [0] is the 1st in computer language
+
+                if ($found > $index) {
+                  $buffer = substr_replace($buffer, preg_replace($operation['find']['pattern'], $operation['insert'], $matches[0][$index][0]), $matches[0][$index][1], strlen($matches[0][$index][0]));
+                }
+              }
+
+            } else {
+              $buffer = preg_replace($operation['find']['pattern'], $operation['insert'], $buffer, -1, $count);
+
+              if (!$count && $operation['onerror'] != 'skip') {
+                throw new Exception("Failed to perform insert");
+                continue;
+              }
+            }
+          }
+        }
+      }
+
+    } catch (Exception $e) {
+      $current_addon['errors'] = $e->getMessage();
+    }
+
+		$addons[] = $current_addon;
   }
 
 // Number of Rows
@@ -152,7 +208,7 @@
           <th><?php echo functions::draw_fonticon('fa-check-square-o fa-fw', 'data-toggle="checkbox-toggle"'); ?></th>
           <th></th>
           <th class="main"><?php echo language::translate('title_name', 'Name'); ?> / <?php echo language::translate('title_version', 'Version'); ?></th>
-          <th><?php echo language::translate('title_vmod_status', 'vMod Status'); ?></th>
+          <th><?php echo language::translate('title_vmod_health', 'vMod Health'); ?></th>
           <th></th>
           <th></th>
           <th></th>
@@ -164,7 +220,7 @@
         <tr class="<?php echo $addon['status'] ? null : 'semi-transparent'; ?>">
           <td><?php echo functions::form_checkbox('addons[]', $addon['id']); ?></td>
           <td><?php echo functions::draw_fonticon($addon['status'] ? 'on' : 'off'); ?></td>
-          <td><a class="link" href="<?php echo document::href_ilink(__APP__.'/addon', ['addon_id' => $addon['id']]); ?>"><?php echo $addon['name']; ?> / <?php echo $addon['version']; ?></a></td>
+          <td><a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_addon', ['addon_id' => $addon['id']]); ?>"><?php echo $addon['name']; ?> / <?php echo $addon['version']; ?></a></td>
           <td class="text-center">
             <?php if (empty($addon['errors'])) { ?>
             <span style="color: #8c4"><?php echo functions::draw_fonticon('ok'); ?> <?php echo language::translate('title_ok', 'OK'); ?></span>

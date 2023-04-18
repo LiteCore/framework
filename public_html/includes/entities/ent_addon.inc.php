@@ -4,11 +4,11 @@
     public $data;
     public $previous;
 
-    public function __construct($folder_name=null) {
+    public function __construct($id=null) {
 
-      if (!empty($folder_name)) {
-        $folder_name = basename($folder_name);
-        $this->load($folder_name);
+      if (!empty($id)) {
+        $id = basename($id);
+        $this->load($id);
       } else {
         $this->reset();
       }
@@ -39,16 +39,19 @@
       $this->previous = $this->data;
     }
 
-    public function load($folder_name) {
+    public function load($id) {
 
       $this->reset();
 
-      $this->data['folder'] = $folder_name;
 
-      if (!is_dir($this->data['location'] = 'storage://addons/'. $folder_name .'/')) {
-        if (!is_dir($this->data['location'] = 'storage://addons/'. $folder_name .'.disabled/')) {
-          throw new Exception('Invalid vMod ('. $folder_name .')');
-        }
+      if (is_dir($this->data['location'] = 'storage://addons/'. $id .'/')) {
+        $this->data['folder'] = $id;
+
+      } else if (is_dir($this->data['location'] = 'storage://addons/'. $id .'.disabled/')) {
+        $this->data['folder'] = $id.'.disabled';
+
+      } else {
+        throw new Exception('Invalid vMod ('. $id .')');
       }
 
       $this->data['status'] = !preg_match('#\.disabled$#', $this->data['folder']);
@@ -73,10 +76,6 @@
       $this->data['date_created'] = date('Y-m-d H:i:s', filectime($this->data['location'] .'vmod.xml'));
       $this->data['date_updated'] = date('Y-m-d H:i:s', filemtime($this->data['location'] .'vmod.xml'));
 
-      foreach ($dom->getElementsByTagName('alias') as $alias_node) {
-        $this->data['aliases'][$alias_node->getAttribute('key')] = $alias_node->getAttribute('value');
-      }
-
       foreach ($dom->getElementsByTagName('setting') as $setting_node) {
         $this->data['settings'][] = [
           'title' => $setting_node->getElementsByTagName('title')->item(0)->textContent,
@@ -88,17 +87,34 @@
       }
 
       if ($install_node = $dom->getElementsByTagName('install')->item(0)) {
-        $this->data['install'] = rtrim($install_node->textContent);
+        $this->data['install'] = preg_replace('#\R*(.*)\s*#', '$1', $install_node->textContent);
       }
 
       if ($uninstall_node = $dom->getElementsByTagName('uninstall')->item(0)) {
-        $this->data['uninstall'] = rtrim($uninstall_node->textContent);
+        $this->data['uninstall'] = preg_replace('#\R*(.*)\s*#', '$1', $uninstall_node->textContent);
       }
 
       foreach ($dom->getElementsByTagName('upgrade') as $upgrade_node) {
         $this->data['upgrades'][] = [
           'version' => $upgrade_node->getAttribute('version'),
-          'script' => rtrim($upgrade_node->textContent),
+          'script' => preg_replace('#\R*(.*)\s*#', '$1', $upgrade_node->textContent),
+        ];
+      }
+
+      foreach ($dom->getElementsByTagName('alias') as $alias_node) {
+        $this->data['aliases'][] = [
+          'key' => $alias_node->getAttribute('key'),
+          'value' => $alias_node->getAttribute('value'),
+        ];
+      }
+
+      foreach ($dom->getElementsByTagName('setting') as $setting_node) {
+        $this->data['settings'][] = [
+          'title' => $setting_node->getElementsByTagName('title')->item(0)->textContent,
+          'description' => $setting_node->getElementsByTagName('description')->item(0)->textContent,
+          'function' => $setting_node->getElementsByTagName('function')->item(0)->textContent,
+          'key' => $setting_node->getElementsByTagName('key')->item(0)->textContent,
+          'default_value' => $setting_node->getElementsByTagName('default_value')->item(0)->textContent,
         ];
       }
 
@@ -177,20 +193,14 @@
 
       if (empty($this->previous['folder'])) {
         mkdir($this->data['location']);
+
       } else if ($this->data['folder'] != $this->previous['folder']) {
-        rename($this->previous['location'], $this->data['location']);
+        if (!rename($this->previous['location'], $this->data['location'])) {
+          $this->data['location'] = $this->previous['location'];
+          $this->data['folder'] = $this->previous['folder'];
+          throw new Exception('Failed renaming add-on folder');
+        }
       }
-
-      $xml = (string)$this;
-
-      file_put_contents($this->data['location'] .'/vmod.xml', $xml);
-
-      $this->previous = $this->data;
-
-      cache::clear_cache('vmods');
-    }
-
-    public function __toString() {
 
       $dom = new DomDocument('1.0', 'UTF-8');
       $dom->preserveWhiteSpace = false;
@@ -198,7 +208,7 @@
 
       $vmod_node = $dom->createElement('vmod');
 
-      $vmod_node->appendChild( $dom->createElement('id', $this->data['id']) );
+      $vmod_node->appendChild( $dom->createElement('id', $this->data['id']));
       $vmod_node->appendChild( $dom->createElement('name', $this->data['name']) );
       $vmod_node->appendChild( $dom->createElement('version', $this->data['version']) );
       $vmod_node->appendChild( $dom->createElement('description', $this->data['description']) );
@@ -277,7 +287,7 @@
           }
 
         // Find
-          if (!in_array($operation['method'], ['top', 'bottom'])) {
+          if (!in_array($operation['method'], ['top', 'bottom', 'all'])) {
 
             $find_node = $dom->createElement('find');
 
@@ -320,167 +330,26 @@
       $xml = $dom->saveXML();
 
     // Pretty print
-      $xml = preg_replace('#^( +<(alias|setting|install|uninstall|upgrade|file)[^>]*>)#m', PHP_EOL . '$1', $xml);
-      $xml = preg_replace('#^(\n|\r\n?){2,}#m', PHP_EOL, $xml);
+      $xml = preg_replace('#( |\t)+(\r\n?|\n)#', '$2', $xml); // Remove trailing whitespace
+      $xml = preg_replace('#(\r\n?|\n)#', PHP_EOL, $xml); // Convert line endings
+      $xml = preg_replace('#^( +<(alias|setting|install|uninstall|upgrade|file|operation|insert)[^>]*>)#m', PHP_EOL . '$1', $xml); // Add some empty lines
+      $xml = preg_replace('#(\r\n?|\n){3,}#', PHP_EOL . PHP_EOL, $xml); // Remove exceeding line breaks
 
-      return $xml;
-    }
+      file_put_contents($this->data['location'] . 'vmod.xml', $xml);
 
-    public function test() {
+      $this->previous = $this->data;
 
-      $results = [];
-
-      $tmp_file = functions::file_create_tempfile();
-      file_put_contents($tmp_file, (string)$this);
-
-      vmod::parse_xml($tmp_file, $this->data['location'] .'vmod.xml');
-
-      foreach ($this->data['files'] as $file) {
-        foreach (explode(',', $file['name']) as $pattern) {
-          $path_and_file = $file['path'].$pattern;
-
-          if (!empty(vmod::$aliases)) {
-            $path_and_file = preg_replace(array_keys(vmod::$aliases), array_values(vmod::$aliases), $path_and_file);
-          }
-
-          if (!is_file(FS_DIR_APP . $path_and_file)) {
-            $results[$path_and_file] = 'File does not exist';
-            continue;
-          }
-
-          $buffer = file_get_contents(FS_DIR_APP . $path_and_file);
-
-          foreach ($file['operations'] as $i => $operation) {
-            $results[$path_and_file][$i] = null;
-
-            if (!empty($operation['ignoreif']) && preg_match($operation['ignoreif'], $buffer)) {
-              continue;
-            }
-
-            $found = preg_match_all($operation['find']['pattern'], $buffer, $matches, PREG_OFFSET_CAPTURE);
-
-            if (!$found) {
-              switch ($operation['onerror']) {
-                case 'ignore':
-                  continue 2;
-                case 'abort':
-                case 'warning':
-                default:
-                  $results[$path_and_file][$i] = 'Search not found';
-                  continue 2;
-              }
-            }
-
-            if (!empty($operation['find']['indexes'])) {
-              rsort($operation['find']['indexes']);
-
-              foreach ($operation['find']['indexes'] as $index) {
-                $index = $index - 1; // [0] is the 1st in match count
-
-                if ($found > $index) {
-                  $buffer = substr_replace($buffer, preg_replace($operation['find']['pattern'], $operation['insert'], $matches[0][$index][0]), $matches[0][$index][1], strlen($matches[0][$index][0]));
-                }
-              }
-
-            } else {
-              $buffer = preg_replace($operation['find']['pattern'], $operation['insert'], $buffer, -1, $count);
-
-              if (!$count && $operation['onerror'] != 'skip') {
-                $results[$path_and_file][$i] = 'Failed to perform insert';
-                continue;
-              }
-            }
-
-            $results[$path_and_file][$i] = true;
-          }
-        }
-      }
-      return $results;
-    }
-
-    public function check() {
-
-      $errors = [];
-
-      $vmod = vmod::parse_xml((string)$this, $this->data['location'] .'vmod.xml');
-
-      foreach (array_keys($vmod['files']) as $key) {
-        $patterns = explode(',', $vmod['files'][$key]['name']);
-
-        foreach ($patterns as $pattern) {
-          $path_and_file = $vmod['files'][$key]['path'].$pattern;
-
-        // Apply path aliases
-          if (!empty(vmod::$aliases)) {
-            $path_and_file = preg_replace(array_keys(vmod::$aliases), array_values(vmod::$aliases), $path_and_file);
-          }
-
-          if (!is_file(FS_DIR_APP . $path_and_file) && (empty($vmod['files'][$key]['onerror']) || strtolower($vmod['files'][$key]['onerror']) != 'skip')) {
-            $errors[] = 'File does not exist: ' . $path_and_file;
-            continue 2;
-          }
-
-          $buffer = file_get_contents(FS_DIR_APP . $path_and_file);
-
-          foreach ($vmod['files'][$key]['operations'] as $i => $operation) {
-
-            if (!empty($operation['ignoreif']) && preg_match($operation['ignoreif'], $buffer)) {
-              continue;
-            }
-
-            $found = preg_match_all($operation['find']['pattern'], $buffer, $matches, PREG_OFFSET_CAPTURE);
-
-            if (!$found) {
-              switch ($operation['onerror']) {
-                case 'ignore':
-                  continue 2;
-                case 'abort':
-                case 'warning':
-                default:
-                  $errors[] = "Search not found in operation $i ($path_and_file)";
-                  continue 2;
-              }
-            }
-
-            if (!empty($operation['find']['indexes'])) {
-              rsort($operation['find']['indexes']);
-
-              foreach ($operation['find']['indexes'] as $index) {
-                $index = $index - 1; // [0] is the 1st in match count
-
-                if ($found > $index) {
-                  $buffer = substr_replace($buffer, preg_replace($operation['find']['pattern'], $operation['insert'], $matches[0][$index][0]), $matches[0][$index][1], strlen($matches[0][$index][0]));
-                }
-              }
-
-            } else {
-              $buffer = preg_replace($operation['find']['pattern'], $operation['insert'], $buffer, -1, $count);
-
-              if (!$count && $operation['onerror'] != 'skip') {
-                $errors = "Failed to perform insert for operation $i ($path_and_file)";
-                continue;
-              }
-            }
-          }
-        }
-      }
-
-      return $errors;
+      cache::clear_cache('vmods');
     }
 
     public function delete($cleanup=false) {
 
       if (empty($this->previous['folder'])) return;
 
-      $dom = new DOMDocument('1.0', 'UTF-8');
+      if (!empty($this->data['uninstall'])) {
 
-      if (!@$dom->loadXML($this->previous['location'] . 'vmod.xml') || !$dom->getElementsByTagName('vmod')) {
-        throw new Exception(language::translate('error_xml_file_is_not_valid_vmod', 'XML file is not a valid vMod file'));
-      }
-
-      if (!empty($dom->getElementsByTagName('uninstall'))) {
-        $tmp_file = functions::file_create_tempfile();
-        file_put_contents($tmp_file, "<?php\r\n" . $dom->getElementsByTagName('uninstall')->textContent);
+        $tmp_file = stream_get_meta_data(tmpfile())['uri'];
+        file_put_contents($tmp_file, "<?php\r\n" . $this->data['uninstall']);
 
         (function() {
           include func_get_arg(0);

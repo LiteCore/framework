@@ -149,6 +149,7 @@
     'after' => language::translate('title_after', 'After'),
     'top' => language::translate('title_top', 'Top'),
     'bottom' => language::translate('title_bottom', 'Bottom'),
+    'all' => language::translate('title_all', 'All'),
   ];
 
   $type_options = [
@@ -372,7 +373,7 @@ textarea.warning {
             <div class="col-md-4">
               <div class="form-group">
                 <label><?php echo language::translate('title_status', 'Status'); ?></label>
-                <?php echo functions::form_toggle('status', true, 'e/d'); ?>
+                <?php echo functions::form_toggle('status', 'e/d', true); ?>
               </div>
 
               <div class="form-group">
@@ -404,7 +405,7 @@ textarea.warning {
 
               <div class="form-group">
                 <label><?php echo language::translate('title_storage_location', 'Storage Location'); ?></label>
-                <div class="form-input" readyonly><?php echo !empty($addon->data['location']) ? $addon->data['location'] : language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'); ?></div>
+                <div class="form-input" readyonly><?php echo !empty($addon->data['location']) ? $addon->data['location'] : '<em>'. language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage') .'</em>'; ?></div>
               </div>
 
               <?php if (!empty($addon->data['id'])) { ?>
@@ -435,21 +436,22 @@ textarea.warning {
                       </li>
                     </ul>
 
+                    <div class="drag-notice">
+                      <?php echo language::translate('text_drag_and_drop_files_and_folders_here', 'Drag and drop files and folders here'); ?>
+                    </div>
                     <?php } else { ?>
                     <div>
                       <em><?php echo language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'); ?></em>
                     </div>
                     <?php } ?>
-
-                    <div class="drag-notice">
-                      <?php echo language::translate('text_drag_and_drop_files_and_folders_here', 'Drag and drop files and folders here'); ?>
-                    </div>
                   </div>
 
+                  <?php if (!empty($addon->data['id'])) { ?>
                   <div class="upload-bar">
                     <?php echo functions::form_file_field('files[]', 'multiple'); ?>
                     <?php echo functions::form_button('upload', ['true', language::translate('title_upload', 'Upload')]); ?>
                   </div>
+                  <?php } ?>
                 </div>
               </div>
             </div>
@@ -1211,31 +1213,43 @@ textarea.warning {
       indexes = $operation.find(':input[name$="[index]"]').val().split(/\s*,\s*/).filter(Boolean),
       offset_before = $operation.find(':input[name$="[offset-before]"]').val(),
       offset_after = $operation.find(':input[name$="[offset-after]"]').val()
-      onerror = $operation.find(':input[name$="[onerror]"]').val();
+      onerror = $operation.find(':input[name$="[onerror]"]').val(),
+      regex_flags = 's';
 
     try {
 
       switch (method) {
 
         case 'top':
+
           find = '^';
           break;
 
         case 'bottom':
+
           find = '$';
+          break;
+
+        case 'all':
+
+          find = '^.*$';
           break;
 
         case 'before':
         case 'after':
         case 'replace':
 
-      // Trim
-        find = find.trim();
+        // Trim
+          find = find.trim();
 
-      // Cook the regex pattern
-        if (type != 'regex') {
+        // Cook the regex pattern
+          if (type == 'regex') {
 
-          if (type == 'inline') {
+            find_operators = 'g'+find.substr(find.lastIndexOf(find.substr(0, 1))+1);
+            find = find.substr(1, find.lastIndexOf(find.substr(0, 1))-1);
+
+          } else if (type == 'inline') {
+
             find = find.replace(/[\-\[\]{}()*+?.,\\\^$|#]/g, "\\$&");
 
           } else {
@@ -1261,17 +1275,18 @@ textarea.warning {
               find = find + '(?:.*?(?:\r\n?|\n|$)){0,'+ offset_after +'}';
             }
           }
-        }
+
+          regex_flags = 'gm';
 
         break;
 
         default:
-          throw new Error('Uknown error');
+          throw new Error('Unknown error');
       }
 
       $.each($tab.find('.script'), function(){
 
-        let regex = new RegExp(find, 'gm'),
+        let regex = new RegExp(find, regex_flags),
           source = $(this).find('.form-code').text(),
           matches = (source.match(regex) || []).length;
 

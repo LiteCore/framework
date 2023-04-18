@@ -41,18 +41,6 @@
         file_put_contents($settings_file, '{}');
       }
 
-    // Backwards Compatibility
-      self::$aliases['#^admin/#'] = 'backend/'; // <3.0.0
-      self::$aliases['#^admin/(.*?)\.app/#'] = 'backend/apps/$1/'; // <3.0.0
-      self::$aliases['#^admin/(.*?)\.widget/#'] = 'backend/widgets/$1/'; // <3.0.0
-      self::$aliases['#^pages/#'] = 'frontend/pages/'; // <3.0.0
-      self::$aliases['#^includes/partials/#'] = 'frontend/partials/'; // <3.0.0
-      self::$aliases['#^includes/controllers/ctrl_#'] = 'includes/entities/ent_'; // <2.2.0
-      self::$aliases['#^includes/library/lib_#'] = 'includes/nodes/nod_'; // <3.0.0
-      self::$aliases['#^includes/routes/#'] = 'frontend/routes/'; // <3.0.0
-      self::$aliases['#^includes/templates/(.*?)\.admin/#'] = 'backend/template/'; // <3.0.0
-      self::$aliases['#^includes/templates/(.*?)\.catalog/#'] = 'frontend/templates/$1/'; // <3.0.0
-
     // Determine last modified date
       $last_modified = null;
 
@@ -124,10 +112,10 @@
           if (in_array($folder, ['.', '..', '.cache'])) continue;
           if (!is_dir(FS_DIR_STORAGE .'addons/'.$folder)) continue;
           if (preg_match('#\.disabled$#', $folder)) continue;
-          self::load(FS_DIR_STORAGE .'addons/'.$folder.'/vmod.xml');
+          self::load(FS_DIR_STORAGE .'addons/'. $folder .'/vmod.xml');
         }
 
-      // Site modifications to cache
+      // Store modifications to cache
         $serialized = json_encode([
           'modifications' => self::$_modifications,
           'index' => self::$_files_to_modifications,
@@ -163,6 +151,7 @@
 
     // Return original file if there are no modifications
       if (empty(self::$_files_to_modifications[$original_file])) {
+
         if (isset(self::$_checked[$original_file])) {
           unset(self::$_checked[$original_file]);
         }
@@ -316,9 +305,9 @@
           }
 
           foreach (glob(FS_DIR_APP . $glob_pattern, GLOB_BRACE) as $file_to_modify) {
-            $original_file = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $file_to_modify);
+            $relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $file_to_modify);
 
-            self::$_files_to_modifications[$original_file][] = [
+            self::$_files_to_modifications[$relative_path][] = [
               'id' => $vmod['id'],
               'key' => $key,
             ];
@@ -339,7 +328,7 @@
             })($tmp_file);
           }
 
-          file_put_contents(FS_DIR_STORAGE . 'addons/.installed', $vmod['id'].';'.$vmod['version'] . PHP_EOL, FILE_APPEND | LOCK_EX);
+          file_put_contents(FS_DIR_STORAGE . 'addons/.installed', $vmod['id'] .';'. $vmod['version'] . PHP_EOL, FILE_APPEND | LOCK_EX);
 
           self::$_installed[] = [
             'id' => $vmod['id'],
@@ -397,7 +386,7 @@
       }
 
       if ($dom->documentElement->tagName != 'vmod') {
-        throw new \Exception("File ($file) is not a valid vmod or vQmod");
+        throw new \Exception("File is not a valid vMod ($file)");
       }
 
       if (empty($dom->getElementsByTagName('name')->item(0))) {
@@ -480,10 +469,15 @@
           $onerror = $operation_node->getAttribute('onerror');
 
         // Find
-          if (!in_array($operation_node->getAttribute('method'), ['top', 'bottom'])) {
+          if (in_array($operation_node->getAttribute('method'), ['top', 'bottom', 'all'])) {
+
+            $find = '';
+            $indexes = '';
+
+          } else {
 
             $find_node = $operation_node->getElementsByTagName('find')->item(0);
-            $find = strtr($find_node->textContent, $aliases);
+            $find = $find_node->textContent;
 
           // Trim
             if (in_array($operation_node->getAttribute('type'), ['inline', 'regex'])) {
@@ -535,10 +529,10 @@
 
         // Insert
           $insert_node = $operation_node->getElementsByTagName('insert')->item(0);
-          $insert = strtr($insert_node->textContent, $aliases);
+          $insert = $insert_node->textContent;
 
-          if (!empty($vmod['aliases'])) {
-            foreach ($vmod['aliases'] as $key => $value) {
+          if (!empty($aliases)) {
+            foreach ($aliases as $key => $value) {
               $insert = str_replace('{alias:'. $key .'}', $value, $insert);
             }
           }
@@ -567,14 +561,12 @@
                 break;
 
               case 'top':
-                $find = '#^#s';
-                $indexes = '';
+                $find = '#^.*$#s';
                 $insert = addcslashes($insert, '\\$').'$0';
                 break;
 
               case 'bottom':
-                $find = '#$#s';
-                $indexes = '';
+                $find = '#^.*$#s';
                 $insert = '$0'.addcslashes($insert, '\\$');
                 break;
 
@@ -582,8 +574,13 @@
                 $insert = addcslashes($insert, '\\$');
                 break;
 
+              case 'all':
+                $find = '#^.*$#s';
+                $add = addcslashes($insert, '\\$');
+                break;
+
               default:
-                throw new \Exception("Unknown value \"$method\" for operation method (before|after|replace|bottom|top)");
+                throw new \Exception("Unknown value \"$method\" for operation method (before|after|replace|bottom|top|all)");
                 continue 2;
             }
           }
