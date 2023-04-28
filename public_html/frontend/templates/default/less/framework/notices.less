@@ -8,16 +8,13 @@
 
 .alert {
   border-radius: var(--border-radius);
-  margin-bottom: var(--gutter-size);
+  margin-bottom: var(--gutter-y);
   padding: var(--input-padding-y) var(--input-padding-x);
   .close {
     float: right;
-    font-size: 1.5em;
-    font-weight: bold;
+    font-size: 1.25em;
+    color: inherit;
     line-height: 1;
-    color: #000;
-    text-shadow: 0 1px 0 #fff;
-    opacity: .2;
     &:hover {
       text-decoration: none;
     }
@@ -26,6 +23,5 @@
   &.alert-default { .alert("default"); }
   &.alert-success { .alert("success"); }
   &.alert-warning { .alert("warning"); }
-  &.alert-info { .alert("info"); }
   &.alert-danger { .alert("danger"); }
 }

@@ -1,4 +1,20 @@
 /* Grid - Bootstrap Compatible */
+.float-start, .float-left {
+  float: left;
+}
+.float-end, .float-right {
+  float: right;
+}
+
+/* Workaround as inline-start and inline-end are not yet supported by browsers */
+html[dir="rtl"] {
+  .float-start {
+    float: right;
+  }
+  .float-end {
+    float: left;
+  }
+}
 
 .container {
   min-width: 320px;
@@ -6,18 +22,19 @@
   margin: 0 auto;
 }
 
-.pull-left {
-  float: left;
-}
-.pull-right {
-  float: right;
+.content {
+  width: 100%;
+  padding: var(--gutter-y) var(--gutter-x);
 }
 
 .row {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-gap: ~"calc(var(--gutter-size)/2)";
-  margin-bottom: ~"calc(var(--gutter-size)/2)";
+  grid-gap: var(--gutter-y) var(--gutter-x);
+  margin-bottom: var(--gutter-y);
+  &.layout {
+    grid-gap: var(--gutter-x);
+  }
   &.column {
     flex-direction: column;
   }
@@ -31,13 +48,9 @@
   [class*="col-"] {
     grid-column: span 12;
   }
-  @media (min-width: @media-breakpoint-sm) {
-    grid-gap: var(--gutter-size);
-    margin-bottom: var(--gutter-size);
-  }
 }
 
-.make-grid-columns(@device) {
+.make-grid-columns(@device: ~'') {
   .col-@{device}-1 { grid-column: span 1 !important; }
   .col-@{device}-2 { grid-column: span 2 !important; }
   .col-@{device}-3 { grid-column: span 3 !important; }
@@ -52,6 +65,9 @@
   .col-@{device}-12 { grid-column: span 12 !important; }
 }
 
+.make-grid-columns();
+
+// Backwards compatibility (col-xs-)
 .make-grid-columns(xs);
 
 @media (min-width: @media-breakpoint-sm) {

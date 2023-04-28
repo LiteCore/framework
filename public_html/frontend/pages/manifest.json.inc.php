@@ -1,10 +1,13 @@
 <?php
 
+  ob_clean();
+  header('Content-Type: application/manifest+json; charset='. mb_http_output());
+
   $manifest = [
     'name' => settings::get('site_name'),
     'start_url' => document::ilink(''),
     'display' => 'standalone',
-    'orientation' => 'portrait-primary',
+    'orientation' => 'landscape-primary',
 
     'icons' => [
       [
@@ -37,6 +40,5 @@
     ],
   ];
 
-  header('Content-Type: application/manifest+json; charset=UTF-8');
   echo json_encode($manifest,  JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-  exit;
+  exit; // As we don't need app_footer to process this with a template

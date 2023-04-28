@@ -13,22 +13,13 @@
 </head>
 <body>
 
-<div id="page" class="container">
+<?php include 'app://frontend/partials/box_site_menu.inc.php'; ?>
 
-  <?php include 'app://frontend/partials/box_site_menu.inc.php'; ?>
+{{content}}
 
-  <main id="main">
-    {{content}}
-  </main>
+<?php include 'app://frontend/partials/box_site_footer.inc.php'; ?>
 
-  <?php include FS_DIR_TEMPLATE . 'partials/box_cookie_notice.inc.php'; ?>
-
-  <?php include 'app://frontend/partials/box_site_footer.inc.php'; ?>
-</div>
-
-<a id="scroll-up" class="hidden-print" href="#">
-  <?php echo functions::draw_fonticon('fa-chevron-circle-up fa-3x', 'style="color: #000;"'); ?>
-</a>
+<?php include FS_DIR_TEMPLATE . 'partials/box_cookie_notice.inc.php'; ?>
 
 {{foot_tags}}
 <script src="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'js/app.min.js'); ?>"></script>

@@ -1,106 +1,199 @@
 @import "framework/media.less";
 
+/* Fonts */
+
+@font-face {
+  font-family: 'Asap';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local(''), url('../fonts/asap-v26-latin-ext_latin-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Asap';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local(''), url('../fonts/asap-v26-latin-ext_latin-700.woff2') format('woff2');
+}
+
 /* Variables */
 
 :root {
-  --site-background-color: #f0f0f0;
-  --page-background-color: #fff;
+  /* General */
+  --border-radius: 8px;
+  --gutter-x: .5rem;
+  --gutter-y: 1rem;
+  --link-text-color: #222;
+  --shadow-color: rgba(0, 0, 0, .3);
+  --whitespace-color: #fff;
+
+  --site-background-color: #f9fafc;
 
   --sidebar-width: 300px;
 
-  --navigation-background-color: #f0f0f0;
-  --navigation-text-color: var(--default-text-color);
+  /* Important Notice */
+  --important-notice-background-color: #222;
+  --important-notice-text-color: #fff;
 
-  --default-background-color: #f9f9f9;
-  --default-background-color-active: #fff;
-  --default-background-color-hover: #d8d8d8;
-  --default-border-color: rgba(0, 0, 0, .1);
+  --header-background-color: transparent;
+  --header-text-color: var(--default-text-color);
+
+  /* Cookie Notice */
+  --cookie-notice-background-color: rgba(45, 45, 56, .75);
+  --cookie-notice-text-color: #fff;
+
+  /* Navigation */
+  --navigation-background-color: #d7dae3;
+  --navigation-background-color-hover: rgba(0, 0, 0, .05);
+  --navigation-background-color-active: rgba(0, 0, 0, .15);
+  --navigation-text-color: #222;
+  --navigation-text-color-hover: var(--navigation-text-color);
+  --navigation-text-color-active: var(--navigation-text-color);
+
+  /* Navigation */
+  --offcanvas-background-color: var(--navigation-background-color);
+  --offcanvas-text-color: var(--navigation-text-color);
+
+  /* Defaults */
+  --default-background-color: #edeff3;
+  --default-border-color: #efeff9;
   --default-line-height: 1.3333;
-  --default-text-font: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-  --default-text-color: #333;
-  --default-text-size: 12px;
-  --default-title-color: var(--default-text-color);
-  --default-title-border-color: #e5e5e5;
-  --default-notice-background-color: #e5e5e5;
-  --default-notice-text-color: #000;
+  --default-text-font: 'Asap', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  --default-text-color: #222;
+  --default-text-size: 15px;
 
-  --primary-background-color: #2e9cd4;
-  --primary-hover-background-color: #ddd;
-  --primary-active-background-color: #bdbdbd;
-  --primary-text-color: #fff;
+  /* Buttons */
+  --default-button-background-color: #f9f9f9;
+  --default-button-background-color-hover: #f3f3f3;
+  --default-button-background-color-active: #f3f3f3;
+  --default-button-border-color: rgba(0, 0, 0, .075);
+  --default-button-text-color: #333;
+
+  --primary-button-background-color: #2e9cd4;
+  --primary-button-background-color-hover: #ddd;
+  --primary-button-background-color-active: #bdbdbd;
+  --primary-button-border-color: rgba(0, 0, 0, .075);
+  --primary-button-text-color: #fff;
+
+  --success-button-background-color: #98cc34;
+  --success-button-background-color-hover: #9dcf3e;
+  --success-button-background-color-active: #89b82e;
+  --success-button-border-color: rgba(0, 0, 0, .075);
+  --success-button-text-color: #fff;
+
+  --warning-button-background-color: #f0ad4e;
+  --warning-button-background-color-hover: #f2b866;
+  --warning-button-background-color-active: #f1b25a;
+  --warning-button-border-color: rgba(0, 0, 0, 0.1);
+  --warning-button-text-color: #aa0000;
+
+  --danger-button-background-color: #d9534f;
+  --danger-button-background-color-hover: #de6764;
+  --danger-button-background-color-active: #db5d59;
+  --danger-button-border-color: rgba(0, 0, 0, 0.1);
+  --danger-button-text-color: #fff;
+
+  /* Notices */
+  --default-notice-background-color: #e6e8ed;
+  --default-notice-text-color: #000;
+  --default-notice-border-color: #e6e8ed;
+
   --primary-notice-background-color: #3ba5c6;
   --primary-notice-text-color: #fff;
+  --primary-notice-border-color: #3ba5c6;
 
-  --success-background-color: #98cc34;
-  --success-hover-background-color: #9dcf3e;
-  --success-active-background-color: #89b82e;
-  --success-border-color: rgba(0,0,0,0.1);
-  --success-text-color: #fff;
   --success-notice-background-color: #98cc34;
   --success-notice-text-color: #fff;
+  --success-notice-border-color: #98cc34;
 
-  --warning-background-color: #f0ad4e;
-  --warning-hover-background-color: #f2b866;
-  --warning-active-background-color: #f1b25a;
-  --warning-border-color: rgba(0,0,0,0.1);
-  --warning-text-color: #aa0000;
   --warning-notice-background-color: #ffcc66;
   --warning-notice-text-color: #aa0000;
+  --warning-notice-border-color: #ffcc66;
 
-  --danger-background-color: #d9534f;
-  --danger-hover-background-color: #de6764;
-  --danger-active-background-color: #db5d59;
-  --danger-border-color: rgba(0,0,0,0.1);
-  --danger-text-color: #fff;
   --danger-notice-background-color: #d9534f;
   --danger-notice-text-color: #fff;
+  --danger-notice-border-color: #d9534f;
 
-  --info-background-color: #5bc0de;
-
-  --breadcrumbs-background-color: #f3f3f3;
-  --breadcrumbs-text-color: #333;
+  /* Breadcrumbs */
+  --breadcrumbs-background-color: #ededf1;
+  --breadcrumbs-text-color: #555;
   --breadcrumbs-border-color: transparent;
 
-  --pagination-background-color: var(--default-background-color);
-  --pagination-text-color: var(--default-text-color);
-  --pagination-border-color: var(--default-border-color);
-  --pagination-active-background-color: var(--primary-background-color);
-  --pagination-active-text-color: #fff;
-  --pagination-hover-background-color: var(--primary-background-color);
-  --pagination-hover-text-color: #fff;
+  /* Cards */
+  --card-background-color: #fff;
+  --card-text-color: var(--default-text-color);
+  --card-border-color: var(--default-border-color);
+  --card-header-background-color: transparent;
+  --card-header-text-color: var(--card-text-color);
+  --card-body-background-color: transparent;
+  --card-footer-backgorund-color: #f2f3f6;
 
-  --table-striped-row-background-odd: #f9f9f9;
+  /* Input */
+  --input-background-color: #fafafc;
+  --input-padding-x: 1.5em;
+  --input-padding-y: .5em;
+  --input-text-color: #000;
+  --input-border-radius: 1em;
+
+  /* Pills */
+  --pills-background-color: transparent;
+  --pills-background-color-active: #d7dae3;
+  --pills-background-color-hover: #f1f3f7;
+  --pills-text-color: var(--default-text-color);
+  --pills-text-color-active: #222;
+
+  /* Tabs */
+  --tabs-pane-background-color: #eff2f5;
+  --tabs-pane-border-color: var(--tabs-pane-background-color);
+  --tabs-background-color: #e8e8eb;
+  --tabs-background-color-active: #fff;
+  --tabs-text-color: #333;
+  --tabs-text-color-active: var(--tabs-text-color);
+  --tabs-border-color: var(--tabs-background-color);
+  --tabs-border-color-active: var(--tabs-background-color-active);
+  --tabs-content-background-color: #fff;
+
+  /* Dropdowns */
+  --dropdown-menu-background-color: #fff;
+  --dropdown-menu-item-background-color: var(--dropdown-menu-background-color);
+  --dropdown-menu-item-text-color: var(--default-text-color);
+
+  /* Tables */
+  --table-striped-row-background-odd: #f5f6f9;
   --table-striped-row-background-even: #fff;
   --table-row-hover-background: #ececec;
 
-  --footer-background-color: #fff;
-  --footer-text-color: #333;
+  /* Pagination */
+  --pagination-background-color: var(--default-background-color);
+  --pagination-background-color-active: #d7dae3;
+  --pagination-background-color-hover: #e7e8ed;
+  --pagination-text-color: var(--default-text-color);
+  --pagination-text-color-active: var(--default-text-color);
+  --pagination-text-color-hover: var(--default-text-color);
+  --pagination-border-color: var(--default-border-color);
 
-  --copyright-background-color: #fff;
-  --copyright-text-color: #333;
+  /* Footer */
+  --footer-background-color: #ededf1;
+  --footer-title-color: var(--default-text-color);
+  --footer-text-color: var(--default-text-color);
 
-  --border-radius: 4px;
-  --gutter-size: 20px;
-  --link-text-color: #2e9cd4;
-  --input-background-color: #fff;
-  --input-padding-x: 1em;
-  --input-padding-y: .5em;
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --image-whitespace-color: #fff;
-}
+  /* Copyright */
+  --copyright-background-color: #e2e2e7;
+  --copyright-text-color: var(--default-text-color);
 
-@media (min-width: @media-breakpoint-sm) {
-  :root {
-    --default-text-size: 13px;
+  @media (min-width: (@media-breakpoint-sm)) {
+    --gutter-x: 1rem;
+    --gutter-y: 1rem;
   }
-}
-@media (min-width: @media-breakpoint-md) {
-  :root {
-    --default-text-size: 14px;
+
+  @media (min-width: (@media-breakpoint-md)) {
+    --gutter-x: 1.5rem;
+    --gutter-y: 1.5rem;
   }
-}
-@media (min-width: @media-breakpoint-lg) {
-  :root {
-    --default-text-size: 15px;
+
+  @media (min-width: (@media-breakpoint-lg)) {
+    --gutter-x: 2rem;
+    --gutter-y: 2rem;
   }
 }

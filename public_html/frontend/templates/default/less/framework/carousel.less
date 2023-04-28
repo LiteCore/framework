@@ -2,6 +2,8 @@
 
 .carousel {
   position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
   .carousel-control,
   .carousel-indicators {
     opacity: 0;
@@ -20,14 +22,13 @@
 .carousel-inner {
   position: relative;
   width: 100%;
-  overflow: hidden;
   line-height: 0;
   > .item {
     position: relative;
     display: none;
     transition: .6s ease-in-out left;
     img {
-      border-radius: var(--border-radius);
+      width: 100%;
     }
   }
 
@@ -90,7 +91,7 @@
 .carousel-caption {
   position: absolute;
   right: 15%;
-  bottom: ~"calc(var(--gutter-size)*2)";
+  bottom: var(--gutter-y);
   left: 15%;
   z-index: 10;
   color: #fff;
@@ -147,11 +148,11 @@
   }
   .icon-prev {
     left: 50%;
-    margin-left: -10px;
+    margin-inline-start: -10px;
   }
   .icon-next {
     right: 50%;
-    margin-right: -10px;
+    margin-inline-end: -10px;
   }
   .icon-prev,
   .icon-next {
@@ -170,22 +171,22 @@
       font-size: 30px;
     }
     .icon-prev {
-      margin-left: -10px;
+      margin-inline-start: -10px;
     }
     .icon-next {
-      margin-right: -10px;
+      margin-inline-end: -10px;
     }
   }
 }
 
 .carousel-indicators {
   position: absolute;
-  bottom: var(--gutter-size);
+  bottom: var(--gutter-y);
   left: 50%;
   z-index: 15;
   width: 60%;
-  padding-left: 0;
-  margin-left: -30%;
+  padding-inline-start: 0;
+  margin-inline-start: -30%;
   text-align: center;
   list-style: none;
 

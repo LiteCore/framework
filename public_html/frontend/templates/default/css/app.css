@@ -1,4 +1,3 @@
-/* Media Breakpoints */
 html {
   background: var(--site-background-color);
 }
@@ -10,12 +9,12 @@ html {
 #site-menu {
   margin: 0 calc(var(--gutter-size)/2) var(--gutter-size) calc(var(--gutter-size)/2);
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #site-menu {
     margin: 0 var(--gutter-size) var(--gutter-size) var(--gutter-size);
   }
 }
-@media (max-width: 575px) {
+@media (max-width: 767px) {
   #site-menu {
     position: sticky;
     top: 0;
@@ -29,12 +28,12 @@ html {
   align-items: center;
   padding: calc(var(--gutter-size)/2);
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #site-menu .navbar-header {
     padding: var(--gutter-size);
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   #site-menu .navbar-header {
     grid-template-columns: var(--sidebar-width) auto var(--sidebar-width);
   }
@@ -60,7 +59,7 @@ html {
   padding: calc(var(--gutter-size)/2);
   text-align: center;
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #cookies-acceptance {
     margin: 0 var(--gutter-size) 0 var(--gutter-size);
     padding: calc(var(--gutter-size)/2) var(--gutter-size);
@@ -69,7 +68,7 @@ html {
 #main {
   padding: 0 calc(var(--gutter-size)/2) var(--gutter-size) calc(var(--gutter-size)/2);
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #main {
     padding: 0 var(--gutter-size) var(--gutter-size) var(--gutter-size);
     display: grid;
@@ -81,7 +80,7 @@ html {
 #sidebar {
   position: relative;
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #sidebar {
     width: var(--sidebar-width);
     margin-right: var(--gutter-size);
@@ -94,7 +93,7 @@ html {
   grid-area: content;
   grid-gap: calc(var(--gutter-size)/2);
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #content {
     grid-gap: var(--gutter-size);
   }
@@ -104,7 +103,7 @@ html {
   background-color: var(--footer-background-color);
   color: var(--footer-text-color);
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #footer {
     padding: calc(var(--gutter-size)*2);
   }
@@ -117,12 +116,12 @@ html {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   grid-gap: 15px;
 }
-@media (min-width: 576px) {
+@media (min-width: 768px) {
   #footer .columns {
     grid-template-columns: repeat(4, 1fr);
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   #footer .columns {
     grid-template-columns: repeat(5, 1fr);
   }

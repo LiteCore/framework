@@ -1,66 +1,57 @@
-<div id="site-menu" class="navbar hidden-print">
-
-  <header class="navbar-header">
-
-    <a class="logotype" href="<?php echo document::href_ilink(''); ?>">
-      <img src="<?php echo document::href_link(WS_DIR_STORAGE . 'images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>" />
-    </a>
-
-    <div class="text-center hidden-xs">
-      x
-    </div>
-
-    <div class="text-right">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#default-menu">
+<header class="container">
+  <div class="navbar navbar-sticky">
+  
+    <div class="navbar-header">
+      <a class="logotype" href="<?php echo document::href_ilink(''); ?>">
+        <img src="<?php echo document::href_link('images/logotype.png'); ?>" alt="<?php echo settings::get('store_name'); ?>" title="<?php echo settings::get('store_name'); ?>" />
+      </a>
+  
+      <?php echo functions::form_begin('search_form', 'get', document::ilink('search'), false, 'class="navbar-search"'); ?>
+        <?php echo functions::form_search_field('query', true, 'placeholder="'. language::translate('text_search_products', 'Search products') .' &hellip;"'); ?>
+      <?php echo functions::form_end(); ?>
+  
+      <a class="regional-setting text-center" href="<?php echo document::href_ilink('regional_settings', ['redirect_url' => document::link()]); ?>#box-regional-settings" data-toggle="lightbox" data-seamless="true">
+        <div class="navbar-icon"><?php echo functions::draw_fonticon('fa-globe'); ?></div>
+        <small class="hidden-xs"><?php echo language::$selected['code']; ?></small>
+      </a>
+  
+      <button type="button" class="btn btn-default navbar-toggler hidden-md hidden-lg hidden-xl hidden-xxl" data-toggle="offcanvas" data-target="#offcanvas">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
     </div>
-  </header>
-
-  <nav id="default-menu" class="navbar-collapse collapse">
-
-    <ul class="nav navbar-nav">
-      <li class="hidden-xs">
-        <a href="<?php echo document::ilink(''); ?>" title="<?php echo language::translate('title_home', 'Home'); ?>"><?php echo functions::draw_fonticon('fa-home'); ?></a>
-      </li>
-
-      <?php if ($categories) { ?>
-      <li class="categories dropdown">
-        <a href="#" data-toggle="dropdown"><?php echo language::translate('title_products', 'Products'); ?> <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <?php foreach ($categories as $item) { ?>
-          <li><a href="<?php echo htmlspecialchars($item['link']); ?>"><?php echo $item['title']; ?></a></li>
+  
+    <div id="offcanvas" class="offcanvas">
+      <div class="offcanvas-header">
+        <div class="offcanvas-title"><?php echo settings::get('store_name'); ?></div>
+        <button type="button" class="btn btn-default" data-toggle="dismiss"><?php echo functions::draw_fonticon('fa-times'); ?></button>
+      </div>
+  
+      <div class="offcanvas-body">
+        <ul class="navbar-nav">
+  
+          <li class="nav-item">
+            <a class="nav-link" href="<?php echo document::href_ilink(''); ?>"><?php echo functions::draw_fonticon('fa-home hidden-xs hidden-sm'); ?> <span class="hidden-md hidden-lg hidden-xl hidden-xxl"><?php echo language::translate('title_home', 'Home'); ?></span></a>
+          </li>
+  
+          <?php if ($pages) { ?>
+          <li class="nav-item information dropdown">
+            <a class="nav-link" href="#" data-toggle="dropdown" class="dropdown-toggle"><?php echo language::translate('title_information', 'Information'); ?></a>
+            <ul class="dropdown-menu">
+              <?php foreach ($pages as $item) { ?>
+              <li class="nav-item"><a class="nav-link" href="<?php echo functions::escape_html($item['link']); ?>"><?php echo $item['title']; ?></a></li>
+              <?php } ?>
+            </ul>
+          </li>
           <?php } ?>
         </ul>
-      </li>
-      <?php } ?>
-
-      <?php if ($brands) { ?>
-      <li class="brands dropdown">
-        <a href="#" data-toggle="dropdown"><?php echo language::translate('title_brands', 'Manufacturers'); ?> <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <?php foreach ($brands as $item) { ?>
-          <li><a href="<?php echo htmlspecialchars($item['link']); ?>"><?php echo $item['title']; ?></a></li>
-          <?php } ?>
+  
+        <ul class="navbar-nav">
+  
+  
         </ul>
-      </li>
-      <?php } ?>
-
-      <?php if ($pages) { ?>
-      <li class="information dropdown">
-        <a href="#" data-toggle="dropdown"><?php echo language::translate('title_information', 'Information'); ?> <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <?php foreach ($pages as $item) { ?>
-          <li><a href="<?php echo htmlspecialchars($item['link']); ?>"><?php echo $item['title']; ?></a></li>
-          <?php } ?>
-        </ul>
-      </li>
-      <?php } ?>
-    </ul>
-
-    <ul class="nav navbar-nav navbar-right">
-    </ul>
-  </nav>
-</div>
+      </div>
+    </div>
+  </div>
+</header>

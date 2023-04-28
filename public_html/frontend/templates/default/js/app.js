@@ -13,25 +13,43 @@
   });
 
 // Form required asterix
-  $(':input[required="required"]').closest('.form-group').addClass('required');
+  $(':input[required]').closest('.form-group').addClass('required');
 
-// Bootstrap Compatible (data-toggle="tab")
-  $('body').on('click', '[data-toggle="tab"]', function(e) {
-    e.preventDefault();
-    $(this).closest('ul').find('li').removeClass('active');
-    $(this).closest('li').addClass('active');
-    $($(this).attr('href')).show().siblings().hide();
+// Detect scroll direction
+  let lastScrollTop = 0;
+  $(document).on('scroll', function(){
+     var scrollTop = $(this).scrollTop();
+     if (scrollTop > lastScrollTop) {
+       $('body').addClass('scrolling-down');
+     } else {
+       $('body').removeClass('scrolling-down');
+     }
+     lastScrollTop = (scrollTop < 0) ? 0 : scrollTop;
   });
 
+// Tabs (data-toggle="tab")
   $('.nav-tabs').each(function(){
-    if (!$(this).find('li.active').length) {
-      $(this).find('li:first').addClass('active');
+    if (!$(this).find('.active').length) {
+      $(this).find('[data-toggle="tab"]:first').addClass('active');
     }
+
+    $(this).on('select', '[data-toggle="tab"]', function() {
+      $(this).siblings().removeClass('active');
+      $(this).addClass('active');
+      $($(this).attr('href')).show().siblings().hide();
+    });
+
+    $(this).on('click', '[data-toggle="tab"]', function(e) {
+      e.preventDefault();
+      $(this).trigger('select');
+      history.replaceState({}, '', location.toString().replace(/#.*$/, '') + $(this).attr('href'));
+    });
+
+    $(this).find('.active').trigger('select');
   });
 
-  $('.nav-tabs .active a').trigger('click');
   if (document.location.hash != '') {
-    $('a[href="' + document.location.hash + '"]').click();
+    $('a[data-toggle="tab"][href="' + document.location.hash + '"]').click();
   }
 
 // Bootstrap Compatible (data-toggle="buttons")
@@ -62,6 +80,52 @@
     $(this).find('input:checkbox').trigger('click');
   });
 
+// Offcanvas
+  $('[data-toggle="offcanvas"]').click(function(e){
+    e.preventDefault();
+    var target = $(this).data('target');
+    if ($(target).hasClass('show')) {
+      $(target).removeClass('show');
+      $(this).removeClass('toggled');
+      $('body').removeClass('has-offcanvas');
+    } else {
+      $(target).addClass('show');
+      $(this).addClass('toggled');
+      $('body').addClass('has-offcanvas');
+    }
+  });
+
+  $('.offcanvas [data-toggle="dismiss"]').click(function(e){
+    $('.offcanvas').removeClass('show');
+    $('[data-toggle="offcanvas"]').removeClass('toggled');
+    $('body').removeClass('has-offcanvas');
+  });
+
+// Password Strength
+  $('form').on('input', 'input[type="password"][data-toggle="password-strength"]', function(){
+
+    $(this).siblings('meter').remove();
+
+    if ($(this).val() == '') return;
+
+    var numbers = ($(this).val().match(/[0-9]/g) || []).length,
+     lowercases = ($(this).val().match(/[a-z]/g) || []).length,
+     uppercases = ($(this).val().match(/[A-Z]/g) || []).length,
+     symbols =   ($(this).val().match(/[^\w]/g) || []).length,
+
+     score = (numbers * 9) + (lowercases * 11.25) + (uppercases * 11.25) + (symbols * 15)
+           + (numbers ? 10 : 0) + (lowercases ? 10 : 0) + (uppercases ? 10 : 0) + (symbols ? 10 : 0);
+
+    var meter = $('<meter min="0" low="80" high="120" optimum="150" max="150" value="'+ score +'"></meter>').css({
+      position: 'absolute',
+      bottom: '-1em',
+      width: '100%',
+      height: '1em'
+    });
+
+    $(this).after(meter);
+  });
+
 // Scroll Up
   $(window).scroll(function(){
     if ($(this).scrollTop() > 100) {
@@ -77,10 +141,252 @@
   });
 
 /* ========================================================================
- * Bootstrap: collapse.js v3.3.7
- * http://getbootstrap.com/javascript/#collapse
+ * Bootstrap: carousel.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#carousel
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
++function ($) {
+  'use strict';
+
+  // CAROUSEL CLASS DEFINITION
+  // =========================
+
+  var Carousel = function (element, options) {
+    this.$element    = $(element)
+    this.$indicators = this.$element.find('.carousel-indicators')
+    this.options     = options
+    this.paused      = null
+    this.sliding     = null
+    this.interval    = null
+    this.$active     = null
+    this.$items      = null
+
+    this.options.keyboard && this.$element.on('keydown.bs.carousel', $.proxy(this.keydown, this))
+
+    this.options.pause == 'hover' && !('ontouchstart' in document.documentElement) && this.$element
+      .on('mouseenter.bs.carousel', $.proxy(this.pause, this))
+      .on('mouseleave.bs.carousel', $.proxy(this.cycle, this))
+  }
+
+  Carousel.VERSION  = '3.4.1'
+
+  Carousel.TRANSITION_DURATION = 600
+
+  Carousel.DEFAULTS = {
+    interval: 5000,
+    pause: 'hover',
+    wrap: true,
+    keyboard: true
+  }
+
+  Carousel.prototype.keydown = function (e) {
+    if (/input|textarea/i.test(e.target.tagName)) return
+    switch (e.which) {
+      case 37: this.prev(); break
+      case 39: this.next(); break
+      default: return
+    }
+
+    e.preventDefault()
+  }
+
+  Carousel.prototype.cycle = function (e) {
+    e || (this.paused = false)
+
+    this.interval && clearInterval(this.interval)
+
+    this.options.interval
+      && !this.paused
+      && (this.interval = setInterval($.proxy(this.next, this), this.options.interval))
+
+    return this
+  }
+
+  Carousel.prototype.getItemIndex = function (item) {
+    this.$items = item.parent().children('.item')
+    return this.$items.index(item || this.$active)
+  }
+
+  Carousel.prototype.getItemForDirection = function (direction, active) {
+    var activeIndex = this.getItemIndex(active)
+    var willWrap = (direction == 'prev' && activeIndex === 0)
+                || (direction == 'next' && activeIndex == (this.$items.length - 1))
+    if (willWrap && !this.options.wrap) return active
+    var delta = direction == 'prev' ? -1 : 1
+    var itemIndex = (activeIndex + delta) % this.$items.length
+    return this.$items.eq(itemIndex)
+  }
+
+  Carousel.prototype.to = function (pos) {
+    var that        = this
+    var activeIndex = this.getItemIndex(this.$active = this.$element.find('.item.active'))
+
+    if (pos > (this.$items.length - 1) || pos < 0) return
+
+    if (this.sliding)       return this.$element.one('slid.bs.carousel', function () { that.to(pos) }) // yes, "slid"
+    if (activeIndex == pos) return this.pause().cycle()
+
+    return this.slide(pos > activeIndex ? 'next' : 'prev', this.$items.eq(pos))
+  }
+
+  Carousel.prototype.pause = function (e) {
+    e || (this.paused = true)
+
+    if (this.$element.find('.next, .prev').length && $.support.transition) {
+      this.$element.trigger($.support.transition.end)
+      this.cycle(true)
+    }
+
+    this.interval = clearInterval(this.interval)
+
+    return this
+  }
+
+  Carousel.prototype.next = function () {
+    if (this.sliding) return
+    return this.slide('next')
+  }
+
+  Carousel.prototype.prev = function () {
+    if (this.sliding) return
+    return this.slide('prev')
+  }
+
+  Carousel.prototype.slide = function (type, next) {
+    var $active   = this.$element.find('.item.active')
+    var $next     = next || this.getItemForDirection(type, $active)
+    var isCycling = this.interval
+    var direction = type == 'next' ? 'left' : 'right'
+    var that      = this
+
+    if ($next.hasClass('active')) return (this.sliding = false)
+
+    var relatedTarget = $next[0]
+    var slideEvent = $.Event('slide.bs.carousel', {
+      relatedTarget: relatedTarget,
+      direction: direction
+    })
+    this.$element.trigger(slideEvent)
+    if (slideEvent.isDefaultPrevented()) return
+
+    this.sliding = true
+
+    isCycling && this.pause()
+
+    if (this.$indicators.length) {
+      this.$indicators.find('.active').removeClass('active')
+      var $nextIndicator = $(this.$indicators.children()[this.getItemIndex($next)])
+      $nextIndicator && $nextIndicator.addClass('active')
+    }
+
+    var slidEvent = $.Event('slid.bs.carousel', { relatedTarget: relatedTarget, direction: direction }) // yes, "slid"
+    if ($.support.transition && this.$element.hasClass('slide')) {
+      $next.addClass(type)
+      if (typeof $next === 'object' && $next.length) {
+        $next[0].offsetWidth // force reflow
+      }
+      $active.addClass(direction)
+      $next.addClass(direction)
+      $active
+        .one('bsTransitionEnd', function () {
+          $next.removeClass([type, direction].join(' ')).addClass('active')
+          $active.removeClass(['active', direction].join(' '))
+          that.sliding = false
+          setTimeout(function () {
+            that.$element.trigger(slidEvent)
+          }, 0)
+        })
+        .emulateTransitionEnd(Carousel.TRANSITION_DURATION)
+    } else {
+      $active.removeClass('active')
+      $next.addClass('active')
+      this.sliding = false
+      this.$element.trigger(slidEvent)
+    }
+
+    isCycling && this.cycle()
+
+    return this
+  }
+
+
+  // CAROUSEL PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.carousel')
+      var options = $.extend({}, Carousel.DEFAULTS, $this.data(), typeof option == 'object' && option)
+      var action  = typeof option == 'string' ? option : options.slide
+
+      if (!data) $this.data('bs.carousel', (data = new Carousel(this, options)))
+      if (typeof option == 'number') data.to(option)
+      else if (action) data[action]()
+      else if (options.interval) data.pause().cycle()
+    })
+  }
+
+  var old = $.fn.carousel
+
+  $.fn.carousel             = Plugin
+  $.fn.carousel.Constructor = Carousel
+
+
+  // CAROUSEL NO CONFLICT
+  // ====================
+
+  $.fn.carousel.noConflict = function () {
+    $.fn.carousel = old
+    return this
+  }
+
+
+  // CAROUSEL DATA-API
+  // =================
+
+  var clickHandler = function (e) {
+    var $this   = $(this)
+    var href    = $this.attr('href')
+    var target  = $this.attr('data-target') || href
+    var $target = $(document).find(target)
+
+    if (!$target.hasClass('carousel')) return
+
+    var options = $.extend({}, $target.data(), $this.data())
+    var slideIndex = $this.attr('data-slide-to')
+    if (slideIndex) options.interval = false
+
+    Plugin.call($target, options)
+
+    if (slideIndex) {
+      $target.data('bs.carousel').to(slideIndex)
+    }
+
+    e.preventDefault()
+  }
+
+  $(document)
+    .on('click.bs.carousel.data-api', '[data-slide]', clickHandler)
+    .on('click.bs.carousel.data-api', '[data-slide-to]', clickHandler)
+
+  $(window).on('load', function () {
+    $('[data-ride="carousel"]').each(function () {
+      var $carousel = $(this)
+      Plugin.call($carousel, $carousel.data())
+    })
+  })
+
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: collapse.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -106,7 +412,7 @@
     if (this.options.toggle) this.toggle()
   }
 
-  Collapse.VERSION  = '3.3.7'
+  Collapse.VERSION  = '3.4.1'
 
   Collapse.TRANSITION_DURATION = 350
 
@@ -144,9 +450,11 @@
     this.$element
       .removeClass('collapse')
       .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
 
     this.$trigger
       .removeClass('collapsed')
+      .attr('aria-expanded', true)
 
     this.transitioning = 1
 
@@ -182,9 +490,11 @@
     this.$element
       .addClass('collapsing')
       .removeClass('collapse in')
+      .attr('aria-expanded', false)
 
     this.$trigger
       .addClass('collapsed')
+      .attr('aria-expanded', false)
 
     this.transitioning = 1
 
@@ -209,7 +519,7 @@
   }
 
   Collapse.prototype.getParent = function () {
-    return $(this.options.parent)
+    return $(document).find(this.options.parent)
       .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
       .each($.proxy(function (i, element) {
         var $element = $(element)
@@ -221,7 +531,10 @@
   Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
     var isOpen = $element.hasClass('in')
 
-    $trigger.toggleClass('collapsed', !isOpen)
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
   }
 
   function getTargetFromTrigger($trigger) {
@@ -229,7 +542,7 @@
     var target = $trigger.attr('data-target')
       || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
 
-    return $(target)
+    return $(document).find(target)
   }
 
 
@@ -281,10 +594,10 @@
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: dropdown.js v3.3.7
- * http://getbootstrap.com/javascript/#dropdowns
+ * Bootstrap: dropdown.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#dropdowns
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -300,7 +613,7 @@
     $(element).on('click.bs.dropdown', this.toggle)
   }
 
-  Dropdown.VERSION = '3.3.7'
+  Dropdown.VERSION = '3.4.1'
 
   function getParent($this) {
     var selector = $this.attr('data-target')
@@ -310,7 +623,7 @@
       selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
     }
 
-    var $parent = selector && $(selector)
+    var $parent = selector !== '#' ? $(document).find(selector) : null
 
     return $parent && $parent.length ? $parent : $this.parent()
   }
@@ -331,6 +644,7 @@
 
       if (e.isDefaultPrevented()) return
 
+      $this.attr('aria-expanded', 'false')
       $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
     })
   }
@@ -350,7 +664,7 @@
         // if mobile we use a backdrop because click events don't delegate
         $(document.createElement('div'))
           .addClass('dropdown-backdrop')
-          .insertAfter($(this))
+          .insertAfter($parent)
           .on('click', clearMenus)
       }
 
@@ -359,7 +673,9 @@
 
       if (e.isDefaultPrevented()) return
 
-      $this.trigger('focus')
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
 
       $parent
         .toggleClass('open')

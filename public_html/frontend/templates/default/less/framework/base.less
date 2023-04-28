@@ -1,10 +1,6 @@
 html {
-  font: ~"calc(var(--default-text-size) - 2px)/150%)" var(--default-text-font);
-  line-height: var(--default-line-height);
+  font: var(--default-text-size)/var(--default-line-height) var(--default-text-font);
   color: var(--default-text-color);
-  @media (min-width: @media-breakpoint-sm) {
-    font: var(--default-text-size)/150% var(--default-text-font);
-  }
 }
 
 html, body {
@@ -14,18 +10,9 @@ html, body {
 }
 
 h1, h2, h3, h4 {
-  color: var(--default-title-color);
-  margin: ~"calc(var(--gutter-size)/2)" 0;
-  border-bottom: 1px solid var(--default-border-color);
-  padding-bottom: ~"calc(var(--gutter-size)/4)";
-  @media (min-width: @media-breakpoint-sm) {
-    padding-bottom: ~"calc(var(--gutter-size)/2)";
-    margin: var(--gutter-size) 0;
-  }
-}
-
-p {
-  margin: var(--gutter-size) 0;
+  color: var(--default-text-color);
+  margin: 0;
+  margin-bottom: 1rem;
 }
 
 a {
@@ -40,7 +27,14 @@ a {
 }
 
 hr {
-  margin: var(--gutter-size) 0;
+  margin: var(--gutter-y) 0;
   border: 0;
   border-top: 1px solid var(--default-border-color);
+}
+
+p {
+  margin-top: 1em;
+  + p {
+    margin-top: 1em;
+  }
 }

@@ -1,7 +1,7 @@
 <?php
   $draw_page = function($page, $page_path, $depth) use (&$draw_page) {
     echo '<li class="page-'. $page['id'] . (!empty($page['opened']) ? ' opened' : '') . (!empty($page['active']) ? ' active' : '') .'">' . PHP_EOL
-       . '  <a href="'. htmlspecialchars($page['link']) .'">'. $page['title'] .'</a>' . PHP_EOL;
+       . '  <a href="'. functions::escape_html($page['link']) .'">'. $page['title'] .'</a>' . PHP_EOL;
     if (!empty($page['subpages'])) {
       echo '  <ul class="nav nav-pills nav-stacked">' . PHP_EOL;
       foreach ($page['subpages'] as $subpage) {
@@ -13,12 +13,14 @@
   };
 ?>
 
-<section id="box-information-links" class="box">
+<section id="box-information-links">
+  <div class="card-header">
+    <h2 class="card-title"><?php echo language::translate('title_information', 'Information'); ?></h2>
+  </div>
 
-  <h2 class="title"><?php echo language::translate('title_information', 'Information'); ?></h2>
-
-  <ul class="nav nav-stacked nav-pills">
-    <?php foreach ($pages as $page) $draw_page($page, $page_path, 0); ?>
-  </ul>
-
+  <div class="card-body">
+    <ul class="nav nav-stacked nav-pills">
+      <?php foreach ($pages as $page) $draw_page($page, $page_path, 0); ?>
+    </ul>
+  </div>
 </section>
