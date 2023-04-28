@@ -1,46 +1,46 @@
 <?php
-  define('PLATFORM_NAME', 'LiteBase');
-  define('PLATFORM_VERSION', '1.0.0');
-  define('SCRIPT_TIMESTAMP_START', microtime(true));
+	define('PLATFORM_NAME', 'LiteBase');
+	define('PLATFORM_VERSION', '1.0.0');
+	define('SCRIPT_TIMESTAMP_START', microtime(true));
 
-// Capture output buffer
-  ob_start();
+	// Capture output buffer
+	ob_start();
 
-// Get config
-  if (!defined('FS_DIR_APP')) {
-    if (!file_exists(__DIR__ . '/../storage/config.inc.php')) {
-      header('Location: ./install/');
-      exit;
-    }
-    require __DIR__ . '/../storage/config.inc.php';
-  }
+	// Get config
+	if (!defined('FS_DIR_APP')) {
+		if (!file_exists(__DIR__ . '/../storage/config.inc.php')) {
+			header('Location: ./install/');
+			exit;
+		}
+		require __DIR__ . '/../storage/config.inc.php';
+	}
 
-// Virtual Modification System
-  require FS_DIR_APP .'includes/wrappers/wrap_stream_app.inc.php';
-  stream_wrapper_register('app', 'wrap_stream_app');
+	// Virtual Modification System
+	require FS_DIR_APP .'includes/wrappers/wrap_stream_app.inc.php';
+	stream_wrapper_register('app', 'wrap_stream_app');
 
-  require FS_DIR_APP .'includes/wrappers/wrap_stream_storage.inc.php';
-  stream_wrapper_register('storage', 'wrap_stream_storage');
+	require FS_DIR_APP .'includes/wrappers/wrap_stream_storage.inc.php';
+	stream_wrapper_register('storage', 'wrap_stream_storage');
 
-  require FS_DIR_APP .'includes/nodes/nod_vmod.inc.php';
-  vmod::init();
+	require FS_DIR_APP .'includes/nodes/nod_vmod.inc.php';
+	vmod::init();
 
-// Compatibility and Polyfills
-  require 'app://includes/compatibility.inc.php';
+	// Compatibility and Polyfills
+	require 'app://includes/compatibility.inc.php';
 
-// 3rd party autoloader (If present)
-  if (is_file('app://vendor/autoload.php')) {
-    require 'app://vendor/autoload.php';
-  }
+	// 3rd party autoloader (If present)
+	if (is_file('app://vendor/autoload.php')) {
+		require 'app://vendor/autoload.php';
+	}
 
-// Autoloader
-  require 'app://includes/autoloader.inc.php';
+	// Autoloader
+	require 'app://includes/autoloader.inc.php';
 
-// Set error handler
-  require 'app://includes/error_handler.inc.php';
+	// Set error handler
+	require 'app://includes/error_handler.inc.php';
 
-  require 'app://includes/functions.inc.php';
+	require 'app://includes/functions.inc.php';
 
-// Jump-start some nodes
-  class_exists('notices');
-  class_exists('stats');
+	// Jump-start some nodes
+	class_exists('notices');
+	class_exists('stats');

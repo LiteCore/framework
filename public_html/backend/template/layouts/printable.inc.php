@@ -22,9 +22,9 @@
 
 <?php if (isset($_GET['media']) && $_GET['media'] == 'print') { ?>
 <script>
-  $('button[name="print"]').click(function(){
-    window.print();
-  });
+	$('button[name="print"]').click(function(){
+		window.print();
+	});
 </script>
 <?php } ?>
 </body>
