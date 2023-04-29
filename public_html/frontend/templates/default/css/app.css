@@ -6,43 +6,32 @@ html {
   background: var(--page-background-color);
   box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
 }
-#site-menu {
-  margin: 0 calc(var(--gutter-size)/2) var(--gutter-size) calc(var(--gutter-size)/2);
+#navigation {
+  margin-top: var(--gutter-y);
+  margin-bottom: var(--gutter-y);
+  padding: calc(var(--gutter-y)/2) var(--gutter-x);
 }
-@media (min-width: 768px) {
-  #site-menu {
-    margin: 0 var(--gutter-size) var(--gutter-size) var(--gutter-size);
-  }
-}
-@media (max-width: 767px) {
-  #site-menu {
-    position: sticky;
-    top: 0;
-    z-index: 999;
-    font-size: 1.25em;
-  }
-}
-#site-menu .navbar-header {
+#navigation .navbar-header {
   display: grid;
   grid-template-columns: auto auto;
   align-items: center;
   padding: calc(var(--gutter-size)/2);
 }
 @media (min-width: 768px) {
-  #site-menu .navbar-header {
+  #navigation .navbar-header {
     padding: var(--gutter-size);
   }
 }
 @media (min-width: 992px) {
-  #site-menu .navbar-header {
+  #navigation .navbar-header {
     grid-template-columns: var(--sidebar-width) auto var(--sidebar-width);
   }
 }
-#site-menu .navbar-header .logotype img {
+#navigation .navbar-header .logotype img {
   max-width: 200px;
 }
 @media (min-width: 400px) {
-  #site-menu .navbar-header .logotype img {
+  #navigation .navbar-header .logotype img {
     max-width: 100%;
     max-height: 80px;
   }

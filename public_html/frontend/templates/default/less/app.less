@@ -12,17 +12,10 @@ html {
 	box-shadow: 0 0 15px 0 rgba(0,0,0,0.1);
 }
 
-#site-menu {
-	margin: 0 ~"calc(var(--gutter-size)/2)" var(--gutter-size) ~"calc(var(--gutter-size)/2)";
-	@media (min-width: (@media-breakpoint-sm)) {
-		margin: 0 var(--gutter-size) var(--gutter-size) var(--gutter-size);
-	}
-	@media (max-width: (@media-breakpoint-sm - 1px)) {
-		position: sticky;
-		top: 0;
-		z-index: 999;
-		font-size: 1.25em;
-	}
+#navigation {
+	margin-top: var(--gutter-y);
+	margin-bottom: var(--gutter-y);
+  padding:  ~"calc(var(--gutter-y)/2)" var(--gutter-x);
 
 	.navbar-header {
 		display: grid;

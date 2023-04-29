@@ -13,11 +13,11 @@
 </head>
 <body>
 
-<?php include 'app://frontend/partials/box_site_menu.inc.php'; ?>
+<?php include 'app://frontend/partials/site_navigation.inc.php'; ?>
 
 {{content}}
 
-<?php include 'app://frontend/partials/box_site_footer.inc.php'; ?>
+<?php include 'app://frontend/partials/site_footer.inc.php'; ?>
 
 <?php include FS_DIR_TEMPLATE . 'partials/box_cookie_notice.inc.php'; ?>
 

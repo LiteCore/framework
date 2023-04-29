@@ -1,11 +1,11 @@
 <?php
 
-	$box_site_menu = new ent_view(FS_DIR_TEMPLATE . 'partials/box_site_menu.inc.php');
+	$site_navigation = new ent_view(FS_DIR_TEMPLATE . 'partials/site_navigation.inc.php');
 
-	$box_site_menu_cache_token = cache::token('box_site_menu', ['language']);
-	if (!$box_site_menu->snippets = cache::get($box_site_menu_cache_token)) {
+	$site_navigation_cache_token = cache::token('site_navigation', ['language']);
+	if (!$site_navigation->snippets = cache::get($site_navigation_cache_token)) {
 
-		$box_site_menu->snippets = [
+		$site_navigation->snippets = [
 			'categories' => [],
 			'brands' => [],
 			'pages' => [],
@@ -21,7 +21,7 @@
 		);
 
 		while ($page = database::fetch($pages_query)) {
-			$box_site_menu->snippets['pages'][$page['id']] = [
+			$site_navigation->snippets['pages'][$page['id']] = [
 				'type' => 'page',
 				'id' => $page['id'],
 				'title' => $page['title'],
@@ -30,7 +30,7 @@
 			];
 		}
 
-		cache::set($box_site_menu_cache_token, $box_site_menu->snippets);
+		cache::set($site_navigation_cache_token, $site_navigation->snippets);
 	}
 
-	echo $box_site_menu;
+	echo $site_navigation;
