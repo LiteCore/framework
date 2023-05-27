@@ -10,6 +10,12 @@
 <link rel="stylesheet" href="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'css/app.min.css'); ?>" />
 {{head_tags}}
 {{style}}
+<style>
+body {
+  display: flex;
+  flex-direction: column;
+}
+</style>
 </head>
 <body>
 

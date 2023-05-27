@@ -76,6 +76,7 @@ module.exports = function(grunt) {
       frontend_default_minified: {
         options: {
           compress: true,
+          sourceMap: true,
           relativeUrls: true
         },
         files: {

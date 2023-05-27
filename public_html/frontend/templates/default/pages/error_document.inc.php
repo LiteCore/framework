@@ -11,8 +11,8 @@
 }
 </style>
 
-<div class="fourteen-forty">
-	<main id="content">
+<div class="container" style="flex-grow: 1; display: flex; ">
+	<main id="content" style="margin: auto;">
 		{{notices}}
 
 		<article id="box-error-document" class="text-center">

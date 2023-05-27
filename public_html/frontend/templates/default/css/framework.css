@@ -211,14 +211,6 @@ body {
   padding: 0;
   min-height: 100vh;
 }
-h1,
-h2,
-h3,
-h4 {
-  color: var(--default-text-color);
-  margin: 0;
-  margin-bottom: 1rem;
-}
 a:link,
 a:visited {
   color: var(--link-text-color);
@@ -1803,7 +1795,7 @@ html[dir="rtl"] .offcanvas {
 /* Notices (Alerts) - Bootstrap Compatible */
 .alert {
   border-radius: var(--border-radius);
-  margin-bottom: var(--gutter-y);
+  margin-bottom: calc(var(--gutter-y) / 2);
   padding: var(--input-padding-y) var(--input-padding-x);
 }
 .alert .close {

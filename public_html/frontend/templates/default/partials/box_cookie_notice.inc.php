@@ -3,7 +3,7 @@
 ?>
 <?php if (!isset($_COOKIE['cookies_accepted'])) { ?>
 <div id="box-cookie-notice">
-	<div class="fourteen-forty">
+	<div class="container">
 		<div class="notice">
 			<?php echo strtr(language::translate('text_cookie_notice', 'We rely on <a href="%url">cookies</a> for storing your shopping cart and regional settings between visits and to understand how our customers use our website.'), ['%url' => document::href_ilink('information', ['page_id' => settings::get('cookie_policy')])]); ?>
 		</div>
