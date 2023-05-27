@@ -649,25 +649,6 @@
     </div>
   </section>
 
-  <section class="card">
-		<div class="card-header">
-			<div class="card-title">Loader
-			</div>
-		</div>
-
-    <div class="card-body">
-
-      <div class="row">
-        <div class="col-md-6 source">
-<div class="loader" style="width: 128px; height: 128px;"></div>
-        </div>
-
-        <div class="col-md-6 code">
-        </div>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <script>
