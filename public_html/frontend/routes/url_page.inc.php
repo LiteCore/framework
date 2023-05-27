@@ -1,9 +1,9 @@
 <?php
 
 	return [
-		'information' => [
-			'pattern' => '#^.*-[is]-([0-9]+)/?$#',
-			'controller' => 'app://frontend/pages/information.inc.php',
+		'page' => [
+			'pattern' => '#^pages/([0-9]+)(/.*|$)#',
+			'controller' => 'app://frontend/pages/page.inc.php',
 			'params' => 'page_id=$1',
 			'endpoint' => 'frontend',
 			'options' => [
@@ -18,7 +18,7 @@
 
 				if (empty($page)) return false;
 
-				$link->path = functions::format_path_friendly($page->title, $language_code) .'-i-'. $page->id;
+				$link->path = WS_DIR_APP .'pages/'. $page->id .'/'. functions::format_path_friendly($page->title, $language_code);
 				$link->unset_query('page_id');
 
 				return $link;

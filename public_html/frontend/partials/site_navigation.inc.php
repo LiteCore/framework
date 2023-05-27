@@ -25,7 +25,7 @@
 				'type' => 'page',
 				'id' => $page['id'],
 				'title' => $page['title'],
-				'link' => document::ilink('information', ['page_id' => $page['id']]),
+				'link' => document::ilink('page', ['page_id' => $page['id']]),
 				'priority' => $page['priority'],
 			];
 		}

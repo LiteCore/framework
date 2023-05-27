@@ -35,15 +35,8 @@
 						<a class="nav-link" href="<?php echo document::href_ilink(''); ?>"><?php echo functions::draw_fonticon('fa-home hidden-xs hidden-sm'); ?> <span class="hidden-md hidden-lg hidden-xl hidden-xxl"><?php echo language::translate('title_home', 'Home'); ?></span></a>
 					</li>
 
-					<?php if ($pages) { ?>
-					<li class="nav-item information dropdown">
-						<a class="nav-link" href="#" data-toggle="dropdown" class="dropdown-toggle"><?php echo language::translate('title_information', 'Information'); ?></a>
-						<ul class="dropdown-menu">
-							<?php foreach ($pages as $item) { ?>
-							<li class="nav-item"><a class="nav-link" href="<?php echo functions::escape_html($item['link']); ?>"><?php echo $item['title']; ?></a></li>
-							<?php } ?>
-						</ul>
-					</li>
+					<?php if ($pages) foreach ($pages as $item) { ?>
+					<li class="nav-item"><a class="nav-link" href="<?php echo functions::escape_html($item['link']); ?>"><?php echo $item['title']; ?></a></li>
 					<?php } ?>
 				</ul>
 
