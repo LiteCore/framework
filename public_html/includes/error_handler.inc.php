@@ -79,3 +79,9 @@
 	}
 
 	set_error_handler('error_handler');
+
+  function exception_handler($e) {
+    error_handler(E_ERROR, $e->getMessage(), $e->getFile(), $e->getLine());
+  }
+
+  set_exception_handler('exception_handler');
