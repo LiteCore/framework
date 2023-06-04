@@ -15,7 +15,7 @@
 
 		<div id="offcanvas" class="offcanvas">
 			<div class="offcanvas-header">
-				<div class="offcanvas-title"><?php echo settings::get('store_name'); ?></div>
+				<div class="offcanvas-title"><?php echo settings::get('site_name'); ?></div>
 				<button type="button" class="btn btn-default" data-toggle="dismiss"><?php echo functions::draw_fonticon('fa-times'); ?></button>
 			</div>
 
