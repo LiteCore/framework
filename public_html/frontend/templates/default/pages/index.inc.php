@@ -551,10 +551,6 @@
 		<div class="card-body">
       <div class="row">
         <div class="col-md-6 source">
-
-        </div>
-
-        <div class="col-md-6 code">
 <button type="button" class="btn btn-sm btn-default">Default</button>
 <button type="button" class="btn btn-sm btn-primary">Primary</button>
 <button type="button" class="btn btn-sm btn-success">Success</button>
@@ -576,6 +572,9 @@
 <button type="button" class="btn btn-lg btn-success">Success</button>
 <button type="button" class="btn btn-lg btn-danger">Danger</button>
         </div>
+
+        <div class="col-md-6 code">
+        </div>
       </div>
 
       <h3>Button Group</h3>
@@ -588,6 +587,9 @@
   <button type="button" class="btn btn btn-default">Button 3</button>
   <button type="button" class="btn btn btn-default">Button 4</button>
 </div>
+
+<br />
+<br />
 
 <div class="btn-group btn-block">
   <button type="button" class="btn btn btn-default">Button 1</button>

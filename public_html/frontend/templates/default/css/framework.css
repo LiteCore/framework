@@ -611,7 +611,7 @@ ul.breadcrumb li a {
 }
 /* Chat */
 .bubbles {
-  padding: 0 15px;
+  padding: 0 30px;
   overflow-y: auto;
 }
 .bubbles .bubble {
@@ -670,9 +670,11 @@ ul.breadcrumb li a {
   border-end-start-radius: 10px;
 }
 .bubbles .bubble.event {
+  padding: calc(var(--gutter-y) / 4) calc(var(--gutter-x) / 2);
   background: transparent;
   border: 1px dashed #ccc;
-  color: inherit;
+  color: #bbb;
+  text-align: center;
 }
 .bubbles .bubble.me.local:after,
 .bubbles .bubble.staff.local:after {
