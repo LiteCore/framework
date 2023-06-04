@@ -649,6 +649,39 @@
     </div>
   </section>
 
+	<section class="card">
+
+		<div class="card-header">
+			<div class="card-title">
+        Chat
+			</div>
+		</div>
+
+    <div class="card-body">
+
+      <div class="row">
+        <div class="col-md-6 source">
+<div class="bubbles">
+  <div class="bubble remote">
+    Knock knock!
+  </div>
+
+  <div class="bubble local">
+    Who's there?
+  </div>
+
+  <div class="bubble event">
+    User signed off
+  </div>
+</div>
+        </div>
+
+        <div class="col-md-6 code">
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <script>

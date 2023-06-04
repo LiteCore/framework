@@ -1,7 +1,7 @@
 /* Chat */
 
 .bubbles {
-	padding: 0 15px;
+	padding: 0 30px;
 	overflow-y: auto;
 
 	.bubble {
@@ -62,9 +62,11 @@
 		}
 
 		&.event {
+			padding: ~"calc(var(--gutter-y) / 4) calc(var(--gutter-x) / 2)";
 			background: transparent;
 			border: 1px dashed #ccc;
-			color: inherit;
+			color: #bbb;
+			text-align: center;
 		}
 
 		/* Colors */
