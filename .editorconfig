@@ -6,7 +6,7 @@ root = true
 
 [*.{css,html,js,json,less,php,scss,xml}]
 charset = utf-8
-indent_style = tabs
+indent_style = tab
 indent_size = 2
 trim_trailing_whitespace = true
 

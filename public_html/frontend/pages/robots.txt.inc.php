@@ -1,5 +1,5 @@
 <?php
-  ob_clean();
+	ob_clean();
 	header('Content-Type: text/plain;charset='. mb_http_output());
 ?>
 User-agent: *

@@ -12,8 +12,8 @@
 {{style}}
 <style>
 body {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 </style>
 </head>

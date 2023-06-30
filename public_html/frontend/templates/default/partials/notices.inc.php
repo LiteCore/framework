@@ -6,30 +6,30 @@
 
 				case 'errors':
 					echo '<div class="alert alert-danger">'
-					   . '  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice
-					   . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
-					   . '</div>' . PHP_EOL;
+						 . '  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice
+						 . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
+						 . '</div>' . PHP_EOL;
 					break;
 
 				case 'warnings':
 					echo '<div class="alert alert-warning">'
-					   . '  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice
-					   . '<a href="#" class="close" data-dismiss="alert">&times;</a>'
-					   . '</div>' . PHP_EOL;
+						 . '  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice
+						 . '<a href="#" class="close" data-dismiss="alert">&times;</a>'
+						 . '</div>' . PHP_EOL;
 					break;
 
 				case 'notices':
 					echo '<div class="alert alert-info">'
-					   . '  '. functions::draw_fonticon('fa-info-circle') . ' ' . $notice
-					   . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
-					   . '</div>' . PHP_EOL;
+						 . '  '. functions::draw_fonticon('fa-info-circle') . ' ' . $notice
+						 . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
+						 . '</div>' . PHP_EOL;
 					break;
 
 				case 'success':
 					echo '<div class="alert alert-success">'
-					   . '  '. functions::draw_fonticon('fa-check-circle') . ' ' . $notice
-					   . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
-					   . '</div>' . PHP_EOL;
+						 . '  '. functions::draw_fonticon('fa-check-circle') . ' ' . $notice
+						 . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
+						 . '</div>' . PHP_EOL;
 					break;
 			}
 		}

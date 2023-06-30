@@ -36,7 +36,7 @@
 	// Run operations before processing the route
 	event::fire('before_capture');
 
-  // Process the route and capture the content
+	// Process the route and capture the content
 	route::process();
 
 	require_once 'app://includes/app_footer.inc.php';
