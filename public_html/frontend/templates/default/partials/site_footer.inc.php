@@ -53,7 +53,7 @@
 
 <section id="copyright">
 	<div class="container notice content">
-		<!-- LiteBase is provided free under license CC BY-ND 4.0 - https://creativecommons.org/licenses/by-nd/4.0/. Removing the link back to the official website without permission is a violation. -->
-		Copyright &copy; <?php echo date('Y'); ?> <?php echo settings::get('site_name'); ?>. All rights reserved &middot; Powered by <a href="https://www.github.com/litecart/litebase" target="_blank" title="Website Core Framework">LiteBase™</a>
+		<!-- LiteCore is provided free under license CC BY-ND 4.0 - https://creativecommons.org/licenses/by-nd/4.0/. Removing the link back to the official website without permission is a violation. -->
+		Copyright &copy; <?php echo date('Y'); ?> <?php echo settings::get('site_name'); ?>. All rights reserved &middot; Powered by <a href="https://www.github.com/litecart/litebase" target="_blank" title="Website Core Framework">LiteCore™</a>
 	</div>
 </section>

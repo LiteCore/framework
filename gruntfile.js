@@ -24,8 +24,8 @@ module.exports = function(grunt) {
         overwrite: true,
         replacements: [
           {
-            from: /LiteBase™ ([0-9\.]+)/,
-            to: 'LiteBase™ <%= pkg.version %>'
+            from: /LiteCore™ ([0-9\.]+)/,
+            to: 'LiteCore™ <%= pkg.version %>'
           }
         ]
       },

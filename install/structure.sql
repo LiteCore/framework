@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `lb_administrators` (
+CREATE TABLE IF NOT EXISTS `lc_administrators` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `status` TINYINT(1) NOT NULL DEFAULT '0',
   `username` VARCHAR(32) NOT NULL DEFAULT '',
@@ -23,10 +23,10 @@ CREATE TABLE IF NOT EXISTS `lb_administrators` (
   KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-INSERT INTO `lb_administrators` (`id`, `status`, `username`, `email`, `password_hash`, `apps`, `widgets`, `last_ip_address`, `last_hostname`, `login_attempts`, `total_logins`, `date_valid_from`, `date_valid_to`, `date_active`, `date_login`, `date_updated`, `date_created`)
+INSERT INTO `lc_administrators` (`id`, `status`, `username`, `email`, `password_hash`, `apps`, `widgets`, `last_ip_address`, `last_hostname`, `login_attempts`, `total_logins`, `date_valid_from`, `date_valid_to`, `date_active`, `date_login`, `date_updated`, `date_created`)
 VALUES (1, 1, 'admin', '', '$2y$10$iCjIIJh4rcNiOe2fRxE.Dej65HjwrTzRSe5YYaoibX.vIY/ngkUM.', '[]', '', '127.0.0.1', '', 0, 0, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- --------------------------------------------------------
-CREATE TABLE `lb_emails` (
+CREATE TABLE `lc_emails` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `status` ENUM('draft','scheduled','sent','error') NOT NULL DEFAULT 'draft',
   `code` VARCHAR(255) NOT NULL DEFAULT '',
@@ -47,7 +47,7 @@ CREATE TABLE `lb_emails` (
   KEY `sender_email` (`sender`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-CREATE TABLE `lb_languages` (
+CREATE TABLE `lc_languages` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `status` TINYINT(1) NOT NULL DEFAULT '0',
   `code` CHAR(2) NOT NULL DEFAULT '',
@@ -73,7 +73,7 @@ CREATE TABLE `lb_languages` (
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lb_modules` (
+CREATE TABLE IF NOT EXISTS `lc_modules` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `module_id` VARCHAR(64) NOT NULL DEFAULT '',
   `type` VARCHAR(16) NOT NULL DEFAULT '',
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `lb_modules` (
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-CREATE TABLE `lb_pages` (
+CREATE TABLE `lc_pages` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `status` TINYINT(1) NOT NULL DEFAULT '0',
   `parent_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -105,7 +105,7 @@ CREATE TABLE `lb_pages` (
   KEY `dock` (`dock`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-CREATE TABLE `lb_pages_info` (
+CREATE TABLE `lc_pages_info` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `page_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
   `language_code` CHAR(2) NOT NULL DEFAULT '',
@@ -119,7 +119,7 @@ CREATE TABLE `lb_pages_info` (
   KEY `language_code` (`language_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-CREATE TABLE `lb_settings` (
+CREATE TABLE `lc_settings` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `group_key` VARCHAR(64) NOT NULL DEFAULT '',
   `type` ENUM('global','local') NOT NULL DEFAULT 'local',
@@ -138,7 +138,7 @@ CREATE TABLE `lb_settings` (
   KEY `group_key` (`group_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-CREATE TABLE `lb_settings_groups` (
+CREATE TABLE `lc_settings_groups` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `key` VARCHAR(64) NOT NULL DEFAULT '',
   `name` VARCHAR(64) NOT NULL DEFAULT '',
@@ -148,7 +148,7 @@ CREATE TABLE `lb_settings_groups` (
   UNIQUE KEY `key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
-CREATE TABLE `lb_translations` (
+CREATE TABLE `lc_translations` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` VARCHAR(128) NOT NULL DEFAULT '',
   `text_en` TEXT NOT NULL DEFAULT '',

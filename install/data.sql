@@ -1,13 +1,13 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 -- --------------------------------------------------------
-INSERT INTO `lb_languages` (`status`, `code`, `code2`, `name`, `locale`, `url_type`, `raw_date`, `raw_time`, `raw_datetime`, `format_date`, `format_time`, `format_datetime`, `decimal_point`, `thousands_sep`, `priority`, `date_updated`, `date_created`) VALUES
+INSERT INTO `lc_languages` (`status`, `code`, `code2`, `name`, `locale`, `url_type`, `raw_date`, `raw_time`, `raw_datetime`, `format_date`, `format_time`, `format_datetime`, `decimal_point`, `thousands_sep`, `priority`, `date_updated`, `date_created`) VALUES
 (1, 'en', 'eng', 'English', 'en_US.utf8,en_US.UTF-8,english', 'none', 'm/d/y', 'h:i:s A', 'm/d/y h:i:s A', '%b %e %Y', '%I:%M %p', '%b %e %Y %I:%M %p', '.', ',', 0, NOW(), NOW());
 -- --------------------------------------------------------
-INSERT INTO `lb_modules` (`id`, `module_id`, `type`, `status`, `priority`, `settings`, `last_log`, `date_updated`, `date_created`) VALUES
+INSERT INTO `lc_modules` (`id`, `module_id`, `type`, `status`, `priority`, `settings`, `last_log`, `date_updated`, `date_created`) VALUES
 (4, 'job_error_reporter', 'job', 1, 0, '{"status":"1","report_frequency":"Weekly","email_receipient":"","priority":"0"}', '', NOW(), NOW()),
 (5, 'job_cache_cleaner', 'job', 1, 0, '{"status":"1","priority":"0"}', '', NOW(), NOW());
 -- --------------------------------------------------------
-INSERT INTO `lb_settings_groups` (`key`, `name`, `description`, `priority`) VALUES
+INSERT INTO `lc_settings_groups` (`key`, `name`, `description`, `priority`) VALUES
 ('site_info', 'Site Info', 'Site information', 10),
 ('defaults', 'Defaults', 'Default settings', 20),
 ('social_media', 'Social Media', 'Settings related to social media.', 30),
@@ -17,7 +17,7 @@ INSERT INTO `lb_settings_groups` (`key`, `name`, `description`, `priority`) VALU
 ('images', 'Images', 'Settings for graphical elements', 80),
 ('advanced', 'Advanced', 'Advanced settings', 100);
 -- --------------------------------------------------------
-INSERT INTO `lb_settings` (`group_key`, `type`, `title`, `description`, `key`, `value`, `function`, `required`, `priority`, `date_updated`, `date_created`) VALUES
+INSERT INTO `lc_settings` (`group_key`, `type`, `title`, `description`, `key`, `value`, `function`, `required`, `priority`, `date_updated`, `date_created`) VALUES
 ('', 'global', 'Platform Database Version', 'The platform version of the database', 'platform_database_version', '1.0.0', '', 0, 0, NOW(), NOW()),
 ('site_info', 'global', 'Site Name', 'The name of your site.', 'site_name', '', 'text()', 1, 10, NOW(), NOW()),
 ('site_info', 'global', 'Site Email', 'The site\'s email address.', 'site_email', '', 'email()', 1, 11, NOW(), NOW()),

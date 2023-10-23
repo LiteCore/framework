@@ -1,10 +1,10 @@
 <?php
 /*!
- * LiteBase™ 1.0.0
+ * LiteCore™ 1.0.0
  *
  * Website Core Framework
  *
- * LiteBase is provided free without warranty.
+ * LiteCore is provided free without warranty.
  *
  * @author    LiteCart Dev Team <development@litecart.net>
  * @license   http://creativecommons.org/licenses/by-nd/4.0/ CC BY-ND 4.0
