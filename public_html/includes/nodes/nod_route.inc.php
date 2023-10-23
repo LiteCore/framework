@@ -46,18 +46,14 @@
 		public static function add($i, $route) {
 
 			if (empty($route['endpoint'])) {
-				if (strpos($i, ':') !== false) {
-					switch (true) {
-						case (preg_match('#^b(ackend)?:#', $i)):
-							$route['endpoint'] = 'backend';
-							break;
-						default:
-							$route['endpoint'] = 'frontend';
-							break;
-					}
-				} else {
-					$route['endpoint'] = 'frontend';
+				switch (true) {
+					case (preg_match('#^b:#', $i)): $route['endpoint'] = 'backend'; break;
+					case (preg_match('#^f:#', $i)): $route['endpoint'] = 'frontend'; break;
 				}
+			}
+
+			if (empty($route['endpoint'])) {
+				$route['endpoint'] = 'frontend';
 			}
 
 			if (strpos($i, ':') === false) {
@@ -68,6 +64,7 @@
 			}
 
 			self::$_routes[$i] = [
+				'route' => $i,
 				'pattern' => fallback($route['pattern'], ''),
 				'endpoint' => fallback($route['endpoint'], 'frontend'),
 				'controller' => fallback($route['controller']),
@@ -275,8 +272,6 @@
 				$language_code = language::identify();
 			}
 
-			if (isset(self::$_links_cache[$language_code][(string)$link])) return self::$_links_cache[$language_code][(string)$link];
-
 			// Strip logic from string
 			$link->path = self::strip_url_logic($link->path);
 
@@ -284,11 +279,15 @@
 				$path = 'f:'.$link->path;
 			}
 
+			if (isset(self::$_links_cache[$language_code][$path])) {
+				return self::$_links_cache[$language_code][$path];
+			}
+
 			// Rewrite link
 			foreach (self::$_routes as $ilink => $route) {
 				if (preg_match('#^'. strtr(preg_quote($ilink, '#'), ['\\*' => '.*', '\\?' => '.', '\\{' => '(', '\\}' => ')', ',' => '|']) .'$#i', $path)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
 					if (isset($route['rewrite']) && is_callable($route['rewrite'])) {
-						if ($rewritten_link = call_user_func_array($route['rewrite'], [$link, $language_code])) {
+						if ($rewritten_link = call_administrator_func_array($route['rewrite'], [$link, $language_code])) {
 							$link = $rewritten_link;
 						}
 					}
@@ -296,7 +295,6 @@
 			}
 
 			// Detect URL rewrite support
-			$use_rewrite = false;
 			if (isset($_SERVER['HTTP_MOD_REWRITE']) && filter_var($_SERVER['HTTP_MOD_REWRITE'], FILTER_VALIDATE_BOOLEAN)) { // PHP-FPM
 				$use_rewrite = true;
 
@@ -308,6 +306,9 @@
 
 			} else if (preg_match('#(apache)#i', $_SERVER['SERVER_SOFTWARE'])) {
 				$use_rewrite = true;
+
+			} else {
+				$use_rewrite = false;
 			}
 
 			// Set language to URL
@@ -331,8 +332,6 @@
 				$link->path = WS_DIR_APP . 'index.php/' . ltrim($link->path, '/');
 			}
 
-			self::$_links_cache[$language_code][(string)$link] = $link;
-
-			return self::$_links_cache[$language_code][(string)$link];
+			return self::$_links_cache[$language_code][$path] = (string)$link;
 		}
 	}

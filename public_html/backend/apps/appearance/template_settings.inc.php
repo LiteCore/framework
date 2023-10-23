@@ -66,7 +66,7 @@
 				set
 					`value` = '". database::input(json_encode($new_settings, JSON_UNESCAPED_SLASHES)) ."',
 					date_updated = '". date('Y-m-d H:i:s') ."'
-				where `key` = '". database::input('frontend/templates/default/_settings') ."'
+				where `key` = 'template_settings'
 				limit 1;"
 			);
 

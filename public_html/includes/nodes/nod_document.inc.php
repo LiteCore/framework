@@ -258,29 +258,28 @@
 
 		public static function ilink($route=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
 
-			if ($route !== null) {
+			switch (true) {
 
-				if (preg_match('#^b:(.*)$#', $route, $matches)) {
-					$endpoint = 'backend';
-					$route = $matches[1];
+				case ($route === null):
+					if ($inherit_params === null) $inherit_params = true;
+					$route = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+					break;
 
-				} else if (preg_match('#^f:(.*)$#', $route, $matches)) {
-					$endpoint = 'frontend';
-					$route = $matches[1];
+				case (preg_match('#^b:(.*)$#', $route, $matches)):
+					$route = WS_DIR_APP . BACKEND_ALIAS .'/'. $matches[1];
+					break;
 
-				} else {
-					$endpoint = !empty(route::$selected['endpoint']) ? route::$selected['endpoint'] : 'frontend';
-				}
+				case (preg_match('#^f:(.*)$#', $route, $matches)):
+					$route = WS_DIR_APP . $matches[1];
+					break;
 
-				if ($endpoint == 'backend') {
-					$route = WS_DIR_APP . BACKEND_ALIAS .'/'. $route;
-				} else {
-					$route = WS_DIR_APP . $route;
-				}
-
-			} else {
-				$route = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-				if ($inherit_params === null) $inherit_params = true;
+				default:
+					if (!empty(route::$selected['endpoint']) && substr(route::$selected['endpoint'], 0, 1) == 'b') {
+						$route = WS_DIR_APP . BACKEND_ALIAS .'/'. $route;
+					} else {
+						$route = WS_DIR_APP . $route;
+					}
+					break;
 			}
 
 			return (string)route::create_link($route, $new_params, $inherit_params, $skip_params, $language_code, true);
