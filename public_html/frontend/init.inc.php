@@ -6,7 +6,7 @@
 
 	// Development Mode
 	if (settings::get('development_mode')) {
-		if (empty(user::$data['id']) && (!isset(route::$selected['endpoint']) || route::$selected['endpoint'] != 'backend')) {
+		if (empty(administrator::$data['id']) && (!isset(route::$selected['endpoint']) || route::$selected['endpoint'] != 'backend')) {
 			http_response_code(403);
 			include 'app://pages/development_mode.inc.php';
 			require_once 'app://includes/app_footer.inc.php';
@@ -16,7 +16,7 @@
 
 	// Maintenance Mode
 	if (settings::get('maintenance_mode')) {
-		if (!empty(user::$data['id'])) {
+		if (!empty(administrator::$data['id'])) {
 			notices::add('notices', strtr('%message [<a href="%link">%preview</a>]', [
 				'%message' => language::translate('reminder_site_in_maintenance_mode', 'The site is in maintenance mode.'),
 				'%preview' => language::translate('title_preview', 'Preview'),

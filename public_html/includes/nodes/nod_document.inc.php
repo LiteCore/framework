@@ -76,7 +76,7 @@
 				'url' => document::ilink('f:'),
 			];
 
-			if (!empty(user::$data['id'])) {
+			if (!empty(administrator::$data['id'])) {
 				self::$jsenv['backend'] = [
 					'path' => WS_DIR_APP . BACKEND_ALIAS .'/',
 					'url' => document::ilink('b:'),

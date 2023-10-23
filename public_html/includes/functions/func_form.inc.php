@@ -826,9 +826,9 @@ END;
 			case 'url':
 				return form_url_field($name, $input, $parameters);
 
-			case 'user':
-			case 'users':
-				return form_users_list($name, $input, $parameters);
+			case 'administrator':
+			case 'administrators':
+				return form_administrators_list($name, $input, $parameters);
 
 			case 'wysiwyg':
 				return form_regional_wysiwyg_field($input, $name, $parameters);
@@ -1067,21 +1067,21 @@ END;
 		}
 	}
 
-	function form_users_list($name, $input=true, $parameters='') {
+	function form_administrators_list($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_users_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 3rd parameter in form_administrators_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[3])) $parameters = $args[2];
 		}
 
-		$users_query = database::query(
-			"select id, username from ". DB_TABLE_PREFIX ."users
+		$administrators_query = database::query(
+			"select id, username from ". DB_TABLE_PREFIX ."administrators
 			order by username;"
 		);
 
 		$options = [];
-		while ($user = database::fetch($users_query)) {
-			$options[] = [$user['id'], $user['username']];
+		while ($administrator = database::fetch($administrators_query)) {
+			$options[] = [$administrator['id'], $administrator['username']];
 		}
 
 		if (preg_match('#\[\]$#', $name)) {

@@ -78,8 +78,8 @@
 						$hash_string .= document::link();
 						break;
 
-					case 'user':
-						$hash_string .= user::$data['id'];
+					case 'administrator':
+						$hash_string .= administrator::$data['id'];
 						break;
 
 					case 'webp':

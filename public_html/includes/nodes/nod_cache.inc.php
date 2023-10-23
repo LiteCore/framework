@@ -23,7 +23,7 @@
 					limit 1;"
 				);
 
-				if (user::check_login()) {
+				if (administrator::check_login()) {
 					notices::add('success', 'Cache cleared');
 				}
 			}
@@ -48,7 +48,7 @@
 
 				self::clear_cache('settings');
 
-				if (user::check_login()) {
+				if (administrator::check_login()) {
 					notices::add('success', 'Image thumbnails cache cleared');
 				}
 			}
@@ -119,8 +119,8 @@
 						$hash_string .= document::link();
 						break;
 
-					case 'user':
-						$hash_string .= user::$data['id'];
+					case 'administrator':
+						$hash_string .= administrator::$data['id'];
 						break;
 
 					case 'webp':
@@ -317,9 +317,9 @@
 
 			if (function_exists('apc_delete')) {
 				if (!empty($keyword)) {
-					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
+					$cached_keys = new APCIterator('administrator', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
 				} else {
-					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
+					$cached_keys = new APCIterator('administrator', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
 				}
 				foreach ($cached_keys as $key) {
 					apc_delete($key);
