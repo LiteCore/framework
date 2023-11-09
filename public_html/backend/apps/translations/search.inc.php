@@ -96,11 +96,11 @@ th:not(:last-child) {
 
 	<?php echo functions::form_begin('search_form', 'get'); ?>
 		<div class="card-filter">
-			<div class="expandable"><?php echo functions::form_search_field('query', true, 'placeholder="'. language::translate('text_search_phrase_or_keyword', 'Search phrase or keyword') .'"'); ?></div>
+			<div class="expandable"><?php echo functions::form_input_search('query', true, 'placeholder="'. language::translate('text_search_phrase_or_keyword', 'Search phrase or keyword') .'"'); ?></div>
 			<?php echo functions::form_checkbox('untranslated', ['1', language::translate('text_only_untranslated', 'Only untranslated')]); ?>
 			<?php echo functions::form_checkbox('modules', ['1', language::translate('text_inlcude_modules', 'Include modules')]); ?>
-			<?php echo functions::form_dropdown_field('languages[]', $language_options, true); ?>
-			<div style="max-width: max-content;"><?php echo functions::form_select_field('endpoint', ['' => '-- '. language::translate('title_all', 'All') .' --', 'frontend' => language::translate('title_frontend', 'Frontend'), 'backend' => language::translate('title_backend', 'Backend')]); ?></div>
+			<?php echo functions::form_input_dropdown('languages[]', $language_options, true); ?>
+			<div style="max-width: max-content;"><?php echo functions::form_select('endpoint', ['' => '-- '. language::translate('title_all', 'All') .' --', 'frontend' => language::translate('title_frontend', 'Frontend'), 'backend' => language::translate('title_backend', 'Backend')]); ?></div>
 			<?php echo functions::form_button('filter', language::translate('title_search', 'Search'), 'submit'); ?>
 		</div>
 	<?php echo functions::form_end(); ?>
@@ -126,7 +126,7 @@ th:not(:last-child) {
 						</td>
 						<?php foreach ($_GET['languages'] as $key => $language_code) { ?>
 						<td>
-							<?php echo functions::form_hidden_field('translations['. $translation['code'] .'][id]', $translation['id']); ?>
+							<?php echo functions::form_input_hidden('translations['. $translation['code'] .'][id]', $translation['id']); ?>
 							<?php echo functions::form_textarea('translations['. $translation['code'] .'][text_'.$language_code.']', $translation['text_'.$language_code], 'rows="2" dir="'. language::$languages[$language_code]['direction'] .'" tabindex="'. $key.str_pad(++$tab_index, 2, '0', STR_PAD_LEFT) .'"'); ?>
 						</td>
 						<?php } ?>

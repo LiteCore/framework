@@ -11,23 +11,23 @@
 					<div class="row">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_firstname', 'First Name'); ?></label>
-							<?php echo functions::form_draw_text_field('firstname', true, 'required'); ?>
+							<?php echo functions::form_input_draw_text('firstname', true, 'required'); ?>
 						</div>
 
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_lastname', 'Last Name'); ?></label>
-							<?php echo functions::form_draw_text_field('lastname', true, 'required'); ?>
+							<?php echo functions::form_input_draw_text('lastname', true, 'required'); ?>
 						</div>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo language::translate('title_email_address', 'Email Address'); ?></label>
-						<?php echo functions::form_draw_email_field('email', true, 'required'); ?>
+						<?php echo functions::form_input_draw_email('email', true, 'required'); ?>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo language::translate('title_subject', 'Subject'); ?></label>
-						<?php echo functions::form_draw_text_field('subject', true, 'required'); ?>
+						<?php echo functions::form_input_draw_text('subject', true, 'required'); ?>
 					</div>
 
 					<div class="form-group">
@@ -39,7 +39,7 @@
 					<div class="row">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_captcha', 'CAPTCHA'); ?></label>
-							<?php echo functions::form_draw_captcha_field('captcha', 'contact_us', 'required'); ?>
+							<?php echo functions::form_input_draw_captcha('captcha', 'contact_us', 'required'); ?>
 						</div>
 					</div>
 					<?php } ?>

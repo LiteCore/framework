@@ -267,7 +267,7 @@
 					<legend><?php echo language::translate('title_upload_new_addon', 'Upload a New Add-on'); ?>:</legend>
 
 					<div class="input-group">
-						<?php echo functions::form_file_field('addon', 'accept="application/zip,application/xml"'); ?>
+						<?php echo functions::form_input_file('addon', 'accept="application/zip,application/xml"'); ?>
 						<?php echo functions::form_button('upload', language::translate('title_upload', 'Upload'), 'submit'); ?>
 					</div>
 				</fieldset>

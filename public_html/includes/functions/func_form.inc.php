@@ -54,11 +54,11 @@
 		return '<button'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="btn btn-default"' : '') .' type="'. functions::escape_html($type) .'" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. ((!empty($fonticon)) ? functions::draw_fonticon($fonticon) . ' ' : '') . (isset($value[1]) ? $value[1] : $value[0]) .'</button>';
 	}
 
-	function form_captcha_field($name, $id, $parameters='') {
+	function form_input_captcha($name, $id, $parameters='') {
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-text" style="padding: 0;">'. functions::captcha_generate(100, 40, 4, $id, 'numbers', 'align="absbottom"') .'</span>' . PHP_EOL
-				 . '  ' . form_text_field('captcha', '', $parameters . ' autocomplete="off" style="font-size: 24px; padding: 0; text-align: center;"') . PHP_EOL
+				 . '  ' . form_input_text('captcha', '', $parameters . ' autocomplete="off" style="font-size: 24px; padding: 0; text-align: center;"') . PHP_EOL
 				 . '</div>';
 	}
 
@@ -66,7 +66,9 @@
 
 		if (is_array($value)) {
 
-			if ($input === true) $input = form_reinsert_value($name, $value[0]);
+			if ($input === true) {
+				$input = form_reinsert_value($name, $value[0]);
+			}
 
 			return '<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>' . PHP_EOL
 			. '  <input type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . (($parameters) ? ' ' . $parameters : '') .' />' . PHP_EOL
@@ -74,28 +76,36 @@
 			. '</label>';
 		}
 
-		if ($input === true) $input = form_reinsert_value($name, $value);
+		if ($input === true) {
+			$input = form_reinsert_value($name, $value);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .' type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value) .'" '. (!strcmp($input, $value) ? ' checked' : '') . (($parameters) ? ' ' . $parameters : '') .' />';
 	}
 
-	function form_code_field($name, $input=true, $parameters='') {
+	function form_input_code($name, $input=true, $parameters='') {
 
-		if ($input === true) $input = form_reinsert_value($name);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<textarea'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-code"' : '') .' name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
 	}
 
-	function form_color_field($name, $input=true, $parameters='') {
+	function form_input_color($name, $input=true, $parameters='') {
 
-		if ($input === true) $input = form_reinsert_value($name);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="color" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_csv_field($name, $input=true, $parameters='') {
+	function form_input_csv($name, $input=true, $parameters='') {
 
-		if ($input === true) $input = form_reinsert_value($name);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		if (!$csv = functions::csv_decode($input)) {
 			return form_textarea($name, $input, $parameters);
@@ -181,8 +191,11 @@ END;
 		return $html;
 	}
 
-	function form_date_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_date($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		if (!empty($input) && !in_array(substr($input, 0, 10), ['0000-00-00', '1970-01-01'])) {
 			$input = date('Y-m-d', strtotime($input));
@@ -193,8 +206,11 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="date" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" placeholder="YYYY-MM-DD"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_datetime_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_datetime($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		if (!empty($input) && !in_array(substr($input, 0, 10), ['0000-00-00', '1970-01-01'])) {
 			$input = date('Y-m-d\TH:i', strtotime($input));
@@ -205,25 +221,27 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="datetime-local" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" placeholder="YYYY-MM-DD [hh:nn]"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_decimal_field($name, $input=true, $decimals=2, $parameters='') {
+	function form_input_decimal($name, $input=true, $decimals=2, $parameters='') {
 
 		if (count($args = func_get_args()) > 4) {
-			trigger_error('Passing min and max separate parameters in form_decimal_field() is deprecated. Instead define min="0" max="999" in $parameters', E_USER_DEPRECATED);
+			trigger_error('Passing min and max separate parameters in form_input_decimal() is deprecated. Instead define min="0" max="999" in $parameters', E_USER_DEPRECATED);
 			if (isset($args[5])) $parameters = $args[5];
 			if (isset($args[3])) $parameters .= ($parameters ? ' ' : '') . 'min="'. (int)$args[3] .'"';
 			if (isset($args[4])) $parameters .= ($parameters ? ' ' : '') . 'min="'. (int)$args[4] .'"';
 		}
 
-		if ($input === true) $input = form_reinsert_value($name);
-
-		if ($input != '') {
-			$input = round($input, (int)$decimals);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
 		}
 
-		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="number" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" '. (($parameters) ? ' '.$parameters : '') .' />';
+		if ($input != '') {
+			$input = number_format((float)$input, (int)$decimals, '.', '');
+		}
+
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="number" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" data-decimals="'. $decimals .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_dropdown_field($name, $options=[], $input=true, $parameters='') {
+	function form_input_dropdown($name, $options=[], $input=true, $parameters='') {
 
 		$html = '<div class="dropdown"'. (($parameters) ? ' ' . $parameters : '') .'>' . PHP_EOL
 					. '  <div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>' . PHP_EOL
@@ -254,8 +272,11 @@ END;
 		return $html;
 	}
 
-	function form_email_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_email($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-envelope-o fa-fw') .'</span>' . PHP_EOL
@@ -263,13 +284,15 @@ END;
 				 . '</div>';
 	}
 
-	function form_file_field($name, $parameters='') {
-
+	function form_input_file($name, $parameters='') {
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="file" name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_fonticon_field($name, $input=true, $type='text', $icon='', $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_fonticon($name, $input=true, $type='text', $icon='', $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-icon">'. functions::draw_fonticon($icon) .'</span>' . PHP_EOL
@@ -277,8 +300,11 @@ END;
 				 . '</div>';
 	}
 
-	function form_hidden_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_hidden($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<input type="hidden" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
@@ -288,7 +314,10 @@ END;
 	}
 
 	function form_input($name, $input=true, $type='text', $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="'. functions::escape_html($type) .'" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
@@ -297,8 +326,11 @@ END;
 		return '<a '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="btn btn-default"' : '') .' href="'. functions::escape_html($url) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. (!empty($fonticon) ? functions::draw_fonticon($fonticon) . ' ' : '') . $title .'</a>';
 	}
 
-	function form_month_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_month($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		if (!in_array(substr($input, 0, 7), ['', '0000-00', '1970-00', '1970-01'])) {
 			$input = date('Y-m', strtotime($input));
@@ -309,8 +341,11 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="month" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" maxlength="7" pattern="[0-9]{4}-[0-9]{2}" placeholder="YYYY-MM"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_number_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = (int)form_reinsert_value($name);
+	function form_input_number($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = (int)form_reinsert_value($name);
+		}
 
 		if ($input != '') {
 			$input = round($input);
@@ -319,8 +354,11 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="number" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" step="1"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_password_field($name, $input='', $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_password($name, $input='', $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-key fa-fw') .'</span>' . PHP_EOL
@@ -328,8 +366,11 @@ END;
 				 . '</div>';
 	}
 
-	function form_phone_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_phone($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-phone fa-fw') .'</span>' . PHP_EOL
@@ -340,7 +381,10 @@ END;
 	function form_radio_button($name, $value, $input=true, $parameters='') {
 
 		if (is_array($value)) {
-			if ($input === true) $input = form_reinsert_value($name, $value[0]);
+
+			if ($input === true) {
+				$input = form_reinsert_value($name, $value[0]);
+			}
 
 			return '<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>' . PHP_EOL
 					. '  <input type="radio" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . (($parameters) ? ' ' . $parameters : '') .' />' . PHP_EOL
@@ -348,27 +392,36 @@ END;
 					. '</label>';
 		}
 
-		if ($input === true) $input = form_reinsert_value($name, $value);
+		if ($input === true) {
+			$input = form_reinsert_value($name, $value);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .' type="radio" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value) .'" '. (!strcmp($input, $value) ? ' checked' : '') . (($parameters) ? ' ' . $parameters : '') .' />';
 	}
 
 	function form_range_slider($name, $input=true, $min='', $max='', $step='', $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-range"' : '') .' type="range" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" min="'. (float)$min .'" max="'. (float)$max .'" step="'. (float)$step .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_regional_input_field($name, $language_code='', $input=true, $type='text', $parameters='') {
+	function form__inputregional($name, $language_code='', $input=true, $type='text', $parameters='') {
 
 		if (preg_match('#^[a-z]{2}$#', $name)) {
-			trigger_error('Passing $language code as 1st parameter in form_regional_input_field() is deprecated. Instead, use form_regional_input_field($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
+			trigger_error('Passing $language code as 1st parameter in form_input_regional_input() is deprecated. Instead, use form_input_regional_input($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
 			list($name, $language_code) = [$language_code, $name];
 		}
 
-		if (empty($language_code)) $language_code = settings::get('site_language_code');
+		if (empty($language_code)) {
+			$language_code = settings::get('store_language_code');
+		}
 
-		if ($input === true) $input = form_reinsert_value($name);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
@@ -376,13 +429,15 @@ END;
 				 . '</div>';
 	}
 
-	function form_regional_text_field($name, $language_code='', $input=true, $parameters='') {
+	function form_input_regional_text($name, $language_code='', $input=true, $parameters='') {
 
-		if (empty($language_code)) $language_code = settings::get('site_language_code');
+		if (empty($language_code)) {
+			$language_code = settings::get('store_language_code');
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
-				 . '  ' . form_text_field($name, $input, $parameters) . PHP_EOL
+				 . '  ' . form_input_text($name, $input, $parameters) . PHP_EOL
 				 . '</div>';
 	}
 
@@ -393,7 +448,9 @@ END;
 			list($name, $language_code) = [$language_code, $name];
 		}
 
-		if (empty($language_code)) $language_code = settings::get('site_language_code');
+		if (empty($language_code)) {
+			$language_code = settings::get('site_language_code');
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
@@ -401,23 +458,28 @@ END;
 				 . '</div>';
 	}
 
-	function form_regional_wysiwyg_field($name, $language_code='', $input=true, $parameters='') {
+	function form_input_regional_wysiwyg($name, $language_code='', $input=true, $parameters='') {
 
 		if (preg_match('#^[a-z]{2}$#', $name)) {
-			trigger_error('Passing language code as 1st parameter in form_regional_wysiwyg_field() is deprecated. Instead, use form_regional_wysiwyg_field($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
+			trigger_error('Passing language code as 1st parameter in form_input_regional_wysiwyg() is deprecated. Instead, use form_input_regional_wysiwyg($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
 			list($name, $language_code) = [$language_code, $name];
 		}
 
-		if (empty($language_code)) $language_code = settings::get('site_language_code');
+		if (empty($language_code)) {
+			$language_code = settings::get('site_language_code');
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
-				 . '  ' . form_wysiwyg_field($name, $input, $parameters) . PHP_EOL
+				 . '  ' . form_input_wysiwyg($name, $input, $parameters) . PHP_EOL
 				 . '</div>';
 	}
 
-	function form_search_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_search($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-search fa-fw') .'</span>' . PHP_EOL
@@ -425,9 +487,11 @@ END;
 				 . '</div>';
 	}
 
-	function form_select_field($name, $options=[], $input=true, $parameters='') {
+	function form_select($name, $options=[], $input=true, $parameters='') {
 
-		if (preg_match('#\[\]$#', $name)) return form_select_multiple_field($name, $options, $input, $parameters);
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple($name, $options, $input, $parameters);
+		}
 
 		$html = '<select '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="form-select"' : '') .' name="'. functions::escape_html($name) .'"'. (($parameters) ? ' ' . $parameters : '') .'>' . PHP_EOL;
 
@@ -457,7 +521,7 @@ END;
 		return $html;
 	}
 
-	function form_select_multiple_field($name, $options=[], $input=true, $parameters='') {
+	function form_select_multiple($name, $options=[], $input=true, $parameters='') {
 
 		$html = '<div class="form-input"' . (($parameters) ? ' ' . $parameters : '') .'>' . PHP_EOL;
 
@@ -481,10 +545,10 @@ END;
 		return $html;
 	}
 
-	function form_select_optgroup_field($name, $groups=[], $input=true, $parameters='') {
+	function form_select_optgroup($name, $groups=[], $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 3 && is_bool($args[3])) {
-			trigger_error('Passing $multiple as 4th parameter in form_select_optgroup_field() is deprecated as determined by input name instead.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 4th parameter in form_select_optgroup() is deprecated as determined by input name instead.', E_USER_DEPRECATED);
 			if (isset($args[4])) $parameters = $args[3];
 		}
 
@@ -525,25 +589,37 @@ END;
 	}
 
 	function form_switch($name, $value, $label, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<label><input '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="form-switch"' : '') .' name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($label) .'</label>';
 	}
 
 	function form_textarea($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<textarea'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
 	}
 
-	function form_text_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_text($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_time_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_time($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="time" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
@@ -555,7 +631,9 @@ END;
 			list($type, $input) = [$input, $type];
 		}
 
-		if ($input === true) $input = form_reinsert_value($name);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		$input = preg_match('#^(1|active|enabled|on|true|yes)$#i', $input) ? '1' : '0';
 
@@ -602,7 +680,9 @@ END;
 
 	function form_toggle_buttons($name, $options, $input=true, $parameters='') {
 
-		if ($input === true) $input = form_reinsert_value($name);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		$html = '<div '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="btn-group btn-block btn-group-inline"' : '') .' data-toggle="buttons"'. (($parameters) ? ' '.$parameters : '') .'>'. PHP_EOL;
 
@@ -628,14 +708,19 @@ END;
 		return $html;
 	}
 
-	function form_url_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_url($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="url" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_username_field($name, $input=true, $parameters='') {
-		if ($input === true) $input = form_reinsert_value($name);
+	function form_input_username($name, $input=true, $parameters='') {
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		return '<div class="input-group">' . PHP_EOL
 				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-user fa-fw') .'</span>' . PHP_EOL
@@ -643,9 +728,11 @@ END;
 				 . '</div>';
 	}
 
-	function form_wysiwyg_field($name, $input=true, $parameters='') {
+	function form_input_wysiwyg($name, $input=true, $parameters='') {
 
-		if ($input === true) $input = form_reinsert_value($name);
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
 
 		document::$snippets['head_tags']['trumbowyg'] = '<link href="'. document::href_rlink('app://assets/trumbowyg/ui/trumbowyg.min.css') .'" rel="stylesheet" />' . PHP_EOL
 																									. '<link href="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css') .'" rel="stylesheet" />'
@@ -681,7 +768,9 @@ END;
 		return '<textarea name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
 	}
 
-	######################################################################
+	##################################
+	# Platform specific form helpers #
+	##################################
 
 	function form_function($name, $function, $input=true, $parameters='') {
 
@@ -702,19 +791,23 @@ END;
 
 		switch ($matches[1]) {
 
+			case 'administrator':
+			case 'administrators':
+				return form_select_administrator($name, $input, $parameters);
+
 			case 'date':
-				return form_date_field($name, $input, $parameters);
+				return form_input_date($name, $input, $parameters);
 
 			case 'datetime':
-				return form_datetime_field($name, $input, $parameters);
+				return form_input_datetime($name, $input, $parameters);
 
 			case 'decimal':
 			case 'float':
-				return form_decimal_field($name, $input, 2, $parameters);
+				return form_input_decimal($name, $input, 2, $parameters);
 
 			case 'number':
 			case 'int':
-				return form_number_field($name, $input, $parameters);
+				return form_input_number($name, $input, $parameters);
 
 			case 'checkbox':
 				$html = '';
@@ -724,13 +817,13 @@ END;
 				return $html;
 
 			case 'color':
-				return form_color_field($name, $input, $parameters);
+				return form_input_color($name, $input, $parameters);
 
 			case 'text':
-				return form_text_field($name, $input, $parameters);
+				return form_input_text($name, $input, $parameters);
 
 			case 'password':
-				return form_password_field($name, $input, $parameters);
+				return form_input_password($name, $input, $parameters);
 
 			case 'mediumtext':
 			case 'textarea':
@@ -743,25 +836,25 @@ END;
 				return form_textarea($name, $input, true, $parameters);
 
 			case 'email':
-				return form_email_field($name, $input, $parameters);
+				return form_input_email($name, $input, $parameters);
 
 			case 'file':
 			case 'files':
-				return form_files_list($name, $options[0], $input, $parameters);
+				return form_select_file($name, $options[0], $input, $parameters);
 
 			case 'language':
 			case 'languages':
-				return form_languages_list($name, $input, $parameters);
+				return form_select_language($name, $input, $parameters);
 
 			case 'page':
 			case 'pages':
-				return form_pages_list($name, $input, $parameters);
+				return form_select_page($name, $input, $parameters);
 
 			case 'password':
-				return functions::form_password_field($name, $input);
-				
+				return functions::form_input_password($name, $input);
+
 			case 'phone':
-				return functions::form_phone_field($name, $input);
+				return functions::form_input_phone($name, $input);
 
 			case 'radio':
 				$html = '';
@@ -773,7 +866,7 @@ END;
 			case 'regional_text':
 				$html = '';
 				foreach (array_keys(language::$languages) as $language_code) {
-					$html .= form_regional_text_field($name.'['. $language_code.']', $language_code, $input, $parameters);
+					$html .= form_input_regional_text($name.'['. $language_code.']', $language_code, $input, $parameters);
 				}
 				return $html;
 
@@ -787,13 +880,13 @@ END;
 			case 'regional_wysiwyg':
 				$html = '';
 				foreach (array_keys(language::$languages) as $language_code) {
-					$html .= form_regional_wysiwyg_field($name.'['. $language_code.']', $language_code, $input, $parameters);
+					$html .= form_input_regional_wysiwyg($name.'['. $language_code.']', $language_code, $input, $parameters);
 				}
 				return $html;
 
 			case 'page':
 			case 'pages':
-				return form_pages_list($name, $input, $parameters);
+				return form_select_page($name, $input, $parameters);
 
 			case 'radio':
 				$html = '';
@@ -804,52 +897,120 @@ END;
 
 			case 'select':
 				for ($i=0; $i<count($options); $i++) $options[$i] = [$options[$i]];
-				return form_select_field($name, $options, $input, $parameters);
+				return form_select($name, $options, $input, $parameters);
 
 			case 'timezone':
 			case 'timezones':
-				return form_timezones_list($name, $input, $parameters);
+				return form_select_timezone($name, $input, $parameters);
 
 			case 'template':
 			case 'templates':
-				return form_templates_list($name, $input, $parameters);
+				return form_select_template($name, $input, $parameters);
 
 			case 'time':
-				return form_time_field($name, $input, $parameters);
+				return form_input_time($name, $input, $parameters);
 
 			case 'toggle':
 				return form_toggle($name, fallback($options[0], null), $input);
 
 			case 'upload':
-				return form_file_field($name, $parameters);
+				return form_input_file($name, $parameters);
 
 			case 'url':
-				return form_url_field($name, $input, $parameters);
-
-			case 'administrator':
-			case 'administrators':
-				return form_administrators_list($name, $input, $parameters);
+				return form_input_url($name, $input, $parameters);
 
 			case 'wysiwyg':
-				return form_regional_wysiwyg_field($input, $name, $parameters);
+				return form_input_regional_wysiwyg($input, $name, $parameters);
 
 			case 'zone':
 			case 'zones':
 				$option = !empty($options) ? $options[0] : '';
 					//if (empty($option)) $option = settings::get('site_country_code');
-				return form_zones_list($name, $option, $input, $parameters);
+				return form_select_zone($name, $option, $input, $parameters);
 
 			default:
 				trigger_error('Unknown function name ('. $function .')', E_USER_WARNING);
-				return form_text_field($name, $input, $parameters);
+				return form_input_text($name, $input, $parameters);
 				break;
 		}
 	}
 
-	function form_encodings_list($name, $input=true, $parameters='') {
+	function form_select_administrator($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_encodings_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 3rd parameter in form_select_administrator() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			if (isset($args[3])) $parameters = $args[2];
+		}
+
+		$administrators_query = database::query(
+			"select id, username from ". DB_TABLE_PREFIX ."administrator
+			order by username;"
+		);
+
+		$options = [];
+		while ($administrator = database::fetch($administrators_query)) {
+			$options[] = [$administrator['id'], $administrator['username']];
+		}
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple($name, $options, $input, $parameters);
+		} else {
+			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			return form_select($name, $options, $input, $parameters);
+		}
+	}
+
+
+	function form_select_country($name, $input=true, $parameters='') {
+
+		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
+			trigger_error('Passing $multiple as 3rd parameter in form_select_country() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			if (isset($args[3])) $parameters = $args[2];
+		}
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+
+			if ($input == '' && file_get_contents('php://input') == '') {
+				$input = settings::get('default_country_code');
+			}
+		}
+
+		switch ($input) {
+			case 'customer_country_code':
+				$input = customer::$data['country_code'];
+				break;
+			case 'default_country_code':
+				$input = settings::get('default_country_code');
+				break;
+			case 'store_country_code':
+				$input = settings::get('store_country_code');
+				break;
+		}
+
+		$countries_query = database::query(
+			"select * from ". DB_TABLE_PREFIX ."countries
+			where status
+			order by name asc;"
+		);
+
+		$options = [];
+		while ($country = database::fetch($countries_query)) {
+			$options[] = [$country['iso_code_2'], $country['name'], 'data-tax-id-format="'. $country['tax_id_format'] .'" data-postcode-format="'. $country['postcode_format'] .'" data-phone-code="'. $country['phone_code'] .'"'];
+		}
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple($name, $options, $input, $parameters);
+		} else {
+			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			return form_select($name, $options, $input, $parameters);
+		}
+	}
+
+	function form_select_encoding($name, $input=true, $parameters='') {
+
+		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
+			trigger_error('Passing $multiple as 3rd parameter in form_select_encoding() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[3])) $parameters = $args[2];
 		}
 
@@ -896,14 +1057,36 @@ END;
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}
 
-	function form_files_list($name, $glob, $input=true, $parameters='') {
+	function form_select_file($name, $parameters='') {
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple_files($name, $options, $input, $parameters);
+		}
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		return '<div class="form-input"'. (($parameters) ? ' ' . $parameters : '') .'>' . PHP_EOL
+				 . '  ' . form_input_hidden($name, true) . PHP_EOL
+				 . '  <span class="value">'. (!empty($input) ? $input : '('. language::translate('title_none', 'None') .')') .'</span> <a href="'. document::href_ilink('b:files/file_picker') .'" data-toggle="lightbox" class="btn btn-default btn-sm" style="margin-inline-start: 5px;">'. language::translate('title_change', 'Change') .'</a>' . PHP_EOL
+				 . '</div>';
+
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="file" name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
+	}
+
+	function form_select_multiple_files($name, $glob, $input=true, $parameters='') {
+
+		if (!preg_match('#\[\]$#', $name)) {
+			return form_select_file($name, $options, $input, $parameters);
+		}
 
 		$options = [];
 
@@ -917,14 +1100,14 @@ END;
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}
 
-	function form_languages_list($name, $input=true, $parameters='') {
+	function form_select_language($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
 			trigger_error('Passing $multiple as 3rd parameter in form_languages_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
@@ -938,17 +1121,17 @@ END;
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}
 
-	function form_mysql_collations_list($name, $input=true, $parameters='') {
+	function form_select_mysql_collation($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_mysql_collations_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 3rd parameter in form_select_mysql_collation() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[3])) $parameters = $args[2];
 		}
 
@@ -964,17 +1147,17 @@ END;
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}
 
-	function form_pages_list($name, $input=true, $parameters='') {
+	function form_select_page($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_pages_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 3rd parameter in form_select_page() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[3])) $parameters = $args[2];
 		}
 
@@ -982,7 +1165,9 @@ END;
 
 			$options = [];
 
-			if (empty($parent_id)) $options[] = ['0', '['.language::translate('title_root', 'Root').']'];
+			if (empty($parent_id)) {
+				$options[] = ['0', '['.language::translate('title_root', 'Root').']'];
+			}
 
 			$pages_query = database::query(
 				"select p.id, pi.title from ". DB_TABLE_PREFIX ."pages p
@@ -1012,17 +1197,17 @@ END;
 		$options = $iterator(0, 1);
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}
 
-	function form_templates_list($name, $input=true, $parameters='') {
+	function form_select_template($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_templates_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 3rd parameter in form_select_template() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[3])) $parameters = $args[2];
 		}
 
@@ -1034,17 +1219,17 @@ END;
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}
 
-	function form_timezones_list($name, $input=true, $parameters='') {
+	function form_select_timezone($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_timezones_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 3rd parameter in form_select_timezone() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[3])) $parameters = $args[2];
 		}
 
@@ -1060,34 +1245,9 @@ END;
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
-		}
-	}
-
-	function form_administrators_list($name, $input=true, $parameters='') {
-
-		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_administrators_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
-			if (isset($args[3])) $parameters = $args[2];
-		}
-
-		$administrators_query = database::query(
-			"select id, username from ". DB_TABLE_PREFIX ."administrators
-			order by username;"
-		);
-
-		$options = [];
-		while ($administrator = database::fetch($administrators_query)) {
-			$options[] = [$administrator['id'], $administrator['username']];
-		}
-
-		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_field($name, $options, $input, $parameters);
-		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select_field($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}

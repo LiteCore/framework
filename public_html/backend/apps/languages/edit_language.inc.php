@@ -225,7 +225,7 @@
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_name', 'Name'); ?></label>
-					<?php echo functions::form_text_field('name', true); ?>
+					<?php echo functions::form_input_text('name', true); ?>
 				</div>
 
 				<div class="form-group col-md-6">
@@ -240,18 +240,18 @@
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_code', 'Code'); ?> (ISO 639-1) <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank"><?php echo functions::draw_fonticon('fa-external-link'); ?></a></label>
-					<?php echo functions::form_text_field('code', true, 'required pattern="[a-z]{2}"'); ?>
+					<?php echo functions::form_input_text('code', true, 'required pattern="[a-z]{2}"'); ?>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_code', 'Code'); ?> 2 (ISO 639-2) <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes" target="_blank"><?php echo functions::draw_fonticon('fa-external-link'); ?></a></label>
-					<?php echo functions::form_text_field('code2', true, 'required pattern="[a-z]{3}"'); ?>
+					<?php echo functions::form_input_text('code2', true, 'required pattern="[a-z]{3}"'); ?>
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label><?php echo language::translate('title_system_locale', 'System Locale'); ?></label>
-				<?php echo functions::form_text_field('locale', true, 'placeholder="en_US.utf8, en-US.UTF-8, english"'); ?>
+				<?php echo functions::form_input_text('locale', true, 'placeholder="en_US.utf8, en-US.UTF-8, english"'); ?>
 			</div>
 
 			<div class="row">
@@ -266,55 +266,55 @@
 
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_domain_name', 'Domain Name'); ?></label>
-					<?php echo functions::form_text_field('domain_name', true); ?>
+					<?php echo functions::form_input_text('domain_name', true); ?>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_date_format', 'Date Format'); ?> <a href="http://php.net/manual/en/function.strftime.php" target="_blank"><?php echo functions::draw_fonticon('fa-external-link'); ?></a></label>
-					<?php echo functions::form_select_field('format_date', $date_format_options, true); ?>
+					<?php echo functions::form_select('format_date', $date_format_options, true); ?>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_time_format', 'Time Format'); ?> <a href="http://php.net/manual/en/function.strftime.php" target="_blank"><?php echo functions::draw_fonticon('fa-external-link'); ?></a></label>
-					<?php echo functions::form_select_optgroup_field('format_time', $time_format_options, true); ?>
+					<?php echo functions::form_select_optgroup('format_time', $time_format_options, true); ?>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_raw_date_format', 'Raw Date Format'); ?> <a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo functions::draw_fonticon('fa-external-link'); ?></a></label>
-					<?php echo functions::form_select_optgroup_field('raw_date', $raw_date_options, true); ?>
+					<?php echo functions::form_select_optgroup('raw_date', $raw_date_options, true); ?>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_raw_time_format', 'Raw Time Format'); ?> <a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo functions::draw_fonticon('fa-external-link'); ?></a></label>
-					<?php echo functions::form_select_optgroup_field('raw_time', $raw_time_options, true); ?>
+					<?php echo functions::form_select_optgroup('raw_time', $raw_time_options, true); ?>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_decimal_point', 'Decimal Point'); ?></label>
-					<?php echo functions::form_select_field('decimal_point', $decimal_point_options, true); ?>
+					<?php echo functions::form_select('decimal_point', $decimal_point_options, true); ?>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_thousands_sep', 'Thousands Separator'); ?></label>
-					<?php echo functions::form_select_field('thousands_sep', $thousands_separator_options, true); ?>
+					<?php echo functions::form_select('thousands_sep', $thousands_separator_options, true); ?>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_force_currency_code', 'Force Currency Code'); ?></label>
-					<?php echo functions::form_text_field('currency_code', true); ?>
+					<?php echo functions::form_input_text('currency_code', true); ?>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_priority', 'Priority'); ?></label>
-					<?php echo functions::form_number_field('priority', true); ?>
+					<?php echo functions::form_input_number('priority', true); ?>
 				</div>
 			</div>
 
