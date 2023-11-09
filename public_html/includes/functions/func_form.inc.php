@@ -9,6 +9,7 @@
 	}
 
 	function form_reinsert_value($name, $array_value=null) {
+
 		if (empty($name)) return;
 
 		foreach ([$_POST, $_GET] as $superglobal) {
@@ -39,7 +40,7 @@
 				}
 			}
 
-			if (!empty($node)) return $node;
+			if (!empty($node) || $node != '') return $node;
 		}
 
 		return '';

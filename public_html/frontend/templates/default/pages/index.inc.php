@@ -8,6 +8,7 @@
 	font-size: .8em;
 	padding: 1em;
 	border-radius: var(--border-radius);
+	tab-size: 2;
 }
 .show-grid [class*="col"] {
 	border: 1px dotted #ccc;
@@ -76,6 +77,58 @@
 				<div class="col-md-6 code">
 		</div>
 
+	</section>
+
+	<section class="card">
+
+		<div class="card-header">
+			<div class="card-title">
+				Cards
+			</div>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-6 source">
+<section class="card">
+	<div class="card-header">
+		<div class="card-title">
+			Card Title
+		</div>
+	</div>
+
+	<div class="card-body">
+		Card Body
+	</div>
+
+	<div class="card-footer">
+		Card Footer
+	</div>
+</section>
+
+<section class="card">
+	<div class="card-header">
+		<div class="card-title">
+		Card Title
+		</div>
+	</div>
+
+	<div class="card-body">
+		Card Body
+	</div>
+</section>
+
+<section class="card">
+	<div class="card-body">
+		Card Body
+	</div>
+</section>
+				</div>
+
+				<div class="col-md-6 code">
+				</div>
+			</div>
+		</div>
 	</section>
 
 	<section class="card">
@@ -259,16 +312,16 @@
 
 	<div class="carousel-inner">
 		<div class="item active">
-			<img src="https://via.placeholder.com/1280x480.png?text=First%20slide" />
+			<img src="https://via.placeholder.com/1280x480.png?text=First%20slide">
 		</div>
 
 		<div class="item">
-			<img src="https://via.placeholder.com/1280x480.png?text=Second%20slide" />
+			<img src="https://via.placeholder.com/1280x480.png?text=Second%20slide">
 			<div class="carousel-caption">Lorem ipsum</div>
 		</div>
 
 		<div class="item">
-			<img src="https://via.placeholder.com/1280x480.png?text=Third%20slide" />
+			<img src="https://via.placeholder.com/1280x480.png?text=Third%20slide">
 			<div class="carousel-caption">Dolor sit amet</div>
 		</div>
 	</div>
@@ -473,40 +526,46 @@
 				<div class="col-md-6 source">
 <div class="form-group">
 	<label>Text</label>
-	<input type="text" class="form-input" placeholder="Text" />
+	<input type="text" class="form-input" placeholder="Text">
 </div>
 
 <div class="form-group">
 	<label>File</label>
-	<input type="file" class="form-input" />
+	<input type="file" class="form-input">
 </div>
 
 <div class="form-group">
 	<label>Color</label>
-	<input type="color" class="form-input" placeholder="#fff" />
+	<input type="color" class="form-input" placeholder="#fff">
 </div>
 
 <div class="form-group">
-	<label>Input Group</label>
+	<label>Input Group Icon</label>
 	<div class="input-group">
-		<span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
-		<input type="email" class="form-input" placeholder="Email" />
+		<span class="input-group-icon"><i class="fa fa-envelope-o"></i></span>
+		<input type="email" class="form-input" placeholder="Email">
 	</div>
 </div>
 
 <div class="form-group">
-	<label>Input Group With Button</label>
+	<label>Input Group Text</label>
 	<div class="input-group">
-		<input type="text" class="form-input" placeholder="Text" />
-		<span class="input-group-btn">
-			<button class="btn btn-default">Button</button>
-		</span>
+		<span class="input-group-text">Text</span>
+		<input type="email" class="form-input" placeholder="Email">
+	</div>
+</div>
+
+<div class="form-group">
+	<label>Input Group Button</label>
+	<div class="input-group">
+		<input type="text" class="form-input" placeholder="Text">
+		<button class="btn btn-default">Button</button>
 	</div>
 </div>
 
 <div class="form-group">
 	<label>Select</label>
-	<select class="form-input">
+	<select class="form-select">
 		<option>-- Select --</option>
 		<option>A</option>
 		<option>B</option>
@@ -515,17 +574,36 @@
 </div>
 
 <div class="form-group">
-	<label>Checkbox</label>
-	<div class="checkbox">
-		<input type="checkbox" checked="checked" /> Value
+	<label>Select Dropdown</label>
+	<div class="dropdown">
+		<div class="form-select" data-toggle="dropdown">
+			-- Select --
+		</div>
+		<ul class="dropdown-menu">
+			<li class="option"><label class="checkbox"><input type="checkbox"> Value</label></li>
+			<li class="option"><label class="checkbox"><input type="checkbox"> Value</label></li>
+		</ul>
 	</div>
 </div>
 
 <div class="form-group">
+	<label>Checkbox</label>
+	<label class="checkbox">
+		<input type="checkbox" name="checkbox"> Value
+	</label>
+	<label class="checkbox">
+		<input type="checkbox" name="checkbox" checked> Value
+	</label>
+</div>
+
+<div class="form-group">
 	<label>Radio</label>
-	<div class="checkbox">
-		<input type="radio" checked="checked" /> Value
-	</div>
+	<label class="checkbox">
+		<input type="radio" name="radio"> Value
+	</label>
+	<label class="checkbox">
+		<input type="radio" name="radio" checked> Value
+	</label>
 </div>
 
 <div class="form-group">
@@ -556,16 +634,16 @@
 <button type="button" class="btn btn-sm btn-success">Success</button>
 <button type="button" class="btn btn-sm btn-danger">Danger</button>
 
-<br />
-<br />
+<br>
+<br>
 
 <button type="button" class="btn btn-default">Default</button>
 <button type="button" class="btn btn-primary">Primary</button>
 <button type="button" class="btn btn-success">Success</button>
 <button type="button" class="btn btn-danger">Danger</button>
 
-<br />
-<br />
+<br>
+<br>
 
 <button type="button" class="btn btn-lg btn-default">Default</button>
 <button type="button" class="btn btn-lg btn-primary">Primary</button>
@@ -588,8 +666,8 @@
 	<button type="button" class="btn btn btn-default">Button 4</button>
 </div>
 
-<br />
-<br />
+<br>
+<br>
 
 <div class="btn-group btn-block">
 	<button type="button" class="btn btn btn-default">Button 1</button>
@@ -641,7 +719,7 @@
 			<div class="row">
 				<div class="col-md-6 source">
 <a href="#" class="thumbnail">
-	<img src="https://via.placeholder.com/300x200.png" />
+	<img src="https://via.placeholder.com/300x200.png">
 </a>
 				</div>
 

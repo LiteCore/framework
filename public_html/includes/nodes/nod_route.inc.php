@@ -287,7 +287,7 @@
 			foreach (self::$_routes as $ilink => $route) {
 				if (preg_match('#^'. strtr(preg_quote($ilink, '#'), ['\\*' => '.*', '\\?' => '.', '\\{' => '(', '\\}' => ')', ',' => '|']) .'$#i', $path)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
 					if (isset($route['rewrite']) && is_callable($route['rewrite'])) {
-						if ($rewritten_link = call_administrator_func_array($route['rewrite'], [$link, $language_code])) {
+						if ($rewritten_link = call_user_func_array($route['rewrite'], [$link, $language_code])) {
 							$link = $rewritten_link;
 						}
 					}
