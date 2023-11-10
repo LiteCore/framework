@@ -312,16 +312,16 @@
 
 	<div class="carousel-inner">
 		<div class="item active">
-			<img src="https://via.placeholder.com/1280x480.png?text=First%20slide">
+			<img src="https://via.placeholder.com/1280x480.png?text=First%20slide" loading="lazy">
 		</div>
 
 		<div class="item">
-			<img src="https://via.placeholder.com/1280x480.png?text=Second%20slide">
+			<img src="https://via.placeholder.com/1280x480.png?text=Second%20slide" loading="lazy">
 			<div class="carousel-caption">Lorem ipsum</div>
 		</div>
 
 		<div class="item">
-			<img src="https://via.placeholder.com/1280x480.png?text=Third%20slide">
+			<img src="https://via.placeholder.com/1280x480.png?text=Third%20slide" loading="lazy">
 			<div class="carousel-caption">Dolor sit amet</div>
 		</div>
 	</div>
@@ -660,20 +660,20 @@
 			<div class="row">
 				<div class="col-md-6 source">
 <div class="btn-group">
-	<button type="button" class="btn btn btn-default">Button 1</button>
-	<button type="button" class="btn btn btn-default">Button 2</button>
-	<button type="button" class="btn btn btn-default">Button 3</button>
-	<button type="button" class="btn btn btn-default">Button 4</button>
+	<button type="button" class="btn btn-default">Button 1</button>
+	<button type="button" class="btn btn-default">Button 2</button>
+	<button type="button" class="btn btn-default">Button 3</button>
+	<button type="button" class="btn btn-default">Button 4</button>
 </div>
 
 <br>
 <br>
 
 <div class="btn-group btn-block">
-	<button type="button" class="btn btn btn-default">Button 1</button>
-	<button type="button" class="btn btn btn-default">Button 2</button>
-	<button type="button" class="btn btn btn-default">Button 3</button>
-	<button type="button" class="btn btn btn-default">Button 4</button>
+	<button type="button" class="btn btn-default">Button 1</button>
+	<button type="button" class="btn btn-default">Button 2</button>
+	<button type="button" class="btn btn-default">Button 3</button>
+	<button type="button" class="btn btn-default">Button 4</button>
 </div>
 				</div>
 
@@ -719,7 +719,7 @@
 			<div class="row">
 				<div class="col-md-6 source">
 <a href="#" class="thumbnail">
-	<img src="https://via.placeholder.com/300x200.png">
+	<img src="https://via.placeholder.com/300x200.png" loading="lazy">
 </a>
 				</div>
 
