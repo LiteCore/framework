@@ -1252,3 +1252,75 @@ END;
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
+
+	function form_select_user($name, $input=true, $parameters='') {
+
+		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
+			trigger_error('Passing $multiple as 3rd parameter in form_select_user() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			if (isset($args[3])) $parameters = $args[2];
+		}
+
+		$users_query = database::query(
+			"select id, username from ". DB_TABLE_PREFIX ."users
+			order by username;"
+		);
+
+		$options = [];
+		while ($user = database::fetch($users_query)) {
+			$options[] = [$user['id'], $user['username']];
+		}
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple($name, $options, $input, $parameters);
+		} else {
+			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			return form_select($name, $options, $input, $parameters);
+		}
+	}
+
+	function form_input_zone($name, $country_code='', $input=true, $parameters='', $preamble='none') {
+
+		if (preg_match('#^([A-Z]{2}|default_country_code|store_country_code)$#', $name)) {
+			trigger_error('form_input_zone() no longer takes country code as 1st parameter. Instead, use form_input_zone($name, $country_code, $input)', E_USER_DEPRECATED);
+			list($name, $country_code) = [$country_code, $name];
+		}
+
+		if (count($args = func_get_args()) > 3 && is_bool($args[3])) {
+			trigger_error('Passing $multiple as 4th parameter in form_input_zone() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			if (isset($args[4])) $parameters = $args[3];
+		}
+
+		if ($country_code == '') $country_code = settings::get('store_country_code');
+		if ($country_code == 'default_country_code') $country_code = settings::get('default_country_code');
+		if ($country_code == 'store_country_code') $country_code = settings::get('store_country_code');
+
+		$zones_query = database::query(
+			"select * from ". DB_TABLE_PREFIX ."zones
+			where country_code = '". database::input($country_code) ."'
+			order by name asc;"
+		);
+
+		$options = [];
+
+		if (!database::num_rows($zones_query)) {
+			$parameters .= ' disabled';
+		}
+
+		while ($zone = database::fetch($zones_query)) {
+			$options[] = [$zone['code'], $zone['name']];
+		}
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_input_select_multiple($name, $options, $input, $parameters);
+		} else {
+			switch($preamble) {
+				case 'all':
+					array_unshift($options, ['', '-- '. language::translate('title_all_zones', 'All Zones') . ' --']);
+					break;
+				case 'select':
+					array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+					break;
+			}
+			return form_input_select($name, $options, $input, $parameters);
+		}
+	}

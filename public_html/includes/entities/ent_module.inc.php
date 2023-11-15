@@ -28,6 +28,11 @@
 				case 'job':
 					$type = 'job';
 					break;
+					
+				case 'um':
+					$type = 'user';
+					break;
+					
 				default:
 					throw new Exception('Unknown module type for module '. $module_id);
 			}
