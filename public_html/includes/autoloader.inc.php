@@ -9,6 +9,11 @@
 				require 'app://includes/abstracts/' . $class . '.inc.php';
 				break;
 
+			case (substr($class, -7) == '_client'):
+
+				require 'app://includes/clients/' . $class . '.inc.php';
+				break;
+
 			case (substr($class, 0, 4) == 'job_'):
 
 				// Patch modules for PHP 8.2 Compatibility
@@ -52,11 +57,6 @@
 			case (substr($class, 0, 5) == 'wrap_'):
 
 				require 'app://includes/wrappers/' . $class . '.inc.php';
-				break;
-
-			case (substr($class, -7) == '_client'):
-
-				require 'app://includes/clients/' . $class . '.inc.php';
 				break;
 
 			default:

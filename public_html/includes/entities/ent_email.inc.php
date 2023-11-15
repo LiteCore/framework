@@ -135,8 +135,6 @@
 				return $this;
 			}
 
-			if (!$charset) $charset = $this->data['charset'];
-
 			$this->data['multiparts'][] = [
 				'headers' => [
 					'Content-Type' => ($html ? 'text/html' : 'text/plain') .'; charset='. mb_http_output(),

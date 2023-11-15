@@ -1,15 +1,16 @@
 <?php
 
-/*
- * Output any variable to the browser console
- * Only works in a HTML environment
- * @author T. Almroth
-*/
-	function console_dump($var) {
-		echo '<script>console.log("'. addcslashes(var_export($var, true), "\"\r\n") .'");</script>';
+	// Output any variable to the browser console
+	function console_dump(...$vars) { // ... as of PHP 5.6
+
+		ob_start();
+		var_dump($vars);
+		$output = addcslashes(ob_get_clean(), "\"\r\n");
+
+		echo '<script>console.log("'. addcslashes($output, '"') .'");</script>';
 	}
 
-	/*
+	// Checks if variables are not set, null, (bool)false, (int)0, (float)0.00, (string)"", (string)"0", (string)"0.00", (array)[], or array with nil nodes
 	function nil(&...$args) { // ... as of PHP 5.6
 		foreach ($args as $arg) {
 			if (is_array($arg)) {
@@ -20,17 +21,6 @@
 			if (!empty($arg) || (is_numeric($arg) && (float)$arg != 0)) return !1;
 		}
 		return !0;
-	}
-	*/
-
-	// Checks if variable is not set, null, (bool)false, (int)0, (float)0.00, (string)"", (string)"0", (string)"0.00", (array)[], or array with nil nodes
-	function nil(&$var) {
-		if (is_array($var)) {
-			foreach ($var as $node) {
-				if (!nil($node)) return !1;
-			}
-		}
-		return (empty($var) || (is_numeric($var) && (float)$var == 0));
 	}
 
 	// Returns value for variable or falls back to a substituting value on nil(). Similar to $var ?? $fallback

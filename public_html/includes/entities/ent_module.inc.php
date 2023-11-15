@@ -12,21 +12,19 @@
 			preg_match('#^([^_]+)#', $module_id, $matches);
 
 			switch ($matches[1]) {
-				case 'cm':
-					$type = 'customer';
-					break;
-				case 'sm':
-					$type = 'shipping';
-					break;
+
 				case 'pm':
 					$type = 'payment';
 					break;
+
 				case 'om':
 					$type = 'order';
 					break;
+
 				case 'ot':
 					$type = 'order_total';
 					break;
+
 				case 'job':
 					$type = 'job';
 					break;
