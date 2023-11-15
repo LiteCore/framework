@@ -12,7 +12,9 @@
 
 	if (empty($_POST['remember_me'])) $_POST['remember_me'] = false;
 
-	if (!empty(user::$data['id'])) notices::add('notices', language::translate('text_already_logged_in', 'You are already logged in'));
+	if (!empty(user::$data['id'])) {
+		notices::add('notices', language::translate('text_already_logged_in', 'You are already logged in'));
+	}
 
 	if (!empty($_POST['login'])) {
 

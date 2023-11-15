@@ -1283,15 +1283,15 @@ END;
 		}
 	}
 
-	function form_input_zone($name, $country_code='', $input=true, $parameters='', $preamble='none') {
+	function form_select_zone($name, $country_code='', $input=true, $parameters='', $preamble='none') {
 
 		if (preg_match('#^([A-Z]{2}|default_country_code|store_country_code)$#', $name)) {
-			trigger_error('form_input_zone() no longer takes country code as 1st parameter. Instead, use form_input_zone($name, $country_code, $input)', E_USER_DEPRECATED);
+			trigger_error('form_select_zone() no longer takes country code as 1st parameter. Instead, use form_select_zone($name, $country_code, $input)', E_USER_DEPRECATED);
 			list($name, $country_code) = [$country_code, $name];
 		}
 
 		if (count($args = func_get_args()) > 3 && is_bool($args[3])) {
-			trigger_error('Passing $multiple as 4th parameter in form_input_zone() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 4th parameter in form_select_zone() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[4])) $parameters = $args[3];
 		}
 
@@ -1316,7 +1316,7 @@ END;
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_input_select_multiple($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
 			switch($preamble) {
 				case 'all':
@@ -1326,6 +1326,6 @@ END;
 					array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
 					break;
 			}
-			return form_input_select($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $parameters);
 		}
 	}

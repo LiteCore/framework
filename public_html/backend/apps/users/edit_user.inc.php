@@ -186,12 +186,12 @@
 					<div class="row">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_country', 'Country'); ?></label>
-							<?php echo functions::form_input_country('country_code', true); ?>
+							<?php echo functions::form_select_country('country_code', true); ?>
 						</div>
 
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_zone', 'Zone'); ?></label>
-							<?php echo functions::form_input_zone('zone_code', fallback($_POST['country_code']), true); ?>
+							<?php echo functions::form_select_zone('zone_code', fallback($_POST['country_code']), true); ?>
 						</div>
 					</div>
 
