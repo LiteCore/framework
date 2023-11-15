@@ -409,7 +409,7 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-range"' : '') .' type="range" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" min="'. (float)$min .'" max="'. (float)$max .'" step="'. (float)$step .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form__inputregional($name, $language_code='', $input=true, $type='text', $parameters='') {
+	function form_input_regional($name, $language_code='', $input=true, $type='text', $parameters='') {
 
 		if (preg_match('#^[a-z]{2}$#', $name)) {
 			trigger_error('Passing $language code as 1st parameter in form_input_regional_input() is deprecated. Instead, use form_input_regional_input($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
@@ -417,7 +417,7 @@ END;
 		}
 
 		if (empty($language_code)) {
-			$language_code = settings::get('store_language_code');
+			$language_code = settings::get('site_language_code');
 		}
 
 		if ($input === true) {
@@ -433,7 +433,7 @@ END;
 	function form_input_regional_text($name, $language_code='', $input=true, $parameters='') {
 
 		if (empty($language_code)) {
-			$language_code = settings::get('store_language_code');
+			$language_code = settings::get('site_language_code');
 		}
 
 		return '<div class="input-group">' . PHP_EOL
@@ -553,7 +553,9 @@ END;
 			if (isset($args[4])) $parameters = $args[3];
 		}
 
-		if (!is_array($groups)) $groups = [$groups];
+		if (!is_array($groups)) {
+			 $groups = [$groups];
+		}
 
 		$html = '<select class="form-select" name="'. functions::escape_html($name) .'"'. (preg_match('#\[\]$#', $name) ? ' multiple' : '') . (($parameters) ? ' ' . $parameters : '') .'>' . PHP_EOL;
 
@@ -920,13 +922,17 @@ END;
 			case 'url':
 				return form_input_url($name, $input, $parameters);
 
+			case 'user':
+			case 'users':
+				return form_select_user($name, $input, $parameters);
+
 			case 'wysiwyg':
 				return form_input_regional_wysiwyg($input, $name, $parameters);
 
 			case 'zone':
 			case 'zones':
 				$option = !empty($options) ? $options[0] : '';
-					//if (empty($option)) $option = settings::get('site_country_code');
+				//if (empty($option)) $option = settings::get('site_country_code');
 				return form_select_zone($name, $option, $input, $parameters);
 
 			default:
@@ -944,7 +950,7 @@ END;
 		}
 
 		$administrators_query = database::query(
-			"select id, username from ". DB_TABLE_PREFIX ."administrator
+			"select id, username from ". DB_TABLE_PREFIX ."administrators
 			order by username;"
 		);
 
@@ -960,7 +966,6 @@ END;
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
-
 
 	function form_select_country($name, $input=true, $parameters='') {
 
@@ -984,8 +989,8 @@ END;
 			case 'default_country_code':
 				$input = settings::get('default_country_code');
 				break;
-			case 'store_country_code':
-				$input = settings::get('store_country_code');
+			case 'site_country_code':
+				$input = settings::get('site_country_code');
 				break;
 		}
 

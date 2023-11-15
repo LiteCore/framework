@@ -626,7 +626,7 @@
 </div>
 
 <fieldset>
-  <legend>Fieldset</legend>
+	<legend>Fieldset</legend>
 
 	<div class="form-group">
 		<label>Label</label>
