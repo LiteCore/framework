@@ -1,4 +1,23 @@
-/* Input Fields & Input Groups - Bootstrap Compatible */
+/* Forms & Input Fields */
+
+.input-field() {
+	position: relative;
+	display: block;
+	width: 100%;
+	padding: .5em 1em;
+	
+	color: var(--default-text-color);
+	
+	background: var(--input-background-color);
+	
+	border: 1px solid var(--default-border-color);
+	border-radius: var(--input-border-radius);
+}
+
+fieldset {
+	border: 1px solid var(--default-border-color);
+	border-radius: var(--border-radius);
+}
 
 input, button, select, textarea {
 	font-family: inherit;
@@ -58,6 +77,12 @@ input[type="radio"] {
 	}
 }
 
+input[type="range"] {
+	padding-left: 0;
+	padding-right: 0;
+	margin-left: var(--input-padding-x);
+	margin-right: var(--input-padding-x);
+}
 
 .form-group {
 	&.required > label::after {
@@ -71,14 +96,6 @@ input[type="radio"] {
 		display: block;
 		padding-bottom: var(--input-padding-y);
 	}
-}
-
-.input-field() {
-	position: relative;
-	color: var(--default-text-color);
-	background: var(--input-background-color);
-	border: 1px solid var(--default-border-color);
-	border-radius: var(--input-border-radius);
 }
 
 .form-input {
@@ -113,38 +130,66 @@ textarea.form-input {
 	padding: var(--input-padding-x);
 }
 
-select.form-input {
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-
+.form-select {
+	.input-field();
 	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
 	background-repeat: no-repeat;
 	background-position: right 1em center;
-	background-size: .8em;
-	padding-inline-end: 2.5em !important;
+	background-size: 16px 12px;
+	padding-inline-end: 2.5em;
+	appearance: none;
+	cursor: default;
+	user-select: none;
+}
 
-	&.multiple {
-		padding: 0;
-		option {
-			padding: var(--input-padding-y) var(--input-padding-x);
-		}
+.dropdown .form-select + .dropdown-menu {
+	> .active {
+		font-weight: bold;
 	}
 }
 
-.form-input .dropdown-menu {
-	user-select: none;
-	li > label {
-		display: block;
-		padding: var(--input-padding-y) var(--input-padding-x);
+.form-switch {
+	display: block;
+	input[type="checkbox"] {
+		clip: rect(0,0,0,0);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		position: absolute;
+		width: 1px;
+	}
+	.switch {
+		display: inline-block;
+		position: relative;
+		height: .8rem;
+		width: 1.6rem;
+		background: #bcc3ce;
+		background-clip: padding-box;
+		border: .05rem solid #bcc3ce;
+		border-radius: .45rem;
 		cursor: pointer;
-		&:hover {
-			background: rgba(0, 0, 0, 0.15);
+		transition: background .2s, border .2s, box-shadow .2s, color .2s;
+
+		&:before {
+			content: '';
+			display: block;
+			background: #fff;
+			border-radius: 50%;
+			width: .7rem;
+			height: .7rem;
+			position: absolute;
+			left: 0;
+			top: 0;
+			transition: background .2s, border .2s, box-shadow .2s, color .2s, left .2s;
 		}
 	}
 
-	[type="radio"]:checked + *, [type="checkbox"]:checked + * {
-		font-weight: bold;
+	input[type="checkbox"]:checked + .switch {
+		background: #254461;
+		border-color: #254461;
+		&:before {
+			left: 11px;
+		}
 	}
 }
 
@@ -163,6 +208,7 @@ select.form-input {
 .input-group {
 	.input-field();
 	display: flex;
+	padding: 0;
 	.form-input {
 		flex: 1 1 auto;
 		background-color: unset;
@@ -184,8 +230,8 @@ select.form-input {
 	}
 	.input-group-icon {
 		flex: 0 1 auto;
-		padding: var(--input-padding-y) ~"calc(var(--input-padding-x) / 2)";
-		margin-inline-end: -12px;
+		padding: var(--input-padding-y) var(--input-padding-x);
+		padding-inline-end: 0;
 		align-self: center;
 	}
 	> .btn {
@@ -206,7 +252,14 @@ select.form-input {
 	}
 }
 
-[data-toggle="buttons"] input[type="checbox"],
+fieldset[disabled] > :not(legend),
+:input[disabled],
+.form-input[disabled],
+.form-select[disabled] {
+	opacity: .5;
+}
+
+[data-toggle="buttons"] input[type="checkbox"],
 [data-toggle="buttons"] input[type="radio"] {
 	display: none;
 }

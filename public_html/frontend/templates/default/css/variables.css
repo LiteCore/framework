@@ -32,16 +32,6 @@
 	/* Cookie Notice */
 	--cookie-notice-background-color: rgba(45, 45, 56, 0.75);
 	--cookie-notice-text-color: #fff;
-	/* Navigation */
-	--navigation-background-color: #d7dae3;
-	--navigation-background-color-hover: rgba(0, 0, 0, 0.05);
-	--navigation-background-color-active: rgba(0, 0, 0, 0.15);
-	--navigation-text-color: #222;
-	--navigation-text-color-hover: var(--navigation-text-color);
-	--navigation-text-color-active: var(--navigation-text-color);
-	/* Navigation */
-	--offcanvas-background-color: var(--navigation-background-color);
-	--offcanvas-text-color: var(--navigation-text-color);
 	/* Defaults */
 	--default-background-color: #edeff3;
 	--default-border-color: #efeff9;
@@ -49,32 +39,16 @@
 	--default-text-font: 'Asap', Arial, 'Helvetica Neue', Helvetica, sans-serif;
 	--default-text-color: #222;
 	--default-text-size: 15px;
-	/* Buttons */
-	--default-button-background-color: #f9f9f9;
-	--default-button-background-color-hover: #f3f3f3;
-	--default-button-background-color-active: #f3f3f3;
-	--default-button-border-color: rgba(0, 0, 0, 0.075);
-	--default-button-text-color: #333;
-	--primary-button-background-color: #2e9cd4;
-	--primary-button-background-color-hover: #ddd;
-	--primary-button-background-color-active: #bdbdbd;
-	--primary-button-border-color: rgba(0, 0, 0, 0.075);
-	--primary-button-text-color: #fff;
-	--success-button-background-color: #98cc34;
-	--success-button-background-color-hover: #9dcf3e;
-	--success-button-background-color-active: #89b82e;
-	--success-button-border-color: rgba(0, 0, 0, 0.075);
-	--success-button-text-color: #fff;
-	--warning-button-background-color: #f0ad4e;
-	--warning-button-background-color-hover: #f2b866;
-	--warning-button-background-color-active: #f1b25a;
-	--warning-button-border-color: rgba(0, 0, 0, 0.1);
-	--warning-button-text-color: #aa0000;
-	--danger-button-background-color: #d9534f;
-	--danger-button-background-color-hover: #de6764;
-	--danger-button-background-color-active: #db5d59;
-	--danger-button-border-color: rgba(0, 0, 0, 0.1);
-	--danger-button-text-color: #fff;
+	/* Navigation */
+	--navigation-background-color: #d7dae3;
+	--navigation-background-color-hover: rgba(0, 0, 0, 0.05);
+	--navigation-background-color-active: rgba(0, 0, 0, 0.15);
+	--navigation-text-color: #222;
+	--navigation-text-color-hover: var(--navigation-text-color);
+	--navigation-text-color-active: var(--navigation-text-color);
+	/* Offcanvas */
+	--offcanvas-background-color: var(--navigation-background-color);
+	--offcanvas-text-color: var(--navigation-text-color);
 	/* Notices */
 	--default-notice-background-color: #e6e8ed;
 	--default-notice-text-color: #000;
@@ -103,7 +77,33 @@
 	--card-header-text-color: var(--card-text-color);
 	--card-body-background-color: transparent;
 	--card-footer-backgorund-color: #f2f3f6;
-	/* Input */
+	/* Buttons */
+	--default-button-background-color: #f9f9f9;
+	--default-button-background-color-hover: #f3f3f3;
+	--default-button-background-color-active: #f3f3f3;
+	--default-button-border-color: rgba(0, 0, 0, 0.075);
+	--default-button-text-color: #333;
+	--primary-button-background-color: #2e9cd4;
+	--primary-button-background-color-hover: #ddd;
+	--primary-button-background-color-active: #bdbdbd;
+	--primary-button-border-color: rgba(0, 0, 0, 0.075);
+	--primary-button-text-color: #fff;
+	--success-button-background-color: #98cc34;
+	--success-button-background-color-hover: #9dcf3e;
+	--success-button-background-color-active: #89b82e;
+	--success-button-border-color: rgba(0, 0, 0, 0.075);
+	--success-button-text-color: #fff;
+	--warning-button-background-color: #f0ad4e;
+	--warning-button-background-color-hover: #f2b866;
+	--warning-button-background-color-active: #f1b25a;
+	--warning-button-border-color: rgba(0, 0, 0, 0.1);
+	--warning-button-text-color: #aa0000;
+	--danger-button-background-color: #d9534f;
+	--danger-button-background-color-hover: #de6764;
+	--danger-button-background-color-active: #db5d59;
+	--danger-button-border-color: rgba(0, 0, 0, 0.1);
+	--danger-button-text-color: #fff;
+	/* Forms */
 	--input-background-color: #fafafc;
 	--input-padding-x: 1.5em;
 	--input-padding-y: 0.5em;
@@ -133,7 +133,7 @@
 	--table-striped-row-background-odd: #f5f6f9;
 	--table-striped-row-background-even: #fff;
 	--table-row-hover-background: #ececec;
-	/* Pagination */
+	/* Paginations */
 	--pagination-background-color: var(--default-background-color);
 	--pagination-background-color-active: #d7dae3;
 	--pagination-background-color-hover: #e7e8ed;

@@ -5,49 +5,6 @@ No Nonsense Coding is a provocative coding concept that will probably upset many
 The purpose is to make as much sense as possible with as little effort as possible when writing program code.
 
 
-## No Duplicate Naming
-
-This will just take longer to type, longer to read, longer to analyze, and leave a bigger footprint:
-
-    foreach ($webshopCustomers as $webshopCustomer) {
-      echo $webshopCustomer['webshopCustomerShippingAddress']['webshopCustomerShippingAddressStreetName'];
-    }
-
-Better:
-
-    foreach ($customers as $customer) {
-      ech $customer['shippingAddress']['street'];
-    }
-
-
-## No Cryptic Naming
-
-This will just have anyone looking back at code confused and frustrated:
-
-    function fmt_CustBillAddr(custObj $c) {
-      $result = fmthlp::fmtAddr($c->billAddr->identity['custFName'], $c->billAddr->identity['custLName'], $c->billAddr->identity['custAddr1'], $c->delAddr->identity['custAddr2'], $c->billAddr->identity['zip'], $c->billAddr->identity['country']);
-      return $result;
-    }
-
-    function fmt_CustDelAddr(custObj $c) {
-      $result = fmthlp::fmtAddr($c->delAddr->identity['custFName'], $c->delAddr->identity['custLName'], $c->delAddr->identity['custAddr1'], $c->delAddr->identity['custAddr2'], $c->delAddr->identity['zip'], $c->delAddr->identity['country']);
-      return $result;
-    }
-
-    fmt_CustBillAddr($custObj);
-    fmt_CustDelAddr($custObj);
-
-Better:
-
-    function formatAddress(array $address) :string {
-      $result = '...';
-      return $result;
-    }
-
-    formatAddress($customer->billingAddress);
-    formatAddress($customer->deliveryAddress);
-
-
 ## No Overcomplications
 
     function anOverComplicatedFrameworkFunctionName() {
@@ -80,9 +37,51 @@ Better:
     }
 
 
+## No Cryptic Naming
+
+This will just have anyone looking back at code confused and frustrated:
+
+    function fmt_CustBillAddr(custObj $c) {
+      $result = fmthlp::fmtAddr($c->billAddr->identity['custFName'], $c->billAddr->identity['custLName'], $c->billAddr->identity['custAddr1'], $c->delAddr->identity['custAddr2'], $c->billAddr->identity['zip'], $c->billAddr->identity['country']);
+      return $result;
+    }
+
+    function fmt_CustDelAddr(custObj $c) {
+      $result = fmthlp::fmtAddr($c->delAddr->identity['custFName'], $c->delAddr->identity['custLName'], $c->delAddr->identity['custAddr1'], $c->delAddr->identity['custAddr2'], $c->delAddr->identity['zip'], $c->delAddr->identity['country']);
+      return $result;
+    }
+
+    fmt_CustBillAddr($custObj);
+    fmt_CustDelAddr($custObj);
+
+Better:
+
+    function formatAddress(array $address) :string {
+      $result = '...';
+      return $result;
+    }
+
+    formatAddress($customer->billingAddress);
+    formatAddress($customer->deliveryAddress);
+
+## No Duplicate Naming
+
+This will just take longer to type, longer to read, longer to analyze, and leave a bigger footprint:
+
+    foreach ($webshopCustomers as $webshopCustomer) {
+      foobar($webshopCustomer['webshopCustomerShippingAddress']['webshopCustomerShippingAddressStreetName']);
+    }
+
+Better:
+
+    foreach ($customers as $customer) {
+      foobar($customer['shippingAddress']['street']);
+    }
+
+
 ## No Unnecessary Variable Duplication
 
-Variable duplication is a challenge to backtrace. If we have no use of the original user input, we can just overwrite it with the safer polished and sanitized data.
+Variable duplication is a challenge to backtrace. If we have no use of the raw user input, we can just overwrite them with safer polished and sanitized data.
 
     $userInput = $_POST['userInput'];
     $sanitizeduserInput = sanitize($userInput);
@@ -99,9 +98,9 @@ Better:
 
 ## Use codes others recognize
 
-    $country = 'us';     // Wrong. Country codes should be uppercase
-    $lang = 'EN';        // Wrong. Language codes should be lowercase
-    $currencyId = 1234;  // Nonsense. No one but you recognize your internal IDs and they are hard to migrate
+    $country = 'us';     // Invalid. Country codes should be uppercase
+    $lang = 'EN';        // Invalid. Language codes should be lowercase
+    $currencyId = 1234;  // Complete nonsense. No one but you recognize your internal IDs and they are hard to migrate
 
 Better:
 
@@ -134,3 +133,5 @@ Looking to cut corners with third party libraries will backfire eventually. Libr
 There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea to do it.
 
 Try to stay away from third party libraries.
+
+

@@ -6,14 +6,7 @@
 	// Capture output buffer
 	ob_start();
 
-	// Get config
-	if (!defined('FS_DIR_APP')) {
-		if (!file_exists(__DIR__ . '/../storage/config.inc.php')) {
-			header('Location: ./install/');
-			exit;
-		}
-		require __DIR__ . '/../storage/config.inc.php';
-	}
+	require __DIR__.'/../storage/config.inc.php';
 
 	// Virtual Modification System
 	require FS_DIR_APP .'includes/wrappers/wrap_stream_app.inc.php';
