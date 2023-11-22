@@ -11,8 +11,10 @@ Please note running your own website requires some common sense of web knowledge
 
 What you need:
 
-  * An Apache2 web server running PHP 5.6 or higher. Latest stable PHP release recommended for best performance.
+  * A storage location on an Apache2 web server running PHP 5.6 or higher. Latest stable PHP release recommended for best performance.
   * A MySQL 5.7+ account.
+
+Here is what you do:
 
 1. Connect to your web host via FTP using your favourite FTP software.
 

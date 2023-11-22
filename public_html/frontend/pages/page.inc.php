@@ -44,20 +44,16 @@
 	}
 
 ?>
-<main id="content" class="container">
-	{{breadcrumbs}}
-	{{notices}}
-
-	<article id="box-information" class="card">
+<main class="container">
+	<article id="box-page" class="card">
 		<div class="card-header">
 			<div class="card-title">
-			{{title}}
+				<?php echo $title; ?>
 			</div>
 		</div>
 
 		<div class="card-body">
-			{{content}}
+			<?php echo $content; ?>
 		</div>
 	</article>
-
 </main>

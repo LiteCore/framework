@@ -1116,7 +1116,7 @@ END;
 	function form_select_language($name, $input=true, $parameters='') {
 
 		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_languages_list() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			trigger_error('Passing $multiple as 3rd parameter in form_select_language() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
 			if (isset($args[3])) $parameters = $args[2];
 		}
 
