@@ -164,37 +164,3 @@ CREATE TABLE `lc_translations` (
   KEY `backend` (`backend`),
   KEY `date_created` (`date_created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
-CREATE TABLE `users` (
-	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
-	`email` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`tax_id` VARCHAR(32) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`company` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`firstname` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`lastname` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`address1` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`address2` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`postcode` VARCHAR(8) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`city` VARCHAR(32) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`country_code` VARCHAR(4) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`zone_code` VARCHAR(8) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`phone` VARCHAR(24) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`newsletter` TINYINT(4) NOT NULL DEFAULT '0',
-	`notes` TEXT NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`password_hash` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`password_reset_token` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`num_logins` INT(11) NOT NULL DEFAULT '0',
-	`login_attempts` INT(11) NOT NULL DEFAULT '0',
-	`last_ip_address` VARCHAR(39) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`last_hostname` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`last_user_agent` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-	`date_login` TIMESTAMP NULL DEFAULT NULL,
-	`date_blocked_until` TIMESTAMP NULL DEFAULT NULL,
-	`date_expire_sessions` TIMESTAMP NULL DEFAULT NULL,
-	`date_updated` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	`date_created` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-	PRIMARY KEY (`id`) USING BTREE,
-	UNIQUE INDEX `email` (`email`) USING BTREE,
-	INDEX `status` (`status`) USING BTREE
-) ENGINE=InnoDB COLLATE='utf8mb4_swedish_ci';
