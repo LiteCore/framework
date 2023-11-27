@@ -88,7 +88,9 @@
 				];
 
 				foreach ($fields as $field) {
-					if (isset($row[$field])) $page->data[$field] = $row[$field];
+					if (isset($row[$field])) {
+						$page->data[$field] = $row[$field];
+					}
 				}
 
 				$fields = [
@@ -99,7 +101,9 @@
 				];
 
 				foreach ($fields as $field) {
-					if (isset($row[$field])) $page->data[$field][$row['language_code']] = $row[$field];
+					if (isset($row[$field])) {
+						$page->data[$field][$row['language_code']] = $row[$field];
+					}
 				}
 
 				$page->save();
@@ -116,7 +120,9 @@
 
 		try {
 
-			if (empty($_POST['language_code'])) throw new Exception(language::translate('error_must_select_a_language', 'You must select a language'));
+			if (empty($_POST['language_code'])) {
+				throw new Exception(language::translate('error_must_select_a_language', 'You must select a language'));
+			}
 
 			$csv = database::query(
 				"select p.*, pi.title, pi.content, pi.head_title, pi.meta_description, '". database::input($_POST['language_code']) ."' as language_code

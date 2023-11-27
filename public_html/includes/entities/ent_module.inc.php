@@ -7,7 +7,9 @@
 
 		public function __construct($module_id) {
 
-			if (empty($module_id)) throw new Exception('First argument module_id cannot be empty');
+			if (empty($module_id)) {
+				throw new Exception('First argument module_id cannot be empty');
+			}
 
 			preg_match('#^([^_]+)#', $module_id, $matches);
 
@@ -27,10 +29,6 @@
 
 				case 'job':
 					$type = 'job';
-					break;
-					
-				case 'um':
-					$type = 'user';
 					break;
 					
 				default:
@@ -68,7 +66,9 @@
 
 		public function load($module_id, $type) {
 
-			if (!preg_match('#^[a-z0-9_]+$#', $module_id)) throw new Exception('Invalid module (ID: '. $module_id .')');
+			if (!preg_match('#^[a-z0-9_]+$#', $module_id)) {
+				throw new Exception('Invalid module (ID: '. $module_id .')');
+			}
 
 			$this->reset();
 
@@ -95,11 +95,15 @@
 
 				if (substr($structure['function'], 0, 8) == 'regional') {
 					foreach (array_keys(language::$languages) as $language_code) {
-						if (!isset($this->data['settings'][$structure['key']][$language_code])) $this->data['settings'][$structure['key']][$language_code] = $structure['default_value'];
+						if (!isset($this->data['settings'][$structure['key']][$language_code])) {
+							$this->data['settings'][$structure['key']][$language_code] = $structure['default_value'];
+						}
 					}
 
 				} else {
-					if (!isset($this->data['settings'][$structure['key']])) $this->data['settings'][$structure['key']] = $structure['default_value'];
+					if (!isset($this->data['settings'][$structure['key']])) {
+						$this->data['settings'][$structure['key']] = $structure['default_value'];
+					}
 				}
 			}
 

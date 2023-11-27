@@ -29,6 +29,9 @@
 			}
 
 			if (settings::get('cache_clear_thumbnails')) {
+
+				clearstatcache();
+
 				foreach (glob(FS_DIR_STORAGE .'cache/*', GLOB_ONLYDIR) as $dir) {
 					foreach (glob($dir.'/*.{jpg,png,webp}', GLOB_BRACE) as $file) {
 						unlink($file);
@@ -150,7 +153,9 @@
 
 			if (empty($force_cache)) {
 				if (empty(self::$enabled)) return;
-				if (isset($_SERVER['HTTP_CACHE_CONTROL']) && preg_match('#no-cache#i', $_SERVER['HTTP_CACHE_CONTROL'])) return;
+				if (isset($_SERVER['HTTP_CACHE_CONTROL'])) {
+					if (preg_match('#no-cache|max-age=0#i', $_SERVER['HTTP_CACHE_CONTROL'])) return;
+				}
 			}
 
 			switch ($token['storage']) {
@@ -317,9 +322,9 @@
 
 			if (function_exists('apc_delete')) {
 				if (!empty($keyword)) {
-					$cached_keys = new APCIterator('administrator', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
+								$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
 				} else {
-					$cached_keys = new APCIterator('administrator', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
+								$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
 				}
 				foreach ($cached_keys as $key) {
 					apc_delete($key);

@@ -42,7 +42,9 @@
 
 		public function load($email_id) {
 
-			if (!preg_match('#^[0-9]+$#', $email_id)) throw new Exception('Invalid email (ID: '. $email_id .')');
+			if (!preg_match('#^[0-9]+$#', $email_id)) {
+				throw new Exception('Invalid email (ID: '. $email_id .')');
+			}
 
 			$this->reset();
 
@@ -111,7 +113,9 @@
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)) throw new Exception('Invalid email address ('. $email .')');
+			if (!functions::validate_email($email)){
+				throw new Exception('Invalid email address ('. $email .')');
+			}
 
 			$this->data['sender'] = [
 				'email' => filter_var($email, FILTER_SANITIZE_EMAIL),
@@ -148,7 +152,9 @@
 
 		public function add_attachment($file, $filename=null, $parse_as_string=false) {
 
-			if (!$filename) $filename = pathinfo($file, PATHINFO_BASENAME);
+			if (!$filename) {
+				$filename = pathinfo($file, PATHINFO_BASENAME);
+			}
 
 			$data = $parse_as_string ? $file : file_get_contents($file);
 
@@ -174,12 +180,16 @@
 
 		public function add_recipient($email, $name=null) {
 
-			if (empty($name)) $name = preg_replace('#"?(.*)"?\s*<[^>]+>#', '$1', $email);
+			if (empty($name)) {
+				$name = preg_replace('#"?(.*)"?\s*<[^>]+>#', '$1', $email);
+			}
 
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)) throw new Exception('Invalid email address ('. $email .')');
+			if (!functions::validate_email($email)) {
+				throw new Exception('Invalid email address ('. $email .')');
+			}
 
 			$this->data['recipients'][] = [
 				'email' => filter_var($email, FILTER_SANITIZE_EMAIL),
@@ -191,12 +201,16 @@
 
 		public function add_cc($email, $name=null) {
 
-			if (empty($name)) $name = preg_replace('#"?(.*)"?\s*<[^>]+>#', '$1', $email);
+			if (empty($name)) {
+				$name = preg_replace('#"?(.*)"?\s*<[^>]+>#', '$1', $email);
+			}
 
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)) trigger_error('Invalid email address ('. $email .')', E_USER_ERROR);
+			if (!functions::validate_email($email)) {
+				trigger_error('Invalid email address ('. $email .')', E_USER_ERROR);
+			}
 
 			$this->data['ccs'][] = [
 				'email' => filter_var($email, FILTER_SANITIZE_EMAIL),
@@ -208,12 +222,16 @@
 
 		public function add_bcc($email, $name=null) {
 
-			if (empty($name)) $name = preg_replace('#"?(.*)"?\s*<[^>]+>#', '$1', $email);
+			if (empty($name)) {
+				$name = preg_replace('#"?(.*)"?\s*<[^>]+>#', '$1', $email);
+			}
 
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)) trigger_error('Invalid email address ('. $email .')', E_USER_ERROR);
+			if (!functions::validate_email($email)) {
+				trigger_error('Invalid email address ('. $email .')', E_USER_ERROR);
+			}
 
 			$this->data['bccs'][] = [
 				'email' => filter_var($email, FILTER_SANITIZE_EMAIL),
@@ -398,7 +416,7 @@
 
 			$this->save();
 
-			return !empty($result) ? true : false;
+			return !empty($result);
 		}
 
 		public function delete() {

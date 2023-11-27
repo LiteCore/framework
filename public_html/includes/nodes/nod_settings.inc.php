@@ -62,7 +62,11 @@
 			);
 
 			if (!database::num_rows($settings_query)) {
-				if ($fallback === null) trigger_error('Unsupported settings key ('. $key .')', E_USER_WARNING);
+				
+				if ($fallback === null) {
+					trigger_error('Unsupported settings key ('. $key .')', E_USER_WARNING);
+				}
+			
 				return $fallback;
 			}
 
@@ -76,7 +80,7 @@
 						$setting['value'] = [];
 					}
 
-					if (isset($values[language::$selected['code']])) {
+					if (isset($setting['value'][language::$selected['code']])) {
 						return self::$_cache[$key] = $setting['value'][language::$selected['code']];
 
 					} else if (isset($value['en'])) {

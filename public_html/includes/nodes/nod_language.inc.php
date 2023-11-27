@@ -11,10 +11,19 @@
 
 			// Bind selected language to session
 			if (preg_match('#^'. preg_quote(WS_DIR_APP . BACKEND_ALIAS, '#') .'/#', $_SERVER['REQUEST_URI'])) {
-				if (empty(session::$data['backend']['language'])) session::$data['backend']['language'] = [];
+
+				if (empty(session::$data['backend']['language'])) {
+					session::$data['backend']['language'] = [];
+				}
+
 				self::$selected = &session::$data['backend']['language'];
+
 			} else {
-				if (!isset(session::$data['language'])) session::$data['language'] = [];
+
+				if (!isset(session::$data['language'])) {
+					session::$data['language'] = [];
+				}
+
 				self::$selected = &session::$data['language'];
 			}
 
@@ -112,7 +121,10 @@
 
 			$enabled_languages = [];
 			foreach (self::$languages as $language) {
-				if (!empty(administrator::$data['id']) || $language['status'] == 1) $enabled_languages[] = $language['code'];
+
+				if (!empty(administrator::$data['id']) || $language['status'] == 1) {
+					$enabled_languages[] = $language['code'];
+				}
 			}
 
 			// Return language by regional domain
@@ -126,7 +138,9 @@
 
 			// Return language from URI query
 			if (!empty($_GET['language'])) {
-				if (in_array($_GET['language'], $all_languages)) return $_GET['language'];
+				if (in_array($_GET['language'], $all_languages)) {
+					return $_GET['language'];
+				}
 			}
 
 			// Return language from URI path
@@ -134,25 +148,33 @@
 			if (in_array($code, $all_languages)) return $code;
 
 			// Return language from session
-			if (isset(self::$selected['code']) && in_array(self::$selected['code'], $all_languages)) return self::$selected['code'];
+			if (isset(self::$selected['code']) && in_array(self::$selected['code'], $all_languages)){
+				return self::$selected['code'];
+			}
 
 			// Return language from cookie
-			if (isset($_COOKIE['language_code']) && in_array($_COOKIE['language_code'], $all_languages)) return $_COOKIE['language_code'];
+			if (isset($_COOKIE['language_code']) && in_array($_COOKIE['language_code'], $all_languages)){
+				return $_COOKIE['language_code'];
+			}
 
 			// Return language from country (TLD)
 			if (database::query(
 				"select table_name from information_schema.tables
 				where table_schema = '". database::input(DB_DATABASE) ."'
 				and table_name = '". database::input(DB_TABLE_PREFIX .'countries') ."'
-				limit 1;")->fetch()
-			) {
+				limit 1;"
+			)->fetch()) {
 				if (preg_match('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
+
 					$country = database::query(
 						"select * from ". DB_TABLE_PREFIX ."countries
 						where iso_code_2 = '". database::input(strtoupper($matches[1])) ."'
 						limit 1;"
 					)->fetch();
-					if (!empty($country['language_code']) && in_array($country['language_code'], $enabled_languages)) return $country['language_code'];
+
+					if (!empty($country['language_code']) && in_array($country['language_code'], $enabled_languages)){
+						return $country['language_code'];
+					}
 				}
 			}
 
@@ -164,17 +186,24 @@
 			} else {
 				$browser_locales = [];
 			}
+
 			foreach ($browser_locales as $browser_locale) {
 				if (preg_match('#('. implode('|', array_keys(self::$languages)) .')-?.*#', $browser_locale, $reg)) {
-					if (!empty($reg[1]) && in_array($reg[1], $enabled_languages)) return $reg[1];
+					if (!empty($reg[1]) && in_array($reg[1], $enabled_languages)) {
+						return $reg[1];
+					}
 				}
 			}
 
 			// Return default language
-			if (in_array(settings::get('default_language_code'), $all_languages)) return settings::get('default_language_code');
+			if (in_array(settings::get('default_language_code'), $all_languages)){
+				return settings::get('default_language_code');
+			}
 
 			// Return system language
-			if (in_array(settings::get('site_language_code'), $all_languages)) return settings::get('site_language_code');
+			if (in_array(settings::get('site_language_code'), $all_languages)) {
+				return settings::get('site_language_code');
+			}
 
 			// Return first language
 			return (!empty($enabled_languages)) ? $enabled_languages[0] : $all_languages[0];
@@ -298,23 +327,29 @@
 
 					// %c = Preferred date and time stamp based on locale
 					// Example: Tue Feb 5 00:45:10 2009 for February 5, 2009 at 12:45:10 AM
-				if ($format == '%c') {
+				switch ($format) {
+
+					case '%c':
 					$date_type = IntlDateFormatter::LONG;
 					$time_type = IntlDateFormatter::SHORT;
-				}
+						break;
+
 					// %x = Preferred date representation based on locale, without the time
 					// Example: 02/05/09 for February 5, 2009
-				elseif ($format == '%x') {
+					case '%x':
 					$date_type = IntlDateFormatter::SHORT;
 					$time_type = IntlDateFormatter::NONE;
-				}
+						break;
+
 					// Localized time format
-				elseif ($format == '%X') {
+					case '%X':
 					$date_type = IntlDateFormatter::NONE;
 					$time_type = IntlDateFormatter::MEDIUM;
-				}
-				else {
+						break;
+
+					default:
 					$pattern = $intl_formats[$format];
+						break;
 				}
 
 				return (new IntlDateFormatter(self::$selected['code'], $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
@@ -375,7 +410,7 @@
 				'%r' => 'G:i:s A', // %I:%M:%S %p
 				'%R' => 'H:i', // %H:%M
 				'%S' => 's',
-				'%X' => $intl_formatter,// Preferred time representation based on locale, without the date
+				'%X' => $intl_formatter, // Preferred time representation based on locale, without the date
 
 				// Timezone
 				'%z' => 'O',

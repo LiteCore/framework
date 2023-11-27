@@ -310,17 +310,8 @@ END;
 		return '<input type="hidden" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_image($name, $src, $parameters='') {
+	function form_input_image($name, $src, $parameters='') {
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="image" name="'. functions::escape_html($name) .'" src="'. functions::escape_html($src) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
-	}
-
-	function form_input($name, $input=true, $type='text', $parameters='') {
-
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
-		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="'. functions::escape_html($type) .'" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
 	function form_link_button($url, $title, $parameters='', $fonticon='') {
@@ -488,6 +479,86 @@ END;
 				 . '</div>';
 	}
 
+
+	function form_input_text($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
+	}
+
+	function form_input_time($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="time" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
+	}
+
+	function form_input_url($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="url" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
+	}
+
+	function form_input_username($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		return '<div class="input-group">' . PHP_EOL
+				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-user fa-fw') .'</span>' . PHP_EOL
+				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />'
+				 . '</div>';
+	}
+
+	function form_input_wysiwyg($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		document::$snippets['head_tags']['trumbowyg'] = '<link href="'. document::href_rlink('app://assets/trumbowyg/ui/trumbowyg.min.css') .'" rel="stylesheet" />' . PHP_EOL
+														. '<link href="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css') .'" rel="stylesheet" />'
+														. '<link href="'. document::href_rlink('app://assets/trumbowyg/plugins/table/ui/trumbowyg.table.min.css') .'" rel="stylesheet" />';
+
+		document::$snippets['foot_tags']['trumbowyg'] = '<script src="'. document::href_rlink('app://assets/trumbowyg/trumbowyg.min.js') .'"></script>' . PHP_EOL
+														. ((language::$selected['code'] != 'en') ? '<script src="'. document::href_rlink('app://assets/trumbowyg/langs/'. language::$selected['code'] .'.min.js') .'"></script>' . PHP_EOL : '')
+														. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/trumbowyg.colors.min.js') .'"></script>' . PHP_EOL
+														. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.min.js') .'"></script>' . PHP_EOL
+														. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/table/trumbowyg.table.min.js') .'"></script>';
+
+		document::$snippets['javascript'][] = '  $(\'textarea[name="'. $name .'"]\').trumbowyg({' . PHP_EOL
+																				. '    btns: [["viewHTML"], ["formatting"], ["strong", "em", "underline", "del"], ["foreColor", "backColor"], ["link"], ["insertImage"], ["table"], ["justifyLeft", "justifyCenter", "justifyRight"], ["lists"], ["preformatted"], ["horizontalRule"], ["removeformat"], ["fullscreen"]],' . PHP_EOL
+																				. '    btnsDef: {' . PHP_EOL
+																				. '      lists: {' . PHP_EOL
+																				. '        dropdown: ["unorderedList", "orderedList"],' . PHP_EOL
+																				. '        title: "Lists",' . PHP_EOL
+																				. '        ico: "unorderedList",' . PHP_EOL
+																				. '      }' . PHP_EOL
+																				. '    },' . PHP_EOL
+																				. '    plugins: {' . PHP_EOL
+																				. '      upload: {' . PHP_EOL
+																				. '        serverPath: "'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.php') .'",' . PHP_EOL
+																				. '      }' . PHP_EOL
+																				. '    },' . PHP_EOL
+																				. '    lang: "'. language::$selected['code'] .'",' . PHP_EOL
+																				. '    autogrowOnEnter: true,' . PHP_EOL
+																				. '    imageWidthModalEdit: true,' . PHP_EOL
+																				. '    removeformatPasted: true,' . PHP_EOL
+																				. '    semantic: false' . PHP_EOL
+																				. '  });';
+
+		return '<textarea name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
+	}
+
 	function form_select($name, $options=[], $input=true, $parameters='') {
 
 		if (preg_match('#\[\]$#', $name)) {
@@ -609,24 +680,6 @@ END;
 		return '<textarea'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
 	}
 
-	function form_input_text($name, $input=true, $parameters='') {
-
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
-		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
-	}
-
-	function form_input_time($name, $input=true, $parameters='') {
-
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
-		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="time" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
-	}
-
 	function form_toggle($name, $type='t/f', $input=true, $parameters='') {
 
 		if (strpos($input, '/') === true) {
@@ -709,66 +762,6 @@ END;
 		$html .= '</div>';
 
 		return $html;
-	}
-
-	function form_input_url($name, $input=true, $parameters='') {
-
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
-		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="url" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
-	}
-
-	function form_input_username($name, $input=true, $parameters='') {
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-user fa-fw') .'</span>' . PHP_EOL
-				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />'
-				 . '</div>';
-	}
-
-	function form_input_wysiwyg($name, $input=true, $parameters='') {
-
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
-		document::$snippets['head_tags']['trumbowyg'] = '<link href="'. document::href_rlink('app://assets/trumbowyg/ui/trumbowyg.min.css') .'" rel="stylesheet" />' . PHP_EOL
-																									. '<link href="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css') .'" rel="stylesheet" />'
-																									. '<link href="'. document::href_rlink('app://assets/trumbowyg/plugins/table/ui/trumbowyg.table.min.css') .'" rel="stylesheet" />';
-
-		document::$snippets['foot_tags']['trumbowyg'] = '<script src="'. document::href_rlink('app://assets/trumbowyg/trumbowyg.min.js') .'"></script>' . PHP_EOL
-																									. ((language::$selected['code'] != 'en') ? '<script src="'. document::href_rlink('app://assets/trumbowyg/langs/'. language::$selected['code'] .'.min.js') .'"></script>' . PHP_EOL : '')
-																									. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/trumbowyg.colors.min.js') .'"></script>' . PHP_EOL
-																									. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.min.js') .'"></script>' . PHP_EOL
-																									. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/table/trumbowyg.table.min.js') .'"></script>';
-
-		document::$snippets['javascript'][] = '  $(\'textarea[name="'. $name .'"]\').trumbowyg({' . PHP_EOL
-																				. '    btns: [["viewHTML"], ["formatting"], ["strong", "em", "underline", "del"], ["foreColor", "backColor"], ["link"], ["insertImage"], ["table"], ["justifyLeft", "justifyCenter", "justifyRight"], ["lists"], ["preformatted"], ["horizontalRule"], ["removeformat"], ["fullscreen"]],' . PHP_EOL
-																				. '    btnsDef: {' . PHP_EOL
-																				. '      lists: {' . PHP_EOL
-																				. '        dropdown: ["unorderedList", "orderedList"],' . PHP_EOL
-																				. '        title: "Lists",' . PHP_EOL
-																				. '        ico: "unorderedList",' . PHP_EOL
-																				. '      }' . PHP_EOL
-																				. '    },' . PHP_EOL
-																				. '    plugins: {' . PHP_EOL
-																				. '      upload: {' . PHP_EOL
-																				. '        serverPath: "'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.php') .'",' . PHP_EOL
-																				. '      }' . PHP_EOL
-																				. '    },' . PHP_EOL
-																				. '    lang: "'. language::$selected['code'] .'",' . PHP_EOL
-																				. '    autogrowOnEnter: true,' . PHP_EOL
-																				. '    imageWidthModalEdit: true,' . PHP_EOL
-																				. '    removeformatPasted: true,' . PHP_EOL
-																				. '    semantic: false' . PHP_EOL
-																				. '  });';
-
-		return '<textarea name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
 	}
 
 	##################################
@@ -1143,13 +1136,39 @@ END;
 
 		$collations_query = database::query(
 			"select * from information_schema.COLLATIONS
-			where CHARACTER_SET_NAME = '". database::input(DB_CONNECTION_CHARSET) ."'
+			where CHARACTER_SET_NAME = 'utf8mb4'
 			order by COLLATION_NAME;"
 		);
 
 		$options = [];
 		while ($row = database::fetch($collations_query)) {
 			$options[] = $row['COLLATION_NAME'];
+		}
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple($name, $options, $input, $parameters);
+		} else {
+			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			return form_select($name, $options, $input, $parameters);
+		}
+	}
+
+	function form_select_mysql_engine($name, $input=true, $parameters='') {
+
+		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
+			trigger_error('Passing $multiple as 3rd parameter in form_select_mysql_engine() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
+			if (isset($args[3])) $parameters = $args[2];
+		}
+
+		$collations_query = database::query(
+			"SHOW ENGINES;"
+		);
+
+		$options = [];
+		while ($row = database::fetch($collations_query)) {
+			if (!in_array(strtoupper($row['Support']), ['YES', 'DEFAULT'])) continue;
+			if (!in_array($row['Engine'], ['CSV', 'InnoDB', 'MyISAM', 'Aria'])) continue;
+			$options[] = [$row['Engine'], $row['Engine'] . ' -- '. $row['Comment']];
 		}
 
 		if (preg_match('#\[\]$#', $name)) {

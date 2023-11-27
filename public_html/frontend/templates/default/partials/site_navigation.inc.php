@@ -29,18 +29,18 @@
 					<?php if ($pages) foreach ($pages as $item) { ?>
 					<li class="nav-item"><a class="nav-link" href="<?php echo functions::escape_html($item['link']); ?>"><?php echo $item['title']; ?></a></li>
 					<?php } ?>
-					
+
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Dropdown</a>
 						<ul class="dropdown-menu">
-							<li class="nav-link">
-								<a class="nav-item  href="#">Item 1</a>
+							<li class="dropdown-item">
+								<a class="nav-link href="#">Item 1</a>
 							</li>
-							<li class="nav-link">
-								<a class="nav-item  href="#">Item 2</a>
+							<li class="dropdown-item">
+								<a class="nav-link href="#">Item 2</a>
 							</li>
-							<li class="nav-link">
-								<a class="nav-item  href="#">Item 3</a>
+							<li class="dropdown-item">
+								<a class="nav-link href="#">Item 3</a>
 							</li>
 						</ul>
 					</li>

@@ -46,7 +46,7 @@
 					'title' => $item['title'],
 					'doc' => $item['doc'],
 					'link' => document::ilink($app['id'] .'/'. $item['doc'], fallback($item['params'], [])),
-					'active' => $selected ? true : false,
+					'active' => $selected,
 				];
 			}
 		}

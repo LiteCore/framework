@@ -16,8 +16,13 @@
 
 		try {
 
-			if (empty($_POST['id'])) throw new Exception(language::translate('error_must_enter_id', 'You must enter an ID'));
-			if (empty($_POST['name'])) throw new Exception(language::translate('error_must_enter_name', 'You must enter a name'));
+			if (empty($_POST['id'])) {
+				throw new Exception(language::translate('error_must_enter_id', 'You must enter an ID'));
+			}
+
+			if (empty($_POST['name'])) {
+				throw new Exception(language::translate('error_must_enter_name', 'You must enter a name'));
+			}
 
 			if (empty($_POST['install'])) $_POST['install'] = '';
 			if (empty($_POST['uninstall'])) $_POST['uninstall'] = '';
@@ -42,7 +47,9 @@
 			];
 
 			foreach ($fields as $field) {
-				if (isset($_POST[$field])) $addon->data[$field] = $_POST[$field];
+				if (isset($_POST[$field])) {
+					$addon->data[$field] = $_POST[$field];
+				}
 			}
 
 			$addon->save();
@@ -79,9 +86,17 @@
 
 		try {
 
-			if (empty($addon->data['id'])) throw new Exception(language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
-			if (empty($_FILES['files'])) throw new Exception('No files uploaded');
-			if (empty($_POST['paths'])) throw new Exception('No paths defined for uploaded files');
+			if (empty($addon->data['id'])) {
+				throw new Exception(language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
+			}
+
+			if (empty($_FILES['files'])) {
+				throw new Exception('No files uploaded');
+			}
+
+			if (empty($_POST['paths'])) {
+				throw new Exception('No paths defined for uploaded files');
+			}
 
 			foreach (array_keys($_FILES['files']['tmp_name']) as $key) {
 				$new_file = $addon->data['location'] . functions::file_strip_path($_POST['paths'][$key]);
@@ -102,12 +117,19 @@
 
 		try {
 
-			if (empty($addon->data['id'])) throw new Exception(language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
-			if (empty($_POST['file'])) throw new Exception(language::translate('error_must_specify_a_file', 'You must specify a file'));
+			if (empty($addon->data['id'])) {
+				throw new Exception(language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
+			}
+
+			if (empty($_POST['file'])) {
+				throw new Exception(language::translate('error_must_specify_a_file', 'You must specify a file'));
+			}
 
 			$file = $addon->data['location'] . functions::file_strip_path($_POST['file']);
 
-			if (!file_exists($file)) throw new Exception(language::translate('error_file_does_not_exist', 'File does not exist'));
+			if (!file_exists($file)) {
+				throw new Exception(language::translate('error_file_does_not_exist', 'File does not exist'));
+			}
 
 			switch ($_POST['storage_action']) {
 
@@ -118,7 +140,10 @@
 
 				case 'rename':
 
-					if (empty($_POST['new_name'])) throw new Exception(language::translate('error_must_provide_new_name', 'You must provide a new name'));
+					if (empty($_POST['new_name'])) {
+						throw new Exception(language::translate('error_must_provide_new_name', 'You must provide a new name'));
+					}
+
 					functions::file_move($file, $addon->data['location'] . functions::file_strip_path($_POST['new_name']));
 
 					break;
@@ -192,9 +217,11 @@
 		$output = '';
 
 		foreach (scandir($directory) as $file) {
+
 			if (in_array($file, ['.', '..'])) continue;
 
 			if ($directory == 'storage://addons/'.$addon->data['id'].'/' && $file == 'vmod.xml') continue;
+
 			$relative_path = preg_replace('#^'. preg_quote('storage://addons/'.$addon->data['id'].'/', '#') .'#', '', $directory . $file);
 			if (is_dir($directory.$file)) {
 				$output .= '<li>'. functions::draw_fonticon('fa-folder fa-lg', 'style="color: #7ccdff;"') .' <span class="item" data-path="'. $relative_path .'">'. $file .'/</span>'. $draw_folder_contents($directory.$file.'/') .'</li>';
@@ -289,10 +316,6 @@ html.dark-mode .operation {
 }
 .nav-tabs .fa-plus {
 	color: #0c0;
-}
-.operations {
-	position: sticky;
-	top: 0;
 }
 
 .script {

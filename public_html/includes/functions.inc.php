@@ -37,7 +37,7 @@
 	}
 
 /*
-	// Checks if variable is equal(ish) to brother. Interprets null, (string)"", (array)[] and false as the same
+	// Checks if two variables are equal(ish). Case insensitive. Interprets null, (string)"", (array)[] and false as the same
 	function equalish(mixed &$var1, mixed &$var2):bool {
 		if (nil($var1) && nil($var2)) return true;
 		if (is_string($var1) && is_string($var2) && strcasecmp($var1, $var2)) return true;
@@ -46,19 +46,19 @@
 	}
 */
 
-	// Check if variable or string indicates true
+	// Check if variable indicates a truthy value
 	function is_true($string) {
-			//return (!empty($string) && preg_match('#^(1|true|yes|on|active|enabled)$#i', $string));
+		//return (!empty($string) && preg_match('#^(1|true|yes|on|active|enabled)$#i', $string));
 		return filter_var($string, FILTER_VALIDATE_BOOLEAN);
 	}
 
-	// Check if variable or string indicates false
+	// Check if variable indicates a falsy value
 	function is_false($string) {
-			//return (empty($string) || preg_match('#^(0|false|no|off|inactive|disabled)$#i', $string));
+		//return (empty($string) || preg_match('#^(0|false|no|off|inactive|disabled)$#i', $string));
 		return !filter_var($string, FILTER_VALIDATE_BOOLEAN);
 	}
 
-	// Return a sane list of uploaded files
+	// Return a sane list of uploaded files $name[subnode][subnode][tmp_name] rather than $name[tmp_name][subnode][subnode]
 	function get_uploaded_files() {
 
 		$result = [];

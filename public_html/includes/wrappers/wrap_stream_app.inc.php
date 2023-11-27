@@ -15,7 +15,6 @@
 			foreach (glob($path.'*') as $file) {
 				$basename = basename($file) . (is_dir($file) ? '/' : '');
 				$this->_directory[$basename] = $file . (is_dir($file) ? '/' : '');
-					//$this->_directory[basename($file)] = 'app://'. $file . (is_dir($file) ? '/' : '');
 			}
 
 			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*', GLOB_BRACE) as $file) {

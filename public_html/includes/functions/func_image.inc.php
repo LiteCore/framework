@@ -1,26 +1,16 @@
 <?php
 
 	function image_scale_by_width($width, $ratio) {
-		switch($ratio) {
-			case '2:3':
-				return [$width, round($width/2*3)];
-			case '3:2':
-				return [$width, round($width/3*2)];
-			case '3:4':
-				return [$width, round($width/3*4)];
-			case '4:3':
-				return [$width, round($width/4*3)];
-			case '16:9':
-				return [$width, round($width/16*9)];
-			case '1:1':
-			default:
-				return [$width, $width];
-		}
+		list($x, $y) = explode(':', $ratio);
+		return [$width, round($width / $x * $y)];
 	}
 
 	function image_process($source, $options) {
 
 		try {
+
+			$source = preg_replace('#^'. preg_quote(FS_DIR_STORAGE, '#') .'#', 'storage://', str_replace('\\', '/', realpath($source)));
+			$source = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', str_replace('\\', '/', realpath($source)));
 
 			if (!is_file($source)) {
 				$source = 'storage://images/no_image.png';
@@ -32,7 +22,7 @@
 				'height' => fallback($options['height'], 0),
 				'quality' => fallback($options['quality'], settings::get('image_quality')),
 				'trim' => fallback($options['trim'], false),
-				'interlaced' => !empty($options['interlaced']) ? true : false,
+				'interlaced' => !empty($options['interlaced']),
 				'overwrite' => fallback($options['overwrite'], false),
 				'watermark' => fallback($options['watermark'], false),
 			];
@@ -47,15 +37,15 @@
 					}
 
 					$filename = implode([
-						sha1(preg_replace('#^('. preg_quote(FS_DIR_APP, '#') .')#', '', str_replace('\\', '/', realpath($source)))),
+						sha1($source),
 						$options['trim'] ? '_t' : '',
-						'_'.(int)$options['width'] .'x'. (int)$options['height'],
+						($options['width'] && $options['height']) ? '_'.(int)$options['width'] .'x'. (int)$options['height'] : '',
 						$options['watermark'] ? '_wm' : '',
 						settings::get('image_thumbnail_interlaced') ? '_i' : '',
 						'.'.$extension,
 					]);
 
-					$options['destination'] = FS_DIR_STORAGE .'cache/'. substr($filename, 0, 2) . '/' . $filename;
+					$options['destination'] = 'storage://cache/'. substr($filename, 0, 2) . '/' . $filename;
 
 				} else {
 					$options['destination'] = rtrim($options['destination'], '/') .'/'. basename($source);
@@ -90,7 +80,11 @@
 			}
 
 			if (!empty($options['watermark'])) {
-				if ($options['watermark'] === true) $options['watermark'] = 'storage://images/logotype.png';
+
+				if ($options['watermark'] === true) {
+					$options['watermark'] = 'storage://images/logotype.png';
+				}
+
 				if (!$image->watermark($options['watermark'], 'RIGHT', 'BOTTOM')) return;
 			}
 
@@ -129,7 +123,9 @@
 
 	function image_thumbnail($source, $width=0, $height=0, $trim=false) {
 
-		if (!is_file($source)) $source = 'storage://images/no_image.png';
+		if (!is_file($source)) {
+			$source = 'storage://images/no_image.png';
+		}
 
 		if (pathinfo($source, PATHINFO_EXTENSION) == 'svg') {
 			return $source;

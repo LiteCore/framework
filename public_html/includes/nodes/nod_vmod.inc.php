@@ -177,15 +177,21 @@
 
 			// Return original file if nothing to modify
 			if (empty($queue)) {
-				if (is_file(FS_DIR_STORAGE . $modified_file)) unlink(FS_DIR_STORAGE . $modified_file);
+
+				if (is_file(FS_DIR_STORAGE . $modified_file)) {
+					unlink(FS_DIR_STORAGE . $modified_file);
+				}
+
 				self::$time_elapsed += microtime(true) - $timestamp;
 				return FS_DIR_STORAGE . (self::$_checked[$original_file] = $modified_file);
 			}
 
 			// Return modified file if checksum matches
-			if (!empty(self::$_checksums[$original_file]) && !empty(self::$_checked[$original_file]) && file_exists(FS_DIR_APP . self::$_checked[$original_file]) && self::$_checksums[$original_file] == $checksum) {
-				self::$time_elapsed += microtime(true) - $timestamp;
-				return FS_DIR_STORAGE . (self::$_checked[$original_file] = $modified_file);
+			if (!empty(self::$_checksums[$original_file]) && self::$_checksums[$original_file] == $checksum) {
+				if (!empty(self::$_checked[$original_file]) && file_exists(FS_DIR_STORAGE . self::$_checked[$original_file])) {
+					self::$time_elapsed += microtime(true) - $timestamp;
+					return FS_DIR_STORAGE . (self::$_checked[$original_file] = $modified_file);
+				}
 			}
 
 			// Modify file
@@ -321,7 +327,7 @@
 					if (!empty($vmod['install'])) {
 
 						$tmp_file = stream_get_meta_data(tmpfile())['uri'];
-						file_put_contents($tmp_file, "<?php\r\n" . $vmod['install']);
+						file_put_contents($tmp_file, "<?php" . PHP_EOL . $vmod['install']);
 
 						(function() {
 							include func_get_arg(0);
@@ -346,7 +352,7 @@
 
 							// Exceute upgrade in an isolated scope
 							$tmp_file = stream_get_meta_data(tmpfile())['uri'];
-							file_put_contents($tmp_file, "<?php\r\n" . $upgrade['script']);
+							file_put_contents($tmp_file, "<?php" . PHP_EOL . $upgrade['script']);
 
 							(function() {
 								include func_get_arg(0);
@@ -403,7 +409,6 @@
 				'version' => $dom->getElementsByTagName('version')->item(0)->textContent,
 				'author' => !empty($dom->getElementsByTagName('author')) ? $dom->getElementsByTagName('author')->item(0)->textContent : '',
 				'date_modified' => date('Y-m-d H:i:s', filemtime($file)),
-				'aliases' => [],
 				'settings' => [],
 				'files' => [],
 				'install' => null,
@@ -478,6 +483,12 @@
 
 						$find_node = $operation_node->getElementsByTagName('find')->item(0);
 						$find = $find_node->textContent;
+
+						if (!empty($aliases)) {
+							foreach ($aliases as $key => $value) {
+								$find = str_replace('{alias:'. $key .'}', $value, $insert);
+							}
+						}
 
 						// Trim
 						if (in_array($operation_node->getAttribute('type'), ['inline', 'regex'])) {
@@ -561,12 +572,14 @@
 								break;
 
 							case 'top':
-								$find = '#^.*$#s';
+								$find = '#^#s';
+								$indexes = '';
 								$insert = addcslashes($insert, '\\$').'$0';
 								break;
 
 							case 'bottom':
-								$find = '#^.*$#s';
+								$find = '#$#s';
+								$indexes = '';
 								$insert = '$0'.addcslashes($insert, '\\$');
 								break;
 

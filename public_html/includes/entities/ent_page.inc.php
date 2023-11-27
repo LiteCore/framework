@@ -43,7 +43,9 @@
 
 		public function load($page_id) {
 
-			if (!preg_match('#^[0-9]+$#', $page_id)) throw new Exception('Invalid page (ID: '. $page_id .')');
+			if (!preg_match('#^[0-9]+$#', $page_id)) {
+				throw new Exception('Invalid page (ID: '. $page_id .')');
+			}
 
 			$this->reset();
 

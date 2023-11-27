@@ -30,10 +30,10 @@
 	$raw_uptime = (int)file_get_contents('/proc/uptime');
 
 	$uptime = [
-		'days' => intval($raw_uptime / (60*60*24)),
-		'hours' => intval(($raw_uptime / (60*60)) % 24),
-		'minutes' => intval(($raw_uptime / 60) % 60),
-		'seconds' => intval($raw_uptime % 60),
+		'days' => round($raw_uptime / (60*60*24)),
+		'hours' => round(($raw_uptime / (60*60))) % 24,
+		'minutes' => round($raw_uptime / 60) % 60,
+		'seconds' => $raw_uptime % 60,
 	];
 
 	// Software

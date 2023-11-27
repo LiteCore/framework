@@ -70,7 +70,6 @@
 			return self::$_links[$link];
 		}
 
-
 		public static function server_info($link='default') {
 
 			if (!$result = mysqli_get_server_info(self::$_links[$link])) {
@@ -117,7 +116,7 @@
 				}
 			}
 
-			return $errors ? true : false;
+			return $errors;
 		}
 
 		public static function query($sql, $link='default') {
@@ -350,7 +349,10 @@
 			$timestamp = microtime(true);
 
 			if ($page < 1) $page = 1;
-			if (!$items_per_page) $items_per_page = settings::get('data_table_rows_per_page');
+
+			if (!$items_per_page) {
+				$items_per_page = settings::get('data_table_rows_per_page');
+			}
 
 			mysqli_data_seek($this->_result, ((int)$page -1) * $items_per_page);
 
