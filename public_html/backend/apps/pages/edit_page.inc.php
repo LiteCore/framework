@@ -107,22 +107,22 @@
 				<div id="<?php echo $language_code; ?>" class="tab-pane fade in<?php echo ($language_code == language::$selected['code']) ? ' active' : ''; ?>">
 					<div class="form-group">
 						<label><?php echo language::translate('title_title', 'Title'); ?></label>
-						<?php echo functions::form_input_regional_text('title['. $language_code .']', $language_code, true, ''); ?>
+						<?php echo functions::form_regional_text('title['. $language_code .']', $language_code, true, ''); ?>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo language::translate('title_content', 'Content'); ?></label>
-						<?php echo functions::form_input_regional_wysiwyg('content['. $language_code .']', $language_code, true, 'style="height: 400px;"'); ?>
+						<?php echo functions::form_regional_wysiwyg('content['. $language_code .']', $language_code, true, 'style="height: 400px;"'); ?>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo language::translate('title_head_title', 'Head Title'); ?></label>
-						<?php echo functions::form_input_regional_text('head_title['. $language_code .']', $language_code, true); ?>
+						<?php echo functions::form_regional_text('head_title['. $language_code .']', $language_code, true); ?>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo language::translate('title_meta_description', 'Meta Description'); ?></label>
-						<?php echo functions::form_input_regional_text('meta_description['. $language_code .']', $language_code, true); ?>
+						<?php echo functions::form_regional_text('meta_description['. $language_code .']', $language_code, true); ?>
 					</div>
 				</div>
 				<?php } ?>

@@ -55,7 +55,7 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo functions::form_link_button(document::ilink(__APP__.'/edit_language'), language::translate('title_create_new_language', 'Create New Language'), '', 'add'); ?>
+		<?php echo functions::form_button_link(document::ilink(__APP__.'/edit_language'), language::translate('title_create_new_language', 'Create New Language'), '', 'add'); ?>
 	</div>
 
 	<?php echo functions::form_begin('languages_form', 'post'); ?>

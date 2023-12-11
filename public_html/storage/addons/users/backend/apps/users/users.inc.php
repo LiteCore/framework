@@ -88,7 +88,7 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo functions::form_link_button(document::ilink('users/edit_user'), language::translate('title_create_new_user', 'Create New User'), '', 'add'); ?>
+		<?php echo functions::form_button_link(document::ilink('users/edit_user'), language::translate('title_create_new_user', 'Create New User'), '', 'add'); ?>
 	</div>
 
 	<?php echo functions::form_begin('search_form', 'get'); ?>

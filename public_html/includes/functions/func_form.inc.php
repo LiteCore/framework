@@ -55,6 +55,41 @@
 		return '<button'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="btn btn-default"' : '') .' type="'. functions::escape_html($type) .'" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. ((!empty($fonticon)) ? functions::draw_fonticon($fonticon) . ' ' : '') . (isset($value[1]) ? $value[1] : $value[0]) .'</button>';
 	}
 
+	function form_button_link($url, $title, $parameters='', $fonticon='') {
+		return '<a '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="btn btn-default"' : '') .' href="'. functions::escape_html($url) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. (!empty($fonticon) ? functions::draw_fonticon($fonticon) . ' ' : '') . $title .'</a>';
+	}
+
+	function form_dropdown($name, $options=[], $input=true, $parameters='') {
+
+		$html = '<div class="dropdown"'. (($parameters) ? ' ' . $parameters : '') .'>' . PHP_EOL
+					. '  <div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>' . PHP_EOL
+					. '  <ul class="dropdown-menu">' . PHP_EOL;
+
+		$is_numerical_index = (array_keys($options) === range(0, count($options) - 1));
+
+		foreach ($options as $key => $option) {
+
+			if (!is_array($option)) {
+				if ($is_numerical_index) {
+					$option = [$option, $option];
+				} else {
+					$option = [$key, $option];
+				}
+			}
+
+			if (preg_match('#\[\]$#', $name)) {
+				$html .= '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
+			} else {
+				$html .= '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
+			}
+		}
+
+		$html .= '  </ul>' . PHP_EOL
+					 . '</div>';
+
+		return $html;
+	}
+
 	function form_input_captcha($name, $id, $parameters='') {
 
 		return '<div class="input-group">' . PHP_EOL
@@ -72,9 +107,9 @@
 			}
 
 			return '<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>' . PHP_EOL
-			. '  <input type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . (($parameters) ? ' ' . $parameters : '') .' />' . PHP_EOL
-			. '  ' . (isset($value[1]) ? $value[1] : $value[0]) . PHP_EOL
-			. '</label>';
+			  . '  <input type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . (($parameters) ? ' ' . $parameters : '') .' />' . PHP_EOL
+			  . '  ' . (isset($value[1]) ? $value[1] : $value[0]) . PHP_EOL
+			  . '</label>';
 		}
 
 		if ($input === true) {
@@ -235,35 +270,13 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="number" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" data-decimals="'. $decimals .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_input_dropdown($name, $options=[], $input=true, $parameters='') {
+	function form_input_dummy($name, $value=true, $parameters='') {
 
-		$html = '<div class="dropdown"'. (($parameters) ? ' ' . $parameters : '') .'>' . PHP_EOL
-					. '  <div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>' . PHP_EOL
-					. '  <ul class="dropdown-menu">' . PHP_EOL;
-
-		$is_numerical_index = (array_keys($options) === range(0, count($options) - 1));
-
-		foreach ($options as $key => $option) {
-
-			if (!is_array($option)) {
-				if ($is_numerical_index) {
-					$option = [$option, $option];
-				} else {
-					$option = [$key, $option];
-				}
-			}
-
-			if (preg_match('#\[\]$#', $name)) {
-				$html .= '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
-			} else {
-				$html .= '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
-			}
+		if ($input === true) {
+			$input = form_reinsert_value($name);
 		}
 
-		$html .= '  </ul>' . PHP_EOL
-					 . '</div>';
-
-		return $html;
+		return '<div class="form-input" readonly'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($value) .'</div>';
 	}
 
 	function form_input_email($name, $input=true, $parameters='') {
@@ -305,10 +318,6 @@ END;
 
 	function form_input_image($name, $src, $parameters='') {
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="image" name="'. functions::escape_html($name) .'" src="'. functions::escape_html($src) .'"'. (($parameters) ? ' '.$parameters : '') .' />';
-	}
-
-	function form_link_button($url, $title, $parameters='', $fonticon='') {
-		return '<a '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="btn btn-default"' : '') .' href="'. functions::escape_html($url) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. (!empty($fonticon) ? functions::draw_fonticon($fonticon) . ' ' : '') . $title .'</a>';
 	}
 
 	function form_input_month($name, $input=true, $parameters='') {
@@ -393,10 +402,10 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-range"' : '') .' type="range" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" min="'. (float)$min .'" max="'. (float)$max .'" step="'. (float)$step .'"'. (($parameters) ? ' '.$parameters : '') .' />';
 	}
 
-	function form_input_regional($name, $language_code='', $input=true, $type='text', $parameters='') {
+	function form_regional($name, $language_code='', $input=true, $type='text', $parameters='') {
 
 		if (preg_match('#^[a-z]{2}$#', $name)) {
-			trigger_error('Passing $language code as 1st parameter in form_input_regional_input() is deprecated. Instead, use form_input_regional_input($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
+			trigger_error('Passing $language code as 1st parameter in form_regional() is deprecated. Instead, use form_regional_input($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
 			list($name, $language_code) = [$language_code, $name];
 		}
 
@@ -414,7 +423,7 @@ END;
 				 . '</div>';
 	}
 
-	function form_input_regional_text($name, $language_code='', $input=true, $parameters='') {
+	function form_regional_text($name, $language_code='', $input=true, $parameters='') {
 
 		if (empty($language_code)) {
 			$language_code = settings::get('site_language_code');
@@ -443,10 +452,10 @@ END;
 				 . '</div>';
 	}
 
-	function form_input_regional_wysiwyg($name, $language_code='', $input=true, $parameters='') {
+	function form_regional_wysiwyg($name, $language_code='', $input=true, $parameters='') {
 
 		if (preg_match('#^[a-z]{2}$#', $name)) {
-			trigger_error('Passing language code as 1st parameter in form_input_regional_wysiwyg() is deprecated. Instead, use form_input_regional_wysiwyg($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
+			trigger_error('Passing language code as 1st parameter in form_regional_wysiwyg() is deprecated. Instead, use form_regional_wysiwyg($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
 			list($name, $language_code) = [$language_code, $name];
 		}
 
@@ -854,7 +863,7 @@ END;
 			case 'regional_text':
 				$html = '';
 				foreach (array_keys(language::$languages) as $language_code) {
-					$html .= form_input_regional_text($name.'['. $language_code.']', $language_code, $input, $parameters);
+					$html .= form_regional_text($name.'['. $language_code.']', $language_code, $input, $parameters);
 				}
 				return $html;
 
@@ -868,7 +877,7 @@ END;
 			case 'regional_wysiwyg':
 				$html = '';
 				foreach (array_keys(language::$languages) as $language_code) {
-					$html .= form_input_regional_wysiwyg($name.'['. $language_code.']', $language_code, $input, $parameters);
+					$html .= form_regional_wysiwyg($name.'['. $language_code.']', $language_code, $input, $parameters);
 				}
 				return $html;
 
@@ -912,7 +921,7 @@ END;
 				return form_select_user($name, $input, $parameters);
 
 			case 'wysiwyg':
-				return form_input_regional_wysiwyg($input, $name, $parameters);
+				return form_regional_wysiwyg($input, $name, $parameters);
 
 			case 'zone':
 			case 'zones':
