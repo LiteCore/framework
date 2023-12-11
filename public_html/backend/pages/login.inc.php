@@ -1,6 +1,6 @@
 <?php
 
-	document::$layout = 'login';
+	document::$layout = 'blank';
 	
 	document::$snippets['head_tags'][] = '<meta name="viewport" content="width=device-width, initial-scale=1" />';
 

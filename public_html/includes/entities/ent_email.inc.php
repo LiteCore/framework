@@ -366,7 +366,7 @@
 					array_walk($headers, function (&$v, $k) { $v = "$k: $v"; });
 
 					$data = implode("\r\n", $headers) . "\r\n\r\n"
-								. $body;
+						  . $body;
 
 					$result = $smtp->send(settings::get('site_email'), $recipients, $data);
 

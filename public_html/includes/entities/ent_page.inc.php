@@ -49,11 +49,11 @@
 
 			$this->reset();
 
-			$page = database::fetch(database::query(
+			$page = database::query(
 				"select * from ". DB_TABLE_PREFIX ."pages
 				where id = ". (int)$page_id ."
 				limit 1;"
-			));
+			)->fetch();
 
 			if ($page) {
 				$this->data = array_replace($this->data, array_intersect_key($page, $this->data));

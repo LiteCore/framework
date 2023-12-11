@@ -70,7 +70,7 @@
 		". ((!empty($_GET['endpoint']) && $_GET['endpoint'] == 'backend') ? "and backend = 1" : null) ."
 		". (!empty($_GET['query']) ? "and (code like '%". str_replace('%', "\\%", database::input($_GET['query'])) ."%' or " . implode(" or ", array_map(function($s){ return "`text_$s` like '%". database::input($_GET['query']) ."%'";}, database::input($_GET['languages']))) .")" : "") ."
 		". (!empty($_GET['untranslated']) ? "and (". implode(" or ", array_map(function($s){ return "(text_$s is null or text_$s = '')"; }, database::input($_GET['languages']))) .")" : null) ."
-		". (empty($_GET['modules']) ? " and code not regexp '^(cm|job|om|ot|pm|sm)_'" : null) ."
+		". (empty($_GET['modules']) ? " and code not regexp '^(job)_'" : null) ."
 		order by date_updated desc;"
 	)->fetch_page($_GET['page'], null, $num_rows, $num_pages);
 
@@ -108,7 +108,7 @@ th:not(:last-child) {
 			<div class="expandable"><?php echo functions::form_input_search('query', true, 'placeholder="'. language::translate('text_search_phrase_or_keyword', 'Search phrase or keyword') .'"'); ?></div>
 			<?php echo functions::form_checkbox('untranslated', ['1', language::translate('text_only_untranslated', 'Only untranslated')]); ?>
 			<?php echo functions::form_checkbox('modules', ['1', language::translate('text_inlcude_modules', 'Include modules')]); ?>
-			<?php echo functions::form_input_dropdown('languages[]', $language_options, true); ?>
+			<?php echo functions::form_dropdown('languages[]', $language_options, true); ?>
 			<div style="max-width: max-content;"><?php echo functions::form_select('endpoint', ['' => '-- '. language::translate('title_all', 'All') .' --', 'frontend' => language::translate('title_frontend', 'Frontend'), 'backend' => language::translate('title_backend', 'Backend')]); ?></div>
 			<?php echo functions::form_button('filter', language::translate('title_search', 'Search'), 'submit'); ?>
 		</div>

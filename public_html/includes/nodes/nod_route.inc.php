@@ -100,7 +100,9 @@
 
 		public static function process() {
 
-			if (empty(self::$selected)) self::identify();
+			if (empty(self::$selected)) {
+				self::identify();
+			}
 
 			// Forward to rewritten URL (if necessary)
 			if (!empty($selected)) {
@@ -201,7 +203,7 @@
 				$path = preg_replace('#^'. WS_DIR_APP . '(index\.php/)?(('. implode('|', array_keys(language::$languages)) .')/)?(.*)$#', "$4", $path);
 			}
 
-			if (!$path = preg_replace('#^'. WS_DIR_APP . '(index\.php/)?(('. implode('|', array_keys(language::$languages)) .')/)?(.*)$#', '$4', $path)) {
+			if (!$path) {
 				return '';
 			}
 

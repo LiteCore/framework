@@ -224,13 +224,6 @@ END;
 
 	function form_input_decimal($name, $input=true, $decimals=2, $parameters='') {
 
-		if (count($args = func_get_args()) > 4) {
-			trigger_error('Passing min and max separate parameters in form_input_decimal() is deprecated. Instead define min="0" max="999" in $parameters', E_USER_DEPRECATED);
-			if (isset($args[5])) $parameters = $args[5];
-			if (isset($args[3])) $parameters .= ($parameters ? ' ' : '') . 'min="'. (int)$args[3] .'"';
-			if (isset($args[4])) $parameters .= ($parameters ? ' ' : '') . 'min="'. (int)$args[4] .'"';
-		}
-
 		if ($input === true) {
 			$input = form_reinsert_value($name);
 		}
@@ -478,7 +471,6 @@ END;
 				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="search" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .' />' . PHP_EOL
 				 . '</div>';
 	}
-
 
 	function form_input_text($name, $input=true, $parameters='') {
 
@@ -976,12 +968,15 @@ END;
 		}
 
 		switch ($input) {
+			
 			case 'customer_country_code':
 				$input = customer::$data['country_code'];
 				break;
+				
 			case 'default_country_code':
 				$input = settings::get('default_country_code');
 				break;
+				
 			case 'site_country_code':
 				$input = settings::get('site_country_code');
 				break;

@@ -8,13 +8,14 @@
 
 	require __DIR__.'/../storage/config.inc.php';
 
-	// Virtual Modification System
+	// Virtual File System
 	require FS_DIR_APP .'includes/wrappers/wrap_stream_app.inc.php';
 	stream_wrapper_register('app', 'wrap_stream_app');
 
 	require FS_DIR_APP .'includes/wrappers/wrap_stream_storage.inc.php';
 	stream_wrapper_register('storage', 'wrap_stream_storage');
 
+	// Virtual Modification System
 	require FS_DIR_APP .'includes/nodes/nod_vmod.inc.php';
 	vmod::init();
 

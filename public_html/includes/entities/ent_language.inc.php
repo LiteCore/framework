@@ -30,7 +30,9 @@
 
 		public function load($language_code) {
 
-			if (!preg_match('#^([0-9]+|[a-z]{2,3}|[a-z A-Z]{4,})$#', $language_code)) throw new Exception('Invalid language ('. $language_code .')');
+			if (!preg_match('#^([0-9]+|[a-z]{2,3}|[a-z A-Z]{4,})$#', $language_code)) {
+				throw new Exception('Invalid language ('. $language_code .')');
+			}
 
 			$this->reset();
 
@@ -123,17 +125,7 @@
 						);
 
 						$info_tables = [
-							DB_TABLE_PREFIX . "attribute_groups_info",
-							DB_TABLE_PREFIX . "attribute_values_info",
-							DB_TABLE_PREFIX . "categories_info",
-							DB_TABLE_PREFIX . "delivery_statuses_info",
-							DB_TABLE_PREFIX . "manufacturers_info",
-							DB_TABLE_PREFIX . "order_statuses_info",
 							DB_TABLE_PREFIX . "pages_info",
-							DB_TABLE_PREFIX . "products_info",
-							DB_TABLE_PREFIX . "quantity_units_info",
-							DB_TABLE_PREFIX . "slides_info",
-							DB_TABLE_PREFIX . "sold_out_statuses_info",
 						];
 
 						foreach ($info_tables as $table) {
@@ -199,17 +191,7 @@
 			}
 
 			$info_tables = [
-				DB_TABLE_PREFIX . "attribute_groups_info",
-				DB_TABLE_PREFIX . "attribute_values_info",
-				DB_TABLE_PREFIX . "categories_info",
-				DB_TABLE_PREFIX . "delivery_statuses_info",
-				DB_TABLE_PREFIX . "manufacturers_info",
-				DB_TABLE_PREFIX . "order_statuses_info",
 				DB_TABLE_PREFIX . "pages_info",
-				DB_TABLE_PREFIX . "products_info",
-				DB_TABLE_PREFIX . "quantity_units_info",
-				DB_TABLE_PREFIX . "slides_info",
-				DB_TABLE_PREFIX . "sold_out_statuses_info",
 			];
 
 			foreach ($info_tables as $table) {

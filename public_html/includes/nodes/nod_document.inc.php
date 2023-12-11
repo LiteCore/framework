@@ -114,20 +114,22 @@
 			// Prepare styles
 			if (!empty(self::$snippets['style'])) {
 				self::$snippets['style'] = '<style>' . PHP_EOL
-																 . implode(PHP_EOL . PHP_EOL, self::$snippets['style']) . PHP_EOL
-																 . '</style>' . PHP_EOL;
+										 . implode(PHP_EOL . PHP_EOL, self::$snippets['style']) . PHP_EOL
+										 . '</style>' . PHP_EOL;
 			}
 
 			// Prepare javascript
 			if (!empty(self::$snippets['javascript'])) {
 				self::$snippets['javascript'] = '<script>' . PHP_EOL
-																			. implode(PHP_EOL . PHP_EOL, self::$snippets['javascript']) . PHP_EOL
-																			. '</script>' . PHP_EOL;
+											. implode(PHP_EOL . PHP_EOL, self::$snippets['javascript']) . PHP_EOL
+											. '</script>' . PHP_EOL;
 			}
 
 			// Prepare snippets
 			foreach (array_keys(self::$snippets) as $snippet) {
-				if (is_array(self::$snippets[$snippet])) self::$snippets[$snippet] = implode(PHP_EOL, self::$snippets[$snippet]);
+				if (is_array(self::$snippets[$snippet])) {
+					self::$snippets[$snippet] = implode(PHP_EOL, self::$snippets[$snippet]);
+				}
 			}
 		}
 
@@ -210,10 +212,10 @@
 			// Reinsert inline javascripts
 			if (!empty($javascript)) {
 				$javascript = '<script>' . PHP_EOL
-											//. '<!--/*--><![CDATA[/*><!--*/' . PHP_EOL // Do we still need bypassing in 2022?
-										. implode(PHP_EOL . PHP_EOL, $javascript) . PHP_EOL
-											//. '/*]]>*/-->' . PHP_EOL
-										. '</script>' . PHP_EOL;
+							//. '<!--/*--><![CDATA[/*><!--*/' . PHP_EOL // Do we still need bypassing in 2022?
+							. implode(PHP_EOL . PHP_EOL, $javascript) . PHP_EOL
+								//. '/*]]>*/-->' . PHP_EOL
+							. '</script>' . PHP_EOL;
 
 				$GLOBALS['output'] = preg_replace('#</body>#is', addcslashes($javascript . '</body>', '\\$'), $GLOBALS['output'], 1);
 			}

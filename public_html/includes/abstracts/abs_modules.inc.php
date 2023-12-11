@@ -49,7 +49,7 @@
 					$object->settings[$setting['key']] = isset($settings[$setting['key']]) ? $settings[$setting['key']] : $setting['default_value'];
 				}
 
-				$object->status = (isset($object->settings['status']) && preg_match('#^(1|active|enabled|on|true|yes)$#i', $object->settings['status'])) ? 1 : 0;
+				$object->status = (isset($object->settings['status']) && filter_var($object->settings['status'], FILTER_VALIDATE_BOOLEAN));
 				$object->priority = isset($object->settings['priority']) ? (int)$object->settings['priority'] : 0;
 
 				if ($type == 'jobs') {

@@ -84,6 +84,10 @@
 			foreach ($dependencies as $dependency) {
 				switch ($dependency) {
 
+					case 'administrator':
+						$hash_string .= administrator::$data['id'];
+						break;
+
 					case 'domain':
 					case 'host':
 						$hash_string .= $_SERVER['HTTP_HOST'];
@@ -120,10 +124,6 @@
 					case 'uri':
 					case 'url':
 						$hash_string .= document::link();
-						break;
-
-					case 'administrator':
-						$hash_string .= administrator::$data['id'];
 						break;
 
 					case 'webp':
@@ -248,7 +248,7 @@
 			}
 		}
 
-			// Output recorder (This option is not affected by self::$enabled as fresh data is always building up cache)
+		// Output recorder (This option is not affected by self::$enabled as fresh data is always building up cache)
 		public static function capture($token, $max_age=900, $force_cache=false) {
 
 			if (isset(self::$_recorders[$token['id']])) {
@@ -322,9 +322,9 @@
 
 			if (function_exists('apc_delete')) {
 				if (!empty($keyword)) {
-								$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
+					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
 				} else {
-								$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
+					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
 				}
 				foreach ($cached_keys as $key) {
 					apc_delete($key);
