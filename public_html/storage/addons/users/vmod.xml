@@ -7,43 +7,30 @@
 	<author>LiteCart Dev Team</author>
 	<install><![CDATA[
 	database::query(
-		"CREATE TABLE `lc_newsletter_recipients` (
-			`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-			`lastname` VARCHAR(64) NOT NULL DEFAULT '',
-			`firstname` VARCHAR(64) NOT NULL DEFAULT '',
-			`email` VARCHAR(128) NOT NULL DEFAULT '',
-			`client_ip` VARCHAR(64) NOT NULL DEFAULT '',
-			`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			PRIMARY KEY (`id`),
-			UNIQUE INDEX `email` (`email`)
-		) ENGINE=InnoDB;"
-	);
-
-	database::query(
-		"CREATE TABLE `lc_users` (
+		"CREATE TABLE `". DB_TABLE_PREFIX ."users` (
 			`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 			`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
-			`email` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`tax_id` VARCHAR(32) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`company` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`firstname` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`lastname` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`address1` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`address2` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`postcode` VARCHAR(8) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`city` VARCHAR(32) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`country_code` VARCHAR(4) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`zone_code` VARCHAR(8) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`phone` VARCHAR(24) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
+			`email` VARCHAR(128) NOT NULL DEFAULT '',
+			`tax_id` VARCHAR(32) NOT NULL DEFAULT '',
+			`company` VARCHAR(64) NOT NULL DEFAULT '',
+			`firstname` VARCHAR(64) NOT NULL DEFAULT '',
+			`lastname` VARCHAR(64) NOT NULL DEFAULT '',
+			`address1` VARCHAR(64) NOT NULL DEFAULT '',
+			`address2` VARCHAR(64) NOT NULL DEFAULT '',
+			`postcode` VARCHAR(8) NOT NULL DEFAULT '',
+			`city` VARCHAR(32) NOT NULL DEFAULT '',
+			`country_code` VARCHAR(4) NOT NULL DEFAULT '',
+			`zone_code` VARCHAR(8) NOT NULL DEFAULT '',
+			`phone` VARCHAR(24) NOT NULL DEFAULT '',
 			`newsletter` TINYINT(4) NOT NULL DEFAULT '0',
-			`notes` TEXT NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`password_hash` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`password_reset_token` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
+			`notes` TEXT NOT NULL DEFAULT '',
+			`password_hash` VARCHAR(256) NOT NULL DEFAULT '',
+			`password_reset_token` VARCHAR(128) NOT NULL DEFAULT '',
 			`num_logins` INT(11) NOT NULL DEFAULT '0',
 			`login_attempts` INT(11) NOT NULL DEFAULT '0',
-			`last_ip_address` VARCHAR(39) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`last_hostname` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
-			`last_user_agent` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
+			`last_ip_address` VARCHAR(39) NOT NULL DEFAULT '',
+			`last_hostname` VARCHAR(64) NOT NULL DEFAULT '',
+			`last_user_agent` VARCHAR(256) NOT NULL DEFAULT '',
 			`date_login` TIMESTAMP NULL DEFAULT NULL,
 			`date_blocked_until` TIMESTAMP NULL DEFAULT NULL,
 			`date_expire_sessions` TIMESTAMP NULL DEFAULT NULL,

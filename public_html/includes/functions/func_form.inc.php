@@ -80,7 +80,7 @@
 			if (preg_match('#\[\]$#', $name)) {
 				$html .= '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
 			} else {
-				$html .= '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
+				$html .= '<li class="option">' . functions::form_input_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
 			}
 		}
 
@@ -372,7 +372,7 @@ END;
 				 . '</div>';
 	}
 
-	function form_radio_button($name, $value, $input=true, $parameters='') {
+	function form_input_radio_button($name, $value, $input=true, $parameters='') {
 
 		if (is_array($value)) {
 
@@ -856,7 +856,7 @@ END;
 			case 'radio':
 				$html = '';
 				foreach ($options as $option) {
-					$html .= form_radio_button($name, [$option, $option], $input, $parameters);
+					$html .= form_input_radio_button($name, [$option, $option], $input, $parameters);
 				}
 				return $html;
 
@@ -888,7 +888,7 @@ END;
 			case 'radio':
 				$html = '';
 				for ($i=0; $i<count($options); $i++) {
-					$html .= '<div class="radio"><label>'. form_radio_button($name, $options[$i], $input, $parameters) .' '. $options[$i] .'</label></div>';
+					$html .= '<div class="radio"><label>'. form_input_radio_button($name, $options[$i], $input, $parameters) .' '. $options[$i] .'</label></div>';
 				}
 				return $html;
 
@@ -896,9 +896,11 @@ END;
 				for ($i=0; $i<count($options); $i++) $options[$i] = [$options[$i]];
 				return form_select($name, $options, $input, $parameters);
 
-			case 'timezone':
-			case 'timezones':
-				return form_select_timezone($name, $input, $parameters);
+			case 'textarea':
+				return form_textarea($name, $input, $parameters);
+
+			case 'tags':
+				return form_tags($name, $input, $parameters);
 
 			case 'template':
 			case 'templates':
@@ -977,15 +979,15 @@ END;
 		}
 
 		switch ($input) {
-			
+
 			case 'customer_country_code':
 				$input = customer::$data['country_code'];
 				break;
-				
+
 			case 'default_country_code':
 				$input = settings::get('default_country_code');
 				break;
-				
+
 			case 'site_country_code':
 				$input = settings::get('site_country_code');
 				break;

@@ -5,7 +5,7 @@
 	breadcrumbs::add(language::translate('title_appearance', 'Appearance'));
 	breadcrumbs::add(language::translate('title_logotype', 'Logotype'));
 
-	if (isset($_POST['save'])) {
+	if (isset($_POST['upload'])) {
 
 		try {
 			if (empty($_FILES['image'])) {
@@ -14,7 +14,7 @@
 
 			$image = new ent_image($_FILES['image']['tmp_name']);
 
-			if (!$image->width()) {
+			if (!$image->width) {
 				throw new Exception(language::translate('error_invalid_image', 'The image is invalid'));
 			}
 
@@ -35,7 +35,7 @@
 				throw new Exception(language::translate('error_failed_uploading_image', 'The uploaded image failed saving to disk. Make sure permissions are set.'));
 			}
 
-			notices::add('success', language::translate('success_changes_saved_refresh_cache', 'Changes saved successfully. If you don\'t see any changes, try <a href="https://www.google.com/search?q=how+to+hard+refresh+a+web+page" target="_blank">hard refreshing</a> the page or clear browser cache.'));
+			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
 			header('Location: '. document::ilink());
 			exit;
 
@@ -55,7 +55,7 @@
 		<?php echo functions::form_begin('logotype_form', 'post', false, true); ?>
 
 			<div style="max-width: 480px;">
-				<img class="thumbnail fit" src="<?php echo document::href_rlink(functions::image_thumbnail('storage://images/logotype.png', 480, 240)); ?>" alt="" style="margin: 0 0 2em 0;" />
+				<img class="thumbnail fit" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="" style="margin: 0 0 2em 0;" />
 			</div>
 
 			<div class="form-group" style="max-width: 480px;">

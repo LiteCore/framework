@@ -284,8 +284,8 @@
 						<div class="form-group">
 							<label><?php echo language::translate('title_type', 'Type'); ?></label>
 							<div class="form-input">
-								<?php echo functions::form_radio_button('type', ['users', language::translate('title_users', 'Users')], true); ?>
-								<?php echo functions::form_radio_button('type', ['newsletter_recipients', language::translate('title_newsletter_recipients', 'Newsletter Recipients')], true); ?>
+								<?php echo functions::form_input_radio_button('type', ['users', language::translate('title_users', 'Users')], true); ?>
+								<?php echo functions::form_input_radio_button('type', ['newsletter_recipients', language::translate('title_newsletter_recipients', 'Newsletter Recipients')], true); ?>
 							</div>
 						</div>
 
@@ -337,8 +337,8 @@
 						<div class="form-group">
 							<label><?php echo language::translate('title_type', 'Type'); ?></label>
 							<div class="form-input">
-								<?php echo functions::form_radio_button('type', ['users', language::translate('title_users', 'Users')], true); ?>
-								<?php echo functions::form_radio_button('type', ['newsletter_recipients', language::translate('title_newsletter_recipients', 'Newsletter Recipients')], true); ?>
+								<?php echo functions::form_input_radio_button('type', ['users', language::translate('title_users', 'Users')], true); ?>
+								<?php echo functions::form_input_radio_button('type', ['newsletter_recipients', language::translate('title_newsletter_recipients', 'Newsletter Recipients')], true); ?>
 							</div>
 						</div>
 

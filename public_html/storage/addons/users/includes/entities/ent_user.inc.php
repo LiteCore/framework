@@ -26,7 +26,7 @@
 			}
 
 			$this->data['status'] = 1;
-			$this->data['newsletter'] = '';
+			$this->data['newsletter'] = 0;
 
 			$this->previous = $this->data;
 		}
@@ -52,14 +52,19 @@
 				throw new Exception('Could not find user (ID: '. (int)$user_id .') in database.');
 			}
 
-			$newsletter_recipient_query = database::query(
-				"select id from ". DB_TABLE_PREFIX ."newsletter_recipients
-				where email = '". database::input($this->data['email']) ."'
+			if (database::query(
+				"select * from information_schema.tables
+				where table_schema = '". DB_SERVER ."'
+				and table_name = '". DB_TABLE_PREFIX ."newsletter_recipients'
 				limit 1;"
-			);
+			)->num_rows) {
 
-			if (database::num_rows($newsletter_recipient_query)) {
-				$this->data['newsletter'] = 1;
+				$this->data['newsletter'] = (int)database::query(
+					"select id from ". DB_TABLE_PREFIX ."newsletter_recipients
+					where email = '". database::input($this->data['email']) ."'
+					limit 1;"
+				)->fetch('id');
+
 			} else {
 				$this->data['newsletter'] = 0;
 			}
