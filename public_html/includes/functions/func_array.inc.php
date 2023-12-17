@@ -1,5 +1,12 @@
 <?php
 
+	// Return array values alphanumerically between $from and $to
+	function array_between(array $array, $from, $to):array {
+		return array_filter($array, function($node) use ($from, $to) {
+			return ($node >= $from && $node < $to);
+		});
+	}
+
 	// Retain the original array keys when extracting an array column by passing $index_key = true
 	function array_column_intact(array $array, int|string|null $column_key, bool|int|string|null $index_key = null): array {
 		if ($index_key === true) {
