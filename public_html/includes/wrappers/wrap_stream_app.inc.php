@@ -70,7 +70,7 @@
 			return rmdir($this->_resolve_path($path));
 		}
 
-		public function stream_cast(int $cast_as): object {
+		public function stream_cast(int $cast_as) {
 			return $this->_stream;
 		}
 
