@@ -154,6 +154,50 @@
 				}
 			}
 
+			// Return a static file
+			$request_path = functions::file_resolve_path(parse_url(self::$request, PHP_URL_PATH));
+
+			if (is_file('app://'.$request_path) && preg_match('#\.(avif|bmp|css|eot|gif|ico|jpe?g|jp2|js|otf|pdf|a?png|svg|tiff?|ttf|webp|woff2?)$#', pathinfo($request_path, PATHINFO_BASENAME))) {
+
+				if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= filemtime('app://'.$request_path)) {
+					header('HTTP/1.1 304 Not Modified');
+					exit;
+				}
+
+				if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == md5_file('app://'.$request_path)) {
+					header('HTTP/1.1 304 Not Modified');
+					exit;
+				}
+
+				switch (pathinfo($request_path, PATHINFO_EXTENSION)) {
+
+					case 'css': // Not supported by mime_content_type()
+						header('Content-Type: text/css; charset=utf-8');
+						break;
+
+					case 'js': // Not supported by mime_content_type()
+						header('Content-Type: text/javascript; charset=utf-8');
+						break;
+
+					default:
+						header('Content-Type: '. mime_content_type('app://'.$request_path));
+						break;
+					}
+
+				header('Content-Length: '. filesize('app://'.$request_path));
+				header('Etag: '. md5_file('app://'.$request_path));
+				header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime('app://'.$request_path)) .' GMT');
+				header('Cache-Control: public, max-age=604800');	// 7 days
+				header('Expires: '. gmdate('D, d M Y H:i:s', strtotime('+7 days')) .' GMT');
+				header('Pragma: cache');
+				header('X-Frame-Options: SAMEORIGIN');
+				header('X-Content-Type-Options: nosniff');
+				header('X-XSS-Protection: 1; mode=block');
+
+				readfile('app://'.$request_path);
+				exit;
+			}
+
 			// Display error document
 			http_response_code(404);
 
