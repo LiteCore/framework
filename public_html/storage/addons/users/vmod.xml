@@ -42,4 +42,21 @@
 		) ENGINE=InnoDB;"
 	);
 	]]></install>
+
+  <file name="frontend/partials/site_navigation.inc.php">
+    <operation method="before" type="multiline" onerror="warning">
+      <find><![CDATA[
+				case 'job':
+					$type = 'job';
+					break;
+      ]]></find>
+
+      <insert><![CDATA[
+
+				case 'um':
+					$type = 'user';
+					break;
+      ]]></insert>
+    </operation>
+  </file>
 </vmod>

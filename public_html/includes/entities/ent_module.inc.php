@@ -30,7 +30,7 @@
 				case 'job':
 					$type = 'job';
 					break;
-					
+
 				default:
 					throw new Exception('Unknown module type for module '. $module_id);
 			}
