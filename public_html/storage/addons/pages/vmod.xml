@@ -70,4 +70,76 @@
       ]]></insert>
     </operation>
   </file>
+
+  <file name="includes/functions/func_form.inc.php">
+    <operation method="after" type="multiline" onerror="warning">
+      <find><![CDATA[
+			case 'language':
+			case 'languages':
+				return form_select_language($name, $input, $parameters);
+      ]]></find>
+
+      <insert><![CDATA[
+
+			case 'page':
+			case 'pages':
+				return form_select_page($name, $input, $parameters);
+      ]]></insert>
+    </operation>
+  </file>
+
+  <file name="includes/functions/func_form.inc.php">
+    <operation method="before" type="multiline" onerror="warning">
+      <find><![CDATA[
+	function form_select_template($name, $input=true, $parameters='') {
+      ]]></find>
+
+      <insert><![CDATA[
+	function form_select_page($name, $input=true, $parameters='') {
+
+		$iterator = function($parent_id, $level) use (&$iterator) {
+
+			$options = [];
+
+			if (empty($parent_id)) {
+				$options[] = ['0', '['.language::translate('title_root', 'Root').']'];
+			}
+
+			$pages_query = database::query(
+				"select p.id, pi.title from ". DB_TABLE_PREFIX ."pages p
+				left join ". DB_TABLE_PREFIX ."pages_info pi on (pi.page_id = p.id and pi.language_code = '". database::input(language::$selected['code']) ."')
+				where p.parent_id = '". (int)$parent_id ."'
+				order by p.priority asc, pi.title asc;"
+			);
+
+			while ($page = database::fetch($pages_query)) {
+
+				$options[] = [$page['id'], str_repeat('&nbsp;&nbsp;&nbsp;', $level) . $page['title']];
+
+				$sub_pages_query = database::query(
+					"select id from ". DB_TABLE_PREFIX ."pages
+					where parent_id = '". (int)$page['id'] ."'
+					limit 1;"
+				);
+
+				$sub_options = $iterator($page['id'], $level+1);
+
+				$options = array_merge($options, $sub_options);
+			}
+
+			return $options;
+		};
+
+		$options = $iterator(0, 1);
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple($name, $options, $input, $parameters);
+		} else {
+			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			return form_select($name, $options, $input, $parameters);
+		}
+	}
+      ]]></insert>
+    </operation>
+  </file>
 </vmod>
