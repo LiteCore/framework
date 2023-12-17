@@ -127,7 +127,10 @@
 			'errors' => null,
 		];
 
-		$vmod = vmod::parse_xml(file_get_contents($addon->data['location'] . 'vmod.xml'), $addon->data['location'] . 'vmod.xml');
+		$dom = new DOMDocument('1.0', 'UTF-8');
+		$dom->load($addon->data['location'] . 'vmod.xml');
+
+		$vmod = vmod::parse_xml($dom, $addon->data['location'] . 'vmod.xml');
 
 		// Check for errors
 		try {
