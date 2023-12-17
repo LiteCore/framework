@@ -38,11 +38,6 @@
 				self::$_cache[$setting['key']] = $setting['value'];
 			}
 
-			// Check version
-			if (settings::get('platform_database_version') != PLATFORM_VERSION) {
-				trigger_error('Platform database version ('. settings::get('platform_database_version') .') does not match platform version ('. PLATFORM_VERSION .'). Did you run /install/upgrade.php?', E_USER_WARNING);
-			}
-
 			// Set time zone
 			if ($timezone = self::get('site_timezone')) {
 				date_default_timezone_set($timezone);

@@ -116,7 +116,7 @@
 				unlink('storage://images/' . $filename);
 			}
 
-			$image->write('storage://images/' . $filename, $image->type());
+			$image->save('storage://images/' . $filename, $image->type());
 
 			$this->data['image'] = $filename;
 			$this->save();

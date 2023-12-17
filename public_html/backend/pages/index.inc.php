@@ -1,6 +1,5 @@
 <?php
 
-
 	breadcrumbs::reset();
 	breadcrumbs::add(language::translate('title_dashboard', 'Dashboard'), document::ilink(''));
 

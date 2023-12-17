@@ -34,8 +34,8 @@
 				if (($duration = microtime(true) - $timestamp) > 1) {
 					error_log('['. date('Y-m-d H:i:s e').'] Warning: A MySQL connection established in '. number_format($duration, 3, '.', ' ') .' s.' . PHP_EOL, 3, 'app://logs/performance.log');
 				}
-			
-				self::$stats['duration'] += $duration;	
+
+				self::$stats['duration'] += $duration;
 			}
 
 			if (!is_object(self::$_links[$link])) {
@@ -121,7 +121,9 @@
 
 		public static function query($sql, $link='default') {
 
-			if (!isset(self::$_links[$link])) self::connect($link);
+			if (!isset(self::$_links[$link])) {
+				self::connect($link);
+			}
 
 			$timestamp = microtime(true);
 

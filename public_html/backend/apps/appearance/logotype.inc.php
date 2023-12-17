@@ -31,7 +31,7 @@
 				$image->resample($width, $height, 'FIT_ONLY_BIGGER');
 			}
 
-			if (!$image->write('storage://images/' . $filename)) {
+			if (!$image->save('storage://images/' . $filename)) {
 				throw new Exception(language::translate('error_failed_uploading_image', 'The uploaded image failed saving to disk. Make sure permissions are set.'));
 			}
 

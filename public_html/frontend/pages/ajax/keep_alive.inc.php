@@ -4,5 +4,5 @@
 
 	header('Content-Type: text/plain; charset=UTF-8');
 
-	echo "I'm awake";
+	echo "Okay, you are still here. :)";
 	exit;

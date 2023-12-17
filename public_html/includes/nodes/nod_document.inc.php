@@ -17,7 +17,7 @@
 		public static function before_capture() {
 
 			header('X-Powered-By: '. PLATFORM_NAME);
-			header('Access-Control-Allow-Origin: '. document::ilink('')); // Only allow HTTP POST data data from own domain
+			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data data from own domain
 			header('X-Frame-Options: SAMEORIGIN'); // Clickjacking Protection
 
 			// Default to AJAX layout on AJAX request

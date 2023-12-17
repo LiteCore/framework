@@ -33,7 +33,7 @@
 	function array_map_keys($callback, $array, $arg1=null, $arg2=null, $arg3=null) {
 		$new_keys = array_map($callback, array_keys($array), $arg1, $arg2, $arg3);
 		return array_combine($new_keys, $array);
-	);
+	}
 
 	// Get first value from array without shifting it or moving internal cursor
 	function array_first(array $array):mixed {

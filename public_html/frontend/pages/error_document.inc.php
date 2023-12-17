@@ -4,7 +4,7 @@
 
 	if (!empty($_GET['code'])) http_response_code($_GET['code']);
 
-	if (preg_match('#\.(jpg|png|gif|webp)$#', route::$request)) {
+	if (preg_match('#\.(avif|gif|jpg|png|webp)$#', route::$request)) {
 		echo file_get_contents('images/no_image.png');
 		exit;
 	}
@@ -45,7 +45,7 @@
 			break;
 	}
 
-	$_page->snippets['code'] = http_response_code();
+	$_page->snippets['status_code'] = http_response_code();
 
 	//echo $_page;
 	extract($_page->snippets);
@@ -68,7 +68,7 @@
 		{{notices}}
 
 		<article id="box-error-document" class="text-center">
-			<div class="code">HTTP <?php echo $code; ?></div>
+			<div class="code">HTTP <?php echo $status_code; ?></div>
 			<div class="title"><?php echo $title; ?></div>
 			<p class="description"><?php echo $description; ?></p>
 		</article>

@@ -41,7 +41,6 @@
 				throw new Exception(language::translate('error_administrator_not_found', 'The administrator could not be found in our database'));
 			}
 
-
 			if (empty($administrator['status'])) {
 				throw new Exception(language::translate('error_administrator_account_disabled', 'The administrator account is disabled'));
 			}

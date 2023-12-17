@@ -8,7 +8,7 @@
 	if (settings::get('development_mode')) {
 		if (empty(administrator::$data['id']) && (!isset(route::$selected['endpoint']) || route::$selected['endpoint'] != 'backend')) {
 			http_response_code(403);
-			include 'app://pages/development_mode.inc.php';
+			include 'app://frontend/pages/development_mode.inc.php';
 			require_once 'app://includes/app_footer.inc.php';
 			exit;
 		}

@@ -222,7 +222,7 @@
 
 						<div class="form-group">
 							<label><?php echo language::translate('title_languages', 'Languages'); ?></label>
-							<?php echo functions::form_languages_list('language_codes[]', true); ?></td>
+							<?php echo functions::form_select_language('language_codes[]', true); ?></td>
 						</div>
 
 						<div class="row">

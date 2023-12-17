@@ -5,7 +5,8 @@
 		public static $data;
 
 		public static function init() {
-			if (empty(session::$data['notices'])) {
+
+			if (empty(session::$data['notices']) || !is_array(session::$data['notices'])) {
 				session::$data['notices'] = [
 					'errors' => [],
 					'warnings' => [],

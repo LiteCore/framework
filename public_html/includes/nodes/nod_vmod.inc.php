@@ -76,10 +76,7 @@
 			// Load installed
 			foreach (file($installed_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $installed) {
 				list($id, $version) = preg_split('#;#', $installed);
-				self::$_installed[] = [
-					'id' => $id,
-					'version' => $version,
-				];
+				self::$_installed[$id] = $version;
 			}
 
 			// Load settings
@@ -309,7 +306,7 @@
 				$vmod = self::parse_xml($dom, $file);
 
 				// Load modification if it is installed
-				if (in_array($vmod['id'], array_column(self::$_installed, 'id'))) {
+				if (in_array($vmod['id'], array_keys(self::$_installed))) {
 
 					self::$_modifications[$vmod['id']] = $vmod;
 
@@ -334,10 +331,9 @@
 					}
 
 					// Run upgrades if a previous version is installed
-					if (!empty($dom->getElementsByTagName('upgrade'))) {
+					if (self::$_installed[$vmod['id']] < $vmod['version']) {
 
-						if ($installed_version = array_search($vmod['id'], array_column(self::$_installed, 'id', 'version'))) {
-							if ($installed_version < $vmod['version']) {
+						if (!empty($dom->getElementsByTagName('upgrade')->length)) {
 
 								// Gather upgrade scripts
 								$upgrades = [];
@@ -364,7 +360,7 @@
 								// Execute upgrade scripts
 								foreach ($upgrades as $upgrade) {
 
-									if (version_compare($upgrade['version'], $installed_version, '<=')) continue;
+								if (version_compare($upgrade['version'], self::$_installed[$vmod['id']], '<=')) continue;
 
 									// Exceute upgrade in an isolated scope
 									$tmp_file = stream_get_meta_data(tmpfile())['uri'];
@@ -374,20 +370,21 @@
 										include func_get_arg(0);
 									})($tmp_file);
 
-									foreach (self::$_installed as $key => $installed) {
-										if ($installed['id'] == $vmod['id']) {
-											self::$_installed[$key]['version'] = $upgrade['version'];
+								foreach (self::$_installed as $id => $version) {
+									if ($id == $vmod['id']) {
+										self::$_installed[$id] = $upgrade['version'];
 											break;
 										}
 									}
 								}
 
-								$new_contents = implode(PHP_EOL, array_map(function($vmod){
-									return $vmod['id'] .';'. $vmod['version'];
-								}, self::$_installed));
+							$new_contents = implode(PHP_EOL, array_map(function($id, $version){
+								return $id .';'. $version;
+							}, array_keys(self::$_installed), self::$_installed));
 
 								file_put_contents(FS_DIR_STORAGE . 'addons/.installed', $new_contents . PHP_EOL, LOCK_EX);
 
+							if (isset($_SERVER['REQUEST_URI'])) {
 								header('Location: '. $_SERVER['REQUEST_URI']);
 								exit;
 							}
@@ -416,10 +413,7 @@
 						exit;
 					}
 
-					self::$_installed[] = [
-						'id' => $vmod['id'],
-						'version' => $vmod['version'],
-					];
+					self::$_installed[$vmod['id']] = $vmod['version'];
 				}
 
 			} catch (\Exception $e) {
@@ -457,7 +451,7 @@
 				$vmod['version'] = date('Y-m-d', filemtime($file));
 			}
 
-			if (!$installed_version = array_search($vmod['id'], array_column(self::$_installed, 'id', 'version'))) {
+			if (!isset(self::$_installed[$vmod['id']])) {
 
 				if ($dom->getElementsByTagName('install')->length > 0) {
 					$vmod['install'] = $dom->getElementsByTagName('install')->item(0)->textContent;
