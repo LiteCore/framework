@@ -8,14 +8,6 @@
 		breadcrumbs::add(language::translate('title_contact', 'Contact'));
 	}
 
-	if (!$_POST) {
-		$_POST = [
-			'firstname' => user::$data['firstname'],
-			'lastname' => user::$data['lastname'],
-			'email' => user::$data['email'],
-		];
-	}
-
 	if (!empty($_POST['send'])) {
 
 		try {
@@ -27,7 +19,6 @@
 					throw new Exception(language::translate('error_invalid_captcha', 'Invalid CAPTCHA given'));
 				}
 			}
-
 
 			if (empty($_POST['firstname'])) {
 				throw new Exception(language::translate('error_missing_firstname', 'You must provide a firstname'));
@@ -47,11 +38,6 @@
 
 			if (empty($_POST['message'])) {
 				throw new Exception(language::translate('error_missing_message', 'You must provide a message'));
-			}
-
-		// Collect scraps
-			if (empty(user::$data['id'])) {
-				user::$data = array_replace(user::$data, array_intersect_key(array_filter(array_diff_key($_POST, array_flip(['id']))), user::$data));
 			}
 
 			$message = strtr(language::translate('email_user_feedback', "** This is an email message from %sender_name <%sender_email> **\r\n\r\n%message"), [

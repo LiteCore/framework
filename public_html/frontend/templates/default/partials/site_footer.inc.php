@@ -5,13 +5,6 @@
 			<div class="col-md-8">
 				<div class="row" style="margin-bottom: 0;">
 
-					<section class="information col-xs-6 col-sm-3">
-						<h3 class="title"><?php echo language::translate('title_information', 'Information'); ?></h3>
-						<ul class="list-unstyled">
-							<?php foreach ($pages as $page) echo '<li><a href="'. htmlspecialchars($page['link']) .'">'. $page['title'] .'</a></li>' . PHP_EOL; ?>
-						</ul>
-					</section>
-
 					<section class="store-info col-sm-4">
 						<h3 class="title"><?php echo language::translate('title_contact', 'Contact'); ?></h3>
 

@@ -108,8 +108,8 @@
 
 			return '<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>' . PHP_EOL
 			. '  <input type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>' . PHP_EOL
-			  . '  ' . (isset($value[1]) ? $value[1] : $value[0]) . PHP_EOL
-			  . '</label>';
+				. '  ' . (isset($value[1]) ? $value[1] : $value[0]) . PHP_EOL
+				. '</label>';
 		}
 
 		if ($input === true) {
@@ -124,6 +124,16 @@
 		if ($input === true) {
 			$input = form_reinsert_value($name);
 		}
+
+		document::$snippets['javascript'][] = implode(PHP_EOL, [
+			'$(\'textarea[name="'. $name .'"]\').on(\'keydown\', function(e){',
+			'	if (e.keyCode != 9) return;',
+			'	e.preventDefault();',
+			' var start = this.selectionStart, end = this.selectionEnd;',
+			'	this.value = this.value.substring(0, start) + \'\t\' + this.value.substring(end);',
+			'	this.selectionStart = this.selectionEnd = start + 1;',
+			'});',
+		]);
 
 		return '<textarea'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-code"' : '') .' name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
 	}
@@ -890,10 +900,6 @@ END;
 			case 'url':
 				return form_input_url($name, $input, $parameters);
 
-			case 'user':
-			case 'users':
-				return form_select_user($name, $input, $parameters);
-
 			case 'wysiwyg':
 				return form_regional_wysiwyg($input, $name, $parameters);
 
@@ -1155,26 +1161,6 @@ END;
 					$options[] = implode('/', $timezone);
 				}
 			}
-		}
-
-		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
-		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select($name, $options, $input, $parameters);
-		}
-	}
-
-	function form_select_user($name, $input=true, $parameters='') {
-
-		$users_query = database::query(
-			"select id, username from ". DB_TABLE_PREFIX ."users
-			order by username;"
-		);
-
-		$options = [];
-		while ($user = database::fetch($users_query)) {
-			$options[] = [$user['id'], $user['username']];
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
