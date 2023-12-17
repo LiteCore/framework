@@ -6,29 +6,10 @@
 	if (!$site_navigation->snippets = cache::get($site_navigation_cache_token)) {
 
 		$site_navigation->snippets = [
-			'categories' => [],
-			'brands' => [],
-			'pages' => [],
+			'items' => [],
 		];
 
-		// Information pages
 
-		$pages_query = database::query(
-			"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
-			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
-			where status
-			order by p.priority, pi.title;"
-		);
-
-		while ($page = database::fetch($pages_query)) {
-			$site_navigation->snippets['pages'][$page['id']] = [
-				'type' => 'page',
-				'id' => $page['id'],
-				'title' => $page['title'],
-				'link' => document::ilink('page', ['page_id' => $page['id']]),
-				'priority' => $page['priority'],
-			];
-		}
 
 		cache::set($site_navigation_cache_token, $site_navigation->snippets);
 	}

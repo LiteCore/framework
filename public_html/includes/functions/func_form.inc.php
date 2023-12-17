@@ -843,10 +843,6 @@ END;
 			case 'languages':
 				return form_select_language($name, $input, $parameters);
 
-			case 'page':
-			case 'pages':
-				return form_select_page($name, $input, $parameters);
-
 			case 'password':
 				return functions::form_input_password($name, $input);
 
@@ -880,10 +876,6 @@ END;
 					$html .= form_regional_wysiwyg($name.'['. $language_code.']', $language_code, $input, $parameters);
 				}
 				return $html;
-
-			case 'page':
-			case 'pages':
-				return form_select_page($name, $input, $parameters);
 
 			case 'radio':
 				$html = '';
@@ -1185,62 +1177,7 @@ END;
 		}
 	}
 
-	function form_select_page($name, $input=true, $parameters='') {
-
-		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_select_page() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
-			if (isset($args[3])) $parameters = $args[2];
-		}
-
-		$iterator = function($parent_id, $level) use (&$iterator) {
-
-			$options = [];
-
-			if (empty($parent_id)) {
-				$options[] = ['0', '['.language::translate('title_root', 'Root').']'];
-			}
-
-			$pages_query = database::query(
-				"select p.id, pi.title from ". DB_TABLE_PREFIX ."pages p
-				left join ". DB_TABLE_PREFIX ."pages_info pi on (pi.page_id = p.id and pi.language_code = '". database::input(language::$selected['code']) ."')
-				where p.parent_id = '". (int)$parent_id ."'
-				order by p.priority asc, pi.title asc;"
-			);
-
-			while ($page = database::fetch($pages_query)) {
-
-				$options[] = [$page['id'], str_repeat('&nbsp;&nbsp;&nbsp;', $level) . $page['title']];
-
-				$sub_pages_query = database::query(
-					"select id from ". DB_TABLE_PREFIX ."pages
-					where parent_id = '". (int)$page['id'] ."'
-					limit 1;"
-				);
-
-				$sub_options = $iterator($page['id'], $level+1);
-
-				$options = array_merge($options, $sub_options);
-			}
-
-			return $options;
-		};
-
-		$options = $iterator(0, 1);
-
-		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
-		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select($name, $options, $input, $parameters);
-		}
-	}
-
 	function form_select_template($name, $input=true, $parameters='') {
-
-		if (count($args = func_get_args()) > 2 && is_bool($args[2])) {
-			trigger_error('Passing $multiple as 3rd parameter in form_select_template() is deprecated as instead determined by input name.', E_USER_DEPRECATED);
-			if (isset($args[3])) $parameters = $args[2];
-		}
 
 		$folders = functions::file_search('app://frontend/templates/*', GLOB_ONLYDIR);
 

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vmod>
+	<name>Pages</name>
+	<version/>
+	<description/>
+	<author>T. Almroth</author>
+
+	<install><![CDATA[
+	database::query(
+		"CREATE TABLE `". DB_TABLE_PREFIX ."pages` (
+			`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+			`status` TINYINT(1) NOT NULL DEFAULT '0',
+			`parent_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+			`dock` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			`priority` INT(11) NOT NULL DEFAULT '0',
+			`date_updated` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+			`date_created` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+			PRIMARY KEY (`id`),
+			INDEX `status` (`status`),
+			INDEX `parent_id` (`parent_id`),
+			INDEX `dock` (`dock`)
+		) ENGINE=InnoDB;"
+	);
+
+	database::query(
+		"CREATE TABLE `". DB_TABLE_PREFIX ."pages_info` (
+			`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+			`page_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+			`language_code` CHAR(2) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			`title` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			`content` MEDIUMTEXT NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			`head_title` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			`meta_description` VARCHAR(512) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			PRIMARY KEY (`id`),
+			UNIQUE INDEX `page_info` (`page_id`, `language_code`),
+			INDEX `page_id` (`page_id`),
+			INDEX `language_code` (`language_code`)
+		) ENGINE=InnoDB;"
+	);
+	]]></install>
+
+	<uninstall><![CDATA[
+	database::query(
+		"DROP TABLE IF EXISTS `". DB_TABLE_PREFIX ."pages`;"
+		"DROP TABLE IF EXISTS `". DB_TABLE_PREFIX ."pages_info`;"
+	]]></uninstall>
+
+  <file name="frontend/partials/site_navigation.inc.php">
+    <operation method="before" type="multiline" onerror="warning">
+      <find><![CDATA[
+		cache::set($site_navigation_cache_token, $site_navigation->snippets);
+      ]]></find>
+
+      <insert><![CDATA[
+		// Pages
+		$pages_query = database::query(
+			"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
+			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
+			where status
+			order by p.priority, pi.title;"
+		);
+
+		while ($page = database::fetch($pages_query)) {
+			$site_navigation->snippets['items'][] = [
+				'id' => 'page-'.$page['id'],
+				'title' => $page['title'],
+				'link' => document::ilink('page', ['page_id' => $page['id']]),
+			];
+		}
+      ]]></insert>
+    </operation>
+  </file>
+</vmod>

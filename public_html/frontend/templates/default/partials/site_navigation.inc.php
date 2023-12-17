@@ -23,11 +23,17 @@
 				<ul class="navbar-nav">
 
 					<li class="nav-item">
-						<a class="nav-link" href="<?php echo document::href_ilink(''); ?>"><?php echo functions::draw_fonticon('fa-home hidden-xs hidden-sm'); ?> <span class="hidden-md hidden-lg hidden-xl hidden-xxl"><?php echo language::translate('title_home', 'Home'); ?></span></a>
+						<a class="nav-link" href="<?php echo document::href_ilink(''); ?>">
+							<?php echo functions::draw_fonticon('fa-home hidden-xs hidden-sm'); ?> <span class="hidden-md hidden-lg hidden-xl hidden-xxl"><?php echo language::translate('title_home', 'Home'); ?></span>
+						</a>
 					</li>
 
-					<?php if ($pages) foreach ($pages as $item) { ?>
-					<li class="nav-item"><a class="nav-link" href="<?php echo functions::escape_html($item['link']); ?>"><?php echo $item['title']; ?></a></li>
+					<?php foreach ($items as $item) { ?>
+					<li class="nav-item" data-id="<?php echo functions::escape_html($item['id']); ?>">
+						<a class="nav-link" href="<?php echo functions::escape_html($item['link']); ?>">
+							<?php echo $item['title']; ?>
+						</a>
+					</li>
 					<?php } ?>
 
 					<li class="nav-item dropdown">
