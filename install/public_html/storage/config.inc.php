@@ -10,23 +10,18 @@
 	define('DOCUMENT_ROOT',    str_replace('\\', '/', rtrim(realpath(!empty($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : __DIR__.'/..'), '/')));
 
 	define('FS_DIR_APP',       str_replace('\\', '/', rtrim(realpath(__DIR__.'/..'), '/')) . '/');
-	define('FS_DIR_ASSETS',    FS_DIR_APP . 'assets/');
 	define('FS_DIR_STORAGE',   FS_DIR_APP . 'storage/');
-	define('FS_DIR_VENDOR',    FS_DIR_APP . 'vendor/');
 
 	// Web System
 	define('WS_DIR_APP',       preg_replace('#^'. preg_quote(DOCUMENT_ROOT, '#') .'#', '', FS_DIR_APP));
 	define('WS_DIR_ADMIN',     WS_DIR_APP . BACKEND_ALIAS . '/');
-	define('WS_DIR_ASSETS',    WS_DIR_APP . 'assets/');
 	define('WS_DIR_STORAGE',   WS_DIR_APP . 'storage/');
-	define('WS_DIR_VENDOR',    WS_DIR_APP . 'vendor/');
 
 	######################################################################
 	## Database ##########################################################
 	######################################################################
 
 	// Database
-	define('DB_TYPE', 'mysql');
 	define('DB_SERVER', '127.0.0.1');
 	define('DB_USERNAME', '');
 	define('DB_PASSWORD', '');
@@ -61,6 +56,9 @@
 	ini_set('session.cookie_samesite', 'Lax');
 	ini_set('session.gc_maxlifetime', 1440);
 
+	// Timezone
+	date_default_timezone_set('Europe/Stockholm');
+
 	// Errors
 	error_reporting(version_compare(PHP_VERSION, '5.4.0', '>=') ? E_ALL & ~E_STRICT : E_ALL);
 	ini_set('ignore_repeated_errors', 'On');
@@ -78,4 +76,5 @@
 ## Application #######################################################
 ######################################################################
 
+	// Ability to disable vMods
 	define('VMOD_DISABLED', false);
