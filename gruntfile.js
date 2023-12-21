@@ -114,7 +114,7 @@ module.exports = function(grunt) {
 
 		phplint: {
 			options: {
-				//phpCmd: 'C:/xampp/php/php.exe', // Defaults to php
+				phpCmd: 'C:/xampp/php82/php.exe', // Defaults to php
 				limit: 10,
 				stdout: false
 			},

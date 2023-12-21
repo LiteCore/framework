@@ -1,5 +1,23 @@
 <?php
 
+	// Short command for dumping variables to output and exiting
+	function x(&...$arrays) {
+		foreach ($arrays as $array) {
+			var_dump($array);
+		}
+		exit(1);
+	}
+
+	function whereami() {
+		$trace = debug_backtrace();
+		$caller = array_shift($trace);
+		echo $caller['file'] .' on line '. $caller['line'];
+		foreach ($trace as $caller) {
+			echo "\n". $caller['file'] .' on line '. $caller['line'];
+		}
+		exit(1);
+	}
+
 	// Output any variable to the browser console
 	function console_dump(...$vars) { // ... as of PHP 5.6
 
@@ -46,7 +64,7 @@
 	}
 */
 
-	// Check if variable indicates a truthy value
+	// Check if variable indicates a trueish value
 	function is_true($string) {
 		//return (!empty($string) && preg_match('#^(1|true|yes|on|active|enabled)$#i', $string));
 		return filter_var($string, FILTER_VALIDATE_BOOLEAN);

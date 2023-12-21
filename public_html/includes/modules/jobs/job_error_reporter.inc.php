@@ -1,7 +1,8 @@
 <?php
 
 	#[AllowDynamicProperties]
-	class job_error_reporter {
+	class job_error_reporter extends abs_module {
+		public $id = __CLASS__;
 		public $name = 'Error Reporter';
 		public $description = '';
 		public $author = 'LiteCart Dev Team';
@@ -19,7 +20,7 @@
 					if (time() < strtotime("Today $from_time") || time() > strtotime("Today $to_time")) return;
 				}
 
-				switch ($this->settings['report_frequency']) {
+				switch ($this->settings['frequency']) {
 					case 'Hourly':
 						if (date('Ymdh', strtotime($last_run)) == date('Ymdh')) return;
 						break;
@@ -107,11 +108,11 @@
 					'function' => 'text()',
 				],
 				[
-					'key' => 'report_frequency',
+					'key' => 'frequency',
 					'default_value' => 'Weekly',
-					'title' => language::translate(__CLASS__.':title_report_frequency', 'Report Frequency'),
-					'description' => language::translate(__CLASS__.':description_report_frequency', 'How often the reports should be sent.'),
-					'function' => 'radio("Immediately","Hourly","Daily","Weekly","Monthly")',
+					'title' => language::translate(__CLASS__.':title_frequency', 'Frequency'),
+					'description' => language::translate(__CLASS__.':description_frequency', 'How often this job should be processed.'),
+					'function' => 'radio("Hourly","Daily","Weekly","Monthly")',
 				],
 				[
 					'key' => 'email_recipient',

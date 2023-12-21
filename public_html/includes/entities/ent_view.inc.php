@@ -12,17 +12,16 @@
 
 			if ($view) {
 
-				// Set filename extension if missing
-				$view = preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
-
 				// Absolute path
 				if (preg_match('#^app://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
 					$this->view = $view;
 
 				// Relative path
 				} else {
-					$this->view = FS_DIR_TEMPLATE . $view;
-					if (!is_file($this->view)) $this->view = 'app://frontend/templates/default/'. $view;
+					$this->view = 'app://frontend/templates/'. settings::get('template') .'/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
+					if (!is_file($this->view)) {
+						$this->view = 'app://frontend/templates/default/'. $view;
+					}
 				}
 			}
 
@@ -150,23 +149,24 @@
 
 		public function stitch($view=null, $cleanup=false) {
 
-				//trigger_error('ent_view->stitch() is deprecated. Instead set the view file when constructing view object and use echo to output the rendered view.', E_USER_DEPRECATED);
+			//trigger_error('ent_view->stitch() is deprecated. Instead set the view file when constructing view object and use echo to output the rendered view.', E_USER_DEPRECATED);
 
 			if ($cleanup) {
 				$this->cleanup = true;
 			}
 
 			if ($view) {
-				$view = preg_replace('#^(.*?)(\.inc\.php)?$#', '$1.inc.php', $view);
 
 				// Absolute path
-				if (preg_match('#^([a-zA-Z]:)?/#', $view)) {
+				if (preg_match('#^app://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
 					$this->view = $view;
 
 				// Relative path
 				} else {
-					$this->view = FS_DIR_TEMPLATE . $view;
-					if (!is_file($this->view)) $this->view = 'app://frontend/templates/default/'. $view;
+					$this->view = 'app://frontend/templates/'. settings::get('template') .'/' . preg_replace('#^(.*?)(\.inc\.php)?$#', '$1.inc.php', $view);
+					if (!is_file($this->view)) {
+						$this->view = 'app://frontend/templates/default/'. $view;
+					}
 				}
 			}
 

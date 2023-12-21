@@ -16,9 +16,10 @@
 
 		public static function before_capture() {
 
-			header('X-Powered-By: '. PLATFORM_NAME);
+			header('Content-Security-Policy: frame-ancestors \'self\';'); // Clickjacking Protection
 			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data data from own domain
 			header('X-Frame-Options: SAMEORIGIN'); // Clickjacking Protection
+			header('X-Powered-By: '. PLATFORM_NAME);
 
 			// Default to AJAX layout on AJAX request
 			if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
@@ -30,25 +31,25 @@
 			self::$snippets['text_direction'] = language::$selected['direction'];
 			self::$snippets['charset'] = mb_http_output();
 			self::$snippets['home_path'] = WS_DIR_APP;
-			self::$snippets['template_path'] = WS_DIR_TEMPLATE;
+			self::$snippets['template_path'] = WS_DIR_APP . 'frontend/templates/'.settings::get('template').'/';
 			self::$snippets['title'] = [settings::get('site_name')];
 			self::$snippets['head_tags']['favicon'] = implode(PHP_EOL, [
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96" />',
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128" />',
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192" />',
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="255x255" />',
+				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
+				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
+				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
+				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="255x255">',
 			]);
-			self::$snippets['head_tags']['manifest'] = '<link rel="manifest" href="'. WS_DIR_APP . 'manifest.json" />';
-			self::$snippets['head_tags']['fontawesome'] = '<link rel="stylesheet" href="'. document::href_rlink('app://assets/fontawesome/font-awesome.min.css') .'" />';
+			self::$snippets['head_tags']['manifest'] = '<link rel="manifest" href="'. WS_DIR_APP . 'manifest.json">';
+			self::$snippets['head_tags']['fontawesome'] = '<link rel="stylesheet" href="'. document::href_rlink('app://assets/fontawesome/font-awesome.min.css') .'">';
 			self::$snippets['foot_tags']['jquery'] = '<script src="'. document::href_rlink('app://assets/jquery/jquery-3.7.0.min.js') .'"></script>';
 
 			// Hreflang
-			if (!empty(route::$selected['controller'])) {
+			if (!empty(route::$selected['resource'])) {
 				self::$snippets['head_tags']['hreflang'] = '';
 				foreach (language::$languages as $language) {
 					if ($language['url_type'] == 'none') continue;
 					if ($language['code'] == language::$selected['code']) continue;
-					self::$snippets['head_tags']['hreflang'] .= '<link rel="alternate" hreflang="'. $language['code'] .'" href="'. document::href_ilink(route::$selected['controller'], [], true, ['page', 'sort'], $language['code']) .'" />' . PHP_EOL;
+					self::$snippets['head_tags']['hreflang'] .= '<link rel="alternate" hreflang="'. $language['code'] .'" href="'. document::href_ilink(route::$selected['resource'], [], true, ['page', 'sort'], $language['code']) .'">' . PHP_EOL;
 				}
 				self::$snippets['head_tags']['hreflang'] = trim(self::$snippets['head_tags']['hreflang']);
 			}
@@ -89,7 +90,7 @@
 			];
 
 			self::$jsenv['template'] = [
-				'url' => document::link(WS_DIR_TEMPLATE),
+				'url' => document::link(preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request) ? 'backend/template' : 'frontend/templates/'. settings::get('template') .'/'),
 				'settings' => self::$settings,
 			];
 
@@ -107,7 +108,7 @@
 
 			// Add meta description
 			if (!empty(self::$snippets['description'])) {
-				self::$snippets['head_tags'][] = '<meta name="description" content="'. functions::escape_html(self::$snippets['description']) .'" />';
+				self::$snippets['head_tags'][] = '<meta name="description" content="'. functions::escape_html(self::$snippets['description']) .'">';
 				unset(self::$snippets['description']);
 			}
 
@@ -194,11 +195,13 @@
 					'#;}#' => '}',
 				];
 
-				$styles = '<style>' . PHP_EOL
-							 //. '<!--/*--><![CDATA[/*><!--*/' . PHP_EOL // Do we still need bypassing in 2022?
-							 . preg_replace(array_keys($search_replace), array_values($search_replace), implode(PHP_EOL . PHP_EOL, $styles)) . PHP_EOL
-							 //. '/*]]>*/-->' . PHP_EOL
-							 . '</style>' . PHP_EOL;
+				$styles = implode(PHP_EOL, [
+					'<style>',
+					 //'<!--/*--><![CDATA[/*><!--*/', // Do we still need bypassing in 2022?
+					 preg_replace(array_keys($search_replace), array_values($search_replace), implode(PHP_EOL . PHP_EOL, $styles)),
+					 //'/*]]>*/-->',
+					 '</style>',
+				]);
 
 				$GLOBALS['output'] = preg_replace('#</head>#', addcslashes($styles . '</head>', '\\$'), $GLOBALS['output'], 1);
 			}
@@ -211,11 +214,13 @@
 
 			// Reinsert inline javascripts
 			if (!empty($javascript)) {
-				$javascript = '<script>' . PHP_EOL
-							//. '<!--/*--><![CDATA[/*><!--*/' . PHP_EOL // Do we still need bypassing in 2022?
-							. implode(PHP_EOL . PHP_EOL, $javascript) . PHP_EOL
-								//. '/*]]>*/-->' . PHP_EOL
-							. '</script>' . PHP_EOL;
+				$javascript = implode(PHP_EOL, [
+					'<script>',
+					//. '<!--/*--><![CDATA[/*><!--*/', // Do we still need bypassing in 2022?
+					implode(PHP_EOL . PHP_EOL, $javascript),
+					//. '/*]]>*/-->',
+					'</script>',
+				]);
 
 				$GLOBALS['output'] = preg_replace('#</body>#is', addcslashes($javascript . '</body>', '\\$'), $GLOBALS['output'], 1);
 			}
@@ -258,37 +263,37 @@
 
 		######################################################################
 
-		public static function ilink($route=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
+		public static function ilink($resource=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
 
 			switch (true) {
 
-				case ($route === null):
+				case ($resource === null):
 					if ($inherit_params === null) $inherit_params = true;
-					$route = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+					$resource = route::$request;
 					break;
 
-				case (preg_match('#^b:(.*)$#', $route, $matches)):
-					$route = WS_DIR_APP . BACKEND_ALIAS .'/'. $matches[1];
+				case (preg_match('#^b:(.*)$#', $resource, $matches)):
+					$resource = WS_DIR_APP . BACKEND_ALIAS .'/'. $matches[1];
 					break;
 
-				case (preg_match('#^f:(.*)$#', $route, $matches)):
-					$route = WS_DIR_APP . $matches[1];
+				case (preg_match('#^f:(.*)$#', $resource, $matches)):
+					$resource = WS_DIR_APP . $matches[1];
 					break;
 
 				default:
-					if (!empty(route::$selected['endpoint']) && substr(route::$selected['endpoint'], 0, 1) == 'b') {
-						$route = WS_DIR_APP . BACKEND_ALIAS .'/'. $route;
+					if (isset(route::$selected['endpoint']) && route::$selected['endpoint'] == 'backend') {
+						$resource = WS_DIR_APP . BACKEND_ALIAS .'/'. $resource;
 					} else {
-						$route = WS_DIR_APP . $route;
+						$resource = WS_DIR_APP . $resource;
 					}
 					break;
 			}
 
-			return (string)route::create_link($route, $new_params, $inherit_params, $skip_params, $language_code, true);
+			return (string)route::create_link($resource, $new_params, $inherit_params, $skip_params, $language_code, true);
 		}
 
-		public static function href_ilink($route=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
-			return functions::escape_html(self::ilink($route, $new_params, $inherit_params, $skip_params, $language_code));
+		public static function href_ilink($resource=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
+			return functions::escape_html(self::ilink($resource, $new_params, $inherit_params, $skip_params, $language_code));
 		}
 
 		public static function link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {

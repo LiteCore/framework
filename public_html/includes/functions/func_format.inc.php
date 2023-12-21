@@ -1,10 +1,5 @@
 <?php
 
-	function format_mysql_fulltext($string) {
-		$string = strip_tags($string);
-		return preg_replace('#[+\-<>\(\)~*\"@;]+#', ' ', $string);
-	}
-
 	function format_path_friendly($text, $language_code='') {
 
 		if (empty($text)) return '';
@@ -97,6 +92,12 @@
 				'Ý' => 'Y', 'Ỳ' => 'Y', 'Ỷ' => 'Y', 'Ỹ' => 'Y', 'Ỵ' => 'Y', 'ý' => 'y', 'ỳ' => 'y', 'ỷ' => 'y', 'ỹ' => 'y', 'ỵ' => 'y',
 				'Đ' => 'D', 'đ' => 'd'
 			],
+			'ar' => [ /* Arabic */
+				'أ' => 'a', 'ب' => 'b', 'ت' => 't', 'ث' => 'th', 'ج' => 'g', 'ح' => 'h', 'خ' => 'kh', 'د' => 'd',
+				'ذ' => 'th', 'ر' => 'r', 'ز' => 'z', 'س' => 's', 'ش' => 'sh', 'ص' => 's', 'ض' => 'd', 'ط' => 't',
+				'ظ' => 'th', 'ع' => 'aa', 'غ' => 'gh', 'ف' => 'f', 'ق' => 'k', 'ك' => 'k', 'ل' => 'l', 'م' => 'm',
+				'ن' => 'n', 'ه' => 'h', 'و' => 'o', 'ي' => 'y'
+			],
 			'sr' => [ /* Serbian */
 				'ђ' => 'dj', 'ј' => 'j', 'љ' => 'lj', 'њ' => 'nj', 'ћ' => 'c', 'џ' => 'dz', 'đ' => 'dj',
 				'Ђ' => 'Dj', 'Ј' => 'j', 'Љ' => 'Lj', 'Њ' => 'Nj', 'Ћ' => 'C', 'Џ' => 'Dz', 'Đ' => 'Dj'
@@ -104,7 +105,13 @@
 			'az' => [ /* Azerbaijani */
 				'ç' => 'c', 'ə' => 'e', 'ğ' => 'g', 'ı' => 'i', 'ö' => 'o', 'ş' => 's', 'ü' => 'u',
 				'Ç' => 'C', 'Ə' => 'E', 'Ğ' => 'G', 'İ' => 'I', 'Ö' => 'O', 'Ş' => 'S', 'Ü' => 'U'
-			]
+			],
+			'ge' => [ /* Georgian */
+				'ა' => 'a', 'ბ' => 'b', 'გ' => 'g', 'დ' => 'd', 'ე' => 'e', 'ვ' => 'v', 'ზ' => 'z', 'თ' => 'T', 'ი' => 'i',
+				'კ' => 'k', 'ლ' => 'l', 'მ' => 'm', 'ნ' => 'n', 'ო' => 'o', 'პ' => 'p', 'ჟ' => 'zh', 'რ' => 'r', 'ს' => 's',
+				'ტ' => 't', 'უ' => 'u', 'ფ' => 'f', 'ქ' => 'q', 'ღ' => 'R', 'ყ' => 'y', 'შ' => 'S', 'ჩ' => 'C', 'ც' => 'c',
+				'ძ' => 'Z', 'წ' => 'w', 'ჭ' => 'W', 'ხ' => 'x', 'ჯ' => 'j', 'ჰ' => 'h'
+			],
 		];
 
 		// Convert foreign characters
@@ -128,25 +135,4 @@
 		$text = mb_strtolower($text);
 
 		return $text;
-	}
-
-	function format_regex_code($string) {
-
-		$string = strip_tags($string);
-
-		if (strlen($string) > 24 || preg_match('#[^0-9a-zA-Z \-\./]#', $string)) {
-			return addcslashes(preg_quote($string, "'"), '&<>');
-		}
-
-		$string = preg_replace('#[ -\./]+#', '', $string);
-
-		$parts = preg_split('#(.)#u', $string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-
-		foreach ($parts as $key => $char) {
-			$parts[$key] = addcslashes(preg_quote($char, "'"), '&<>');
-		}
-
-		$string = implode('([ \-\./]+)?', $parts);
-
-		return $string;
 	}

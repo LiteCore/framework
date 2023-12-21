@@ -24,12 +24,12 @@
 
 			<section class="hidden-xs hidden-sm col-md-4" style="align-self: center;">
 				<div class="logotype">
-					<img src="<?php echo document::href_link(WS_DIR_STORAGE . 'images/logotype.png'); ?>" class="img-responsive" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>" />
+					<img src="<?php echo document::href_link(WS_DIR_STORAGE . 'images/logotype.png'); ?>" class="img-responsive" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>">
 				</div>
 
 				<ul class="modules list-inline text-center">
 					<?php foreach ($modules as $module) { ?>
-					<li class="thumbnail"><img src="<?php echo document::href_link($module['icon']); ?>" class="img-responsive" alt="" /></li>
+					<li class="thumbnail"><img src="<?php echo document::href_link($module['icon']); ?>" class="img-responsive" alt=""></li>
 					<?php } ?>
 				</ul>
 

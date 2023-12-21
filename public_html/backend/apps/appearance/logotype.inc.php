@@ -28,7 +28,7 @@
 
 			if (settings::get('image_downsample_size')) {
 				list($width, $height) = explode(',', settings::get('image_downsample_size'));
-				$image->resample($width, $height, 'FIT_ONLY_BIGGER');
+				//$image->resample($width, $height, 'FIT_ONLY_BIGGER');
 			}
 
 			if (!$image->save('storage://images/' . $filename)) {
@@ -55,7 +55,7 @@
 		<?php echo functions::form_begin('logotype_form', 'post', false, true); ?>
 
 			<div style="max-width: 480px;">
-				<img class="thumbnail fit" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="" style="margin: 0 0 2em 0;" />
+				<img class="thumbnail fit" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="" style="margin: 0 0 2em 0;">
 			</div>
 
 			<div class="form-group" style="max-width: 480px;">

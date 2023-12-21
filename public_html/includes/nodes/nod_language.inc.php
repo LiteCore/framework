@@ -330,25 +330,25 @@
 				switch ($format) {
 
 					case '%c':
-					$date_type = IntlDateFormatter::LONG;
-					$time_type = IntlDateFormatter::SHORT;
+						$date_type = IntlDateFormatter::LONG;
+						$time_type = IntlDateFormatter::SHORT;
 						break;
 
 					// %x = Preferred date representation based on locale, without the time
 					// Example: 02/05/09 for February 5, 2009
 					case '%x':
-					$date_type = IntlDateFormatter::SHORT;
-					$time_type = IntlDateFormatter::NONE;
+						$date_type = IntlDateFormatter::SHORT;
+						$time_type = IntlDateFormatter::NONE;
 						break;
 
 					// Localized time format
 					case '%X':
-					$date_type = IntlDateFormatter::NONE;
-					$time_type = IntlDateFormatter::MEDIUM;
+						$date_type = IntlDateFormatter::NONE;
+						$time_type = IntlDateFormatter::MEDIUM;
 						break;
 
 					default:
-					$pattern = $intl_formats[$format];
+						$pattern = $intl_formats[$format];
 						break;
 				}
 
@@ -427,8 +427,7 @@
 			$out = preg_replace_callback('/(?<!%)(%[a-zA-Z])/', function ($match) use ($translation_table, $timestamp) {
 				if ($match[1] == '%n') {
 					return "\n";
-				}
-				elseif ($match[1] == '%t') {
+				} elseif ($match[1] == '%t') {
 					return "\t";
 				}
 
@@ -440,8 +439,7 @@
 
 				if (is_string($replace)) {
 					return $timestamp->format($replace);
-				}
-				else {
+				} else {
 					return $replace($timestamp, $match[1]);
 				}
 			}, $format);

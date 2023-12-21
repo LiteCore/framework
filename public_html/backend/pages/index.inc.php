@@ -1,5 +1,7 @@
 <?php
 
+	administrator::require_login();
+
 	breadcrumbs::reset();
 	breadcrumbs::add(language::translate('title_dashboard', 'Dashboard'), document::ilink(''));
 
@@ -38,7 +40,7 @@
 		];
 
 		// Render the page
-		$_page = new ent_view(FS_DIR_TEMPLATE . 'pages/doc.inc.php');
+		$_page = new ent_view('app://backend/template/pages/doc.inc.php');
 
 		$_page->snippets = [
 			'app' => __APP__,
@@ -57,17 +59,13 @@
 
 		document::$snippets['title'][] = language::translate('title_dashboard', 'Dashboard');
 
-		if (file_exists(FS_DIR_APP . 'install/')) {
-			notices::add('warnings', language::translate('warning_install_folder_exists', 'Warning: The installation directory is still available and should be deleted.'), 'install_folder');
-		}
-
 		if (settings::get('maintenance_mode')) {
 			notices::add('notices', language::translate('reminder_site_in_maintenance_mode', 'The site is in maintenance mode.'));
 		}
 
 		// Widgets
 
-		$box_widgets = new ent_view(FS_DIR_TEMPLATE . 'partials/box_widgets.inc.php');
+		$box_widgets = new ent_view('app://backend/template/partials/box_widgets.inc.php');
 		$box_widgets->snippets['widgets'] = [];
 
 		$widgets = functions::admin_get_widgets();
@@ -77,10 +75,11 @@
 
 			ob_start();
 			include $widget['directory'] . $widget['file'];
+			$output = ob_get_clean();
 
 			$box_widgets->snippets['widgets'][] = [
 				'id' => $widget['id'],
-				'content' => ob_get_clean(),
+				'content' => $output,
 			];
 		}
 

@@ -1,10 +1,10 @@
 <?php
-	$box_site_footer_cache_token = cache::token('box_site_footer', ['language', 'login', 'region']);
-	if (cache::capture($box_site_footer_cache_token)) {
+	$site_footer_cache_token = cache::token('site_footer', ['language', 'login', 'region']);
+	if (cache::capture($site_footer_cache_token)) {
 
-		$box_site_footer = new ent_view(FS_DIR_TEMPLATE . 'partials/site_footer.inc.php');
+		$site_footer = new ent_view(FS_DIR_TEMPLATE . 'partials/site_footer.inc.php');
 
-		$box_site_footer->snippets = [
+		$site_footer->snippets = [
 			'pages' => [],
 			'modules' => [],
 			'social' => [],
@@ -18,35 +18,35 @@
 		);
 
 		while ($page = database::fetch($pages_query)) {
-			$box_site_footer->snippets['pages'][$page['id']] = [
+			$site_footer->snippets['pages'][$page['id']] = [
 				'id' => $page['id'],
 				'title' => $page['title'],
-				'link' => document::href_ilink('information', ['page_id' => $page['id']]),
+				'link' => document::ilink('information', ['page_id' => $page['id']]),
 			];
 		}
 
-		$box_site_footer->snippets['social']['facebook'] = [
+		$site_footer->snippets['social']['facebook'] = [
 			'type' => 'facebook',
 			'title' => 'Facebook',
 			'icon' => 'fa-facebook',
 			'link' => 'https://www.facebook.com/',
 		];
 
-		$box_site_footer->snippets['social']['twitter'] = [
+		$site_footer->snippets['social']['twitter'] = [
 			'type' => 'twitter',
 			'title' => 'Twitter',
 			'icon' => 'fa-twitter',
 			'link' => 'https://www.twitter.com/',
 		];
 
-		$box_site_footer->snippets['social']['linkedin'] = [
+		$site_footer->snippets['social']['linkedin'] = [
 			'type' => 'linkedin',
 			'title' => 'LinkedIn',
 			'icon' => 'fa-linkedin',
 			'link' => 'https://www.linkedin.com/',
 		];
 
-		echo $box_site_footer;
+		echo $site_footer;
 
-		cache::end_capture($box_site_footer_cache_token);
+		cache::end_capture($site_footer_cache_token);
 	}

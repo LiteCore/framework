@@ -14,23 +14,39 @@
 				require 'app://includes/clients/' . $class . '.inc.php';
 				break;
 
-			case (substr($class, 0, 4) == 'job_'):
+			case (preg_match('#^(job)_#', $class)):
 
 				// Patch modules for PHP 8.2 Compatibility
 				if (version_compare(PHP_VERSION, 8.2, '>=')) {
 
-					$file = preg_replace('#^(job_.*)#', 'app://includes/modules/jobs/$1.inc.php', $class);
+					$search_replace = [
+						'#^(job_.*)#' => 'app://includes/modules/jobs/$1.inc.php',
+					];
+
+					$file = preg_replace(array_keys($search_replace), array_values($search_replace), $class);
 
 					if (is_file($file)) {
 						$source = file_get_contents($file);
+
 						if (!preg_match('#\#\[AllowDynamicProperties\]#', $source)) {
 							$source = preg_replace('#([ \t]*)class [a-zA-Z0-9_-]+ *\{(\n|\r\n?)#', '$1#[AllowDynamicProperties]$2$0', $source);
+							file_put_contents($file, $source);
+						}
+
+						if (!preg_match('#class [a-zA-Z0-9_-]+ extends abs_module#', $source)) {
+							$source = preg_replace('#(class [a-zA-Z0-9_-]+) *\{#', '$1 extends abs_module {', $source);
 							file_put_contents($file, $source);
 						}
 					}
 				}
 
-				require 'app://includes/modules/jobs/' . $class . '.inc.php';
+				switch ($class) {
+
+					case (substr($class, 0, 4) == 'job_'):
+						require vmod::check('app://includes/modules/jobs/' . $class . '.inc.php');
+						break;
+				}
+
 				break;
 
 			case (substr($class, 0, 4) == 'ent_'):
@@ -61,10 +77,16 @@
 
 			default:
 
-				require 'app://includes/nodes/nod_' . $class . '.inc.php';
+				if (is_file($file = 'app://includes/nodes/nod_' . $class . '.inc.php')) {
+					require $file;
+				}
 
 				if (method_exists($class, 'init')) {
 					call_user_func([$class, 'init']); // As static classes do not have a __construct() (PHP #62860)
+				}
+
+				if (is_file($file = 'app://includes/nodes/' . $class . '.inc.php')) {
+					require $file;
 				}
 
 				break;

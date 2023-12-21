@@ -28,7 +28,7 @@
 						<th><?php echo language::translate('title_date_registered', 'Date Registered'); ?></th>
 					</tr>
 				</thead>
-				<tbody />
+				<tbody>
 			</table>
 		</div>
 	</div>

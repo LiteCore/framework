@@ -69,10 +69,10 @@
 			}
 
 			$this->data['id'] = preg_replace('#\.disabled$#', '', $this->data['folder']);
-			$this->data['name'] = fallback($dom->getElementsByTagName('name')->item(0)->textContent, '');
-			$this->data['version'] = fallback($dom->getElementsByTagName('version')->item(0)->textContent, date('Y-m-d', filemtime($this->data['location'] .'vmod.xml')));
-			$this->data['description'] = fallback($dom->getElementsByTagName('description')->item(0)->textContent, '');
-			$this->data['author'] = fallback($dom->getElementsByTagName('author')->item(0)->textContent, '');
+			$this->data['name'] = $dom->getElementsByTagName('name')->length ? $dom->getElementsByTagName('name')->item(0)->textContent : '';
+			$this->data['version'] = $dom->getElementsByTagName('version')->length ? $dom->getElementsByTagName('version')->item(0)->textContent : date('Y-m-d', filemtime($this->data['location'] .'vmod.xml'));
+			$this->data['description'] = $dom->getElementsByTagName('description')->length ? $dom->getElementsByTagName('description')->item(0)->textContent : '';
+			$this->data['author'] = $dom->getElementsByTagName('author')->length ? $dom->getElementsByTagName('author')->item(0)->textContent : '';
 			$this->data['date_created'] = date('Y-m-d H:i:s', filectime($this->data['location'] .'vmod.xml'));
 			$this->data['date_updated'] = date('Y-m-d H:i:s', filemtime($this->data['location'] .'vmod.xml'));
 

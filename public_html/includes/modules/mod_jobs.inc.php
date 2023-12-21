@@ -13,7 +13,7 @@
 			if (empty($modules)) {
 				$modules = array_keys($this->modules);
 			}
-				
+
 			if (!is_array($modules)) {
 				$modules = [$modules];
 			}

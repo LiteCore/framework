@@ -81,5 +81,5 @@
 
 		// Output key and image
 		return '<input type="hidden" name="captcha_id" value="'. $id .'">' . PHP_EOL
-			 . '<img src="data:image/gif;base64,'. $base64_image .'" alt="" style="width: '. $width .'px; height: '. $height .'px"'. (($parameters) ? ' ' . $parameters : '') .' />';
+			 . '<img src="data:image/gif;base64,'. $base64_image .'" alt="" style="width: '. $width .'px; height: '. $height .'px"'. ($parameters ? ' ' . $parameters : '') .'>';
 	}

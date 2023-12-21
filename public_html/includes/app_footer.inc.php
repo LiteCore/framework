@@ -8,7 +8,12 @@
 	event::fire('after_capture');
 
 	// Stitch content with layout
-	$_page = new ent_view(FS_DIR_TEMPLATE . 'layouts/'.document::$layout.'.inc.php');
+	if (preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request)) {
+		$_page = new ent_view('app://backend/template/layouts/'.document::$layout.'.inc.php');
+	} else {
+		$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/layouts/'.document::$layout.'.inc.php');
+	}
+
 	$_page->snippets = [
 		'important_notice' => settings::get('important_notice'),
 		'content' => $content,

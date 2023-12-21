@@ -41,11 +41,11 @@
 	}
 
 	// PHP doesn't always clean up temp files, so let's create a function that does
-	function file_create_tempfile($data='') {
+	function file_create_tempfile($data=null) {
 
 		$tmp_file = stream_get_meta_data(tmpfile())['uri'];
 
-		if ($data) {
+		if ($data !== null) {
 			file_put_contents($tmp_file, $data);
 		}
 
@@ -194,7 +194,7 @@
 			else throw new \Exception('Climbing above the root is not permitted.');
 		}
 
-		return join('/', $new_path);
+		return implode('/', $new_path);
 	}
 
 	// PHP glob() does not support stream wrappers, so let's create our own glob.

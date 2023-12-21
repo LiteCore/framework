@@ -13,7 +13,7 @@
 	$hreflangs = '';
 	foreach (language::$languages as $language) {
 		if ($language['url_type'] == 'none') continue;
-		$hreflangs .= '  <xhtml:link rel="alternate" hreflang="'. $language['code'] .'" href="'. document::href_ilink('', [], false, [], $language['code']) .'" />' . PHP_EOL;
+		$hreflangs .= '  <xhtml:link rel="alternate" hreflang="'. $language['code'] .'" href="'. document::href_ilink('', [], false, [], $language['code']) .'">' . PHP_EOL;
 	}
 
 	echo '  <url>' . PHP_EOL

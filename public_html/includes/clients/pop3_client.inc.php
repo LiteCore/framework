@@ -69,7 +69,7 @@
 			if (preg_match('#250-STARTTLS#', $this->_last_response)) {
 				$this->write("STARTTLS\r\n", 220);
 				if (!stream_socket_enable_crypto($this->_socket, true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT)) {
-					//if (!stream_socket_enable_crypto($this->_socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+				//if (!stream_socket_enable_crypto($this->_socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
 					throw new Exception('Could not start TLS encryption');
 				}
 				$this->write("EHLO {$_SERVER['SERVER_NAME']}\r\n", 250);

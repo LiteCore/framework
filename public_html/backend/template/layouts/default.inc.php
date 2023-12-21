@@ -2,12 +2,12 @@
 <html lang="{{language}}" dir="{{text_direction}}"<?php echo !empty($_COOKIE['dark_mode']) ? ' class="dark-mode"' : ''; ?>>
 <head>
 <title>{{title}}</title>
-<meta charset="{{charset}}" />
-<meta name="robots" content="noindex, nofollow" />
+<meta charset="{{charset}}">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=1600">
-<link rel="stylesheet" href="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'css/variables.css'); ?>" />
-<link rel="stylesheet" href="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'css/framework.min.css'); ?>" />
-<link rel="stylesheet" href="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'css/app.min.css'); ?>" />
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/variables.css'); ?>">
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
 {{head_tags}}
 {{style}}
 <style>
@@ -19,12 +19,12 @@
 <body>
 
 <div id="backend-wrapper">
-	<input id="sidebar-compressed" type="checkbox" hidden />
+	<input id="sidebar-compressed" type="checkbox" hidden>
 
 	<div id="sidebar" class="hidden-print">
 
 		<a class="logotype" href="<?php echo document::href_ilink(''); ?>">
-			<img class="center-block responsive" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>" />
+			<img class="center-block responsive" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>">
 		</a>
 
 		<div id="search">
@@ -39,7 +39,7 @@
 			<span class="version"><?php echo PLATFORM_VERSION; ?></span>
 		</a>
 
-		<div class="copyright" class="text-center">Copyright &copy; <?php echo date('2012-Y'); ?><br />
+		<div class="copyright" class="text-center">Copyright &copy; <?php echo date('2012-Y'); ?><br>
 			<a href="https://www.litecart.net" target="_blank">www.litecart.net</a>
 		</div>
 	</div>
@@ -69,8 +69,8 @@
 
 			<li>
 				<div class="btn-group btn-group-inline" data-toggle="buttons">
-					<label class="btn btn-default btn-sm<?php echo empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_light', 'Light')); ?>"><input type="radio" name="dark_mode" value="0"<?php echo empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?> /> <?php echo functions::draw_fonticon('fa-sun-o'); ?></label>
-					<label class="btn btn-default btn-sm<?php echo !empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_dark', 'Dark')); ?>"><input type="radio" name="dark_mode" value="1"<?php echo !empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?> /> <?php echo functions::draw_fonticon('fa-moon-o'); ?></label>
+					<label class="btn btn-default btn-sm<?php echo empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_light', 'Light')); ?>"><input type="radio" name="dark_mode" value="0"<?php echo empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-sun-o'); ?></label>
+					<label class="btn btn-default btn-sm<?php echo !empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_dark', 'Dark')); ?>"><input type="radio" name="dark_mode" value="1"<?php echo !empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-moon-o'); ?></label>
 				</div>
 			</li>
 
@@ -137,7 +137,7 @@
 </div>
 
 {{foot_tags}}
-<script src="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'js/app.min.js'); ?>"></script>
+<script src="<?php echo document::href_rlink('app://frontend/templates/'. settings::get('template') .'/js/app.min.js'); ?>"></script>
 {{javascript}}
 
 <script>

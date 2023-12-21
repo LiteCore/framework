@@ -1,9 +1,8 @@
 <?php
 
 	return [
-		'' => [
-			'pattern' => '#^(?:index\.php)?$#',
-			'endpoint' => 'frontend',
+		'f:' => [
+			'pattern' => '#^(index)?$#',
 			'controller' => 'app://frontend/pages/index.inc.php',
 			'params' => '',
 			'options' => [

@@ -1,9 +1,5 @@
 <?php
 
-	// Define template paths
-	define('FS_DIR_TEMPLATE', 'app://backend/template/');
-	define('WS_DIR_TEMPLATE', WS_DIR_APP . 'backend/template/');
-
 	// Fetch apps
 	$apps = functions::admin_get_apps();
 

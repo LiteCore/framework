@@ -37,35 +37,33 @@
 				$routes = include $file;
 				if (!$routes) continue;
 
-				foreach ($routes as $i => $route) {
-					self::add($i, $route);
+				foreach ($routes as $resource => $route) {
+					self::add($resource, $route);
 				}
 			}
 		}
 
-		public static function add($i, $route) {
+		public static function add($resource, $route) {
 
-			if (empty($route['endpoint'])) {
-				switch (true) {
-					case (preg_match('#^b:#', $i)): $route['endpoint'] = 'backend'; break;
-					case (preg_match('#^f:#', $i)): $route['endpoint'] = 'frontend'; break;
+			if (strpos($resource, ':') === false) {
+				if (!preg_match('#^.:#', $resource)) {
+					$resource = 'f:'.$resource;
 				}
 			}
 
-			if (empty($route['endpoint'])) {
-				$route['endpoint'] = 'frontend';
+			switch (true) {
+				case (preg_match('#^b:#', $resource)): $route['endpoint'] = 'backend'; break;
+				case (preg_match('#^f:#', $resource)): $route['endpoint'] = 'frontend'; break;
+				default: $route['endpoint'] = 'frontend'; break;
 			}
 
-			if (strpos($i, ':') === false) {
-				switch ($route['endpoint']) {
-					case 'frontend': $i = 'f:'.$i;  break;
-					case 'backend':  $i = 'b:'.$i;  break;
-				}
+			if (!isset($route['patterns'])) {
+				$route['patterns'] = [$route['pattern']];
 			}
 
-			self::$_routes[$i] = [
-				'route' => $i,
-				'pattern' => fallback($route['pattern'], ''),
+			self::$_routes[$resource] = [
+				'resource' => $resource,
+				'patterns' => fallback($route['patterns'], ''),
 				'endpoint' => fallback($route['endpoint'], 'frontend'),
 				'controller' => fallback($route['controller']),
 				'params' => fallback($route['params'], []),
@@ -74,26 +72,35 @@
 			];
 		}
 
+		// Resolve the request to a route
 		public static function identify() {
 
-			// Find a target route for requested URL
-			foreach (self::$_routes as $i => $route) {
+			// Step through each route
+			foreach (self::$_routes as $route) {
 
-				if (!preg_match($route['pattern'], self::$request)) continue;
+				// Does any pattern of the route match the request?
+				foreach ($route['patterns'] as $pattern) {
 
-				if (is_string($route['controller'])) {
-					$route['controller'] = preg_replace($route['pattern'], $route['controller'], self::$request);
-				}
+					if (preg_match($pattern, self::$request)) {
 
-				if (!empty($route['params'])) {
-					parse_str(preg_replace($route['pattern'], $route['params'], self::$request), $params);
-					$_GET = array_filter(array_merge($_GET, $params));
-				}
+						// Resolve resource logic
+						if (preg_match('#\*#', $route['resource'])) {
+							$route['resource'] = preg_replace('#^(.:).*$#', '$1'.parse_url(self::$request, PHP_URL_PATH), self::$request);
+						}
 
-				if (preg_match('#:\*$#', $i)) {
-					return self::$selected = array_merge(['route' => route::$request], $route);
-				} else {
-					return self::$selected = array_merge(['route' => $i], $route);
+						// Resolve controller logic
+						if (is_string($route['controller'])) {
+							$route['controller'] = preg_replace($pattern, $route['controller'], self::$request);
+						}
+
+						// Resolve query params logic
+						if (!empty($route['params'])) {
+							parse_str(preg_replace($pattern, $route['params'], self::$request), $params);
+							$_GET = array_filter(array_merge($_GET, $params));
+						}
+
+						return self::$selected = $route;
+					}
 				}
 			}
 		}
@@ -105,15 +112,19 @@
 			}
 
 			// Forward to rewritten URL (if necessary)
-			if (!empty($selected)) {
-				$rewritten_url = document::ilink(self::$selected['controller'], $_GET);
+			if (!empty(self::$selected)) {
 
-				if (urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) != parse_url($rewritten_url, PHP_URL_PATH)) {
+				$requested_url = document::link($_SERVER['REQUEST_URI']);
+				$rewritten_url = document::ilink(self::$selected['resource'], $_GET);
+
+				if ($requested_url != $rewritten_url) {
 
 					$do_redirect = true;
 
 					// Don't forward if there is HTTP POST data
-					if (file_get_contents('php://input') != '') $do_redirect = false;
+					if (file_get_contents('php://input') != '') {
+						$do_redirect = false;
+					}
 
 					// Don't forward if requested not to
 					if (isset(self::$selected['options']['redirect']) && self::$selected['options']['redirect'] != true) {
@@ -130,7 +141,7 @@
 					if ($do_redirect) {
 
 						// Send HTTP 302 if it's the start page
-						if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) == WS_DIR_APP) {
+						if (parse_url(self::$request, PHP_URL_PATH) == WS_DIR_APP) {
 							header('Location: '. $rewritten_url, true, 302);
 							exit;
 						}
@@ -187,12 +198,11 @@
 				header('Content-Length: '. filesize('app://'.$request_path));
 				header('Etag: '. md5_file('app://'.$request_path));
 				header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime('app://'.$request_path)) .' GMT');
+				header('Pragma: cache');
 				header('Cache-Control: public, max-age=604800');	// 7 days
 				header('Expires: '. gmdate('D, d M Y H:i:s', strtotime('+7 days')) .' GMT');
-				header('Pragma: cache');
-				header('X-Frame-Options: SAMEORIGIN');
 				header('X-Content-Type-Options: nosniff');
-				header('X-XSS-Protection: 1; mode=block');
+				header('X-Frame-Options: SAMEORIGIN');
 
 				readfile('app://'.$request_path);
 				exit;
@@ -321,7 +331,7 @@
 			}
 
 			if (!in_array($language_code, array_keys(language::$languages))) {
-				$language_code = language::identify();
+				$language_code = language::$selected['code'];
 			}
 
 			$checksum = crc32((string)$link);
@@ -333,13 +343,13 @@
 			// Strip logic from string
 			$ipath = self::strip_url_logic($link->path);
 
-			if (!preg_match('#^(f|b):#', $link->path)) {
-				$ipath = 'f:'.$link->path;
+			if (!preg_match('#^(f|b):#', $ipath)) {
+				$ipath = 'f:'.$ipath;
 			}
 
 			// Rewrite link
 			foreach (self::$_routes as $ilink => $route) {
-				if (preg_match('#^'. strtr(preg_quote($ilink, '#'), ['\\*' => '.*', '\\?' => '.', '\\{' => '(', '\\}' => ')', ',' => '|']) .'$#i', $ipath)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
+				if (preg_match('#^'. strtr(preg_quote($ilink, '#'), ['\\*' => '.+', '\\?' => '.', '\\{' => '(', '\\}' => ')', ',' => '|']) .'$#i', $ipath)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
 					if (isset($route['rewrite']) && is_callable($route['rewrite'])) {
 						if ($rewritten_link = call_user_func_array($route['rewrite'], [$link, $language_code])) {
 							$link = $rewritten_link;
@@ -352,7 +362,7 @@
 			if (isset($_SERVER['HTTP_MOD_REWRITE']) && filter_var($_SERVER['HTTP_MOD_REWRITE'], FILTER_VALIDATE_BOOLEAN)) { // PHP-FPM
 				$use_rewrite = true;
 
-			} elseif (isset($_SERVER['REDIRECT_HTTP_MOD_REWRITE']) && filter_var($_SERVER['REDIRECT_HTTP_MOD_REWRITE'], FILTER_VALIDATE_BOOLEAN)) {  // Fast CGI
+			} else if (isset($_SERVER['REDIRECT_HTTP_MOD_REWRITE']) && filter_var($_SERVER['REDIRECT_HTTP_MOD_REWRITE'], FILTER_VALIDATE_BOOLEAN)) {  // Fast CGI
 				$use_rewrite = true;
 
 			} else if (function_exists('apache_get_modules') && in_array('mod_rewrite', apache_get_modules())) {

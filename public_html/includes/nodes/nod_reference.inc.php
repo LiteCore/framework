@@ -28,7 +28,7 @@
 
 					$class_name = 'ref_'.$resource;
 
-						//self::$_cache[$resource][$checksum] = new $class_name(...$arguments); // As of PHP 5.6
+					//self::$_cache[$resource][$checksum] = new $class_name(...$arguments); // As of PHP 5.6
 					$reflect = new ReflectionClass($class_name);
 					self::$_cache[$resource][$checksum] = $reflect->newInstanceArgs($arguments);
 
@@ -42,7 +42,7 @@
 				case (!$component && is_file('app://includes/entities/ent_'.basename($resource).'.inc.php')):
 
 					$class_name = 'ent_'.$resource;
-					$object = new $class_name(fallback($arguments[0]));
+					$object = new $class_name($arguments[0]);
 
 					self::$_cache[$resource][$checksum] = (object)$object->data;
 

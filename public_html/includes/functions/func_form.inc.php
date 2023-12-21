@@ -46,11 +46,24 @@
 		return '';
 	}
 
+	function form_parameters($parameters) {
+
+		if (is_array($parameters)) {
+			$parameters = implode(' ', array_map(function($attribute, $value) {
+				return $attribute .'="'. functions::escape_html($value) .'"';
+			}, array_keys($parameters), $parameters));
+		}
+
+		return $parameters;
+	}
+
 	function form_button($name, $value, $type='submit', $parameters='', $fonticon='') {
 
 		if (!is_array($value)) {
 			$value = [$value, $value];
 		}
+
+		$parameters = form_parameters($parameters);
 
 		return '<button'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="btn btn-default"' : '') .' type="'. functions::escape_html($type) .'" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'"'. ($parameters ? ' '. $parameters : '') .'>'. ((!empty($fonticon)) ? functions::draw_fonticon($fonticon) . ' ' : '') . (isset($value[1]) ? $value[1] : $value[0]) .'</button>';
 	}
@@ -61,9 +74,11 @@
 
 	function form_dropdown($name, $options=[], $input=true, $parameters='') {
 
-		$html = '<div class="dropdown"'. ($parameters ? ' ' . $parameters : '') .'>' . PHP_EOL
-					. '  <div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>' . PHP_EOL
-					. '  <ul class="dropdown-menu">' . PHP_EOL;
+		$html = implode(PHP_EOL, [
+			'<div class="dropdown"'. ($parameters ? ' ' . $parameters : '') .'>',
+			'  <div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>',
+			'  <ul class="dropdown-menu">',
+		]);
 
 		$is_numerical_index = (array_keys($options) === range(0, count($options) - 1));
 
@@ -80,7 +95,7 @@
 			if (preg_match('#\[\]$#', $name)) {
 				$html .= '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
 			} else {
-				$html .= '<li class="option">' . functions::form_input_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
+				$html .= '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
 			}
 		}
 
@@ -92,10 +107,12 @@
 
 	function form_input_captcha($name, $id, $parameters='') {
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-text" style="padding: 0;">'. functions::captcha_generate(100, 40, 4, $id, 'numbers', 'align="absbottom"') .'</span>' . PHP_EOL
-				 . '  ' . form_input_text('captcha', '', $parameters . ' autocomplete="off" style="font-size: 24px; padding: 0; text-align: center;"') . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-text" style="padding: 0;">'. functions::captcha_generate(100, 40, 4, $id, 'numbers', 'align="absbottom"') .'</span>',
+			'  ' . form_input_text('captcha', '', $parameters . ' autocomplete="off" style="font-size: 24px; padding: 0; text-align: center;"'),
+			'</div>',
+		]);
 	}
 
 	function form_checkbox($name, $value, $input=true, $parameters='') {
@@ -106,10 +123,12 @@
 				$input = form_reinsert_value($name, $value[0]);
 			}
 
-			return '<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>' . PHP_EOL
-			. '  <input type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>' . PHP_EOL
-				. '  ' . (isset($value[1]) ? $value[1] : $value[0]) . PHP_EOL
-				. '</label>';
+			return implode(PHP_EOL, [
+				'<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>',
+				'  <input type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>',
+				'  ' . (isset($value[1]) ? $value[1] : $value[0]),
+				'</label>',
+			]);
 		}
 
 		if ($input === true) {
@@ -295,10 +314,12 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-envelope-o fa-fw') .'</span>' . PHP_EOL
-				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="email" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>'
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-envelope-o fa-fw') .'</span>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="email" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>',
+			'</div>',
+		]);
 	}
 
 	function form_input_file($name, $parameters='') {
@@ -311,10 +332,12 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-icon">'. functions::draw_fonticon($icon) .'</span>' . PHP_EOL
-				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="'. functions::escape_html($type) .'" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>' . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-icon">'. functions::draw_fonticon($icon) .'</span>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="'. functions::escape_html($type) .'" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>',
+			'</div>',
+		]);
 	}
 
 	function form_input_hidden($name, $input=true, $parameters='') {
@@ -360,10 +383,12 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-key fa-fw') .'</span>' . PHP_EOL
-				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="password" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>'
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-key fa-fw') .'</span>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="password" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>',
+			'</div>',
+		]);
 	}
 
 	function form_input_phone($name, $input=true, $parameters='') {
@@ -372,13 +397,15 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-phone fa-fw') .'</span>' . PHP_EOL
-				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="tel" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" pattern="^\+?([0-9]|-| )+$"'. (($parameters) ? ' '.$parameters : '') .'>'
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-phone fa-fw') .'</span>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="tel" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" pattern="^\+?([0-9]|-| )+$"'. (($parameters) ? ' '.$parameters : '') .'>',
+			'</div>',
+		]);
 	}
 
-	function form_input_radio_button($name, $value, $input=true, $parameters='') {
+	function form_radio_button($name, $value, $input=true, $parameters='') {
 
 		if (is_array($value)) {
 
@@ -386,10 +413,12 @@ END;
 				$input = form_reinsert_value($name, $value[0]);
 			}
 
-			return '<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>' . PHP_EOL
-					. '  <input type="radio" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>' . PHP_EOL
-					. '  ' . (isset($value[1]) ? $value[1] : $value[0]) . PHP_EOL
-					. '</label>';
+			return implode(PHP_EOL, [
+				'<label'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .'>',
+				'  <input type="radio" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value[0]) .'" '. (!strcmp($input, $value[0]) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>',
+				'  ' . (isset($value[1]) ? $value[1] : $value[0]),
+				'</label>',
+			]);
 		}
 
 		if ($input === true) {
@@ -399,7 +428,7 @@ END;
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .' type="radio" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value) .'" '. (!strcmp($input, $value) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>';
 	}
 
-	function form_range_slider($name, $input=true, $min='', $max='', $step='', $parameters='') {
+	function form_input_range($name, $input=true, $min='', $max='', $step='', $parameters='') {
 
 		if ($input === true) {
 			$input = form_reinsert_value($name);
@@ -410,11 +439,6 @@ END;
 
 	function form_regional($name, $language_code='', $input=true, $type='text', $parameters='') {
 
-		if (preg_match('#^[a-z]{2}$#', $name)) {
-			trigger_error('Passing $language code as 1st parameter in form_regional() is deprecated. Instead, use form_regional_input($name, $language_code, $input, $parameters)', E_USER_DEPRECATED);
-			list($name, $language_code) = [$language_code, $name];
-		}
-
 		if (empty($language_code)) {
 			$language_code = settings::get('site_language_code');
 		}
@@ -423,10 +447,12 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
-				 . '  <input class="form-input" name="'. functions::escape_html($name) .'" type="'. functions::escape_html($type) .'" value="'. functions::escape_html($input) .'">' . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>',
+			'  <input class="form-input" name="'. functions::escape_html($name) .'" type="'. functions::escape_html($type) .'" value="'. functions::escape_html($input) .'">',
+			'</div>'
+		]);
 	}
 
 	function form_regional_text($name, $language_code='', $input=true, $parameters='') {
@@ -435,10 +461,12 @@ END;
 			$language_code = settings::get('site_language_code');
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
-				 . '  ' . form_input_text($name, $input, $parameters) . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>',
+			'  ' . form_input_text($name, $input, $parameters),
+			'</div>',
+		]);
 	}
 
 	function form_regional_textarea($name, $language_code='', $input=true, $parameters='') {
@@ -447,10 +475,12 @@ END;
 			$language_code = settings::get('site_language_code');
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
-				 . '  ' . form_textarea($name, $input, $parameters) . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>',
+			'  ' . form_textarea($name, $input, $parameters),
+			'</div>',
+		]);
 	}
 
 	function form_regional_wysiwyg($name, $language_code='', $input=true, $parameters='') {
@@ -459,10 +489,12 @@ END;
 			$language_code = settings::get('site_language_code');
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>' . PHP_EOL
-				 . '  ' . form_input_wysiwyg($name, $input, $parameters) . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-text" style="font-family: monospace;" title="'. functions::escape_html(language::$languages[$language_code]['name']) .'">'. functions::escape_html($language_code) .'</span>',
+			'  ' . form_input_wysiwyg($name, $input, $parameters),
+			'</div>',
+		]);
 	}
 
 	function form_input_search($name, $input=true, $parameters='') {
@@ -471,10 +503,12 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-search fa-fw') .'</span>' . PHP_EOL
-				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="search" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>' . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-search fa-fw') .'</span>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="search" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>',
+			'</div>',
+		]);
 	}
 
 	function form_input_text($name, $input=true, $parameters='') {
@@ -510,10 +544,12 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  <span class="input-group-icon">'. functions::draw_fonticon('fa-user fa-fw') .'</span>' . PHP_EOL
-				 . '  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>'
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-user fa-fw') .'</span>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'"'. (($parameters) ? ' '.$parameters : '') .'>',
+			'</div>',
+		]);
 	}
 
 	function form_input_wysiwyg($name, $input=true, $parameters='') {
@@ -522,36 +558,42 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		document::$snippets['head_tags']['trumbowyg'] = '<link href="'. document::href_rlink('app://assets/trumbowyg/ui/trumbowyg.min.css') .'" rel="stylesheet">' . PHP_EOL
-														. '<link href="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css') .'" rel="stylesheet">'
-														. '<link href="'. document::href_rlink('app://assets/trumbowyg/plugins/table/ui/trumbowyg.table.min.css') .'" rel="stylesheet">';
+		document::$snippets['head_tags']['trumbowyg'] = implode(PHP_EOL, [
+			'<link rel="stylesheet" href="'. document::href_rlink('app://assets/trumbowyg/ui/trumbowyg.min.css') .'">',
+			'<link rel="stylesheet" href="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css') .'">',
+			'<link rel="stylesheet" href="'. document::href_rlink('app://assets/trumbowyg/plugins/table/ui/trumbowyg.table.min.css') .'">',
+		]);
 
-		document::$snippets['foot_tags']['trumbowyg'] = '<script src="'. document::href_rlink('app://assets/trumbowyg/trumbowyg.min.js') .'"></script>' . PHP_EOL
-														. ((language::$selected['code'] != 'en') ? '<script src="'. document::href_rlink('app://assets/trumbowyg/langs/'. language::$selected['code'] .'.min.js') .'"></script>' . PHP_EOL : '')
-														. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/trumbowyg.colors.min.js') .'"></script>' . PHP_EOL
-														. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.min.js') .'"></script>' . PHP_EOL
-														. '<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/table/trumbowyg.table.min.js') .'"></script>';
+		document::$snippets['foot_tags']['trumbowyg'] = implode(PHP_EOL, [
+			'<script src="'. document::href_rlink('app://assets/trumbowyg/trumbowyg.min.js') .'"></script>',
+			(language::$selected['code'] != 'en') ? '<script src="'. document::href_rlink('app://assets/trumbowyg/langs/'. language::$selected['code'] .'.min.js') .'"></script>' : '',
+			'<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/trumbowyg.colors.min.js') .'"></script>',
+			'<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.min.js') .'"></script>',
+			'<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/table/trumbowyg.table.min.js') .'"></script>',
+		]);
 
-		document::$snippets['javascript'][] = '  $(\'textarea[name="'. $name .'"]\').trumbowyg({' . PHP_EOL
-																				. '    btns: [["viewHTML"], ["formatting"], ["strong", "em", "underline", "del"], ["foreColor", "backColor"], ["link"], ["insertImage"], ["table"], ["justifyLeft", "justifyCenter", "justifyRight"], ["lists"], ["preformatted"], ["horizontalRule"], ["removeformat"], ["fullscreen"]],' . PHP_EOL
-																				. '    btnsDef: {' . PHP_EOL
-																				. '      lists: {' . PHP_EOL
-																				. '        dropdown: ["unorderedList", "orderedList"],' . PHP_EOL
-																				. '        title: "Lists",' . PHP_EOL
-																				. '        ico: "unorderedList",' . PHP_EOL
-																				. '      }' . PHP_EOL
-																				. '    },' . PHP_EOL
-																				. '    plugins: {' . PHP_EOL
-																				. '      upload: {' . PHP_EOL
-																				. '        serverPath: "'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.php') .'",' . PHP_EOL
-																				. '      }' . PHP_EOL
-																				. '    },' . PHP_EOL
-																				. '    lang: "'. language::$selected['code'] .'",' . PHP_EOL
-																				. '    autogrowOnEnter: true,' . PHP_EOL
-																				. '    imageWidthModalEdit: true,' . PHP_EOL
-																				. '    removeformatPasted: true,' . PHP_EOL
-																				. '    semantic: false' . PHP_EOL
-																				. '  });';
+		document::$snippets['javascript'][] = implode(PHP_EOL, [
+			'  $(\'textarea[name="'. $name .'"]\').trumbowyg({',
+			'    btns: [["viewHTML"], ["formatting"], ["strong", "em", "underline", "del"], ["foreColor", "backColor"], ["link"], ["insertImage"], ["table"], ["justifyLeft", "justifyCenter", "justifyRight"], ["lists"], ["preformatted"], ["horizontalRule"], ["removeformat"], ["fullscreen"]],',
+			'    btnsDef: {',
+			'      lists: {',
+			'        dropdown: ["unorderedList", "orderedList"],',
+			'        title: "Lists",',
+			'        ico: "unorderedList",',
+			'      }',
+			'    },',
+			'    plugins: {',
+			'      upload: {',
+			'        serverPath: "'. document::href_rlink('app://assets/trumbowyg/plugins/upload/trumbowyg.upload.php') .'",',
+			'      }',
+			'    },',
+			'    lang: "'. language::$selected['code'] .'",',
+			'    autogrowOnEnter: true,',
+			'    imageWidthModalEdit: true,',
+			'    removeformatPasted: true,',
+			'    semantic: false',
+			'  });'
+		]);
 
 		return '<textarea name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. functions::escape_html($input) .'</textarea>';
 	}
@@ -746,9 +788,11 @@ END;
 				}
 			}
 
-			$html .= '  <label class="btn btn-default'. ($input == $option[0] ? ' active' : '') .'">' . PHP_EOL
-						 . '    <input type="radio" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($option[0]) .'"'. (!strcmp($input, $option[0]) ? ' checked' : '') . (!empty($option[2]) ? ' '. $option[2] : '') .'>'. $option[1]
-						 . '  </label>'. PHP_EOL;
+			$html .= implode(PHP_EOL, [
+				'  <label class="btn btn-default'. ($input == $option[0] ? ' active' : '') .'">',
+				'    <input type="radio" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($option[0]) .'"'. (!strcmp($input, $option[0]) ? ' checked' : '') . (!empty($option[2]) ? ' '. $option[2] : '') .'>'. $option[1],
+				'  </label>',
+			]);
 		}
 
 		$html .= '</div>';
@@ -838,7 +882,7 @@ END;
 			case 'radio':
 				$html = '';
 				foreach ($options as $option) {
-					$html .= form_input_radio_button($name, [$option, $option], $input, $parameters);
+					$html .= form_radio_button($name, [$option, $option], $input, $parameters);
 				}
 				return $html;
 
@@ -866,7 +910,7 @@ END;
 			case 'radio':
 				$html = '';
 				for ($i=0; $i<count($options); $i++) {
-					$html .= '<div class="radio"><label>'. form_input_radio_button($name, $options[$i], $input, $parameters) .' '. $options[$i] .'</label></div>';
+					$html .= '<div class="radio"><label>'. form_radio_button($name, $options[$i], $input, $parameters) .' '. $options[$i] .'</label></div>';
 				}
 				return $html;
 
@@ -1042,10 +1086,12 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		return '<div class="form-input"'. ($parameters ? ' ' . $parameters : '') .'>' . PHP_EOL
-				 . '  ' . form_input_hidden($name, true) . PHP_EOL
-				 . '  <span class="value">'. (!empty($input) ? $input : '('. language::translate('title_none', 'None') .')') .'</span> <a href="'. document::href_ilink('b:files/file_picker') .'" data-toggle="lightbox" class="btn btn-default btn-sm" style="margin-inline-start: 5px;">'. language::translate('title_change', 'Change') .'</a>' . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="form-input"'. ($parameters ? ' ' . $parameters : '') .'>',
+			'  ' . form_input_hidden($name, true),
+			'  <span class="value">'. (!empty($input) ? $input : '('. language::translate('title_none', 'None') .')') .'</span> <a href="'. document::href_ilink('b:files/file_picker') .'" data-toggle="lightbox" class="btn btn-default btn-sm" style="margin-inline-start: 5px;">'. language::translate('title_change', 'Change') .'</a>',
+			'</div>',
+		]);
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="file" name="'. functions::escape_html($name) .'"'. (($parameters) ? ' '.$parameters : '') .'>';
 	}
@@ -1058,9 +1104,9 @@ END;
 
 		$options = [];
 
-		foreach (glob(FS_DIR_APP . $glob) as $file) {
-			$file = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $file);
-			if (is_dir(FS_DIR_APP . $file)) {
+		foreach (functions::file_search($glob) as $file) {
+			$file = preg_replace('#^'. preg_quote('app://', '#') .'#', '', $file);
+			if (is_dir('app://' . $file)) {
 				$options[] = [basename($file).'/', $file.'/'];
 			} else {
 				$options[] = [basename($file), $file];

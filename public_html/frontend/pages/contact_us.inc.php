@@ -1,24 +1,12 @@
 <?php
-	document::$snippets['title'][] = language::translate('contact:head_title', 'Contact');
+	document::$snippets['title'][] = language::translate('contact:head_title', 'Contact Us');
 	document::$snippets['description'] = language::translate('contact:meta_description', '');
 
-	if (!empty($_GET['page_id'])) {
-		breadcrumbs::add(language::translate('title_contact', 'Contact'), document::ilink('contact'));
-	} else {
-		breadcrumbs::add(language::translate('title_contact', 'Contact'));
-	}
+	breadcrumbs::add(language::translate('title_contact_us', 'Contact Us'));
 
 	if (!empty($_POST['send'])) {
 
 		try {
-
-			if (settings::get('captcha_enabled')) {
-				$captcha = functions::captcha_get('contact_us');
-
-				if (empty($captcha) || $captcha != $_POST['captcha']) {
-					throw new Exception(language::translate('error_invalid_captcha', 'Invalid CAPTCHA given'));
-				}
-			}
 
 			if (empty($_POST['firstname'])) {
 				throw new Exception(language::translate('error_missing_firstname', 'You must provide a firstname'));
@@ -38,6 +26,14 @@
 
 			if (empty($_POST['message'])) {
 				throw new Exception(language::translate('error_missing_message', 'You must provide a message'));
+			}
+		
+			if (settings::get('captcha_enabled')) {
+				$captcha = functions::captcha_get('contact_us');
+
+				if (empty($captcha) || $captcha != $_POST['captcha']) {
+					throw new Exception(language::translate('error_invalid_captcha', 'Invalid CAPTCHA given'));
+				}
 			}
 
 			$message = strtr(language::translate('email_user_feedback', "** This is an email message from %sender_name <%sender_email> **\r\n\r\n%message"), [
@@ -131,7 +127,7 @@
 				<div class="card-body">
 					<p class="address"><?php echo nl2br(settings::get('store_postal_address')); ?></p>
 
-					<?php if (settings::get('store_phone')) { ?>
+					<?php if (settings::get('site_phone')) { ?>
 					<p class="phone"><?php echo functions::draw_fonticon('fa-phone'); ?> <a href="tel:<?php echo settings::get('store_phone'); ?>"><?php echo settings::get('store_phone'); ?></a></p>
 					<?php } ?>
 

@@ -348,6 +348,24 @@
 			return $rows;
 		}
 
+		public function fetch_custom($function, $index_column=null) {
+
+			$timestamp = microtime(true);
+
+			$rows = [];
+			while ($row = mysqli_fetch_assoc($this->_result)) {
+				$rows[] = $function($row);
+			}
+
+			if ($index_column) {
+				$rows = array_column($rows, null, $index_column);
+			}
+
+			database::$stats['duration'] += microtime(true) - $timestamp;
+
+			return $rows;
+		}
+
 		public function fetch_page($page, $items_per_page=null, &$num_rows=null, &$num_pages=null) {
 
 			$timestamp = microtime(true);

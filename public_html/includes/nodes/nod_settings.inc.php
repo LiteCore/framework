@@ -13,26 +13,30 @@
 
 			while ($setting = database::fetch($settings_query)) {
 
-				if (substr($setting['function'], 0, 9) == 'regional_') {
+				switch (true) {
 
-					if (!class_exists('langauge', false) || empty(language::$selected)) continue;
+					case (substr($setting['function'], 0, 9) == 'regional_'):
 
-					if ($setting['value']) {
-						$setting['value'] = json_decode($setting['value'], true);
+						if (!class_exists('language') || empty(language::$selected)) continue 2;
 
-						if (isset($setting['value'][language::$selected['code']])) {
-							$setting['value'] = $setting['value'][language::$selected['code']];
+						if ($setting['value']) {
+							$setting['value'] = json_decode($setting['value'], true);
 
-						} else if (isset($value['en'])) {
-							$setting['value'] = $setting['value']['en'];
+							if (!empty($setting['value'][language::$selected['code']])) {
+								$setting['value'] = $setting['value'][language::$selected['code']];
+
+							} else if (!empty($setting['value']['en'])) {
+								$setting['value'] = $setting['value']['en'];
+
+							} else {
+								$setting['value'] = '';
+							}
 
 						} else {
 							$setting['value'] = '';
 						}
 
-					} else {
-						$setting['value'] = '';
-					}
+						break;
 				}
 
 				self::$_cache[$setting['key']] = $setting['value'];
@@ -50,44 +54,50 @@
 
 			if (isset(self::$_cache[$key])) return self::$_cache[$key];
 
-			$settings_query = database::query(
-				"select * from ". DB_TABLE_PREFIX ."settings
+			$setting = database::query(
+				"select `key`, `value`, `function`
+				from ". DB_TABLE_PREFIX ."settings
 				where `key` = '". database::input($key) ."'
 				limit 1;"
-			);
+			)->fetch();
 
-			if (!database::num_rows($settings_query)) {
-				
+			if (!$setting) {
+
 				if ($fallback === null) {
 					trigger_error('Unsupported settings key ('. $key .')', E_USER_WARNING);
 				}
-			
+
 				return $fallback;
 			}
 
-			while ($setting = database::fetch($settings_query)) {
+			switch (true) {
 
-				if (substr($setting['function'], 0, 9) == 'regional_') {
+				case (substr($setting['function'], 0, 9) == 'regional_'):
+
+					if (!class_exists('language') || empty(language::$selected)) return;
 
 					if ($setting['value']) {
 						$setting['value'] = json_decode($setting['value'], true);
+
+						if (!empty($setting['value'][language::$selected['code']])) {
+							$setting['value'] = $setting['value'][language::$selected['code']];
+
+						} else if (!empty($value['en'])) {
+							$setting['value'] = $setting['value']['en'];
+
+						} else {
+							$setting['value'] = '';
+						}
+
 					} else {
 						$setting['value'] = [];
 					}
 
-					if (isset($setting['value'][language::$selected['code']])) {
-						return self::$_cache[$key] = $setting['value'][language::$selected['code']];
+					break;
 
-					} else if (isset($value['en'])) {
-						return self::$_cache[$key] = $setting['value']['en'];
-
-					} else {
-						return self::$_cache[$key] = '';
-					}
-				}
-
-				return self::$_cache[$key] = $setting['value'];
 			}
+
+			return self::$_cache[$key] = $setting['value'];
 		}
 
 		public static function set($key, $value) {

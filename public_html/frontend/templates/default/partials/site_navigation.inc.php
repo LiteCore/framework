@@ -3,7 +3,7 @@
 
 		<div class="navbar-header">
 			<a class="logotype" href="<?php echo document::href_ilink(''); ?>">
-				<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>" />
+				<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>">
 			</a>
 
 			<button type="button" class="btn btn-default navbar-toggler hidden-md hidden-lg hidden-xl hidden-xxl" data-toggle="offcanvas" data-target="#offcanvas">
@@ -27,29 +27,8 @@
 							<?php echo functions::draw_fonticon('fa-home hidden-xs hidden-sm'); ?> <span class="hidden-md hidden-lg hidden-xl hidden-xxl"><?php echo language::translate('title_home', 'Home'); ?></span>
 						</a>
 					</li>
-
-					<?php foreach ($items as $item) { ?>
-					<li class="nav-item" data-id="<?php echo functions::escape_html($item['id']); ?>">
-						<a class="nav-link" href="<?php echo functions::escape_html($item['link']); ?>">
-							<?php echo $item['title']; ?>
-						</a>
-					</li>
-					<?php } ?>
-
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Dropdown</a>
-						<ul class="dropdown-menu">
-							<li class="dropdown-item">
-								<a class="nav-link href="#">Item 1</a>
-							</li>
-							<li class="dropdown-item">
-								<a class="nav-link href="#">Item 2</a>
-							</li>
-							<li class="dropdown-item">
-								<a class="nav-link href="#">Item 3</a>
-							</li>
-						</ul>
-					</li>
+				
+					<foreach ($items as $item) echo $draw_menu_item($item); ?>
 				</ul>
 
 				<ul class="navbar-nav">

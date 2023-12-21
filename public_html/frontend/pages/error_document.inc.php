@@ -56,10 +56,10 @@
 	font-weight: bold;
 }
 #box-error-document .title {
-	font-size: 48px;
+	font-size: 36px;
 }
 #box-error-document .description {
-	font-size: 24px;
+	font-size: 18px;
 }
 </style>
 

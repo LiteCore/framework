@@ -29,6 +29,7 @@
 	if (isset($_POST['save'])) {
 
 		try {
+
 			foreach (array_keys($module->data['settings']) as $key) {
 				if (in_array($key, array('id', 'date_updated', 'date_created'))) continue;
 				$module->data['settings'][$key] = isset($_POST['settings'][$key]) ? $_POST['settings'][$key] : '';
@@ -118,17 +119,17 @@
 			</table>
 
 			<div class="card-action">
-					<?php echo functions::form_button('save', language::translate('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
-					<?php if (!empty($module->data['id'])) echo functions::form_button('uninstall', language::translate('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger" onclick="if (!confirm(&quot;'. language::translate('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete'); ?>
-					<?php echo functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1)"', 'cancel'); ?>
+				<?php echo functions::form_button('save', language::translate('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
+				<?php if (!empty($module->data['id'])) echo functions::form_button('uninstall', language::translate('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger" onclick="if (!confirm(&quot;'. language::translate('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete'); ?>
+				<?php echo functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1)"', 'cancel'); ?>
 			</div>
 
 		<?php echo functions::form_end(); ?>
 
 		<?php if (!empty($module->data['last_log'])) { ?>
-		<div id="box-last-log" style="margin-top: 2em">
+		<div id="box-last-log">
 			<h2><?php echo language::translate('title_last_log', 'Last Log'); ?></h2>
-			<pre class="form-input" style="margin-bottom: 0;"><?php echo $module->data['last_log']; ?></pre>
+			<pre class="form-input"><?php echo $module->data['last_log']; ?></pre>
 		</div>
 		<?php } ?>
 	</div>

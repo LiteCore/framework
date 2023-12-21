@@ -16,34 +16,38 @@
 
 			if (!$module) return;
 
-				// Create object
-				$object = new $module['module_id'];
-				$object->id = $module['module_id']; // Set ID
+			// Create object
+			$object = new $module['module_id'];
+			$object->id = $module['module_id']; // Set ID
 
-				// Decode settings
-				$settings = json_decode($module['settings'], true);
+			// Decode settings
+			$settings = json_decode($module['settings'], true);
 
-				// Set settings to object
-				$object->settings = [];
-				foreach ($object->settings() as $setting) {
-					$setting['key'] = rtrim($setting['key'], '[]');
-					$object->settings[$setting['key']] = fallback($settings[$setting['key']], $setting['default_value']);
-				}
-
-				$object->status = (isset($object->settings['status']) && in_array(strtolower($object->settings['status']), ['1', 'active', 'enabled', 'on', 'true', 'yes'])) ? 1 : 0;
-				$object->priority = isset($object->settings['priority']) ? (int)$object->settings['priority'] : 0;
-
-				if ($type == 'jobs') {
-					$object->date_pushed = $module['date_pushed'];
-					$object->date_processed = $module['date_processed'];
-				}
-
-				$this->_object = $object;
+			// Set settings to object
+			$object->settings = [];
+			foreach ($object->settings() as $setting) {
+				$setting['key'] = rtrim($setting['key'], '[]');
+				$object->settings[$setting['key']] = fallback($settings[$setting['key']], $setting['default_value']);
 			}
+
+			$object->status = (isset($object->settings['status']) && in_array(strtolower($object->settings['status']), ['1', 'active', 'enabled', 'on', 'true', 'yes'])) ? 1 : 0;
+			$object->priority = isset($object->settings['priority']) ? (int)$object->settings['priority'] : 0;
+
+			if ($type == 'jobs') {
+				$object->date_pushed = $module['date_pushed'];
+				$object->date_processed = $module['date_processed'];
+			}
+
+			$this->_object = $object;
 		}
 
 		public function __call($name) {
-			return method_exists($name, $this->_object) ? call_user_func_array([$this->_object, $name], array_slice(func_get_args() 1)) : null;
+
+			if (!method_exists($name, $this->_object)) {
+				return;
+			}
+
+			return call_user_func_array([$this->_object, $name], array_slice(func_get_args(), 1));
 		}
 
 		public function &__get($name) {

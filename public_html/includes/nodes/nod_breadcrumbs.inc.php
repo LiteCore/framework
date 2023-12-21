@@ -14,7 +14,7 @@
 		public static function after_capture() {
 
 			if (count(self::$data) > 1) {
-				$breadcrumbs = new ent_view(FS_DIR_TEMPLATE . 'partials/breadcrumbs.inc.php');
+				$breadcrumbs = new ent_view('app://frontend/templates/'.settings::get('template').'/partials/breadcrumbs.inc.php');
 
 				$breadcrumbs->snippets['breadcrumbs'] = [];
 				foreach (self::$data as $breadcrumb) {

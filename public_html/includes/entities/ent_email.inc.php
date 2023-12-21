@@ -76,8 +76,8 @@
 			if (empty($this->data['id'])) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."emails
-					(status, code, date_created) values
-					('". database::input($this->data['status']) ."', '". database::input($this->data['code']) ."', '". ($this->data['date_created'] = date('Y-m-d H:i:s')) ."');"
+					(status, code, ip_address, hostname, user_agent, date_created) values
+					('". database::input($this->data['status']) ."', '". database::input($this->data['code']) ."', '". database::input($_SERVER['REMOTE_ADDR']) ."', '". database::input(gethostbyaddr($_SERVER['REMOTE_ADDR'])) ."', '". database::input($_SERVER['HTTP_USER_AGENT']) ."', '". ($this->data['date_created'] = date('Y-m-d H:i:s')) ."');"
 				);
 
 				$this->data['id'] = database::insert_id();
@@ -168,11 +168,11 @@
 
 			$this->data['multiparts'][] = [
 				'headers' => [
-					'Content-Type' => $mime_type,
+					'Content-Type' => $mime_type .'; name="'. basename($filename) . '"',
 					'Content-Disposition' => 'attachment; filename="'. basename($filename) . '"',
 					'Content-Transfer-Encoding' => 'base64',
 				],
-				'body' => chunk_split(base64_encode($data)) . "\r\n\r\n",
+				'body' => chunk_split(base64_encode($data)),
 			];
 
 			return $this;
@@ -261,6 +261,18 @@
 			cache::clear_cache('email');
 		}
 
+		public function queue($scheduled, $code=null) {
+
+			$this->data['status'] = 'scheduled';
+			$this->data['date_scheduled'] = date('Y-m-d H:i:s', strtotime($scheduled));
+			$this->data['code'] = $code;
+			$this->save();
+
+			if (strtotime($scheduled) < time()) {
+				$this->send();
+			}
+		}
+
 		public function send() {
 
 			if (!settings::get('email_status')) return;
@@ -318,7 +330,7 @@
 			if (count($this->data['multiparts']) > 1) {
 				foreach ($this->data['multiparts'] as $multipart) {
 					$body .= '--'. $multipart_boundary_string . "\r\n"
-								 . implode("\r\n", array_map(function($v, $k) { return $k.':'.$v; }, $multipart['headers'], array_keys($multipart['headers']))) . "\r\n"
+								 . implode("\r\n", array_map(function($v, $k) { return $k.':'.$v; }, $multipart['headers'], array_keys($multipart['headers']))) . "\r\n\r\n"
 								 . $multipart['body'] . "\r\n\r\n";
 				}
 

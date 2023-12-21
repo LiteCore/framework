@@ -9,7 +9,25 @@
 			'items' => [],
 		];
 
+		$site_navigation->snippets['items'][] = [
+			'id' => 'home',
+			'name' => functions::draw_fonticon('fa-home'),
+			'link' => document::ilink(''),
+			'priority' => -1,
+		];
 
+		$site_navigation->snippets['items'][] = [
+			'id' => 'contact-us',
+			'name' => language::translate('title_contact_us', 'Contact Us'),
+			'link' => document::ilink('contact_us'),
+			'priority' => 99,
+		];
+		uasort($site_navigation->snippets['items'], function($a, $b) {
+			if (!isset($a['priority'])) $a['priority'] = 0;
+			if (!isset($b['priority'])) $b['priority'] = 0;
+			if ($a['priority'] == $b['priority']) return;
+			return ($a['priority'] < $b['priority']) ? -1 : 1;
+		});
 
 		cache::set($site_navigation_cache_token, $site_navigation->snippets);
 	}

@@ -1,8 +1,8 @@
 <?php
 
 	document::$layout = 'blank';
-	
-	document::$snippets['head_tags'][] = '<meta name="viewport" content="width=device-width, initial-scale=1" />';
+
+	document::$snippets['head_tags'][] = '<meta name="viewport" content="width=device-width, initial-scale=1">';
 
 	header('X-Robots-Tag: noindex');
 
@@ -166,5 +166,5 @@
 		}
 	}
 
-	$page_login = new ent_view(FS_DIR_TEMPLATE . 'pages/login.inc.php');
+	$page_login = new ent_view('app://backend/template/pages/login.inc.php');
 	echo $page_login;

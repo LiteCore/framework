@@ -1,7 +1,7 @@
 <?php
 
 	header('X-Robots-Tag: noindex');
-	document::$head_tags['noindex'] = '<meta name="robots" content="noindex" />';
+	document::$head_tags['noindex'] = '<meta name="robots" content="noindex">';
 
 	user::require_login();
 
