@@ -27,7 +27,7 @@
 			if (empty($_POST['message'])) {
 				throw new Exception(language::translate('error_missing_message', 'You must provide a message'));
 			}
-		
+
 			if (settings::get('captcha_enabled')) {
 				$captcha = functions::captcha_get('contact_us');
 
@@ -84,18 +84,18 @@
 						<div class="row">
 							<div class="form-group col-md-6">
 								<label><?php echo language::translate('title_name', 'Name'); ?></label>
-								<?php echo functions::form_text_field('name', true, 'required'); ?>
+								<?php echo functions::form_input_text('name', true, 'required'); ?>
 							</div>
 
 							<div class="form-group col-md-6">
 								<label><?php echo language::translate('title_email_address', 'Email Address'); ?></label>
-								<?php echo functions::form_email_field('email', true, 'required'); ?>
+								<?php echo functions::form_input_email('email', true, 'required'); ?>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<label><?php echo language::translate('title_subject', 'Subject'); ?></label>
-							<?php echo functions::form_text_field('subject', true, 'required'); ?>
+							<?php echo functions::form_input_text('subject', true, 'required'); ?>
 						</div>
 
 						<div class="form-group">
@@ -106,7 +106,7 @@
 						<?php if (settings::get('captcha_enabled')) { ?>
 						<div class="form-group" style="max-width: 250px;">
 							<label><?php echo language::translate('title_captcha', 'CAPTCHA'); ?></label>
-							<?php echo functions::form_captcha_field('captcha', 'contact_us', 'required'); ?>
+							<?php echo functions::form_input_captcha('captcha', 'contact_us', 'required'); ?>
 						</div>
 						<?php } ?>
 

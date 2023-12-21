@@ -9,12 +9,12 @@
 			'items' => [],
 		];
 
-		$site_navigation->snippets['items'][] = [
-			'id' => 'home',
-			'name' => functions::draw_fonticon('fa-home'),
-			'link' => document::ilink(''),
-			'priority' => -1,
-		];
+		//$site_navigation->snippets['items'][] = [
+		//	'id' => 'home',
+		//	'name' => functions::draw_fonticon('fa-home'),
+		//	'link' => document::ilink(''),
+		//	'priority' => -1,
+		//];
 
 		$site_navigation->snippets['items'][] = [
 			'id' => 'contact-us',
