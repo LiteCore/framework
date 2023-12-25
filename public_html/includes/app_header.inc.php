@@ -39,3 +39,6 @@
 	// Jump-start some nodes
 	class_exists('notices');
 	class_exists('stats');
+
+	stats::$data['before_content'] = microtime(true) - SCRIPT_TIMESTAMP_START;
+	stats::$data['content'] = microtime(true);

@@ -1,7 +1,5 @@
 <?php
 
-	administrator::require_login();
-
 	breadcrumbs::reset();
 	breadcrumbs::add(language::translate('title_dashboard', 'Dashboard'), document::ilink(''));
 
@@ -57,7 +55,7 @@
 	// Display the start page
 	} else {
 
-		document::$snippets['title'][] = language::translate('title_dashboard', 'Dashboard');
+		document::$title[] = language::translate('title_dashboard', 'Dashboard');
 
 		if (settings::get('maintenance_mode')) {
 			notices::add('notices', language::translate('reminder_site_in_maintenance_mode', 'The site is in maintenance mode.'));

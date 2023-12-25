@@ -131,13 +131,14 @@
 		</ul>
 
 		<div id="content">
+			{{notices}}
 			{{content}}
 		</div>
 	</main>
 </div>
 
 {{foot_tags}}
-<script src="<?php echo document::href_rlink('app://frontend/templates/'. settings::get('template') .'/js/app.min.js'); ?>"></script>
+<script src="<?php echo document::href_rlink('app://backend/template/js/app.min.js'); ?>"></script>
 {{javascript}}
 
 <script>

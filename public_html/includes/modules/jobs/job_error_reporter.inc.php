@@ -2,7 +2,7 @@
 
 	#[AllowDynamicProperties]
 	class job_error_reporter extends abs_module {
-		public $id = __CLASS__;
+
 		public $name = 'Error Reporter';
 		public $description = '';
 		public $author = 'LiteCart Dev Team';

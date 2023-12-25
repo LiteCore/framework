@@ -4,23 +4,23 @@
 
 		switch (true) {
 
-			case (substr($class, 0, 4) == 'abs_'):
+			case (preg_match('#^abs_#', $class)):
 
 				require 'app://includes/abstracts/' . $class . '.inc.php';
 				break;
 
-			case (substr($class, -7) == '_client'):
+			case (preg_match('#_client$#', $class)):
 
 				require 'app://includes/clients/' . $class . '.inc.php';
 				break;
 
-			case (preg_match('#^(job)_#', $class)):
+			case (preg_match('#^job_#', $class)):
 
 				// Patch modules for PHP 8.2 Compatibility
 				if (version_compare(PHP_VERSION, 8.2, '>=')) {
 
 					$search_replace = [
-						'#^(job_.*)#' => 'app://includes/modules/jobs/$1.inc.php',
+						'#^job_.*$#' => 'app://includes/modules/jobs/$1.inc.php',
 					];
 
 					$file = preg_replace(array_keys($search_replace), array_values($search_replace), $class);
@@ -40,37 +40,37 @@
 					}
 				}
 
-				switch ($class) {
+				switch (true) {
 
-					case (substr($class, 0, 4) == 'job_'):
-						require vmod::check('app://includes/modules/jobs/' . $class . '.inc.php');
+					case (preg_match('#^job_#', $class)):
+						require 'app://includes/modules/jobs/' . $class . '.inc.php';
 						break;
 				}
 
 				break;
 
-			case (substr($class, 0, 4) == 'ent_'):
+			case (preg_match('#^ent_#', $class)):
 
 				require 'app://includes/entities/' . $class . '.inc.php';
 				break;
 
-			case (substr($class, 0, 4) == 'mod_'):
+			case (preg_match('#^mod_#', $class)):
 
 				require 'app://includes/modules/' . $class . '.inc.php';
 				break;
 
-			case (substr($class, 0, 4) == 'ref_'):
+			case (preg_match('#^ref_#', $class)):
 
 				require 'app://includes/references/' . $class . '.inc.php';
 				break;
 
-			case (substr($class, 0, 4) == 'url_'):
+			case (preg_match('#^url_#', $class)):
 
 				if (is_file($file = 'app://backend/routes/' . $class . '.inc.php')) require $file;
 				if (is_file($file = 'app://frontend/routes/' . $class . '.inc.php')) require $file;
 				break;
 
-			case (substr($class, 0, 5) == 'wrap_'):
+			case (preg_match('#^wrap_#', $class)):
 
 				require 'app://includes/wrappers/' . $class . '.inc.php';
 				break;
@@ -79,13 +79,13 @@
 
 				if (is_file($file = 'app://includes/nodes/nod_' . $class . '.inc.php')) {
 					require $file;
+
+					if (method_exists($class, 'init')) {
+						call_user_func([$class, 'init']); // As static classes do not have a __construct() (PHP #62860)
+					}
 				}
 
-				if (method_exists($class, 'init')) {
-					call_user_func([$class, 'init']); // As static classes do not have a __construct() (PHP #62860)
-				}
-
-				if (is_file($file = 'app://includes/nodes/' . $class . '.inc.php')) {
+				if (is_file($file = 'app://includes/classes/' . $class . '.inc.php')) {
 					require $file;
 				}
 

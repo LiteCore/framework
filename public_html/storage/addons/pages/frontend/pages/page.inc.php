@@ -18,15 +18,15 @@
 			return;
 		}
 
-		document::$snippets['title'][] = !empty($page->head_title) ? $page->head_title : $page->title;
-		document::$snippets['description'] = !empty($page->meta_description) ? $page->meta_description : '';
+		document::$title[] = !empty($page->head_title) ? $page->head_title : $page->title;
+		document::$description = !empty($page->meta_description) ? $page->meta_description : '';
 
 		foreach (array_slice($page->path, 0, -1, true) as $crumb) {
 			breadcrumbs::add($crumb->title, document::ilink('page', ['page_id' => $crumb->id]));
 		}
 		breadcrumbs::add($page->title);
 
-		$_page = new ent_view(FS_DIR_TEMPLATE . 'pages/page.inc.php');
+		$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/pages/page.inc.php');
 
 		$_page->snippets = [
 			'title' => $page->title,

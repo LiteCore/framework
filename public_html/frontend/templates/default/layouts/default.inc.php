@@ -13,6 +13,12 @@
 </head>
 <body>
 
+<?php if ($important_notice = settings::get('important_notice')) { ?>
+<div id="important-message">
+  <?php echo $important_notice; ?>
+</div>
+<?php } ?>
+
 <?php include 'app://frontend/partials/site_navigation.inc.php'; ?>
 
 {{content}}
@@ -22,7 +28,8 @@
 <?php include 'app://frontend/templates/'. settings::get('template') .'/partials/site_cookie_notice.inc.php'; ?>
 
 {{foot_tags}}
-<script src="<?php echo document::href_rlink(FS_DIR_TEMPLATE . 'js/app.min.js'); ?>"></script>
+<script src="<?php echo document::href_rlink('app://frontend/templates/'.settings::get('template').'/js/app.min.js'); ?>"></script>
 {{javascript}}
+
 </body>
 </html>

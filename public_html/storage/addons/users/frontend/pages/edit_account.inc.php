@@ -110,7 +110,7 @@
 	}
 
 	//$_page = new ent_view();
-	//echo $_page->render(FS_DIR_TEMPLATE . 'pages/edit_account.inc.php');
+	//echo $_page->render('app://frontend/templates/'.settings::get('template').'/pages/edit_account.inc.php');
 ?>
 <main id="main" class="container">
 	<div class="row layout">

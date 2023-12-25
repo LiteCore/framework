@@ -2,7 +2,7 @@
 <vmod>
   <id>users</id>
   <name>Users</name>
-  <version>2023-12-17</version>
+  <version/>
   <description/>
   <author>LiteCart Dev Team</author>
 
@@ -48,15 +48,10 @@
 
   <file name="backend/apps/modules/modules.inc.php">
 
-    <operation method="replace" type="multiline" onerror="warning">
+    <operation method="before" type="multiline" onerror="warning">
       <find><![CDATA[
-		case 'jobs':
-			$title = language::translate('title_job_modules', 'Job Modules');
-			$files = functions::file_search('app://includes/modules/jobs/*.inc.php');
-			$mod_class = new mod_jobs();
-			$type = 'job';
-			$edit_doc = 'edit_job';
-			break;
+		default:
+			trigger_error('Unknown module type ('. __DOC__ .')', E_USER_ERROR);
       ]]></find>
 
       <insert><![CDATA[
@@ -75,11 +70,7 @@
 
     <operation method="replace" type="multiline" onerror="warning">
       <find><![CDATA[
-	if (!empty($_GET['page_id'])) {
-		breadcrumbs::add(language::translate('title_contact', 'Contact'), document::ilink('contact'));
-	} else {
-		breadcrumbs::add(language::translate('title_contact', 'Contact'));
-	}
+	breadcrumbs::add(language::translate('title_contact_us', 'Contact Us'));
       ]]></find>
 
       <insert><![CDATA[
@@ -120,7 +111,6 @@
       ]]></find>
 
       <insert><![CDATA[
-
 			case 'user':
 			case 'users':
 				return form_select_user($name, $input, $parameters);
@@ -153,6 +143,73 @@
 		}
 	}
 
+      ]]></insert>
+    </operation>
+  </file>
+
+  <file name="backend/apps/modules/config.inc.php">
+
+    <operation method="after" type="multiline" onerror="warning">
+      <find><![CDATA[
+			[
+				'title' => language::translate('title_job_modules', 'Job Modules'),
+				'doc' => 'jobs',
+			],
+      ]]></find>
+
+      <insert><![CDATA[
+			[
+				'title' => language::translate('title_user_modules', 'User Modules'),
+				'doc' => 'user',
+			],
+      ]]></insert>
+    </operation>
+
+    <operation method="after" type="multiline" onerror="warning">
+      <find><![CDATA[
+			'jobs' => 'modules.inc.php',
+      ]]></find>
+
+      <insert><![CDATA[
+			'users' => 'users.inc.php',
+      ]]></insert>
+    </operation>
+  </file>
+
+  <file name="includes/autoloader.inc.php">
+
+    <operation method="after" type="multiline" onerror="warning">
+      <find index="1"><![CDATA[
+			case (preg_match('#^job_#', $class)):
+      ]]></find>
+
+      <insert><![CDATA[
+			case (preg_match('#^um_#', $class)):
+      ]]></insert>
+    </operation>
+
+    <operation method="after" type="multiline" onerror="warning">
+      <find><![CDATA[
+						'#^job_.*$#' => 'app://includes/modules/jobs/$1.inc.php',
+      ]]></find>
+
+      <insert><![CDATA[
+						'#^um_.*$#' => 'app://includes/modules/user/$1.inc.php',
+      ]]></insert>
+    </operation>
+
+    <operation method="after" type="multiline" onerror="warning">
+      <find><![CDATA[
+					case (preg_match('#^job_#', $class)):
+						require 'app://includes/modules/jobs/' . $class . '.inc.php';
+						break;
+      ]]></find>
+
+      <insert><![CDATA[
+
+					case (preg_match('#^um_#', $class)):
+						require 'app://includes/modules/user/' . $class . '.inc.php';
+						break;
       ]]></insert>
     </operation>
   </file>

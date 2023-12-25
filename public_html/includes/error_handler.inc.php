@@ -4,7 +4,7 @@
 
 		if (!(error_reporting() & $errno)) return;
 
-		$errfile = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', str_replace('\\', '/', $errfile));
+		$errfile = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '~/', functions::file_realpath($errfile));
 
 		switch($errno) {
 			case E_STRICT:
@@ -47,7 +47,7 @@
 		if (!empty($backtraces)) {
 			foreach ($backtraces as $backtrace) {
 				if (empty($backtrace['file'])) continue;
-				$backtrace['file'] = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', str_replace('\\', '/', $backtrace['file']));
+				$backtrace['file'] = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', functions::file_realpath($backtrace['file']));
 				$backtrace_output .= " → <strong>{$backtrace['file']}</strong> on line <strong>{$backtrace['line']}</strong> in <strong>{$backtrace['function']}()</strong><br>" . PHP_EOL;
 			}
 		}
@@ -61,15 +61,20 @@
 		}
 
 		if (filter_var(ini_get('log_errors'), FILTER_VALIDATE_BOOLEAN)) {
-			error_log(
-				strip_tags($output . $backtrace_output) .
-				"Request: {$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']} {$_SERVER['SERVER_PROTOCOL']}" . PHP_EOL .
-				"Host: {$_SERVER['HTTP_HOST']}" . PHP_EOL .
-				"Client: {$_SERVER['REMOTE_ADDR']} (". gethostbyaddr($_SERVER['REMOTE_ADDR']) .")" . PHP_EOL .
-				"User Agent: {$_SERVER['HTTP_USER_AGENT']}" . PHP_EOL .
-				(!empty($_SERVER['HTTP_REFERER']) ? "Referer: {$_SERVER['HTTP_REFERER']}" . PHP_EOL : '') .
-				"Platform: ". PLATFORM_NAME ."/". PLATFORM_VERSION . PHP_EOL
-			);
+			if (php_sapi_name() == 'cli') {
+				error_log(strip_tags($output . $backtrace_output) . PHP_EOL);
+			} else {
+				error_log(implode(PHP_EOL, array_filter([
+					strip_tags($output . $backtrace_output),
+					(php_sapi_name() == 'cli') ? 'Command: '. implode(' ', $argv) : '',
+					!empty($_SERVER['REQUEST_URI']) ? 'Request: '. $_SERVER['REQUEST_METHOD'] .' '. $_SERVER['REQUEST_URI'] .' '. $_SERVER['SERVER_PROTOCOL'] : '',
+					!empty($_SERVER['HTTP_HOST']) ? 'Host: '. $_SERVER['HTTP_HOST'] : '',
+					!empty($_SERVER['REMOTE_ADDR']) ? 'Client: '. $_SERVER['REMOTE_ADDR'] .' ('. gethostbyaddr($_SERVER['REMOTE_ADDR']) .')' : '',
+					!empty($_SERVER['HTTP_USER_AGENT']) ? 'User Agent: '. $_SERVER['HTTP_USER_AGENT'] : '',
+					!empty($_SERVER['HTTP_REFERER']) ? 'Referer: '. $_SERVER['HTTP_REFERER'] : '',
+					'Platform: '. PLATFORM_NAME .'/'. PLATFORM_VERSION,
+				])) . PHP_EOL);
+			}
 		}
 
 		if (in_array($errno, [E_PARSE, E_ERROR, E_COMPILE_ERROR, E_CORE_ERROR, E_USER_ERROR])) {

@@ -69,18 +69,18 @@
 		if (Featherlight._globalHandlerInstalled !== newState) {
 			Featherlight._globalHandlerInstalled = newState;
 
-			var eventMap = {keyup: 'onKeyUp', resize: 'onResize'};
-			var events = $.map(eventMap, function(_, name) { return name+'.'+Featherlight.prototype.namespace; } ).join(' ');
+		var eventMap = {keyup: 'onKeyUp', resize: 'onResize'};
+		var events = $.map(eventMap, function(_, name) { return name+'.'+Featherlight.prototype.namespace; } ).join(' ');
 
-			$(window)[newState ? 'on' : 'off'](events, function(event) {
-				$.each(Featherlight.opened().reverse(), function() {
-					if (!event.isDefaultPrevented()) {
-						if (this[eventMap[event.type]](event) === false) {
-							event.preventDefault(); event.stopPropagation(); return false;
-						}
+		$(window)[newState ? 'on' : 'off'](events, function(event) {
+			$.each(Featherlight.opened().reverse(), function() {
+				if (!event.isDefaultPrevented()) {
+					if (this[eventMap[event.type]](event) === false) {
+						event.preventDefault(); event.stopPropagation(); return false;
 					}
-				});
+				}
 			});
+		});
 		}
 	}
 
@@ -144,9 +144,9 @@
 					case (self.closeOnClick === 'backdrop' && $(event.target).is('.'+self.namespace)):
 					case (self.closeOnClick === 'anywhere'):
 					case ($(event.target).is('.'+self.namespace+'-close' + (self.otherClose ? ',' + self.otherClose : ''))):
-					self.close(event);
-					event.preventDefault();
-					break;
+						self.close(event);
+						event.preventDefault();
+						break;
 				}
 			});
 
@@ -225,7 +225,7 @@
 			if (self.closeIcon) {
 				self.$instance.find('.'+self.namespace+'-content').prepend(
 					'<div class="'+ self.namespace +'-close-icon '+ self.namespace + '-close" aria-label="Close">' +
-						self.closeIcon +
+					'	' + self.closeIcon +
 					'</div>'
 				);
 			}
@@ -523,7 +523,7 @@
 					}
 					return false;
 				}
-					return _super(event);
+				return _super(event);
 			},
 
 			beforeOpen: function(_super, event) {

@@ -15,18 +15,6 @@
 
 			switch ($matches[1]) {
 
-				case 'pm':
-					$type = 'payment';
-					break;
-
-				case 'om':
-					$type = 'order';
-					break;
-
-				case 'ot':
-					$type = 'order_total';
-					break;
-
 				case 'job':
 					$type = 'job';
 					break;

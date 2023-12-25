@@ -23,9 +23,9 @@
 
 		ob_start();
 		var_dump($vars);
-		$output = addcslashes(ob_get_clean(), "\"\r\n");
+		$output = ob_get_clean();
 
-		echo '<script>console.log("'. addcslashes($output, '"') .'");</script>';
+		echo '<script>console.log("'. addcslashes($output, "\"\r\n") .'");</script>';
 	}
 
 	// Checks if variables are not set, null, (bool)false, (int)0, (float)0.00, (string)"", (string)"0", (string)"0.00", (array)[], or array with nil nodes

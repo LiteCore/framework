@@ -28,13 +28,17 @@
 			// Register default parser for snippets {{var|modifier1|modifier2}}
 			$this->register_parser('([0-9a-zA-Z_\.]+)(|[^'. preg_quote($this->wrapper[1][0], '#') .']+)?', function($matches) {
 
-				if (!isset($this->snippets[$matches[1]])) return $matches[0];
+				if (!isset($this->snippets[$matches[1]])) {
+					return $matches[0];
+				}
 
 				if ($this->snippets[$matches[1]] instanceof ent_view) {
 					$this->snippets[$matches[1]] = (string)$this->snippets[$matches[1]];
 				}
 
-				if (empty($matches[2])) return $this->snippets[$matches[1]];
+				if (empty($matches[2])) {
+					return $this->snippets[$matches[1]];
+				}
 
 				$output = $this->snippets[$matches[1]];
 				$modifiers = !empty($matches[2]) ? preg_split('#\|#', $matches[2], -1, PREG_SPLIT_NO_EMPTY) : [];
@@ -117,43 +121,16 @@
 		}
 
 		public function __toString() {
-
-			// Load view and process it in an isolated scope
-			if ($this->view) {
-				$this->html = (function(){
-					ob_start();
-					extract(func_get_arg(1));
-					include func_get_arg(0);
-					return ob_get_clean();
-				})($this->view, $this->snippets);
-			}
-
-			if (empty($this->html)) return '';
-
-			foreach ($this->snippets as $key => $snippet) {
-				if (!is_string($snippet)) continue;
-				$this->snippets[$key] = preg_replace_callback_array($this->_parsers, $snippet);
-			}
-
-			if (is_string($this->html)) {
-				$this->html = preg_replace_callback_array($this->_parsers, $this->html);
-			}
-
-			if ($this->cleanup) {
-					//$this->html = preg_replace('#'. preg_quote($this->wrapper[0], '#') .'(if|each) .*?'. preg_quote($this->wrapper[0], '#') .'\1'. preg_quote($this->wrapper[1], '#') .'#', '', $this->html);
-				$this->html = preg_replace('#'. preg_quote($this->wrapper[0], '#') .'.*?'. preg_quote($this->wrapper[1], '#') .'#', '', $this->html);
-			}
-
-			return $this->html;
+			return $this->render();
 		}
 
-		public function stitch($view=null, $cleanup=false) {
+		// Render and make it stick
+		public function stitch($view=null, $cleanup=null) {
+			return $this->html = $this->render($view, $cleanup);
+		}
 
-			//trigger_error('ent_view->stitch() is deprecated. Instead set the view file when constructing view object and use echo to output the rendered view.', E_USER_DEPRECATED);
-
-			if ($cleanup) {
-				$this->cleanup = true;
-			}
+		// Render but don't make it stick
+		public function render($view=null, $cleanup=null) {
 
 			if ($view) {
 
@@ -163,13 +140,50 @@
 
 				// Relative path
 				} else {
-					$this->view = 'app://frontend/templates/'. settings::get('template') .'/' . preg_replace('#^(.*?)(\.inc\.php)?$#', '$1.inc.php', $view);
+					$this->view = 'app://frontend/template/' . preg_replace('#^(.*?)(\.inc\.php)?$#', '$1.inc.php', $view);
 					if (!is_file($this->view)) {
-						$this->view = 'app://frontend/templates/default/'. $view;
+						$this->view = 'app://frontend/template/'. $view;
 					}
 				}
+
+			} else {
+				$view = $this->view;
 			}
 
-			return $this->__toString();
+			if ($cleanup === null) {
+				$cleanup = $this->cleanup;
+			}
+
+			$html = $this->html;
+
+			// Load and process view in an isolated scope
+			if ($view) {
+				$html = (function(){
+					ob_start();
+					extract(func_get_arg(1));
+					include func_get_arg(0);
+					return ob_get_clean();
+				})($view, $this->snippets);
+			}
+
+			if (!$html) {
+				return '';
+			}
+
+			foreach ($this->snippets as $key => $snippet) {
+				if (!is_string($snippet)) continue;
+				$this->snippets[$key] = preg_replace_callback_array($this->_parsers, $snippet);
+			}
+
+			if (is_string($html)) {
+				$html = preg_replace_callback_array($this->_parsers, $html);
+			}
+
+			if ($cleanup) {
+				//$html = preg_replace('#'. preg_quote($this->wrapper[0], '#') .'(if|each) .*?'. preg_quote($this->wrapper[0], '#') .'\1'. preg_quote($this->wrapper[1], '#') .'#', '', $html);
+				$html = preg_replace('#'. preg_quote($this->wrapper[0], '#') .'.*?'. preg_quote($this->wrapper[1], '#') .'#', '', $html);
+			}
+
+			return $html;
 		}
 	}

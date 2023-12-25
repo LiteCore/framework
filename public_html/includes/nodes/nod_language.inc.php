@@ -427,7 +427,7 @@
 			$out = preg_replace_callback('/(?<!%)(%[a-zA-Z])/', function ($match) use ($translation_table, $timestamp) {
 				if ($match[1] == '%n') {
 					return "\n";
-				} elseif ($match[1] == '%t') {
+				} else if ($match[1] == '%t') {
 					return "\t";
 				}
 

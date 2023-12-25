@@ -39,7 +39,7 @@
 		}
 	}
 
-	$box_contact_us = new ent_view(FS_DIR_TEMPLATE . 'partials/box_contact_us.inc.php');
+	$box_contact_us = new ent_view('app://frontend/templates/'.settings::get('template').'/partials/box_contact_us.inc.php');
 
 	//echo $box_contact_us;
 	extract($box_contact_us->snippets);

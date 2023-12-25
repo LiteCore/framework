@@ -1,13 +1,15 @@
 <?php
 
-	document::$snippets['title'] = [language::translate('index:head_title', ''), settings::get('site_name')];
-	document::$snippets['description'] = language::translate('index:meta_description', '');
-	document::$snippets['head_tags']['canonical'] = '<link rel="canonical" href="'. document::href_ilink('') .'">';
-	document::$snippets['head_tags']['opengraph'] = '<meta property="og:url" content="'. document::href_ilink('') .'">' . PHP_EOL
-													. '<meta property="og:type" content="website">' . PHP_EOL
-													. '<meta property="og:image" content="'. document::href_rlink('storage://images/logotype.png') .'">';
+	document::$title = [language::translate('index:head_title', ''), settings::get('site_name')];
+	document::$description = language::translate('index:meta_description', '');
+	document::$head_tags['canonical'] = '<link rel="canonical" href="'. document::href_ilink('') .'">';
+	document::$head_tags['opengraph'] = implode(PHP_EOL, [
+		'<meta property="og:url" content="'. document::href_ilink('') .'">',
+		'<meta property="og:type" content="website">',
+		'<meta property="og:image" content="'. document::href_rlink('storage://images/logotype.png') .'">',
+	]);
 
-	$_page = new ent_view(FS_DIR_TEMPLATE . 'pages/index.inc.php');
+	$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/pages/index.inc.php');
 
 	//echo $_page;
 	extract($_page->snippets);

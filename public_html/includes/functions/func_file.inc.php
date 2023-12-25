@@ -41,9 +41,11 @@
 	}
 
 	// PHP doesn't always clean up temp files, so let's create a function that does
-	function file_create_tempfile($data=null) {
+	function file_create_tempfile($data='', $extension='') {
 
-		$tmp_file = stream_get_meta_data(tmpfile())['uri'];
+		while (!isset($tmp_file) || is_file($tmp_file)) {
+			$tmp_file = stream_get_meta_data(tmpfile())['uri'].$extension;
+		}
 
 		if ($data !== null) {
 			file_put_contents($tmp_file, $data);

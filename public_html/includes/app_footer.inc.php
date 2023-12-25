@@ -1,47 +1,38 @@
 <?php
 
+	stats::$data['content'] = microtime(true) - stats::$data['content'];
+	stats::$data['after_content'] = microtime(true);
+
 	// Site the captured output buffer
-	$content = ob_get_contents();
+	document::$content = ob_get_contents();
 	ob_clean();
 
 	// Run after capture processes
 	event::fire('after_capture');
 
-	// Stitch content with layout
-	if (preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request)) {
-		$_page = new ent_view('app://backend/template/layouts/'.document::$layout.'.inc.php');
-	} else {
-		$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/layouts/'.document::$layout.'.inc.php');
-	}
-
-	$_page->snippets = [
-		'important_notice' => settings::get('important_notice'),
-		'content' => $content,
-	];
-	$output = (string)$_page;
-
 	// Run prepare output processes
 	event::fire('prepare_output');
-
-	// Output page
-	$_page = new ent_view();
-	$_page->html = $output;
-	$_page->snippets = &document::$snippets;
-	$_page->cleanup = true;
-	$GLOBALS['output'] = (string)$_page;
 
 	// Run before output processes
 	event::fire('before_output');
 
 	// Output Compression
 	if (filter_var(settings::get('gzip_enabled'), FILTER_VALIDATE_BOOLEAN)) {
-		ini_set('zlib.output_compression', 1);
+		if (!headers_sent()) {
+			ini_set('zlib.output_compression', 1);
+		}
 	} else {
 		ini_set('zlib.output_compression', 0);
 	}
 
+	stats::$data['after_content'] = microtime(true) - stats::$data['after_content'];
+	stats::$data['rendering'] = microtime(true);
+
 	// Output page
-	echo $GLOBALS['output'];
+	echo document::render();
+
+	stats::$data['rendering'] = microtime(true) - stats::$data['rendering'];
+	echo stats::render();
 
 	// Run after processes
 	event::fire('shutdown');

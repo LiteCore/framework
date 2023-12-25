@@ -27,8 +27,6 @@
 		}
 	}
 
-########################################################################
-
 	class ent_image {
 		private $_data = [];
 		private $_file = null;
@@ -108,7 +106,7 @@
 
 					switch ($this->library) {
 						case 'imagick':
-							$this->_data['type'] = $this->_image->getImageFormat();
+							$this->_data['type'] = strtr($this->_image->getImageFormat(), ['JPEG' => 'jpg']);
 							break 2;
 
 						case 'gd':
@@ -291,17 +289,16 @@
 
 		public function load_from_string($binary) {
 
-			$tmp_file = functions::file_create_tempfile();
-			file_put_contents($tmp_file, $binary);
+			$tmp_file = functions::file_create_tempfile($binary);
 
 			$this->load($tmp_file);
 		}
 
 		public function resample($max_width=1024, $max_height=1024, $clipping='FIT_ONLY_BIGGER') {
 
-			if ((int)$max_width == 0 && (int)$max_height == 0) return;
+			if ($max_width == 0 && $max_height == 0) return;
 
-			if ((int)$this->width == 0 || (int)$this->height == 0) {
+			if ($this->width == 0 || $this->height == 0) {
 				throw new Exception('Error getting source image dimensions ('. $this->_file .').');
 			}
 
@@ -582,8 +579,8 @@
 						$_watermark = new imagick();
 						$_watermark->readImage($watermark);
 
-						if ($_watermark->getImageWidth() > ($this->width() / 5) || $_watermark->getImageHeight() > ($this->height() / 5)) {
-							$_watermark->thumbnailImage(round($this->width()/5), round($this->height()/5), true);
+						if ($_watermark->getImageWidth() > round($this->width/5) || $_watermark->getImageHeight() > round($this->height/5)) {
+							$_watermark->thumbnailImage(round($this->width/5), round($this->height/5), true);
 						}
 
 						switch (strtoupper($align_x)) {
@@ -628,7 +625,7 @@
 					$_watermark = new ent_image($watermark, $this->library);
 
 					// Return false on no image
-					if (!$_watermark->type()) {
+					if (!$_watermark->type) {
 						throw new Exception("Watermark file is not a valid image ($watermark)");
 					}
 
@@ -636,12 +633,12 @@
 					$_watermark->load();
 
 					// Check if watermark is a PNG file
-					if ($_watermark->type() != 'png') {
+					if ($_watermark->type != 'png') {
 						trigger_error("Watermark file is not a PNG image ($watermark)", E_USER_NOTICE);
 					}
 
 					// Shrink a large watermark
-					$_watermark->resample(round($this->width()/5), round($this->height()/5), 'FIT_ONLY_BIGGER');
+					$_watermark->resample(round($this->width/5), round($this->height/5), 'FIT_ONLY_BIGGER');
 
 					// Align watermark and set horizontal offset
 					switch (strtoupper($align_x)) {
@@ -758,6 +755,7 @@
 
 					switch (strtolower($type)) {
 						case 'avif': $result = ImageAVIF($new_image, $destination); break;
+						case 'gif': $result = ImageGIF($new_image, $destination); break;
 						case 'jpg': $result = ImageJPEG($new_image, $destination, $quality); break;
 						case 'png': $result = ImagePNG($this->_image, $destination); break;
 						case 'webp': $result = ImageWebP($this->_image, $destination, $quality); break;

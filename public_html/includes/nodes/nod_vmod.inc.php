@@ -1,7 +1,7 @@
 <?php
 
 	class vmod {
-		public static $enabled = true;                 // Bool whether or not to enable this feature
+		public static  $enabled = true;                // Bool whether or not to enable this feature
 		private static $aliases = [];                  // Array of path aliases ['pattern' => 'replace']
 		private static $_checked = [];                 // Array of files that have already passed check() and
 		private static $_checksums = [];               // Array of checksums for time comparison
@@ -9,7 +9,7 @@
 		private static $_modifications = [];           // Array of modifications to apply
 		private static $_installed = [];               // Array of installed modifications
 		private static $_settings = [];                // Array of modification settings
-		public static $time_elapsed = 0;               // Integer of time elapsed during operations
+		public static  $time_elapsed = 0;              // Integer of time elapsed during operations
 
 		public static function init() {
 
@@ -335,54 +335,54 @@
 
 						if (!empty($dom->getElementsByTagName('upgrade')->length)) {
 
-								// Gather upgrade scripts
-								$upgrades = [];
+							// Gather upgrade scripts
+							$upgrades = [];
 
-								foreach ($dom->getElementsByTagName('upgrade') as $upgrade_node) {
+							foreach ($dom->getElementsByTagName('upgrade') as $upgrade_node) {
 
-									$upgrade_version = $upgrade_node->getAttribute('version');
+								$upgrade_version = $upgrade_node->getAttribute('version');
 
-									if (version_compare($vmod['version'], $upgrade_version, '<=')) {
-										$upgrades[] = [
-											'version' => $upgrade_version,
-											'script' => $upgrade_node->textContent,
-										];
-									}
+								if (version_compare($vmod['version'], $upgrade_version, '<=')) {
+									$upgrades[] = [
+										'version' => $upgrade_version,
+										'script' => $upgrade_node->textContent,
+									];
 								}
+							}
 
-								uasort($upgrades, function($a, $b){
-									return version_compare($a['version'], $b['version']);
-								});
+							uasort($upgrades, function($a, $b) {
+								return version_compare($a['version'], $b['version']);
+							});
 
-								require_once vmod::check(FS_DIR_APP . 'includes/compatibility.inc.php');
-								require_once vmod::check(FS_DIR_APP . 'includes/autoloader.inc.php');
+							require_once vmod::check(FS_DIR_APP . 'includes/compatibility.inc.php');
+							require_once vmod::check(FS_DIR_APP . 'includes/autoloader.inc.php');
 
-								// Execute upgrade scripts
-								foreach ($upgrades as $upgrade) {
+							// Execute upgrade scripts
+							foreach ($upgrades as $upgrade) {
 
 								if (version_compare($upgrade['version'], self::$_installed[$vmod['id']], '<=')) continue;
 
-									// Exceute upgrade in an isolated scope
-									$tmp_file = stream_get_meta_data(tmpfile())['uri'];
-									file_put_contents($tmp_file, "<?php" . PHP_EOL . $upgrade['script']);
+								// Exceute upgrade in an isolated scope
+								$tmp_file = stream_get_meta_data(tmpfile())['uri'];
+								file_put_contents($tmp_file, "<?php" . PHP_EOL . $upgrade['script']);
 
-									(function() {
-										include func_get_arg(0);
-									})($tmp_file);
+								(function() {
+									include func_get_arg(0);
+								})($tmp_file);
 
 								foreach (self::$_installed as $id => $version) {
 									if ($id == $vmod['id']) {
 										self::$_installed[$id] = $upgrade['version'];
-											break;
-										}
+										break;
 									}
 								}
+							}
 
-							$new_contents = implode(PHP_EOL, array_map(function($id, $version){
+							$new_contents = implode(PHP_EOL, array_map(function($id, $version) {
 								return $id .';'. $version;
 							}, array_keys(self::$_installed), self::$_installed));
 
-								file_put_contents(FS_DIR_STORAGE . 'addons/.installed', $new_contents . PHP_EOL, LOCK_EX);
+							file_put_contents(FS_DIR_STORAGE . 'addons/.installed', $new_contents . PHP_EOL, LOCK_EX);
 
 							if (isset($_SERVER['REQUEST_URI'])) {
 								header('Location: '. $_SERVER['REQUEST_URI']);

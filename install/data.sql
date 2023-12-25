@@ -49,7 +49,7 @@ INSERT INTO `lc_settings` (`group_key`, `type`, `title`, `description`, `key`, `
 ('advanced', 'global', 'GZIP Enabled', 'Compresses browser data. Increases the load on the server but decreases the bandwidth.', 'gzip_enabled', '1', 'toggle()', 5, 0, NOW(), NOW()),
 ('advanced', 'global', 'System Cache Enabled', 'Enables the system cache module which caches frequently used data.', 'cache_enabled', '1', 'toggle()', 0, 10, NOW(), NOW()),
 ('advanced', 'global', 'Clear System Cache', 'Remove all cached system information.', 'cache_clear', '0', 'toggle()', 0, 11, NOW(), NOW()),
-('advanced', 'global', 'Static Content Domain Name', 'Use the given alias domain name for static content (images, stylesheets, javascripts).', 'static_domain', '', 'text()', 0, 12, NOW(), NOW()),
+('advanced', 'global', 'Static Content Domain Name', 'Use the given alias domain name for static content (images, stylesheets, javascripts) e.g. https://static.domain.tld/', 'static_domain', '', 'url()', 0, 12, NOW(), NOW()),
 ('advanced', 'local', 'Control Panel Link', 'The URL to your control panel, e.g. cPanel.', 'control_panel_link', 'https://', 'text()', 0, 18, NOW(), NOW()),
 ('advanced', 'local', 'Database Admin Link', 'The URL to your database manager, e.g. phpMyAdmin.', 'database_admin_link', 'https://', 'text()', 0, 19, NOW(), NOW()),
 ('advanced', 'local', 'Webmail Link', 'The URL to your webmail client.', 'webmail_link', 'https://', 'text()', 0, 20, NOW(), NOW()),

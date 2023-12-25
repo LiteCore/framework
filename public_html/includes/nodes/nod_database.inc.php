@@ -354,11 +354,15 @@
 
 			$rows = [];
 			while ($row = mysqli_fetch_assoc($this->_result)) {
-				$rows[] = $function($row);
-			}
+				
+				if ($row = $function($row)) {
 
-			if ($index_column) {
-				$rows = array_column($rows, null, $index_column);
+					if ($index_column) {
+						$rows[$row[$index_column]] = $row;
+					} else {
+						$rows[] = $row;
+					}
+				}
 			}
 
 			database::$stats['duration'] += microtime(true) - $timestamp;

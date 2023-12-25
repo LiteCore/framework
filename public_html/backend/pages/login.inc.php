@@ -2,9 +2,7 @@
 
 	document::$layout = 'blank';
 
-	document::$snippets['head_tags'][] = '<meta name="viewport" content="width=device-width, initial-scale=1">';
-
-	header('X-Robots-Tag: noindex');
+	document::$head_tags[] = '<meta name="viewport" content="width=device-width, initial-scale=1">';
 
 	if (!empty(administrator::$data['id'])) {
 		notices::add('notices', language::translate('text_already_logged_in', 'You are already logged in'));

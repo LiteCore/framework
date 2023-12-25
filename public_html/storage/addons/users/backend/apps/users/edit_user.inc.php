@@ -10,7 +10,7 @@
 		$_POST = $user->data;
 	}
 
-	document::$snippets['title'][] = !empty($user->data['id']) ? language::translate('title_edit_user', 'Edit User') : language::translate('title_create_new_user', 'Create New User');
+	document::$title[] = !empty($user->data['id']) ? language::translate('title_edit_user', 'Edit User') : language::translate('title_create_new_user', 'Create New User');
 
 	breadcrumbs::add(language::translate('title_users', 'Users'), document::ilink(__APP__.'/users'));
 	breadcrumbs::add(!empty($user->data['id']) ? language::translate('title_edit_user', 'Edit User') : language::translate('title_create_new_user', 'Create New User'));

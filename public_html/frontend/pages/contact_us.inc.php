@@ -1,6 +1,6 @@
 <?php
-	document::$snippets['title'][] = language::translate('contact:head_title', 'Contact Us');
-	document::$snippets['description'] = language::translate('contact:meta_description', '');
+	document::$title[] = language::translate('contact:head_title', 'Contact Us');
+	document::$description = language::translate('contact:meta_description', '');
 
 	breadcrumbs::add(language::translate('title_contact_us', 'Contact Us'));
 
@@ -44,7 +44,7 @@
 
 			$email = new ent_email();
 			$email->set_sender($_POST['email'], $_POST['firstname'] .' '. $_POST['lastname'])
-						->add_recipient(settings::get('store_email'), settings::get('store_name'))
+						->add_recipient(settings::get('site_email'), settings::get('site_name'))
 						->set_subject($_POST['subject'])
 						->add_body($message);
 
@@ -65,7 +65,7 @@
 
 	$_page = new ent_view();
 
-	//echo $_page->render(FS_DIR_TEMPLATE . 'pages/contact.inc.php');
+	//echo $_page->render('app://frontend/templates/'.settings::get('template').'/pages/contact.inc.php');
 	extract($_page->snippets);
 ?>
 <main id="main" class="container">
@@ -125,13 +125,13 @@
 				</div>
 
 				<div class="card-body">
-					<p class="address"><?php echo nl2br(settings::get('store_postal_address')); ?></p>
+					<p class="address"><?php echo nl2br(settings::get('site_postal_address')); ?></p>
 
 					<?php if (settings::get('site_phone')) { ?>
-					<p class="phone"><?php echo functions::draw_fonticon('fa-phone'); ?> <a href="tel:<?php echo settings::get('store_phone'); ?>"><?php echo settings::get('store_phone'); ?></a></p>
+					<p class="phone"><?php echo functions::draw_fonticon('fa-phone'); ?> <a href="tel:<?php echo settings::get('site_phone'); ?>"><?php echo settings::get('site_phone'); ?></a></p>
 					<?php } ?>
 
-					<p class="email"><?php echo functions::draw_fonticon('fa-envelope'); ?> <a href="mailto:<?php echo settings::get('store_email'); ?>"><?php echo settings::get('store_email'); ?></a></p>
+					<p class="email"><?php echo functions::draw_fonticon('fa-envelope'); ?> <a href="mailto:<?php echo settings::get('site_email'); ?>"><?php echo settings::get('site_email'); ?></a></p>
 				</div>
 
 			</article>

@@ -3,6 +3,7 @@
 	switch (__DOC__) {
 
 		case 'jobs':
+		
 			$title = language::translate('title_job_modules', 'Job Modules');
 			$files = functions::file_search('app://includes/modules/jobs/*.inc.php');
 			$mod_class = new mod_jobs();
@@ -11,7 +12,7 @@
 			break;
 
 		default:
-			trigger_error('Unknown module type', E_USER_ERROR);
+			trigger_error('Unknown module type ('. __DOC__ .')', E_USER_ERROR);
 	}
 
 	if (isset($_POST['enable']) || isset($_POST['disable'])) {
@@ -35,7 +36,7 @@
 		}
 	}
 
-	document::$snippets['title'][] = $title;
+	document::$title[] = $title;
 
 	breadcrumbs::add(language::translate('title_modules', 'Modules'));
 	breadcrumbs::add($title);

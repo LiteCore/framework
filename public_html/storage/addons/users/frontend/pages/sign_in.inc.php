@@ -127,7 +127,7 @@
 	}
 
 	//$_page = new ent_view();
-	//echo $_page->render(FS_DIR_TEMPLATE . 'pages/sign_in.inc.php');
+	//echo $_page->render('app://frontend/templates/'.settings::get('template').'/pages/sign_in.inc.php');
 ?>
 <div class="row">
 	<section id="box-sign-in" class="card col-md-6" style="margin-bottom: 0;">

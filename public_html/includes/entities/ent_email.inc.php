@@ -139,12 +139,15 @@
 				return $this;
 			}
 
+			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/emails/default.inc.php');
+			$view->snippets['conent'] = $html ? $content : nl2br($content);
+
 			$this->data['multiparts'][] = [
 				'headers' => [
-					'Content-Type' => ($html ? 'text/html' : 'text/plain') .'; charset='. mb_http_output(),
+					'Content-Type' => 'text/html; charset='. mb_http_output(),
 					'Content-Transfer-Encoding' => '8bit',
 				],
-				'body' => trim($content),
+				'body' => (string)$view,
 			];
 
 			return $this;

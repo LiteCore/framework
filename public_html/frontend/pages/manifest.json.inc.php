@@ -11,22 +11,22 @@
 
 		'icons' => [
 			[
-				'src' => document::rlink(FS_DIR_APP . 'images/favicons/favicon.ico'),
+				'src' => document::rlink('storage://images/favicons/favicon.ico'),
 				'sizes' => '32x32 48x48 64x64 96x96',
 				'type' => 'image/x-icon',
 			],
 			[
-				'src' => document::rlink(FS_DIR_APP . 'images/favicons/favicon-128x128.png'),
+				'src' => document::rlink('storage://images/favicons/favicon-128x128.png'),
 				'sizes' => '128x128',
 				'type' => 'image/png',
 			],
 			[
-				'src' => document::rlink(FS_DIR_APP . 'images/favicons/favicon-192x192.png'),
+				'src' => document::rlink('storage://images/favicons/favicon-192x192.png'),
 				'sizes' => '192x192',
 				'type' => 'image/png',
 			],
 			[
-				'src' => document::rlink(FS_DIR_APP . 'images/favicons/favicon-256x256.png'),
+				'src' => document::rlink('storage://images/favicons/favicon-256x256.png'),
 				'sizes' => '256x256',
 				'type' => 'image/png',
 			],

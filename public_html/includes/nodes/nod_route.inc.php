@@ -85,7 +85,9 @@
 
 						// Resolve resource logic
 						if (preg_match('#\*#', $route['resource'])) {
-							$route['resource'] = preg_replace('#^(.:).*$#', '$1'.parse_url(self::$request, PHP_URL_PATH), self::$request);
+							$route['resource'] = preg_replace_callback('#^(.:).*$#', function($matches){
+								return fallback($matches[1], 'f:') . preg_replace('#^'. preg_quote(ltrim(BACKEND_ALIAS . '/', '/'), '#') .'#', '', parse_url(self::$request, PHP_URL_PATH));
+							}, $route['resource']);
 						}
 
 						// Resolve controller logic
@@ -168,7 +170,8 @@
 			// Return a static file
 			$request_path = functions::file_resolve_path(parse_url(self::$request, PHP_URL_PATH));
 
-			if (is_file('app://'.$request_path) && preg_match('#\.(avif|bmp|css|eot|gif|ico|jpe?g|jp2|js|otf|pdf|a?png|svg|tiff?|ttf|webp|woff2?)$#', pathinfo($request_path, PATHINFO_BASENAME))) {
+			// Tunnel an asset stored in an add-on
+			if (preg_match('#^assets/#', $request_path) && is_file('app://'.$request_path) && preg_match('#\.(avif|bmp|css|eot|gif|ico|jpe?g|jp2|js|otf|pdf|a?png|svg|tiff?|ttf|webp|woff2?)$#', pathinfo($request_path, PATHINFO_BASENAME))) {
 
 				if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= filemtime('app://'.$request_path)) {
 					header('HTTP/1.1 304 Not Modified');
@@ -228,13 +231,13 @@
 
 				$email = new ent_email();
 				$email->add_recipient(settings::get('site_email'))
-							->set_subject('[Not Found Report] '. settings::get('site_name'))
-								->add_body(
-									wordwrap("This is a list of the last 100 requests made to your website that did not have a destination. Most of these reports usually contain scans and attacks by evil robots. But some URLs may be indexed by search engines requiring a redirect to a proper destination.", 72, "\r\n") . "\r\n\r\n" .
-									PLATFORM_NAME .' '. PLATFORM_VERSION ."\r\n\r\n" .
-									implode("\r\n", $lines)
-								)
-							->send();
+					->set_subject('[Not Found Report] '. settings::get('site_name'))
+					->add_body(
+						wordwrap("This is a list of the last 100 requests made to your website that did not have a destination. Most of these reports usually contain scans and attacks by evil robots. But some URLs may be indexed by search engines requiring a redirect to a proper destination.", 72, "\r\n") . "\r\n\r\n" .
+						PLATFORM_NAME .' '. PLATFORM_VERSION ."\r\n\r\n" .
+						implode("\r\n", $lines)
+					)
+					->send();
 
 				file_put_contents($not_found_file, '');
 

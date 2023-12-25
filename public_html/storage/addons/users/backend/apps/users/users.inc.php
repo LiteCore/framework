@@ -8,7 +8,7 @@
 		$_GET['sort'] = 'date_created';
 	}
 
-	document::$snippets['title'][] = language::translate('title_users', 'Users');
+	document::$title[] = language::translate('title_users', 'Users');
 
 	breadcrumbs::add(language::translate('title_users', 'Users'));
 

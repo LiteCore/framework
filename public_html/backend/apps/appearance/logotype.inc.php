@@ -1,6 +1,6 @@
 <?php
 
-	document::$snippets['title'][] = language::translate('title_logotype', 'Logotype');
+	document::$title[] = language::translate('title_logotype', 'Logotype');
 
 	breadcrumbs::add(language::translate('title_appearance', 'Appearance'));
 	breadcrumbs::add(language::translate('title_logotype', 'Logotype'));
@@ -8,6 +8,7 @@
 	if (isset($_POST['upload'])) {
 
 		try {
+
 			if (empty($_FILES['image'])) {
 				throw new Exception(language::translate('error_missing_image', 'You must select an image'));
 			}
@@ -27,8 +28,7 @@
 			functions::image_delete_cache('storage://images/' . $filename);
 
 			if (settings::get('image_downsample_size')) {
-				list($width, $height) = explode(',', settings::get('image_downsample_size'));
-				//$image->resample($width, $height, 'FIT_ONLY_BIGGER');
+				$image->resample(512, 512, 'FIT_ONLY_BIGGER');
 			}
 
 			if (!$image->save('storage://images/' . $filename)) {

@@ -1,5 +1,11 @@
 <?php
 
+	header('X-Robots-Tag: noindex');
+	
+	if (!in_array(route::$selected['resource'], ['b:login', 'b:manifest.json'])) {
+		administrator::require_login();
+	}
+
 	// Fetch apps
 	$apps = functions::admin_get_apps();
 

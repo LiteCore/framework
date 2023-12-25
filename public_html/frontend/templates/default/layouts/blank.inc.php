@@ -19,6 +19,7 @@ body {
 </head>
 <body>
 
+{{notices}}
 {{content}}
 
 {{foot_tags}}

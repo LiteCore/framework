@@ -9,7 +9,7 @@
 		exit;
 	}
 
-	$_page = new ent_view(FS_DIR_TEMPLATE . 'pages/error_document.inc.php');
+	$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/pages/error_document.inc.php');
 
 	switch (http_response_code()) {
 

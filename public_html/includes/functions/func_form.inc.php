@@ -144,7 +144,7 @@
 			$input = form_reinsert_value($name);
 		}
 
-		document::$snippets['javascript'][] = implode(PHP_EOL, [
+		document::$javascript[] = implode(PHP_EOL, [
 			'$(\'textarea[name="'. $name .'"]\').on(\'keydown\', function(e){',
 			'	if (e.keyCode != 9) return;',
 			'	e.preventDefault();',
@@ -210,7 +210,7 @@
 					 . PHP_EOL
 					 . form_textarea($name, $input, 'style="display: none;"');
 
-		document::$snippets['javascript']['table2csv'] =
+		document::$javascript['table2csv'] =
 <<<END
 $('table[data-toggle="csv"]').on('click', '.remove', function(e) {
 	e.preventDefault();
@@ -558,13 +558,13 @@ END;
 			$input = form_reinsert_value($name);
 		}
 
-		document::$snippets['head_tags']['trumbowyg'] = implode(PHP_EOL, [
+		document::$head_tags['trumbowyg'] = implode(PHP_EOL, [
 			'<link rel="stylesheet" href="'. document::href_rlink('app://assets/trumbowyg/ui/trumbowyg.min.css') .'">',
 			'<link rel="stylesheet" href="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css') .'">',
 			'<link rel="stylesheet" href="'. document::href_rlink('app://assets/trumbowyg/plugins/table/ui/trumbowyg.table.min.css') .'">',
 		]);
 
-		document::$snippets['foot_tags']['trumbowyg'] = implode(PHP_EOL, [
+		document::$foot_tags['trumbowyg'] = implode(PHP_EOL, [
 			'<script src="'. document::href_rlink('app://assets/trumbowyg/trumbowyg.min.js') .'"></script>',
 			(language::$selected['code'] != 'en') ? '<script src="'. document::href_rlink('app://assets/trumbowyg/langs/'. language::$selected['code'] .'.min.js') .'"></script>' : '',
 			'<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/colors/trumbowyg.colors.min.js') .'"></script>',
@@ -572,7 +572,7 @@ END;
 			'<script src="'. document::href_rlink('app://assets/trumbowyg/plugins/table/trumbowyg.table.min.js') .'"></script>',
 		]);
 
-		document::$snippets['javascript'][] = implode(PHP_EOL, [
+		document::$javascript[] = implode(PHP_EOL, [
 			'  $(\'textarea[name="'. $name .'"]\').trumbowyg({',
 			'    btns: [["viewHTML"], ["formatting"], ["strong", "em", "underline", "del"], ["foreColor", "backColor"], ["link"], ["insertImage"], ["table"], ["justifyLeft", "justifyCenter", "justifyRight"], ["lists"], ["preformatted"], ["horizontalRule"], ["removeformat"], ["fullscreen"]],',
 			'    btnsDef: {',
@@ -945,7 +945,7 @@ END;
 				return form_input_url($name, $input, $parameters);
 
 			case 'wysiwyg':
-				return form_regional_wysiwyg($input, $name, $parameters);
+				return form_input_wysiwyg($input, $name, $parameters);
 
 			case 'zone':
 			case 'zones':
