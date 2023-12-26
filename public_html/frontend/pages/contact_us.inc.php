@@ -125,7 +125,7 @@
 				</div>
 
 				<div class="card-body">
-					<p class="address"><?php echo nl2br(settings::get('site_postal_address')); ?></p>
+					<p class="address"><?php echo nl2br(settings::get('site_postal_address', '')); ?></p>
 
 					<?php if (settings::get('site_phone')) { ?>
 					<p class="phone"><?php echo functions::draw_fonticon('fa-phone'); ?> <a href="tel:<?php echo settings::get('site_phone'); ?>"><?php echo settings::get('site_phone'); ?></a></p>

@@ -58,29 +58,6 @@ html {
 	}
 }
 
-#main {
-	padding: 0 ~"calc(var(--gutter-size)/2)" var(--gutter-size) ~"calc(var(--gutter-size)/2)";
-	@media (min-width: (@media-breakpoint-sm)) {
-		padding: 0 var(--gutter-size) var(--gutter-size) var(--gutter-size);
-		display: grid;
-			//grid-template-columns: var(--sidebar-width) auto;
-		grid-template-columns: max-content;
-		grid-template-areas: 'sidebar content';
-		grid-template-rows: 1fr;
-	}
-}
-
-#sidebar {
-	position: relative;
-	@media (min-width: (@media-breakpoint-sm)) {
-		> *:first-child {
-			margin-top: 0;
-		}
-		width: var(--sidebar-width);
-		margin-right: var(--gutter-size);
-	}
-}
-
 #content {
 	grid-area: content;
 	grid-gap: ~"calc(var(--gutter-size)/2)";

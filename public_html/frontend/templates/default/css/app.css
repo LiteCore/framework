@@ -54,30 +54,6 @@ html {
     padding: calc(var(--gutter-size)/2) var(--gutter-size);
   }
 }
-#main {
-  padding: 0 calc(var(--gutter-size)/2) var(--gutter-size) calc(var(--gutter-size)/2);
-}
-@media (min-width: 768px) {
-  #main {
-    padding: 0 var(--gutter-size) var(--gutter-size) var(--gutter-size);
-    display: grid;
-    grid-template-columns: max-content;
-    grid-template-areas: 'sidebar content';
-    grid-template-rows: 1fr;
-  }
-}
-#sidebar {
-  position: relative;
-}
-@media (min-width: 768px) {
-  #sidebar {
-    width: var(--sidebar-width);
-    margin-right: var(--gutter-size);
-  }
-  #sidebar > *:first-child {
-    margin-top: 0;
-  }
-}
 #content {
   grid-area: content;
   grid-gap: calc(var(--gutter-size)/2);
