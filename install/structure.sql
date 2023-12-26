@@ -39,6 +39,7 @@ CREATE TABLE `lc_emails` (
   `ip_address` VARCHAR(39) NOT NULL DEFAULT '',
   `hostname` VARCHAR(128) NOT NULL DEFAULT '',
   `user_agent` VARCHAR(256) NOT NULL DEFAULT '',
+  `language_code` CHAR(2) NOT NULL DEFAULT '',
   `date_scheduled` TIMESTAMP NULL DEFAULT NULL,
   `date_sent` TIMESTAMP NULL DEFAULT NULL,
   `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

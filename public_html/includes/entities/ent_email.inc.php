@@ -25,6 +25,8 @@
 				$this->data[$field['Field']] = database::create_variable($field);
 			}
 
+			$this->data['language_code'] = language::$selected['code'];
+
 			$this->data['sender'] = [
 				'email' => settings::get('site_email'),
 				'name' => settings::get('site_name'),
@@ -93,6 +95,7 @@
 					bccs = '". database::input(json_encode($this->data['bccs'], JSON_UNESCAPED_SLASHES)) ."',
 					subject = '". database::input($this->data['subject']) ."',
 					multiparts = '". database::input(json_encode($this->data['multiparts'], JSON_UNESCAPED_SLASHES), true) ."',
+					language_code = '". database::input($this->data['language_code']) ."',
 					date_scheduled = ". (!empty($this->data['date_scheduled']) ? "'". database::input($this->data['date_scheduled']) ."'" : "null") .",
 					date_sent = ". (!empty($this->data['date_sent']) ? "'". database::input($this->data['date_sent']) ."'" : "null") .",
 					date_updated = '". ($this->data['date_updated'] = date('Y-m-d H:i:s')) ."'
@@ -125,6 +128,13 @@
 			return $this;
 		}
 
+		public function set_language($language_code) {
+
+			$this->data['language_code'] = $language_code;
+
+			return $this;
+		}
+
 		public function set_subject($subject) {
 
 			$this->data['subject'] = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $subject));
@@ -140,12 +150,17 @@
 			}
 
 			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/emails/default.inc.php');
-			$view->snippets['conent'] = $html ? $content : nl2br($content);
+
+			$view->snippets = [
+				'conent' => $html ? $content : nl2br($content),
+				'language_code' => $this->data['language_code'],
+			];
 
 			$this->data['multiparts'][] = [
 				'headers' => [
 					'Content-Type' => 'text/html; charset='. mb_http_output(),
 					'Content-Transfer-Encoding' => '8bit',
+					'Content-Language' => $this->data['language_code'],
 				],
 				'body' => (string)$view,
 			];
