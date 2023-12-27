@@ -152,7 +152,7 @@
 			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/emails/default.inc.php');
 
 			$view->snippets = [
-				'conent' => $html ? $content : nl2br($content),
+				'content' => $html ? $content : nl2br($content),
 				'language_code' => $this->data['language_code'],
 			];
 
