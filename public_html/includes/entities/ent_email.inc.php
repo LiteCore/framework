@@ -149,7 +149,7 @@
 				return $this;
 			}
 
-			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/emails/default.inc.php');
+			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/layouts/email.inc.php');
 
 			$view->snippets = [
 				'content' => $html ? $content : nl2br($content),

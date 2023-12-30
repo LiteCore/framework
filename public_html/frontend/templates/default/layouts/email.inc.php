@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width">
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo mb_http_output(); ?>">
 <style>
-<?php echo file_get_contents(__FILE__.'/../css/email.min.css'); ?>
+<?php echo file_get_contents('app://frontend/templates/'.settings::get('template').'/css/email.min.css'); ?>
 </style>
 </head>
 
