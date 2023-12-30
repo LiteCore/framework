@@ -283,9 +283,11 @@
 			return $result;
 		}
 
-		public static function multi_query($query, $link='default') {
+		public static function multi_query($sql, $link='default') {
 
-			if (!isset(self::$_links[$link])) self::connect($link);
+			if (!isset(self::$_links[$link])) {
+				self::connect($link);
+			}
 
 			$timestamp = microtime(true);
 
@@ -492,7 +494,7 @@
 
 			$rows = [];
 			while ($row = mysqli_fetch_assoc($this->_result)) {
-				
+
 				if ($row = $function($row)) {
 
 					if ($index_column) {

@@ -85,10 +85,6 @@
 					}
 				}
 
-				if (is_file($file = 'app://includes/classes/' . $class . '.inc.php')) {
-					require $file;
-				}
-
 				break;
 		}
 	}, true, false);

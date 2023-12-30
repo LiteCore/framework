@@ -70,7 +70,7 @@
 		return filter_var($string, FILTER_VALIDATE_BOOLEAN);
 	}
 
-	// Check if variable indicates a falsy value
+	// Check if variable indicates a falesish value
 	function is_false($string) {
 		//return (empty($string) || preg_match('#^(0|false|no|off|inactive|disabled)$#i', $string));
 		return !filter_var($string, FILTER_VALIDATE_BOOLEAN);

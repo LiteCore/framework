@@ -66,7 +66,8 @@ module.exports = function(grunt) {
 					relativeUrls: true
 				},
 				files: {
-					'public_html/frontend/templates/default/css/app.css'			 : 'public_html/frontend/templates/default/less/app.less',
+					'public_html/frontend/templates/default/css/app.css'       : 'public_html/frontend/templates/default/less/app.less',
+					'public_html/frontend/templates/default/css/email.css'     : 'public_html/frontend/templates/default/less/email.less',
 					'public_html/frontend/templates/default/css/framework.css' : 'public_html/frontend/templates/default/less/framework.less',
 					'public_html/frontend/templates/default/css/printable.css' : 'public_html/frontend/templates/default/less/printable.less',
 					'public_html/frontend/templates/default/css/variables.css' : 'public_html/frontend/templates/default/less/variables.less',
@@ -80,7 +81,8 @@ module.exports = function(grunt) {
 					relativeUrls: true
 				},
 				files: {
-					'public_html/frontend/templates/default/css/app.min.css'			 : 'public_html/frontend/templates/default/less/app.less',
+					'public_html/frontend/templates/default/css/app.min.css'       : 'public_html/frontend/templates/default/less/app.less',
+					'public_html/frontend/templates/default/css/email.min.css'     : 'public_html/frontend/templates/default/less/email.less',
 					'public_html/frontend/templates/default/css/framework.min.css' : 'public_html/frontend/templates/default/less/framework.less',
 					'public_html/frontend/templates/default/css/printable.min.css' : 'public_html/frontend/templates/default/less/printable.less',
 				}

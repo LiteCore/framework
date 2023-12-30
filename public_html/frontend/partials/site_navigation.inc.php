@@ -16,12 +16,22 @@
 		//	'priority' => -1,
 		//];
 
+		//$site_navigation->snippets['items'][] = [
+		//	'id' => '',
+		//	'name' => 'Dropdown',
+		//	'link' => '#',
+		//	'priority' => -1,
+		//	'subitems' => [],  <-- Put items in here
+		//];
+
 		$site_navigation->snippets['items'][] = [
 			'id' => 'contact-us',
 			'name' => language::translate('title_contact_us', 'Contact Us'),
 			'link' => document::ilink('contact_us'),
 			'priority' => 99,
 		];
+
+		// Sort menu items by priority
 		uasort($site_navigation->snippets['items'], function($a, $b) {
 			if (!isset($a['priority'])) $a['priority'] = 0;
 			if (!isset($b['priority'])) $b['priority'] = 0;

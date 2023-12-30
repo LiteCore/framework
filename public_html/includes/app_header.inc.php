@@ -24,8 +24,8 @@
 	require 'app://includes/compatibility.inc.php';
 
 	// 3rd party autoloader (If present)
-	if (is_file('app://vendor/autoload.php')) {
-		require FS_DIR_APP . 'vendor/autoload.php'; // Some Composer libraries doesn't like streamwrappers e.g. app:// so we use FS_DIR_APP
+	if (is_file(FS_DIR_APP . 'vendor/autoload.php')) {
+		require FS_DIR_APP . 'vendor/autoload.php'; // Some Composer libraries doesn't like streamwrappers and we don't need app:// for third party libraries.
 	}
 
 	// Autoloader

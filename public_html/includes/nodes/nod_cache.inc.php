@@ -88,14 +88,14 @@
 			foreach ($dependencies as $dependency) {
 				switch ($dependency) {
 
+					case 'administrator':
+						$hash_string .= administrator::$data['id'];
+						break;
+
 					case 'avif':
 						if (isset($_SERVER['HTTP_ACCEPT']) && preg_match('#image/avif#', $_SERVER['HTTP_ACCEPT'])) {
 							$hash_string .= 'avif';
 						}
-						break;
-
-					case 'administrator':
-						$hash_string .= administrator::$data['id'];
 						break;
 
 					case 'domain':
