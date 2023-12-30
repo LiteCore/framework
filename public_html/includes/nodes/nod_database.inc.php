@@ -46,7 +46,7 @@
 				self::set_charset($charset, $link);
 			}
 
-			$sql_mode = self::query("select @@SESSION.sql_mode as sql_mode;", $link)->fetch('sql_mode');
+			$sql_mode = self::query("select @@SESSION.sql_mode as sql_mode;", [], $link)->fetch('sql_mode');
 			$sql_mode = preg_split('#\s*,\s*#', $sql_mode, -1, PREG_SPLIT_NO_EMPTY);
 
 			$undesired_modes = [
@@ -64,8 +64,8 @@
 				}
 			}
 
-			self::query("SET SESSION sql_mode = '". database::input(implode(',', $sql_mode)) ."';", $link);
-			self::query("SET names '". database::input($charset) ."';", $link);
+			self::query("SET SESSION sql_mode = '". database::input(implode(',', $sql_mode)) ."';", [], $link);
+			self::query("SET names '". database::input($charset) ."';", [], $link);
 
 			return self::$_links[$link];
 		}
@@ -119,13 +119,151 @@
 			return $errors;
 		}
 
-		public static function query($sql, $link='default') {
+		public static function query($sql, $params=[], $link='default') {
 
 			if (!isset(self::$_links[$link])) {
 				self::connect($link);
 			}
 
 			$timestamp = microtime(true);
+
+			if ($params) {
+
+				// Flatten the parameters
+				$flatten = function($array, $prefix = '') use (&$flatten) {
+
+					$result = [];
+
+					foreach ($array as $key => $value) {
+
+						if ($prefix) {
+							$new_prefix = $prefix ? $prefix . '['.$key.']' : $key;
+						} else {
+							$new_prefix = $key;
+						}
+
+						if (is_array($value)) {
+							$result = $result + $flatten($value, $new_prefix);
+						} else {
+							$result[$new_prefix] = $value;
+						}
+					}
+
+					return $result;
+				};
+
+				$flattened = $flatten($params);
+
+				// Step through each character in the query
+				for ($i = 0; $i < strlen($sql); $i++) {
+
+					// Skip over a value clause
+					if (preg_match("#[`']s#", $sql[$i]) && $sql[$i - 1] != "\\") {
+						$value_wrapper = $sql[$i];
+						for ($n = $i + 1; $n < strlen($sql); $n++) {
+							if ($sql[$n] == $value_wrapper && $sql[$n - 1] != "\\") break;
+						}
+						$i = $n;
+
+						// Restart at cursor position
+						$i--;
+						continue;
+					}
+
+					// Remove #comments
+					if ($sql[$i] == '#' && ($i == 0 || $sql[$i-1] != "\\")) {
+						for ($n = $i + 1; $n < strlen($sql); $n++) {
+							if (($sql[$n] == "\r" || $sql[$n] == "\n") && $sql[$n - 1] != "\\") {
+								if ($sql[$n] == "\r" && $sql[$n+1] == "\n") $n++; // Windows CRLF
+								break;
+							}
+						}
+						$sql = substr($sql, 0, $i) . substr($sql, $n + 1);
+
+						// Restart at cursor position
+						$i--;
+						continue;
+					}
+
+					// Remove -- comments
+					if ($sql[$i] == '-' && $sql[$i+1] == '-' && $sql[$i+2] == ' ') {
+
+						// Find end of line
+						for ($n = $i + 3; $n < strlen($sql); $n++) {
+							if ($sql[$n] == "\r" || $sql[$n] == "\n") {
+								if ($sql[$n] == "\r" && $sql[$n+1] == "\n") $n++; // Windows CRLF
+								break;
+							}
+						}
+
+						// Commit replacement
+						$sql = substr($sql, 0, $i) . substr($sql, $n + 1);
+
+						// Restart at cursor position
+						$i--;
+						continue;
+					}
+
+					// Remove /* comments */
+					if ($sql[$i] == '/' && $sql[$i+1] == '*') {
+
+						// Find end of comment
+						for ($n = $i + 2; $n < strlen($sql); $n++) {
+							if ($sql[$n] == '/' && $sql[$n-1] == '*') break;
+						}
+
+						// Commit replacement
+						$sql = substr($sql, 0, $i) . substr($sql, $n + 1);
+
+						// Restart at cursor position
+						$i--;
+						continue;
+					}
+
+					// Process a detected parameter placeholder
+					if ($sql[$i] == ':') {
+
+						// Find end of parameter
+						for ($n = $i + 1; $n < strlen($sql); $n++) {
+							if (in_array($sql[$n], [' ', ';', "\r", "\n"]) || $i == strlen($sql)) break;
+						}
+
+						// Extract parameter name
+						$param = substr($sql, $i+1, $n-1 - $i);
+
+						// Match parameter name with input parameter
+						if (isset($flattened[$param])) {
+							switch (gettype($flattened[$param])) {
+
+								case 'integer':
+								case 'bool':
+									$value = (int)$flattened[$param];
+									break;
+
+								case 'double':
+									$value = (float)$flattened[$param];
+									break;
+
+								case 'string':
+									$value = "'". $flattened[$param] ."'";
+									break;
+
+								default:
+									trigger_error('Unsupported parameter type ('. gettype($flattened[$param]) .')', E_USER_ERROR);
+							}
+
+						} else {
+							trigger_error('Unmatched parameter name ('. $param .')', E_USER_ERROR);
+						}
+
+						// Commit replacement
+						$sql = substr($sql, 0, $i) . $value . substr($sql, $n + 1);
+
+						// Move cursor to end of parameter
+						$i = $i + strlen($value);
+					}
+				}
+			}
 
 			if (($result = mysqli_query(self::$_links[$link], $sql)) === false) {
 				trigger_error(mysqli_errno(self::$_links[$link]) .' - '. preg_replace('#\r#', ' ', mysqli_error(self::$_links[$link])) . PHP_EOL . preg_replace('#^\s+#m', '', $sql) . PHP_EOL, E_USER_ERROR);
