@@ -89,6 +89,7 @@
 				"update ". DB_TABLE_PREFIX ."emails
 				set status = '". (!empty($this->data['status']) ? database::input($this->data['status']) : 'draft') ."',
 					code = '". database::input($this->data['code']) ."',
+					reference = '". database::input($this->data['reference']) ."',
 					sender = '". database::input(json_encode($this->data['sender'], JSON_UNESCAPED_SLASHES)) ."',
 					recipients = '". database::input(json_encode($this->data['recipients'], JSON_UNESCAPED_SLASHES)) ."',
 					ccs = '". database::input(json_encode($this->data['ccs'], JSON_UNESCAPED_SLASHES)) ."',
@@ -138,6 +139,13 @@
 		public function set_subject($subject) {
 
 			$this->data['subject'] = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $subject));
+
+			return $this;
+		}
+
+		public function set_reference($id) {
+
+			$this->data['reference'] = $id;
 
 			return $this;
 		}
@@ -333,6 +341,11 @@
 			}
 
 			// SMTP does not need a header for BCCs, we will add that for PHP mail() later
+
+			// Add "References"
+			if (!empty($this->data['reference'])) {
+				$headers['References'] = $this->data['reference'];
+			}
 
 			// Prepare subject
 			$headers['Subject'] = mb_encode_mimeheader($this->data['subject']);

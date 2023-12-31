@@ -1,40 +1,55 @@
 <?php
 
-	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') return;
+	// Windows not supported
+	if (preg_match('#^win#i', PHP_OS)) return;
 
 	// CPU
-
 	$cpu_usage = function_exists('sys_getloadavg') ? sys_getloadavg()[0] : false;
 
 	// Memory
+	if (functions::file_is_accessible('/proc/meminfo')) {
 
-	$fh = fopen('/proc/meminfo','r');
+		$fh = fopen('/proc/meminfo','r');
+
 		$ram_usage = 0;
 		while ($line = fgets($fh)) {
-			$pieces = array();
+
 			if (preg_match('/^MemTotal:\s+(\d+)\skB$/', $line, $pieces)) {
 				$ram_usage = $pieces[1];
 				continue;
 			}
+
 			if (preg_match('/^MemFree:\s+(\d+)\skB$/', $line, $pieces)) {
 				$ram_free = $pieces[1];
 				continue;
 			}
 		}
+
 		fclose($fh);
 
 		$ram_total = $ram_usage + $ram_free;
 
+	} else {
+
+		$ram_free = false;
+		$ram_total = false;
+	}
+
 	// Uptime
+	if (functions::file_is_accessible('/proc/uptime')) {
 
-	$raw_uptime = (int)file_get_contents('/proc/uptime');
+		$raw_uptime = (int)file_get_contents('/proc/uptime');
 
-	$uptime = [
-		'days' => round($raw_uptime / (60*60*24)),
-		'hours' => round(($raw_uptime / (60*60))) % 24,
-		'minutes' => round($raw_uptime / 60) % 60,
-		'seconds' => $raw_uptime % 60,
-	];
+		$uptime = [
+			'days' => round($raw_uptime / (60*60*24)),
+			'hours' => round(($raw_uptime / (60*60))) % 24,
+			'minutes' => round($raw_uptime / 60) % 60,
+			'seconds' => $raw_uptime % 60,
+		];
+
+	} else {
+	  $uptime = false;
+	}
 
 	// Software
 

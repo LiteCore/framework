@@ -30,6 +30,8 @@
 
 			if (!empty($data)) {
 				$data = is_array($data) ? http_build_query($data) : $data;
+			} else {
+				$data = '';
 			}
 
 			if (!empty($parts['user']) && empty($headers['Authorization'])) {
@@ -45,7 +47,7 @@
 			}
 
 			if (empty($headers['Content-Length'])) {
-				$headers['Content-Length'] = ($data != '') ? mb_strlen($data) : 0;
+				$headers['Content-Length'] = ($data != '') ? strlen($data) : 0;
 			}
 
 			if (empty($headers['Connection'])) {
@@ -136,12 +138,14 @@
 		}
 
 		public function http_decode_chunked_data($data) {
-			for ($result = ''; !empty($data); $data = trim($data)) {
+
+			for ($result = ''; $data; $data = trim($data)) {
 				$position = strpos($data, "\r\n");
 				$length = (int)hexdec(substr($data, 0, $position));
 				$result .= substr($data, $position + 2, $length);
 				$data = substr($data, $position + 2 + $length);
 			}
+
 			return $result;
 		}
 	}

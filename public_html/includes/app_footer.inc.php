@@ -1,7 +1,8 @@
 <?php
 
-	stats::$data['content'] = microtime(true) - stats::$data['content'];
-	stats::$data['after_content'] = microtime(true);
+	stats::stop_watch('content_capture');
+	
+	stats::start_watch('after_content');
 
 	// Site the captured output buffer
 	document::$content = ob_get_contents();
@@ -25,14 +26,10 @@
 		ini_set('zlib.output_compression', 0);
 	}
 
-	stats::$data['after_content'] = microtime(true) - stats::$data['after_content'];
-	stats::$data['rendering'] = microtime(true);
+	stats::stop_watch('after_content');
 
 	// Output page
 	echo document::render();
-
-	stats::$data['rendering'] = microtime(true) - stats::$data['rendering'];
-	echo stats::render();
 
 	// Run after processes
 	event::fire('shutdown');

@@ -183,14 +183,14 @@
 					<div id="app-permissions" class="form-group">
 						<?php echo functions::form_checkbox('apps_toggle', ['1', language::translate('title_apps', 'Apps')]); ?>
 						<div class="form-input" style="height: 400px; overflow-y: scroll;">
-							<ul class="list-unstyled">
+							<ul class="flex flex-rows">
 <?php
 	$apps = functions::admin_get_apps();
 	foreach ($apps as $app) {
 		echo '  <li data-app="'. functions::escape_html($app['id']) .'">' . PHP_EOL
 			 . '  '. functions::form_checkbox('apps['.$app['id'].'][status]', ['1', $app['name']], true) . PHP_EOL;
 		if (!empty($app['docs'])) {
-			echo '  <ul class="list-unstyled">' . PHP_EOL;
+			echo '  <ul class="flex flex-rows">' . PHP_EOL;
 			foreach ($app['docs'] as $doc => $file) {
 				echo '    <li data-doc="'. functions::escape_html($doc) .'"><label>'. functions::form_checkbox('apps['.$app['id'].'][docs][]', $doc, true) .' '. $doc .'</label>' . PHP_EOL;
 			}
@@ -208,7 +208,7 @@
 					<div id="widget-permissions" class="form-group">
 						<?php echo functions::form_checkbox('widgets_toggle', ['1', language::translate('title_widgets', 'Widgets')]); ?>
 						<div class="form-input" style="height: 150px; overflow-y: scroll;">
-							<ul class="list-unstyled">
+							<ul class="flex flex-rows">
 <?php
 	$widgets = functions::admin_get_widgets();
 	foreach ($widgets as $widget) {

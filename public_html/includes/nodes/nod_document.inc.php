@@ -233,6 +233,8 @@
 
 		public static function render() {
 
+			stats::start_watch('rendering');
+
 			if (preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request)) {
 				$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
 			} else {
@@ -294,8 +296,10 @@
 			$output = $_page->render();
 
 			self::optimize($output);
+			
+			stats::stop_watch('rendering');
 
-			$output .= PHP_EOL;
+			$output .= PHP_EOL . stats::render();
 
 			return $output;
 		}

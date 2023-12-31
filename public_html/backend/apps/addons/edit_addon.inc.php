@@ -233,7 +233,7 @@
 
 		if (!$output) return;
 
-		return '<ul class="list-unstyled">'. PHP_EOL . $output . PHP_EOL . '</ul>';
+		return '<ul class="flex flex-rows">'. PHP_EOL . $output . PHP_EOL . '</ul>';
 	};
 
 	functions::draw_lightbox();
@@ -453,7 +453,7 @@ textarea.warning {
 									<div class="dropzone">
 
 										<?php if (!empty($addon->data['id'])) { ?>
-										<ul class="list list-unstyled">
+										<ul class="list flex flex-rows">
 											<li><strong><?php echo functions::draw_fonticon('fa-folder fa-lg', 'style="color: #7ccdff;"'); ?> [<?php echo language::translate('title_root', 'Root'); ?>]</strong>
 												<?php echo $draw_folder_contents($addon->data['location']); ?>
 											</li>
@@ -1013,7 +1013,7 @@ textarea.warning {
 
 		let $contextmenu = $([
 			'<nav class="context-menu">',
-			'  <ul class="list-unstyled">',
+			'  <ul class="flex flex-rows">',
 			'    <li class="item rename"><?php echo functions::draw_fonticon('fa-pencil'); ?> <?php echo language::translate('title_rename', 'Rename'); ?></a>',
 			'    <li class="item delete"><?php echo functions::draw_fonticon('fa-trash'); ?> <?php echo language::translate('title_delete', 'Delete'); ?></a>',
 			'  </ul>',

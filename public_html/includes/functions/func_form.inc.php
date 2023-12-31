@@ -105,16 +105,6 @@
 		return $html;
 	}
 
-	function form_input_captcha($name, $id, $parameters='') {
-
-		return implode(PHP_EOL, [
-			'<div class="input-group">',
-			'  <span class="input-group-text" style="padding: 0;">'. functions::captcha_generate(100, 40, 4, $id, 'numbers', 'align="absbottom"') .'</span>',
-			'  ' . form_input_text('captcha', '', $parameters . ' autocomplete="off" style="font-size: 24px; padding: 0; text-align: center;"'),
-			'</div>',
-		]);
-	}
-
 	function form_checkbox($name, $value, $input=true, $parameters='') {
 
 		if (is_array($value)) {
@@ -136,6 +126,18 @@
 		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .' type="checkbox" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($value) .'" '. (!strcmp($input, $value) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>';
+	}
+
+	function form_input_captcha($id, $config=[], $parameters='') {
+
+		$config = [
+			'width' => !empty($config['width']) ? $config['width'] : 100,
+			'height' => !empty($config['height']) ? $config['height'] : 40,
+			'length' => !empty($config['length']) ? $config['length'] : 4,
+			'set' => !empty($config['set']) ? $config['set'] : 'numbers',
+		];
+
+		return functions::captcha_draw($id, $config, $parameters);
 	}
 
 	function form_input_code($name, $input=true, $parameters='') {

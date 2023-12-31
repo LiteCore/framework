@@ -28,6 +28,7 @@
 
 		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_html($clipping) .'"' : '') .' src="'. document::href_rlink($image) .'" srcset="'. document::href_rlink($thumbnail_1x) .' 1x, '. document::href_rlink($thumbnail_2x) .' 2x"'. ($parameters ? ' '. $parameters : '') .'>';
 	}
+
 	function draw_fonticon($class, $parameters=null) {
 
 		switch(true) {
