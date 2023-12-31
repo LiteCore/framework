@@ -26,6 +26,30 @@ CREATE TABLE IF NOT EXISTS `lc_administrators` (
 INSERT INTO `lc_administrators` (`id`, `status`, `username`, `email`, `password_hash`, `apps`, `widgets`, `last_ip_address`, `last_hostname`, `login_attempts`, `total_logins`, `date_valid_from`, `date_valid_to`, `date_active`, `date_login`, `date_updated`, `date_created`)
 VALUES (1, 1, 'admin', '', '$2y$10$iCjIIJh4rcNiOe2fRxE.Dej65HjwrTzRSe5YYaoibX.vIY/ngkUM.', '[]', '', '127.0.0.1', '', 0, 0, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- --------------------------------------------------------
+CREATE TABLE `lc_countries` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `status` TINYINT(1) NOT NULL DEFAULT '0',
+  `name` VARCHAR(64) NOT NULL DEFAULT '',
+  `domestic_name` VARCHAR(64) NOT NULL DEFAULT '',
+  `iso_code_1` VARCHAR(3) NOT NULL DEFAULT '',
+  `iso_code_2` VARCHAR(2) NOT NULL DEFAULT '',
+  `iso_code_3` VARCHAR(3) NOT NULL DEFAULT '',
+  `tax_id_format` VARCHAR(64) NOT NULL DEFAULT '',
+  `address_format` VARCHAR(128) NOT NULL DEFAULT '',
+  `postcode_format` VARCHAR(512) NOT NULL DEFAULT '',
+  `postcode_required` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+  `language_code` VARCHAR(2) NOT NULL DEFAULT '',
+  `currency_code` VARCHAR(3) NOT NULL DEFAULT '',
+  `phone_code` VARCHAR(3) NOT NULL DEFAULT '',
+  `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `iso_code_1` (`iso_code_1`),
+  UNIQUE KEY `iso_code_2` (`iso_code_2`),
+  UNIQUE KEY `iso_code_3` (`iso_code_3`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
+-- --------------------------------------------------------
 CREATE TABLE `lc_emails` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `status` ENUM('draft','scheduled','sent','error') NOT NULL DEFAULT 'draft',
@@ -167,4 +191,16 @@ CREATE TABLE `lc_translations` (
   KEY `frontend` (`frontend`),
   KEY `backend` (`backend`),
   KEY `date_created` (`date_created`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
+-- --------------------------------------------------------
+CREATE TABLE `lc_zones` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `country_code` VARCHAR(4) NOT NULL DEFAULT '',
+  `code` VARCHAR(8) NOT NULL DEFAULT '',
+  `name` VARCHAR(64) NOT NULL DEFAULT '',
+  `date_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `country_code` (`country_code`),
+  KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
