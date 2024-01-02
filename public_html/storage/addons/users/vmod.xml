@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vmod>
-  <id>users</id>
-  <name>Users</name>
-  <version/>
-  <description/>
-  <author>LiteCart Dev Team</author>
+	<id>users</id>
+	<name>Users</name>
+	<version/>
+	<description/>
+	<author>LiteCart Dev Team</author>
 
-  <install><![CDATA[
+	<install><![CDATA[
 	database::query("CREATE TABLE `". DB_TABLE_PREFIX ."users` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',`email` VARCHAR(128) NOT NULL DEFAULT '',`tax_id` VARCHAR(32) NOT NULL DEFAULT '',`company` VARCHAR(64) NOT NULL DEFAULT '',`firstname` VARCHAR(64) NOT NULL DEFAULT '',`lastname` VARCHAR(64) NOT NULL DEFAULT '',`address1` VARCHAR(64) NOT NULL DEFAULT '',`address2` VARCHAR(64) NOT NULL DEFAULT '',`postcode` VARCHAR(8) NOT NULL DEFAULT '',`city` VARCHAR(32) NOT NULL DEFAULT '',`country_code` VARCHAR(4) NOT NULL DEFAULT '',`zone_code` VARCHAR(8) NOT NULL DEFAULT '',`phone` VARCHAR(24) NOT NULL DEFAULT '',`newsletter` TINYINT(4) NOT NULL DEFAULT '0',`notes` TEXT NOT NULL DEFAULT '',`password_hash` VARCHAR(256) NOT NULL DEFAULT '',`password_reset_token` VARCHAR(128) NOT NULL DEFAULT '',`num_logins` INT(11) NOT NULL DEFAULT '0',`login_attempts` INT(11) NOT NULL DEFAULT '0',`last_ip_address` VARCHAR(39) NOT NULL DEFAULT '',`last_hostname` VARCHAR(64) NOT NULL DEFAULT '',`last_user_agent` VARCHAR(256) NOT NULL DEFAULT '',`date_login` TIMESTAMP NULL DEFAULT NULL,`date_blocked_until` TIMESTAMP NULL DEFAULT NULL,`date_expire_sessions` TIMESTAMP NULL DEFAULT NULL,`date_updated` TIMESTAMP NOT NULL DEFAULT current_timestamp(),`date_created` TIMESTAMP NOT NULL DEFAULT current_timestamp(),PRIMARY KEY (`id`) USING BTREE,UNIQUE INDEX `email` (`email`) USING BTREE,INDEX `status` (`status`) USING BTREE) ENGINE=InnoDB;");
-  ]]></install>
+	]]></install>
 
-  <file name="includes/entities/ent_module.inc.php">
+	<file name="includes/entities/ent_module.inc.php">
 
-    <operation method="before" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="before" type="multiline" onerror="warning">
+			<find><![CDATA[
 				case 'job':
 					$type = 'job';
 					break;
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 				case 'um':
 					$type = 'user';
 					break;
-      ]]></insert>
-    </operation>
-  </file>
+			]]></insert>
+		</operation>
+	</file>
 
-  <file name="backend/apps/modules/edit_module.inc.php">
+	<file name="backend/apps/modules/edit_module.inc.php">
 
-    <operation method="replace" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="replace" type="multiline" onerror="warning">
+			<find><![CDATA[
 		case 'edit_job':
 			$type = 'job';
 			$return_doc = 'jobs';
 			break;
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 		case 'edit_user':
 			$type = 'user';
 			$return_doc = 'user';
 			break;
-      ]]></insert>
-    </operation>
-  </file>
+			]]></insert>
+		</operation>
+	</file>
 
-  <file name="backend/apps/modules/modules.inc.php">
+	<file name="backend/apps/modules/modules.inc.php">
 
-    <operation method="before" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="before" type="multiline" onerror="warning">
+			<find><![CDATA[
 		default:
 			trigger_error('Unknown module type ('. __DOC__ .')', E_USER_ERROR);
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 		case 'user':
 			$title = language::translate('title_user_modules', 'User Modules');
 			$files = functions::file_search('app://includes/modules/user/*.inc.php');
@@ -62,18 +62,18 @@
 			$type = 'user';
 			$edit_doc = 'edit_user';
 			break;
-      ]]></insert>
-    </operation>
-  </file>
+			]]></insert>
+		</operation>
+	</file>
 
-  <file name="frontend/pages/contact_us.inc.php">
+	<file name="frontend/pages/contact_us.inc.php">
 
-    <operation method="replace" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="replace" type="multiline" onerror="warning">
+			<find><![CDATA[
 	breadcrumbs::add(language::translate('title_contact_us', 'Contact Us'));
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 	if (!$_POST) {
 		$_POST = [
 			'firstname' => user::$data['firstname'],
@@ -81,48 +81,48 @@
 			'email' => user::$data['email'],
 		];
 	}
-      ]]></insert>
-    </operation>
+			]]></insert>
+		</operation>
 
-    <operation method="before" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="before" type="multiline" onerror="warning">
+			<find><![CDATA[
 			$message = strtr(language::translate('email_user_feedback', "** This is an email message from %sender_name <%sender_email> **\r\n\r\n%message"), [
 				'%sender_name' => $_POST['firstname'] .' '. $_POST['lastname'],
 				'%sender_email' => $_POST['email'],
 				'%message' => $_POST['message'],
 			]);
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 			// Collect scraps
 			if (class_exists('user', false) && empty(user::$data['id'])) {
 				user::$data = array_replace(user::$data, array_intersect_key(array_filter(array_diff_key($_POST, array_flip(['id']))), user::$data));
 			}
-      ]]></insert>
-    </operation>
-  </file>
+			]]></insert>
+		</operation>
+	</file>
 
-  <file name="includes/functions/func_form.inc.php">
+	<file name="includes/functions/func_form.inc.php">
 
-    <operation method="replace" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="replace" type="multiline" onerror="warning">
+			<find><![CDATA[
 			case 'url':
 				return form_input_url($name, $input, $parameters);
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 			case 'user':
 			case 'users':
 				return form_select_user($name, $input, $parameters);
-      ]]></insert>
-    </operation>
+			]]></insert>
+		</operation>
 
-    <operation method="before" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="before" type="multiline" onerror="warning">
+			<find><![CDATA[
 	function form_select_zone($name, $country_code='', $input=true, $parameters='', $preamble='none') {
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 	function form_select_user($name, $input=true, $parameters='') {
 
 		$users_query = database::query(
@@ -143,74 +143,74 @@
 		}
 	}
 
-      ]]></insert>
-    </operation>
-  </file>
+			]]></insert>
+		</operation>
+	</file>
 
-  <file name="backend/apps/modules/config.inc.php">
+	<file name="backend/apps/modules/config.inc.php">
 
-    <operation method="after" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="after" type="multiline" onerror="warning">
+			<find><![CDATA[
 			[
 				'title' => language::translate('title_job_modules', 'Job Modules'),
 				'doc' => 'jobs',
 			],
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 			[
 				'title' => language::translate('title_user_modules', 'User Modules'),
 				'doc' => 'user',
 			],
-      ]]></insert>
-    </operation>
+			]]></insert>
+		</operation>
 
-    <operation method="after" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="after" type="multiline" onerror="warning">
+			<find><![CDATA[
 			'jobs' => 'modules.inc.php',
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 			'users' => 'users.inc.php',
-      ]]></insert>
-    </operation>
-  </file>
+			]]></insert>
+		</operation>
+	</file>
 
-  <file name="includes/autoloader.inc.php">
+	<file name="includes/autoloader.inc.php">
 
-    <operation method="after" type="multiline" onerror="warning">
-      <find index="1"><![CDATA[
+		<operation method="after" type="multiline" onerror="warning">
+			<find index="1"><![CDATA[
 			case (preg_match('#^job_#', $class)):
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 			case (preg_match('#^um_#', $class)):
-      ]]></insert>
-    </operation>
+			]]></insert>
+		</operation>
 
-    <operation method="after" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="after" type="multiline" onerror="warning">
+			<find><![CDATA[
 						'#^job_.*$#' => 'app://includes/modules/jobs/$1.inc.php',
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 						'#^um_.*$#' => 'app://includes/modules/user/$1.inc.php',
-      ]]></insert>
-    </operation>
+			]]></insert>
+		</operation>
 
-    <operation method="after" type="multiline" onerror="warning">
-      <find><![CDATA[
+		<operation method="after" type="multiline" onerror="warning">
+			<find><![CDATA[
 					case (preg_match('#^job_#', $class)):
 						require 'app://includes/modules/jobs/' . $class . '.inc.php';
 						break;
-      ]]></find>
+			]]></find>
 
-      <insert><![CDATA[
+			<insert><![CDATA[
 
 					case (preg_match('#^um_#', $class)):
 						require 'app://includes/modules/user/' . $class . '.inc.php';
 						break;
-      ]]></insert>
-    </operation>
-  </file>
+			]]></insert>
+		</operation>
+	</file>
 </vmod>

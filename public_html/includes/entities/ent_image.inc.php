@@ -545,7 +545,7 @@
 					if ($this->type == 'svg') return false;
 
 					if (!function_exists('ImageCropAuto')) { // PHP 5.5
-					  trigger_error('Trimming images requires Imagick or PHP 5.5+', E_USER_WARNING);
+						trigger_error('Trimming images requires Imagick or PHP 5.5+', E_USER_WARNING);
 					}
 
 					//$result = ImageCropAuto($this->_image, IMG_CROP_THRESHOLD, 100, ImageColorAt($this->_image, 0, 0));

@@ -10,42 +10,42 @@
 
 <body>
 
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-    <tr>
+	<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+		<tr>
 
-      <td class="container">
-        <div class="content">
+			<td class="container">
+				<div class="content">
 
-          <table role="presentation" class="main">
+					<table role="presentation" class="main">
 
-            <tr>
-              <td class="wrapper">
-              {{content}}
-              </td>
-            </tr>
+						<tr>
+							<td class="wrapper">
+							{{content}}
+							</td>
+						</tr>
 
-          </table>
+					</table>
 
-          <div class="footer">
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-              <tr>
-                <td class="content-block">
-                </td>
-              </tr>
-              <tr>
-                <td class="content-block powered-by">
-                  <?php echo settings::get('site_name'); ?><br>
-                  <a href="<?php echo document::href_ilink('', [], [], [], $language_code); ?>" target="_blank"><?php echo document::ilink('', [], [], [], $language_code); ?></a>
-                </td>
-              </tr>
-            </table>
-          </div>
+					<div class="footer">
+						<table role="presentation" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="content-block">
+								</td>
+							</tr>
+							<tr>
+								<td class="content-block powered-by">
+									<?php echo settings::get('site_name'); ?><br>
+									<a href="<?php echo document::href_ilink('', [], [], [], $language_code); ?>" target="_blank"><?php echo document::ilink('', [], [], [], $language_code); ?></a>
+								</td>
+							</tr>
+						</table>
+					</div>
 
-        </div>
-      </td>
+				</div>
+			</td>
 
-    </tr>
-  </table>
+		</tr>
+	</table>
 
 </body>
 </html>

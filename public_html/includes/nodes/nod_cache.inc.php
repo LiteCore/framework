@@ -161,11 +161,12 @@
 
 		public static function get($token, $max_age=900, $force_cache=false) {
 
-			if (empty($force_cache)) {
-				if (empty(self::$enabled)) return;
-				if (isset($_SERVER['HTTP_CACHE_CONTROL'])) {
-					if (preg_match('#no-cache|max-age=0#i', $_SERVER['HTTP_CACHE_CONTROL'])) return;
-				}
+			if (empty($force_cache) && empty(self::$enabled)) {
+				return;
+			}
+
+			if (isset($_SERVER['HTTP_CACHE_CONTROL']) && preg_match('#no-cache|max-age=0#i', $_SERVER['HTTP_CACHE_CONTROL'])) {
+				return;
 			}
 
 			switch ($token['storage']) {

@@ -413,6 +413,15 @@
 
 			return mysqli_real_escape_string(self::$_links[$link], $input);
 		}
+
+		public static function input_fulltext($string) {
+			$string = preg_replace('#[+\-<>\(\)~*\"@;]+#', ' ', $string);
+			return self::input($string);
+		}
+
+		public static function input_like($string) {
+			return addcslashes(self::input($string), '_%');
+		}
 	}
 
 	class database_result {

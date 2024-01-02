@@ -5,31 +5,38 @@
 			switch ($type) {
 
 				case 'errors':
-					echo '<div class="alert alert-danger">'
-						 . '  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice
-						 . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
-						 . '</div>' . PHP_EOL;
+					echo implode(PHP_EOL, [
+						'<div class="alert alert-danger">',
+						'  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice,
+						'  <a href="#" class="close" data-dismiss="alert">&times;</a>',
+						'</div>',
+					]);
 					break;
 
 				case 'warnings':
-					echo '<div class="alert alert-warning">'
+					echo implode(PHP_EOL, [
+						'<div class="alert alert-warning">'
 						 . '  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice
 						 . '<a href="#" class="close" data-dismiss="alert">&times;</a>'
-						 . '</div>' . PHP_EOL;
+						 . '</div>',
+					]);
 					break;
 
 				case 'notices':
-					echo '<div class="alert alert-info">'
-						 . '  '. functions::draw_fonticon('fa-info-circle') . ' ' . $notice
-						 . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
-						 . '</div>' . PHP_EOL;
+					echo implode(PHP_EOL, [
+						'<div class="alert alert-info">',
+						'  '. functions::draw_fonticon('fa-info-circle') . ' ' . $notice,
+						'  <a href="#" class="close" data-dismiss="alert">&times;</a>',
+						'</div>',
+					]);
 					break;
 
 				case 'success':
-					echo '<div class="alert alert-success">'
-						 . '  '. functions::draw_fonticon('fa-check-circle') . ' ' . $notice
-						 . '  <a href="#" class="close" data-dismiss="alert">&times;</a>'
-						 . '</div>' . PHP_EOL;
+					echo implode(PHP_EOL, ['<div class="alert alert-success">',
+						'  '. functions::draw_fonticon('fa-check-circle') . ' ' . $notice,
+						'  <a href="#" class="close" data-dismiss="alert">&times;</a>',
+						'</div>',
+					]);
 					break;
 			}
 		}
@@ -38,5 +45,10 @@
 </div>
 
 <script>
-	setTimeout(function(){$('#notices').fadeOut();}, 2e4);
+	setTimeout(function(){
+		$('#notices').fadeOut();
+	}, 20e3);
+	$('.alert [data-dismiss="alert"]').click(function(){
+		$(this).parent().slideUp();
+	});
 </script>

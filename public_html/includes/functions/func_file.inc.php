@@ -98,21 +98,6 @@
 		}
 	}
 
-	function file_is_accessible($path) {
-
-		if (!$basedirs = preg_split('#:#', ini_get('open_basedir'), -1, PREG_SPLIT_NO_EMPTY)) {
-			return true;
-		}
-
-		$path = file_resolve_path($path);
-
-		foreach ($basedirs as $basedir) {
-		 if (preg_match('#^'. preg_quote(str_replace('\\', '/', $basedir)) .'#', $path)) return true;
-		}
-
-		return false;
-	}
-
 	function file_is_binary($file) {
 
 		$fh  = fopen($file, "r");

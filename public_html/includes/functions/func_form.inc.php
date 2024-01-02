@@ -718,11 +718,6 @@ END;
 
 	function form_toggle($name, $type='t/f', $input=true, $parameters='') {
 
-		if (strpos($input, '/') === true) {
-			trigger_error('Passing type as 3rd parameter in form_toggle() is deprecated. Use instead form_toggle($name, $type, $input, $parameters)', E_USER_DEPRECATED);
-			list($type, $input) = [$input, $type];
-		}
-
 		if ($input === true) {
 			$input = form_reinsert_value($name);
 		}

@@ -451,7 +451,7 @@
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6 source">
-<ul class="list-unstyled">
+<ul class="flex flex-rows">
 	<li>Item 1</li>
 	<li>Item 2</li>
 	<li>Item 3</li>
@@ -466,7 +466,7 @@
 
 			<div class="row">
 				<div class="col-md-6 source">
-<ul class="list-inline">
+<ul class="flex flex-columns flex-gap">
 	<li>Item 1</li>
 	<li>Item 2</li>
 	<li>Item 3</li>

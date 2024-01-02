@@ -1,7 +1,7 @@
 <?php
 
 	stats::stop_watch('content_capture');
-	
+
 	stats::start_watch('after_content');
 
 	// Site the captured output buffer

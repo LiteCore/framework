@@ -7,9 +7,9 @@
 	$cpu_usage = function_exists('sys_getloadavg') ? sys_getloadavg()[0] : false;
 
 	// Memory
-	if (functions::file_is_accessible('/proc/meminfo')) {
+	if (@is_readable('/proc/meminfo')) {
 
-		$fh = fopen('/proc/meminfo','r');
+		$fh = fopen('/proc/meminfo', 'r');
 
 		$ram_usage = 0;
 		while ($line = fgets($fh)) {
@@ -31,12 +31,13 @@
 
 	} else {
 
+		$ram_usage = false;
 		$ram_free = false;
 		$ram_total = false;
 	}
 
 	// Uptime
-	if (functions::file_is_accessible('/proc/uptime')) {
+	if (@is_readable('/proc/uptime')) {
 
 		$raw_uptime = (int)file_get_contents('/proc/uptime');
 
@@ -48,7 +49,7 @@
 		];
 
 	} else {
-	  $uptime = false;
+		$uptime = ['days' => null, 'hours' => null, 'minutes' => null, 'seconds' => null];
 	}
 
 	// Software
@@ -80,7 +81,7 @@ meter {
 
 			<div class="col-md-3">
 				<h3><?php echo language::translate('title_ram_usage', 'RAM Usage'); ?></h3>
-				<meter value=<?php echo round($ram_usage / $ram_total * 100); ?> max=100 min=0 high=30 low=10 optimum=5></meter>
+				<meter value=<?php echo ($ram_usage && $ram_total) ? round($ram_usage / $ram_total * 100) : 0; ?> max=100 min=0 high=30 low=10 optimum=5></meter>
 			</div>
 
 			<div class="col-md-3">

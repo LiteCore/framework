@@ -168,18 +168,18 @@ $('.dropdown .form-select + .dropdown-menu :input').on('input', function(e){
 }).trigger('input');
 
 // Data-Table Toggle Checkboxes
-$('body').on('click', '.data-table *[data-toggle="checkbox-toggle"]', function() {
-	$(this).closest('.data-table').find('tbody tr td:first :checkbox').each(function() {
-		$(this).prop('checked', !$(this).prop('checked')).trigger('change');
-	});
-	return false;
-});
+  $('body').on('click', '.data-table *[data-toggle="checkbox-toggle"]', function() {
+    $(this).closest('.data-table').find('tbody td:first-child :checkbox').each(function() {
+      $(this).prop('checked', !$(this).prop('checked')).trigger('change');
+    });
+    return false;
+  });
 
-$('body').on('click', '.data-table tbody tr', function(e) {
-	if ($(e.target).is('a, .btn, :input, th, .fa-star, .fa-star-o')) return;
-	if ($(e.target).parents('a, .btn, :input, th, .fa-star, .fa-star-o').length) return;
-	$(this).find('td:first :checkbox, :radio').trigger('click');
-});
+  $('body').on('click', '.data-table tbody tr', function(e) {
+    if ($(e.target).is('a') || $(e.target).closest('a').length) return;
+    if ($(e.target).is('.btn, :input, th, .fa-star, .fa-star-o')) return;
+    $(this).find(':checkbox, :radio').first().trigger('click');
+  });
 
 // Data-Table Shift Check Multiple Checkboxes
 let lastTickedCheckbox = null;

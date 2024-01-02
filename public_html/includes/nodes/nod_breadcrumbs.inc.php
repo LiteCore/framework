@@ -16,7 +16,7 @@
 		public static function add($title, $link='') {
 			self::$data[] = [
 				'title' => $title,
-				'link' => $link,
+				'link' => ($link === true) ? document::link() : $link,
 			];
 		}
 

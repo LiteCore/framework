@@ -15,7 +15,7 @@
 
 <?php if ($important_notice = settings::get('important_notice')) { ?>
 <div id="important-message">
-  <?php echo $important_notice; ?>
+	<?php echo $important_notice; ?>
 </div>
 <?php } ?>
 

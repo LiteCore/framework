@@ -63,7 +63,7 @@
 			} else {
 				$view = new ent_view('app://frontend/templates/'.settings::get('template').'/partials/notices.inc.php');
 			}
-		
+
 			$view->snippets['notices'] = self::$data;
 			$output = $view->render();
 

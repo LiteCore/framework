@@ -251,7 +251,7 @@
 					<fieldset id="actions">
 						<legend><?php echo language::translate('text_with_selected', 'With selected'); ?>:</legend>
 
-						<ul class="flex flex-columns">
+						<ul class="flex flex-columns flex-gap">
 							<li>
 								<div class="btn-group">
 									<?php echo functions::form_button('enable', language::translate('title_enable', 'Enable'), 'submit', '', 'on'); ?>

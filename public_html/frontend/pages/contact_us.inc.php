@@ -4,6 +4,14 @@
 
 	breadcrumbs::add(language::translate('title_contact_us', 'Contact Us'));
 
+	if (!$_POST && class_exists('user')) {
+		$_POST = [
+			'firstname' => user::$data['firstname'],
+			'lastname' => user::$data['lastname'],
+			'email' => user::$data['email'],
+		];
+	}
+
 	if (!empty($_POST['send'])) {
 
 		try {
@@ -28,12 +36,8 @@
 				throw new Exception(language::translate('error_missing_message', 'You must provide a message'));
 			}
 
-			if (settings::get('captcha_enabled')) {
-				$captcha = functions::captcha_get('contact_us');
-
-				if (empty($captcha) || $captcha != $_POST['captcha']) {
-					throw new Exception(language::translate('error_invalid_captcha', 'Invalid CAPTCHA given'));
-				}
+			if (settings::get('captcha_enabled') && !functions::captcha_validate('contact_us')) {
+				throw new Exception(language::translate('error_invalid_captcha', 'Invalid CAPTCHA given'));
 			}
 
 			$message = strtr(language::translate('email_user_feedback', "** This is an email message from %sender_name <%sender_email> **\r\n\r\n%message"), [
@@ -82,15 +86,22 @@
 					<?php echo functions::form_begin('contact_form', 'post'); ?>
 
 						<div class="row">
-							<div class="form-group col-md-6">
-								<label><?php echo language::translate('title_name', 'Name'); ?></label>
-								<?php echo functions::form_input_text('name', true, 'required'); ?>
+							<div class="row">
+								<div class="form-group col-md-6">
+									<label><?php echo language::translate('title_firstname', 'First Name'); ?></label>
+									<?php echo functions::form_input_text('firstname', true, 'required'); ?>
+								</div>
+		
+								<div class="form-group col-md-6">
+									<label><?php echo language::translate('title_lastname', 'Last Name'); ?></label>
+									<?php echo functions::form_input_text('lastname', true, 'required'); ?>
+								</div>
 							</div>
+						</div>
 
-							<div class="form-group col-md-6">
-								<label><?php echo language::translate('title_email_address', 'Email Address'); ?></label>
-								<?php echo functions::form_input_email('email', true, 'required'); ?>
-							</div>
+						<div class="form-group">
+							<label><?php echo language::translate('title_email_address', 'Email Address'); ?></label>
+							<?php echo functions::form_input_email('email', true, 'required'); ?>
 						</div>
 
 						<div class="form-group">
@@ -106,7 +117,7 @@
 						<?php if (settings::get('captcha_enabled')) { ?>
 						<div class="form-group" style="max-width: 250px;">
 							<label><?php echo language::translate('title_captcha', 'CAPTCHA'); ?></label>
-							<?php echo functions::form_input_captcha('captcha', 'contact_us', 'required'); ?>
+							<?php echo functions::form_input_captcha('contact_us'); ?>
 						</div>
 						<?php } ?>
 

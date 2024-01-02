@@ -226,7 +226,7 @@
 			// Static domain
 			if ($static_domain = settings::get('static_domain')) {
 				$output = preg_replace_callback('#"https?://'. preg_quote($_SERVER['HTTP_HOST'], '#') .'(/[^"]+\.(a?png|avif|bmp|css|eot|gif|ico|jpe?g|js|map|otf|png|svg|tiff?|ttf|woff2?)(\?[^"]+)?)"#', function($matches) use ($static_domain) {
-				  return '"'. rtrim($static_domain, '/') .$matches[1].'"';
+					return '"'. rtrim($static_domain, '/') .$matches[1].'"';
 				}, $output);
 			}
 		}
@@ -296,7 +296,7 @@
 			$output = $_page->render();
 
 			self::optimize($output);
-			
+
 			stats::stop_watch('rendering');
 
 			$output .= PHP_EOL . stats::render();
