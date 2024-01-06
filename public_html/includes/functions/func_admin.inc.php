@@ -10,13 +10,10 @@
 			foreach (functions::file_search('app://backend/apps/*', GLOB_ONLYDIR) as $directory) {
 				if (!$app_config = require $directory . '/config.inc.php') continue;
 
-				if (empty($app_config['theme']['icon'])) {
-					$app_config['theme']['icon'] = 'fa-plus';
-				}
-
-				if (empty($app_config['theme']['color'])) {
-					$app_config['theme']['color'] = '#97a3b5';
-				}
+				$app_config['theme'] = [
+					'icon' => fallback($app_config['theme']['icon'], 'fa-plus'),
+					'color' => fallback($app_config['theme']['color'], '#97a3b5'),
+				];
 
 				$id = basename($directory);
 				$apps[$id] = array_merge(['id' => $id, 'directory' => rtrim($directory, '/') . '/'], $app_config);

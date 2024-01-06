@@ -14,6 +14,11 @@
 			define('__DOC__', $app_config['default']);
 		}
 
+		$app_config['theme'] = [
+			'icon' => fallback($app_config['theme']['icon'], 'fa-plus'),
+			'color' => fallback($app_config['theme']['color'], '#97a3b5'),
+		];
+
 		// Check if administrator is permitted to access document
 		if (!empty(administrator::$data['apps'][__APP__]['status']) && !in_array(__DOC__, administrator::$data['apps'][__APP__]['docs'])) {
 			notices::add('errors', language::translate('title_access_denied', 'Access Denied'));
@@ -32,9 +37,11 @@
 		$_content = new ent_view('app://backend/apps/'. __APP__ .'/'. $app_config['docs'][__DOC__]);
 
 		$_content->snippets = [
-			'app_icon' => '<span class="app-icon">' . PHP_EOL
-									. '  ' . functions::draw_fonticon($app_config['theme']['icon'] .' fa-fw') . PHP_EOL
-									. '</span>',
+			'app_icon' => implode(PHP_EOL, [
+				'<span class="app-icon">',
+				'	' . functions::draw_fonticon($app_config['theme']['icon'] .' fa-fw'),
+				'</span>',
+			]),
 		];
 
 		// Render the page
@@ -44,8 +51,8 @@
 			'app' => __APP__,
 			'doc' => __DOC__,
 			'theme' => [
-				'icon' => fallback($app_config['theme']['icon'], 'fa-plus'),
-				'color' => fallback($app_config['theme']['color'], '#97a3b5'),
+				'icon' => $app_config['theme']['icon'],
+				'color' => $app_config['theme']['color'],
 			],
 			'content' => (string)$_content,
 		];
