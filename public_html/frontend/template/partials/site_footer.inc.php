@@ -27,12 +27,6 @@
 					<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" class="img-responsive" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>">
 				</div>
 
-				<ul class="modules flex flex-inline flex-gap text-center">
-					<?php foreach ($modules as $module) { ?>
-					<li class="thumbnail"><img src="<?php echo document::href_link($module['icon']); ?>" class="img-responsive" alt=""></li>
-					<?php } ?>
-				</ul>
-
 				<ul class="social-bookmarks flex flex-inline flex-gap text-center">
 					<?php foreach ($social as $bookmark) { ?>
 					<li><a href="<?php echo htmlspecialchars($bookmark['link']); ?>" class="thumbnail"><?php echo functions::draw_fonticon($bookmark['icon'] .' fa-fw', 'title="'. htmlspecialchars($bookmark['title']) .'"'); ?></a></li>
