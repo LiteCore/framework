@@ -68,8 +68,7 @@
 	}
 
 	$_page = new ent_view();
-
-	//echo $_page->render('app://frontend/templates/'.settings::get('template').'/pages/contact.inc.php');
+	//echo $_page->render('app://frontend/template/pages/contact.inc.php');
 	extract($_page->snippets);
 ?>
 <main id="main" class="container">
@@ -86,16 +85,14 @@
 					<?php echo functions::form_begin('contact_form', 'post'); ?>
 
 						<div class="row">
-							<div class="row">
-								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_firstname', 'First Name'); ?></label>
-									<?php echo functions::form_input_text('firstname', true, 'required'); ?>
-								</div>
-		
-								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_lastname', 'Last Name'); ?></label>
-									<?php echo functions::form_input_text('lastname', true, 'required'); ?>
-								</div>
+							<div class="form-group col-md-6">
+								<label><?php echo language::translate('title_firstname', 'First Name'); ?></label>
+								<?php echo functions::form_input_text('firstname', true, 'required'); ?>
+							</div>
+	
+							<div class="form-group col-md-6">
+								<label><?php echo language::translate('title_lastname', 'Last Name'); ?></label>
+								<?php echo functions::form_input_text('lastname', true, 'required'); ?>
 							</div>
 						</div>
 

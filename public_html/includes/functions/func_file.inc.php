@@ -141,6 +141,10 @@
 
 	function file_realpath($path) {
 
+		if (empty($path)) {
+			return '';
+		}
+
 		if (preg_match('#^app://#', $path)) {
 			$path = preg_replace('#^app://#', FS_DIR_APP, $path);
 
@@ -158,7 +162,9 @@
 			$path = str_replace('\\', '/', $path);
 		}
 
-		if (is_dir($path)) $path = rtrim($path, '/') . '/';
+		if (is_dir($path)) {
+			$path = rtrim($path, '/') . '/';
+		}
 
 		return $path;
 	}

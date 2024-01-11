@@ -24,7 +24,7 @@
 		public static function before_capture() {
 
 			header('Content-Security-Policy: frame-ancestors \'self\';'); // Clickjacking Protection
-			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data data from own domain
+			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data from own domain
 			header('X-Frame-Options: SAMEORIGIN'); // Clickjacking Protection
 			header('X-Powered-By: '. PLATFORM_NAME);
 
@@ -38,13 +38,13 @@
 			self::$snippets['text_direction'] = language::$selected['direction'];
 			self::$snippets['charset'] = mb_http_output();
 			self::$snippets['home_path'] = WS_DIR_APP;
-			self::$snippets['template_path'] = preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request) ? WS_DIR_APP . 'backend/template/' : WS_DIR_APP . 'frontend/templates/'.settings::get('template').'/';
+			self::$snippets['template_path'] = preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request) ? WS_DIR_APP . 'backend/template/' : WS_DIR_APP . 'frontend/template/';
 			self::$title = [settings::get('site_name')];
 			self::$head_tags['favicon'] = implode(PHP_EOL, [
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
-				'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="255x255">',
+				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
+				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
+				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
+				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="255x255">',
 			]);
 			self::$head_tags['manifest'] = '<link rel="manifest" href="'. self::href_ilink('manifest.json') .'">'; // No namespace as relative to endpoint
 			self::$head_tags['fontawesome'] = '<link rel="stylesheet" href="'. self::href_rlink('app://assets/fontawesome/font-awesome.min.css') .'">';
@@ -58,19 +58,6 @@
 					self::$head_tags['hreflang'] .= '<link rel="alternate" hreflang="'. $language['code'] .'" href="'. self::href_ilink(route::$selected['resource'], [], true, ['page', 'sort'], $language['code']) .'" />' . PHP_EOL;
 				}
 				self::$head_tags['hreflang'] = trim(self::$head_tags['hreflang']);
-			}
-
-			// Get template settings
-			if (!$template_config = include 'app://frontend/templates/'. settings::get('template') .'/config.inc.php') {
-				$template_config = [];
-			}
-
-			self::$settings = settings::get('template_settings') ? json_decode(settings::get('template_settings'), true) : [];
-
-			foreach ($template_config as $setting) {
-				if (!isset(self::$settings[$setting['key']])) {
-					self::$settings[$setting['key']] = $setting['default_value'];
-				}
 			}
 		}
 
@@ -92,11 +79,16 @@
 
 			self::$jsenv['session'] = [
 				'id' => session::get_id(),
-				'language_code' => language::$selected['code'],
+				'language' => [
+					'code' => language::$selected['code'],
+					'name' => language::$selected['name'],
+					'decimal_point' => language::$selected['decimal_point'],
+					'thousands_separator' => language::$selected['thousands_sep'],
+				],
 			];
 
 			self::$jsenv['template'] = [
-				'url' => document::link(preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request) ? 'backend/template' : 'frontend/templates/'. settings::get('template') .'/'),
+				'url' => self::link(preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request) ? 'backend/template' : 'frontend/template/'),
 				'settings' => self::$settings,
 			];
 
@@ -202,6 +194,8 @@
 
 					if (!preg_match('#(?<==")(https?:)?//[^"]+(?=")#is', $match, $m)) continue;
 
+					$m[0] = html_entity_decode($m[0]);
+
 					switch ($matches[1][$key]) {
 						case 'link':
 							if (!preg_match('#stylesheet#', $m[0])) continue 2;
@@ -238,7 +232,7 @@
 			if (preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request)) {
 				$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
 			} else {
-				$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/layouts/'.self::$layout.'.inc.php');
+				$_page = new ent_view('app://frontend/template/layouts/'.self::$layout.'.inc.php');
 			}
 
 			$_page->snippets = array_merge(self::$snippets, [
@@ -254,9 +248,11 @@
 
 			// Prepare title
 			if (!empty(self::$title)) {
+
 				if (!is_array(self::$title)) {
 					self::$title = [self::$title];
 				}
+
 				self::$title = array_filter(self::$title);
 				$_page->snippets['title'] = implode(' | ', array_reverse(self::$title));
 			}
@@ -268,7 +264,7 @@
 
 			// Prepare styles
 			if (!empty(self::$style)) {
-				$_page->snippets['style'] = implode(PHP_EOL, [
+				$_page->snippets['head_tags'][] = implode(PHP_EOL, [
 					'<style>',
 					 implode(PHP_EOL . PHP_EOL, self::$style),
 					 '</style>',
@@ -277,7 +273,7 @@
 
 			// Prepare javascript
 			if (!empty(self::$javascript)) {
-				$_page->snippets['javascript'] = implode(PHP_EOL, [
+				$_page->snippets['foot_tags'][] = implode(PHP_EOL, [
 					'<script>',
 					 implode(PHP_EOL . PHP_EOL, self::$javascript),
 					 '</script>',
@@ -302,6 +298,57 @@
 			$output .= PHP_EOL . stats::render();
 
 			return $output;
+		}
+
+		public static function add_head_tags($tags, $key=null) {
+			if (is_array($tags)) {
+				self::$head_tags[$key] = implode(PHP_EOL, $tags);
+			} else{
+				self::$head_tags[$key] = $tags;
+			}
+		}
+
+		public static function add_foot_tags($tags, $key=null) {
+			if (is_array($tags)) {
+				self::$foot_tags[$key] = implode(PHP_EOL, $tags);
+			} else{
+				self::$foot_tags[$key] = $tags;
+			}
+		}
+
+		public static function load_style($urls, $key=null) {
+
+			if (!is_array($urls)) {
+				$urls = [$urls];
+			}
+
+			self::$head_tags[$key] = implode(PHP_EOL, array_map(function($url){
+				if (!$url) return;
+				return '<link rel="stylesheet" href="'. self::href_rlink($url) .'">';
+			}, $urls));
+		}
+
+		public static function load_script($urls, $key=null) {
+
+			if (!is_array($urls)) {
+				$urls = [$urls];
+			}
+
+			self::$foot_tags[$key] = implode(PHP_EOL, array_map(function($url){
+				if (!$url) return;
+				return '<script src="'. self::href_rlink($url) .'"></script>';
+			}, $urls));
+		}
+
+		public static function add_script($lines, $key=null) {
+
+			if (!is_array($lines)) {
+				$lines = [$lines];
+			}
+
+			self::$javascript[$key] = implode(PHP_EOL, array_map(function($line){
+				return '	'.$line;
+			}, $lines));
 		}
 
 		public static function ilink($resource=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
@@ -341,7 +388,10 @@
 
 			if (empty($path)) {
 				$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-				if ($inherit_params === null) $inherit_params = true;
+
+				if ($inherit_params === null) {
+					$inherit_params = true;
+				}
 			}
 
 			if (preg_match('#^(app://|storage://|'. preg_quote(DOCUMENT_ROOT, '#') .')#', $path)) {
@@ -357,8 +407,12 @@
 
 		public static function rlink($resource) {
 
-			if (empty($resource) || !is_file($resource)) {
-				return self::link(preg_replace('#^'. preg_quote(DOCUMENT_ROOT, '#') .'#', '', $resource));
+			if (empty($resource)) {
+				return '';
+			}
+
+			if (is_file($resource)) {
+				$resource = functions::file_realpath($resource);
 			}
 
 			if (preg_match('#^app://#', $resource)) {
@@ -371,7 +425,8 @@
 				$webpath = preg_replace('#^('. preg_quote(DOCUMENT_ROOT, '#') .')#', '', str_replace('\\', '/', $resource));
 			}
 
-			return self::link($webpath, ['_' => filemtime($resource)]);
+			//return self::link($webpath, ['_' => filemtime($resource)]);
+			return self::link($webpath, is_file($resource) ? ['_' => filemtime($resource)] : []);
 		}
 
 		public static function href_rlink($resource) {

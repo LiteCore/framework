@@ -157,7 +157,7 @@
 				return $this;
 			}
 
-			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/layouts/email.inc.php');
+			$view = new ent_view('app://frontend/template/layouts/email.inc.php');
 
 			$view->snippets = [
 				'content' => $html ? $content : nl2br($content),
@@ -360,9 +360,11 @@
 			// Prepare several multiparts
 			if (count($this->data['multiparts']) > 1) {
 				foreach ($this->data['multiparts'] as $multipart) {
-					$body .= '--'. $multipart_boundary_string . "\r\n"
-								 . implode("\r\n", array_map(function($v, $k) { return $k.':'.$v; }, $multipart['headers'], array_keys($multipart['headers']))) . "\r\n\r\n"
-								 . $multipart['body'] . "\r\n\r\n";
+					$body .= implode("\r\n", [
+						'--'. $multipart_boundary_string,
+						implode("\r\n", array_map(function($v, $k) { return $k.':'.$v; }, $multipart['headers'], array_keys($multipart['headers']))) . "\r\n",
+						$multipart['body'],
+					]) . "\r\n";
 				}
 
 				$body .= '--'. $multipart_boundary_string .'--';

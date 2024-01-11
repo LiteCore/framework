@@ -26,7 +26,7 @@
 		}
 		breadcrumbs::add($page->title);
 
-		$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/pages/page.inc.php');
+		$_page = new ent_view('app://frontend/template/pages/page.inc.php');
 
 		$_page->snippets = [
 			'title' => $page->title,

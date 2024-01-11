@@ -1,6 +1,6 @@
 <?php
 
-	$site_navigation = new ent_view('app://frontend/templates/'. settings::get('template') .'/partials/site_navigation.inc.php');
+	$site_navigation = new ent_view('app://frontend/template/partials/site_navigation.inc.php');
 
 	$site_navigation_cache_token = cache::token('site_navigation', ['language']);
 	if (!$site_navigation->snippets = cache::get($site_navigation_cache_token)) {

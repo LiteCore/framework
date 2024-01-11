@@ -58,15 +58,17 @@
 
 				case 'library':
 
-				if (extension_loaded('imagick')) {
-					$this->_data['library'] = 'imagick';
+					if (extension_loaded('imagick')) {
+						$this->_data['library'] = 'imagick';
 
-				} else if (extension_loaded('gd')) {
-					$this->_data['library'] = 'gd';
+					} else if (extension_loaded('gd')) {
+						$this->_data['library'] = 'gd';
 
-				} else {
-					throw new Exception('No image processing library available');
-				}
+					} else {
+						throw new Exception('No image processing library available');
+					}
+
+					break;
 
 				case 'type':
 
@@ -106,7 +108,7 @@
 
 					switch ($this->library) {
 						case 'imagick':
-							$this->_data['type'] = strtr($this->_image->getImageFormat(), ['JPEG' => 'jpg']);
+							$this->_data['type'] = strtr(strtolower($this->_image->getImageFormat()), ['jpeg' => 'jpg']);
 							break 2;
 
 						case 'gd':
@@ -254,6 +256,7 @@
 						Imagick::setResourceLimit(imagick::RESOURCETYPE_DISK, 256e6);
 
 						$this->_image = new Imagick($this->_file);
+						$this->_data['type'] = strtr(strtolower($this->_image->getImageFormat()), ['jpeg' => 'jpg']);
 
 						return true;
 
@@ -270,13 +273,38 @@
 					}
 
 					switch ($this->type) {
-						case 'avif': $this->_image = ImageCreateFromAVIF($this->_file); break;
-						case 'gif': $this->_image = ImageCreateFromGIF($this->_file); break;
-						case 'jpg': $this->_image = ImageCreateFromJPEG($this->_file); break;
-						case 'png': $this->_image = ImageCreateFromPNG($this->_file); break;
-						case 'webp': $this->_image = ImageCreateFromWebP($this->_file); break;
-						case 'svg': return false;
-						default: throw new Exception("Cannot load unknown image type ($this->type)");
+
+						case 'avif':
+							$this->_data['type'] = 'avif';
+							$this->_image = ImageCreateFromAVIF($this->_file);
+							break;
+
+						case 'gif':
+							$this->_data['type'] = 'gif';
+							$this->_image = ImageCreateFromGIF($this->_file);
+							break;
+
+						case 'jpg':
+							$this->_data['type'] = 'jpg';
+							$this->_image = ImageCreateFromJPEG($this->_file);
+							break;
+
+						case 'png':
+							$this->_data['type'] = 'png';
+							$this->_image = ImageCreateFromPNG($this->_file);
+							break;
+
+						case 'webp':
+							$this->_data['type'] = 'webp';
+							$this->_image = ImageCreateFromWebP($this->_file);
+							break;
+
+						case 'svg':
+							$this->_data['type'] = 'svg';
+							return false;
+
+						default:
+							throw new Exception("Cannot load unknown image type ($this->type)");
 					}
 
 					if (!$this->_image) {
@@ -685,6 +713,10 @@
 
 		public function save($destination, $quality=90, $interlaced=false) {
 
+			if (!$destination) {
+				$destination = $this->_file;
+			}
+
 			$destination = functions::file_realpath($destination);
 
 			if (is_file($destination)) {
@@ -695,7 +727,7 @@
 				throw new Exception("Destination is a folder ($destination)");
 			}
 
-			if (!is_writable(pathinfo($destination, PATHINFO_DIRNAME))) {
+			if (!is_writable(dirname($destination))) {
 				throw new Exception("Destination is not writable ($destination)");
 			}
 

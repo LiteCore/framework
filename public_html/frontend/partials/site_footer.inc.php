@@ -2,7 +2,7 @@
 	$site_footer_cache_token = cache::token('site_footer', ['language', 'login', 'region']);
 	if (cache::capture($site_footer_cache_token)) {
 
-		$site_footer = new ent_view('app://frontend/templates/'.settings::get('template').'/partials/site_footer.inc.php');
+		$site_footer = new ent_view('app://frontend/template/partials/site_footer.inc.php');
 
 		$site_footer->snippets = [
 			'pages' => [],

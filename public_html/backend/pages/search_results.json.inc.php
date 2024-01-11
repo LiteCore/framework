@@ -2,18 +2,15 @@
 
 	document::$layout = 'ajax';
 
-	$app_themes = array_column(functions::admin_get_apps(), 'theme', 'code');
-
-	$search_results = [];
-
 	try {
 
 		if (empty($_GET['query'])) {
 			throw new Exception('Nothing to search for');
 		}
 
-		$apps = admin_get_apps();
-
+		$apps = functions::admin_get_apps();
+		$app_themes = array_column($apps, 'theme', 'code');
+		
 		$search_results = [];
 
 		foreach (array_column($apps, 'search_results', 'id') as $app => $file) {

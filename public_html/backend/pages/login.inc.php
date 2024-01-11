@@ -87,15 +87,15 @@
 						];
 
 						$subject = language::translate('administrator_account_blocked:email_subject', 'Administrator Account Blocked');
-						$message = strtr(language::translate('administrator_account_blocked:email_body',
-							"Your administrator account %username has been blocked until %expires because of too many invalid attempts.\r\n"
-						. "\r\n"
-						. "Client: %hostname (%ip_address)\r\n"
-						. "%user_agent\r\n"
-						. "\r\n"
-						. "%site_name\r\n"
-						. "%site_link"
-						), $aliases);
+						$message = strtr(language::translate('administrator_account_blocked:email_body', implode("\r\n", [
+							'Your administrator account %username has been blocked until %expires because of too many invalid attempts.',
+							'',
+							'Client: %hostname (%ip_address)',
+							'%user_agent',
+							'',
+							'%site_name',
+							'%site_link',
+						])), $aliases);
 
 						$email = new ent_email();
 						$email->add_recipient($administrator['email'], $administrator['username'])

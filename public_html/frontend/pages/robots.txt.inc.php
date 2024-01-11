@@ -13,6 +13,9 @@
 	$output['sitemap'] = 'Sitemap: '. document::ilink('sitemap.xml');
 
 	// Output
+	ob_clean();
+	header('Content-Type: text/plain;charset='. mb_http_output());
+	
 	foreach ($output as $block) {
 		if (is_array($block)) {
 			echo implode(PHP_EOL, $block);
@@ -22,6 +25,4 @@
 		echo PHP_EOL . PHP_EOL;
 	}
 
-	ob_clean();
-	header('Content-Type: text/plain;charset='. mb_http_output());
 	exit;

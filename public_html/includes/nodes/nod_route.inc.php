@@ -186,11 +186,11 @@
 				switch (pathinfo($request_path, PATHINFO_EXTENSION)) {
 
 					case 'css': // Not supported by mime_content_type()
-						header('Content-Type: text/css; charset=utf-8');
+						header('Content-Type: text/css; charset='. mb_http_output());
 						break;
 
 					case 'js': // Not supported by mime_content_type()
-						header('Content-Type: text/javascript; charset=utf-8');
+						header('Content-Type: text/javascript; charset='. mb_http_output());
 						break;
 
 					default:
@@ -296,10 +296,14 @@
 			}
 
 			// Unset params that are to be skipped from the link
-			if (is_string($skip_params)) $skip_params = [$skip_params];
+			if (is_string($skip_params)) {
+				$skip_params = [$skip_params];
+			}
 
 			foreach ($skip_params as $key) {
-				if (isset($link->query[$key])) $link->unset_query($key);
+				if (isset($link->query[$key])) {
+					$link->unset_query($key);
+				}
 			}
 
 			// Set new params (overwrites any existing inherited params)

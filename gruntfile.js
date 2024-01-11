@@ -66,11 +66,11 @@ module.exports = function(grunt) {
 					relativeUrls: true
 				},
 				files: {
-					'public_html/frontend/templates/default/css/app.css'       : 'public_html/frontend/templates/default/less/app.less',
-					'public_html/frontend/templates/default/css/email.css'     : 'public_html/frontend/templates/default/less/email.less',
-					'public_html/frontend/templates/default/css/framework.css' : 'public_html/frontend/templates/default/less/framework.less',
-					'public_html/frontend/templates/default/css/printable.css' : 'public_html/frontend/templates/default/less/printable.less',
-					'public_html/frontend/templates/default/css/variables.css' : 'public_html/frontend/templates/default/less/variables.less',
+					'public_html/frontend/template/css/app.css'       : 'public_html/frontend/template/less/app.less',
+					'public_html/frontend/template/css/email.css'     : 'public_html/frontend/template/less/email.less',
+					'public_html/frontend/template/css/framework.css' : 'public_html/frontend/template/less/framework.less',
+					'public_html/frontend/template/css/printable.css' : 'public_html/frontend/template/less/printable.less',
+					'public_html/frontend/template/css/variables.css' : 'public_html/frontend/template/less/variables.less',
 				}
 			},
 
@@ -81,10 +81,10 @@ module.exports = function(grunt) {
 					relativeUrls: true
 				},
 				files: {
-					'public_html/frontend/templates/default/css/app.min.css'       : 'public_html/frontend/templates/default/less/app.less',
-					'public_html/frontend/templates/default/css/email.min.css'     : 'public_html/frontend/templates/default/less/email.less',
-					'public_html/frontend/templates/default/css/framework.min.css' : 'public_html/frontend/templates/default/less/framework.less',
-					'public_html/frontend/templates/default/css/printable.min.css' : 'public_html/frontend/templates/default/less/printable.less',
+					'public_html/frontend/template/css/app.min.css'       : 'public_html/frontend/template/less/app.less',
+					'public_html/frontend/template/css/email.min.css'     : 'public_html/frontend/template/less/email.less',
+					'public_html/frontend/template/css/framework.min.css' : 'public_html/frontend/template/less/framework.less',
+					'public_html/frontend/template/css/printable.min.css' : 'public_html/frontend/template/less/printable.less',
 				}
 			}
 		},
@@ -109,7 +109,7 @@ module.exports = function(grunt) {
 				},
 				files: {
 					'public_html/backend/template/js/app.min.js': ['public_html/backend/template/js/app.js'],
-					'public_html/frontend/templates/default/js/app.min.js': ['public_html/frontend/templates/default/js/app.js'],
+					'public_html/frontend/template/js/app.min.js': ['public_html/frontend/template/js/app.js'],
 				}
 			},
 		},

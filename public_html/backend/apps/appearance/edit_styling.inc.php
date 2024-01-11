@@ -1,10 +1,10 @@
 <?php
 
-	if (is_file('app://frontend/templates/'. settings::get('template') .'/less/variables.less')) {
-		$stylesheet = 'app://frontend/templates/'. settings::get('template') .'/less/variables.less';
+	if (is_file('app://frontend/template/less/variables.less')) {
+		$stylesheet = 'app://frontend/template/less/variables.less';
 
-	} else if (is_file('app://includes/templates/'. settings::get('template') .'/css/variables.css')) {
-		$stylesheet = 'app://includes/templates/'. settings::get('template') .'/css/variables.css';
+	} else if (is_file('app://frontend/template/css/variables.css')) {
+		$stylesheet = 'app://frontend/template/css/variables.css';
 
 	} else {
 		notices::add('errors', language::translate('error_template_missing_variables_stylesheet', 'This template does not have an editable stylesheet with variables (e.g. variables.css)'));
@@ -59,8 +59,8 @@
 			</div>
 
 			<div class="card-action">
-				<?php echo functions::form_button('save', language::translate('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
-				<?php echo functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"', 'cancel'); ?>
+				<?php echo functions::form_button_predefined('save'); ?>
+				<?php echo functions::form_button_predefined('cancel'); ?>
 			</div>
 
 		<?php echo functions::form_end(); ?>

@@ -27,9 +27,7 @@
 
 			functions::image_delete_cache('storage://images/' . $filename);
 
-			if (settings::get('image_downsample_size')) {
-				$image->resample(512, 512, 'FIT_ONLY_BIGGER');
-			}
+			$image->resample(512, 512, 'FIT_ONLY_BIGGER');
 
 			if (!$image->save('storage://images/' . $filename)) {
 				throw new Exception(language::translate('error_failed_uploading_image', 'The uploaded image failed saving to disk. Make sure permissions are set.'));

@@ -305,9 +305,14 @@ html[dir="rtl"] .form-select {
 	margin-top: .25em;
 }
 
-.table-striped .form-input,
-.table-striped .form-select {
+.table {
+	.form-check {
+		line-height: 100%;
+	}
+	&.table-striped .form-input,
+	&.table-striped .form-select {
 	background-color: var(--whitespace-color);
+	}
 }
 
 fieldset[disabled] > :not(legend),
@@ -340,5 +345,38 @@ fieldset[disabled] > :not(legend),
 	}
 	.trumbowyg-editor, .trumbowyg-textarea {
 		border-end-start-radius: 0;
+	}
+}
+
+input[data-toggle="tags"] + .form-input {
+	.tokens {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		list-style: none;
+		padding: 0;
+		margin: ~"calc(0em - var(--input-padding-y))" ~"calc(0em - var(--input-padding-x))"  ;
+		cursor: text;
+	}
+	.tag {
+		background: #ccc;
+		padding: .25em;
+		margin: var(--input-padding-y) var(--input-padding-x);
+		border-radius: .25em;
+		cursor: default;
+		padding: var(--input-padding-y) var(--input-padding-x);
+		.remove {
+			background: #999;
+			border-radius: .25em;
+			padding: 0 .25em;
+			cursor: pointer;
+		}
+	}
+	.input {
+		flex: 1 1 auto;
+		background: transparent;
+		border: none;
+		outline: none;
+		padding: var(--input-padding-y) var(--input-padding-x);
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-	//$site_cookie_notice = new ent_view('app://frontend/templates/'.settings::get('template').'/partials/site_cookie_notice.inc.php');
+	//$site_cookie_notice = new ent_view('app://frontend/template/partials/site_cookie_notice.inc.php');
 	//echo $site_cookie_notice;
 ?>
 <?php if (settings::get('cookie_policy') && !isset($_COOKIE['cookies_accepted'])) { ?>
@@ -10,8 +10,8 @@
 		</div>
 
 		<div class="buttons text-center">
-			<?php echo functions::form_draw_button('accept_cookies', ['1', language::translate('text_accept_cookies', 'Accept Cookies')], 'button', 'style="font-weight: bold;"'); ?>
-			<?php echo functions::form_draw_button('decline_cookies', ['0', language::translate('text_decline', 'Decline')], 'button'); ?>
+			<?php echo functions::form_button('accept_cookies', ['1', language::translate('text_accept_cookies', 'Accept Cookies')], 'button', 'style="font-weight: bold;"'); ?>
+			<?php echo functions::form_button('decline_cookies', ['0', language::translate('text_decline', 'Decline')], 'button'); ?>
 		</div>
 	</div>
 </div>

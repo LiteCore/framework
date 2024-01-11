@@ -32,7 +32,7 @@
 				}
 
 				if (($duration = microtime(true) - $timestamp) > 1) {
-					error_log('['. date('Y-m-d H:i:s e').'] Warning: A MySQL connection established in '. number_format($duration, 3, '.', ' ') .' s.' . PHP_EOL, 3, 'app://logs/performance.log');
+					error_log('['. date('Y-m-d H:i:s e').'] Warning: A MySQL connection established in '. language::number_format($duration, 3, '.', ' ') .' s.' . PHP_EOL, 3, 'app://logs/performance.log');
 				}
 
 				self::$stats['duration'] += $duration;
@@ -54,8 +54,6 @@
 				'STRICT_ALL_TABLES',   // Strict mode [MySQL 5.7+, MariaDB 10.2.4+]
 				'STRICT_TRANS_TABLES', // Strict mode [MySQL 5.7+, MariaDB 10.2.4+]
 				'ONLY_FULL_GROUP_BY',  // Requiring an undesired amount of columns in group by clause [MySQL 5.7+]
-				'NO_ZERO_DATE',        // Prevents us from sending in empty dates [MySQL 5.7+]
-				'NO_ZERO_IN_DATE',     // Prevents us from sending in a zero date 0000-00-00 [MySQL 5.7+]
 			];
 
 			foreach ($undesired_modes as $mode) {
@@ -270,7 +268,7 @@
 			}
 
 			if (($duration = microtime(true) - $timestamp) > 3) {
-				error_log('['. date('Y-m-d H:i:s e').'] Warning: A MySQL query executed in '. number_format($duration, 3, '.', ' ') .' s. Query: '. str_replace("\r\n", "\r\n  ", $sql) . PHP_EOL, 3, 'storage://logs/performance.log');
+				error_log('['. date('Y-m-d H:i:s e').'] Warning: A MySQL query executed in '. language::number_format($duration, 3, '.', ' ') .' s. Query: '. str_replace("\r\n", "\r\n  ", $sql) . PHP_EOL, 3, 'storage://logs/performance.log');
 			}
 
 			self::$stats['queries']++;
@@ -342,7 +340,9 @@
 
 		public static function create_variable($field, $value=null) {
 
-			if (empty($field)) return null;
+			if (empty($field)) {
+				return null;
+			}
 
 			if (is_string($field)) {
 				$field = [

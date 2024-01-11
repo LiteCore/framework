@@ -41,14 +41,7 @@
 
 				self::$_cache[$setting['key']] = $setting['value'];
 			}
-
-			// Set time zone
-			if ($timezone = self::get('site_timezone')) {
-				date_default_timezone_set($timezone);
-			}
 		}
-
-		######################################################################
 
 		public static function get(string $key, $fallback=null) {
 

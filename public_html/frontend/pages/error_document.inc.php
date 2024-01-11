@@ -2,14 +2,16 @@
 
 	document::$layout = 'blank';
 
-	if (!empty($_GET['code'])) http_response_code($_GET['code']);
+	if (!empty($_GET['code'])) {
+		http_response_code($_GET['code']);
+	}
 
 	if (preg_match('#\.(avif|gif|jpg|png|webp)$#', route::$request)) {
 		echo file_get_contents('images/no_image.png');
 		exit;
 	}
 
-	$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/pages/error_document.inc.php');
+	$_page = new ent_view('app://frontend/template/pages/error_document.inc.php');
 
 	switch (http_response_code()) {
 

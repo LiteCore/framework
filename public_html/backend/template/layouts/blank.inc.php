@@ -3,7 +3,6 @@
 <head>
 <title>{{title}}</title>
 <meta charset="{{charset}}">
-<meta name="description" content="{{description}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/variables.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">

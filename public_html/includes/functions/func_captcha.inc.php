@@ -1,13 +1,15 @@
 <?php
 
 	function captcha_draw($id='default', $config=[], $parameters='') {
-
-		if (empty($config['width'])) $config['width'] = 100;
-		if (empty($config['height'])) $config['height'] = 40;
-		if (empty($config['length'])) $config['length'] = 4;
-		if (empty($config['set'])) $config['set'] = 'numbers';
-		if (empty($config['font'])) $config['font'] = FS_DIR_STORAGE . 'fonts/captcha.ttf';
-		if (empty($config['font_size'])) $config['font_size'] = $config['height'] * 0.75;
+		
+		$config = [
+			'width' => fallback($config['width'], 100),
+			'height' => fallback($config['height'], 40),
+			'length' => fallback($config['length'], 4),
+			'set' => fallback($config['set'], 'numbers'),
+			'font' => fallback($config['font'], FS_DIR_STORAGE . 'fonts/captcha.ttf'),
+			'font_size' => fallback($config['height'], $config['height'] * 0.75),
+		];
 
 		switch ($config['set']) {
 

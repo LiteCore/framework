@@ -27,7 +27,7 @@
 			if (preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request)) {
 				$view = new ent_view('app://backend/template/partials/breadcrumbs.inc.php');
 			} else {
-				$view = new ent_view('app://frontend/templates/'.settings::get('template').'/partials/breadcrumbs.inc.php');
+				$view = new ent_view('app://frontend/template/partials/breadcrumbs.inc.php');
 			}
 
 			$view->snippets['breadcrumbs'] = self::$data;

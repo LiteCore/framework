@@ -39,7 +39,7 @@
 		}
 	}
 
-	$box_contact_us = new ent_view('app://frontend/templates/'.settings::get('template').'/partials/box_contact_us.inc.php');
+	$box_contact_us = new ent_view('app://frontend/template/partials/box_contact_us.inc.php');
 
 	//echo $box_contact_us;
 	extract($box_contact_us->snippets);
@@ -52,7 +52,7 @@
 
 				<h1 style="margin-top: 0;"><?php echo language::translate('title_contact_us', 'Contact Us'); ?></h1>
 
-				<?php echo functions::form_draw_form_begin('contact_form', 'post'); ?>
+				<?php echo functions::form_begin('contact_form', 'post'); ?>
 
 					<div class="row">
 						<div class="form-group col-md-6">
@@ -78,7 +78,7 @@
 
 					<div class="form-group">
 						<label><?php echo language::translate('title_message', 'Message'); ?></label>
-						<?php echo functions::form_draw_textarea('message', true, 'required style="height: 250px;"'); ?>
+						<?php echo functions::form_input_textarea('message', true, 'required style="height: 250px;"'); ?>
 					</div>
 
 					<?php if (settings::get('captcha_enabled')) { ?>
@@ -90,9 +90,9 @@
 					</div>
 					<?php } ?>
 
-					<p><?php echo functions::form_draw_button('send', language::translate('title_send', 'Send'), 'submit', 'style="font-weight: bold;"'); ?></p>
+					<p><?php echo functions::form_button('send', language::translate('title_send', 'Send'), 'submit', 'style="font-weight: bold;"'); ?></p>
 
-				<?php echo functions::form_draw_form_end(); ?>
+				<?php echo functions::form_end(); ?>
 			</div>
 
 			<div class="col-md-4">

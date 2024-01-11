@@ -34,8 +34,6 @@
 			}
 		}
 
-		######################################################################
-
 		public static function start() {
 			return session_start();
 		}

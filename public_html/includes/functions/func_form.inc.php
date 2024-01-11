@@ -5,7 +5,7 @@
 	}
 
 	function form_end() {
-		return '</form>' . PHP_EOL;
+		return '</form>';
 	}
 
 	function form_reinsert_value($name, $array_value=null) {
@@ -72,9 +72,27 @@
 		return '<a '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="btn btn-default"' : '') .' href="'. functions::escape_html($url) .'"'. (($parameters) ? ' '.$parameters : '') .'>'. (!empty($fonticon) ? functions::draw_fonticon($fonticon) . ' ' : '') . $title .'</a>';
 	}
 
+	function form_button_predefined($name, $parameters='') {
+
+		switch($name) {
+			case 'save':
+				return functions::form_button('save', language::translate('title_save', 'Save'), 'submit', 'class="btn btn-success"' . (!empty($parameters) ? ' '. $parameters : ''), 'save');
+
+			case 'delete':
+				return functions::form_button('delete', language::translate('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. language::translate('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"' . (!empty($parameters) ? ' '. $parameters : ''), 'delete');
+
+			case 'cancel':
+				return functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"' . (!empty($parameters) ? ' '. $parameters : ''), 'cancel');
+		}
+
+		trigger_error('Unknown predefined button ('. functions::escape_html($name) .')', E_USER_WARNING);
+
+		return form_button($name, $value, 'submit', $parameters, $fonticon);
+	}
+
 	function form_dropdown($name, $options=[], $input=true, $parameters='') {
 
-		$html = implode(PHP_EOL, [
+		$html = [
 			'<div class="dropdown"'. ($parameters ? ' ' . $parameters : '') .'>',
 			'  <div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>',
 			'  <ul class="dropdown-menu">',
@@ -93,16 +111,18 @@
 			}
 
 			if (preg_match('#\[\]$#', $name)) {
-				$html .= '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
+				$html[] = '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>';
 			} else {
-				$html .= '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
+				$html[] = '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>';
 			}
 		}
 
-		$html .= '  </ul>' . PHP_EOL
-					 . '</div>';
+		$html[] += [
+			'  </ul>',
+			'</div>',
+		];
 
-		return $html;
+		return implode(PHP_EOL, $html);
 	}
 
 	function form_checkbox($name, $value, $input=true, $parameters='') {
@@ -212,48 +232,47 @@
 					 . PHP_EOL
 					 . form_textarea($name, $input, 'style="display: none;"');
 
-		document::$javascript['table2csv'] =
-<<<END
-$('table[data-toggle="csv"]').on('click', '.remove', function(e) {
-	e.preventDefault();
-	let parent = $(this).closest('tbody');
-	$(this).closest('tr').remove();
-	$(parent).trigger('keyup');
-});
-
-$('table[data-toggle="csv"] .add-row').click(function(e) {
-	e.preventDefault();
-	let n = $(this).closest('table').find('thead th:not(:last-child)').length;
-	$(this).closest('table').find('tbody').append(
-		'<tr>' + ('<td contenteditable></td>'.repeat(n)) + '<td><a class="btn btn-default btn-sm remove" href="#"><i class="fa fa-times" style="color: #d33;"></i></a></td>' +'</tr>'
-	).trigger('keyup');
-});
-
-$('table[data-toggle="csv"] .add-column').click(function(e) {
-	e.preventDefault();
-	let table = $(this).closest('table');
-	let title = prompt("<?php echo language::translate('title_column_title', 'Column Title'); ?>");
-	if (!title) return;
-	$(table).find('thead tr th:last-child:last-child').before('<th>'+ title +'</th>');
-	$(table).find('tbody tr td:last-child:last-child').before('<td contenteditable></td>');
-	$(table).find('tfoot tr td').attr('colspan', $(this).closest('table').find('tfoot tr td').attr('colspan') + 1);
-	$(this).trigger('keyup');
-});
-
-$('table[data-toggle="csv"]').keyup(function(e) {
-	 let csv = $(this).find('thead tr, tbody tr').map(function (i, row) {
-			return $(row).find('th:not(:last-child),td:not(:last-child)').map(function (j, col) {
-				let text = \$(col).text();
-				if (/("|,)/.test(text)) {
-					return '"'+ text.replace(/"/g, '""') +'"';
-				} else {
-					return text;
-				}
-			}).get().join(',');
-		}).get().join("\\r\\n");
-	$(this).next('textarea').val(csv);
-});
-END;
+	 document::$javascript['table2csv'] = implode(PHP_EOL, [
+			"$('table[data-toggle=\"csv\"]').on('click', '.remove', function(e) {",
+			"  e.preventDefault();",
+			"  var parent = $(this).closest('tbody');",
+			"  $(this).closest('tr').remove();",
+			"  $(parent).trigger('keyup');",
+			"});",
+			"",
+			"$('table[data-toggle=\"csv\"] .add-row').click(function(e) {",
+			"  e.preventDefault();",
+			"  var n = $(this).closest('table').find('thead th:not(:last-child)').length;",
+			"  $(this).closest('table').find('tbody').append(",
+			"    '<tr>' + ('<td contenteditable></td>'.repeat(n)) + '<td><a class=\"remove\" href=\"#\"><i class=\"fa fa-times-circle\" style=\"color: #d33;\"></i></a></td>' +'</tr>'",
+			"  ).trigger('keyup');",
+			"});",
+			"",
+			"$('table[data-toggle=\"csv\"] .add-column').click(function(e) {",
+			"  e.preventDefault();",
+			"  var table = $(this).closest('table');",
+			"  var title = prompt(\"<?php echo language::translate('title_column_title', 'Column Title'); ?>\");",
+			"  if (!title) return;",
+			"  $(table).find('thead tr th:last-child:last-child').before('<th>'+ title +'</th>');",
+			"  $(table).find('tbody tr td:last-child:last-child').before('<td contenteditable></td>');",
+			"  $(table).find('tfoot tr td').attr('colspan', $(this).closest('table').find('tfoot tr td').attr('colspan') + 1);",
+			"  $(this).trigger('keyup');",
+			"});",
+			"",
+			"$('table[data-toggle=\"csv\"]').keyup(function(e) {",
+			"   var csv = $(this).find('thead tr, tbody tr').map(function (i, row) {",
+			"      return $(row).find('th:not(:last-child),td:not(:last-child)').map(function (j, col) {",
+			"        var text = \$(col).text();",
+			"        if (/('|,)/.test(text)) {",
+			"          return '\"'+ text.replace(/\"/g, '\"\"') +'\"';",
+			"        } else {",
+			"          return text;",
+			"        }",
+			"      }).get().join(',');",
+			"    }).get().join('\\r\\n');',
+			'  $(this).next('textarea').val(csv);",
+			"});",
+		]);
 
 		return $html;
 	}
@@ -364,6 +383,30 @@ END;
 		}
 
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="month" name="'. functions::escape_html($name) .'" value="'. functions::escape_html($input) .'" maxlength="7" pattern="[0-9]{4}-[0-9]{2}" placeholder="YYYY-MM"'. (($parameters) ? ' '.$parameters : '') .'>';
+	}
+
+	function form_input_money($name, $currency_code=null, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		if (empty($currency_code)) {
+			$currency_code = settings::get('store_currency_code');
+		}
+
+		$currency = currency::$currencies[$currency_code];
+
+		if ($input != '') {
+			$input = number_format((float)$input, $currency['decimals'], '.', '');
+			//$input = rtrim(preg_replace('#(\.'. str_repeat('\d', 2) .')0{1,2}$#', '$1', $input), '.'); // Auto decimals
+		}
+
+
+		return '<div class="input-group">' . PHP_EOL
+				 . '  ' . form_input_decimal($name, $input, $currency['decimals'], 'step="any" data-type="currency"') . PHP_EOL
+				 . '  <strong class="input-group-text" style="opacity: 0.75; font-family: monospace;">'. functions::escape_html($currency['code']) .'</strong>' . PHP_EOL
+				 . '</div>';
 	}
 
 	function form_input_number($name, $input=true, $parameters='') {
@@ -804,7 +847,7 @@ END;
 	function form_function($name, $function, $input=true, $parameters='') {
 
 		if (!preg_match('#(\w*)\((.*?)\)$#i', $function, $matches)) {
-			trigger_error('Invalid function name ('. $function .')', E_USER_WARNING);
+			trigger_error('Invalid form function ('. $function .')', E_USER_WARNING);
 		}
 
 		$options = [];
@@ -830,7 +873,6 @@ END;
 				return form_input_decimal($name, $input, 2, $parameters);
 
 			case 'number':
-			case 'int':
 				return form_input_number($name, $input, $parameters);
 
 			case 'checkbox':
@@ -849,7 +891,6 @@ END;
 			case 'password':
 				return form_input_password($name, $input, $parameters);
 
-			case 'mediumtext':
 			case 'textarea':
 				return form_textarea($name, $input, $parameters . ' rows="5"');
 
@@ -857,7 +898,7 @@ END;
 				return form_textarea($name, $input, $parameters . ' rows="10"');
 
 			case 'csv':
-				return form_textarea($name, $input, true, $parameters);
+				return form_input_csv($name, $input, true, $parameters);
 
 			case 'email':
 				return form_input_email($name, $input, $parameters);
@@ -901,13 +942,6 @@ END;
 				$html = '';
 				foreach (array_keys(language::$languages) as $language_code) {
 					$html .= form_regional_wysiwyg($name.'['. $language_code.']', $language_code, $input, $parameters);
-				}
-				return $html;
-
-			case 'radio':
-				$html = '';
-				for ($i=0; $i<count($options); $i++) {
-					$html .= '<div class="radio"><label>'. form_radio_button($name, $options[$i], $input, $parameters) .' '. $options[$i] .'</label></div>';
 				}
 				return $html;
 
@@ -1216,9 +1250,16 @@ END;
 
 	function form_select_zone($name, $country_code='', $input=true, $parameters='', $preamble='none') {
 
-		if ($country_code == '') $country_code = settings::get('site_country_code');
-		if ($country_code == 'default_country_code') $country_code = settings::get('default_country_code');
-		if ($country_code == 'site_country_code') $country_code = settings::get('site_country_code');
+		switch ($country_code) {
+			
+			case 'site_country_code':
+				$country_code = settings::get('site_country_code');
+				break;
+				
+			default:
+				settings::get('default_country_code');
+				break;
+		}
 
 		$zones_query = database::query(
 			"select * from ". DB_TABLE_PREFIX ."zones

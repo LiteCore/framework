@@ -75,7 +75,7 @@
 
 		if (filter_var(ini_get('log_errors'), FILTER_VALIDATE_BOOLEAN)) {
 			$output = array_merge($output, array_filter([
-				(php_sapi_name() == 'cli') ? 'Command: '. implode(' ', $argv) : '',
+				($_SERVER['SERVER_SOFTWARE'] == 'CLI') ? 'Command: '. implode(' ', $GLOBALS['argv']) : '',
 				!empty($_SERVER['REQUEST_URI']) ? 'Request: '. $_SERVER['REQUEST_METHOD'] .' '. $_SERVER['REQUEST_URI'] .' '. $_SERVER['SERVER_PROTOCOL'] : '',
 				!empty($_SERVER['HTTP_HOST']) ? 'Host: '. $_SERVER['HTTP_HOST'] : '',
 				!empty($_SERVER['REMOTE_ADDR']) ? 'Client: '. $_SERVER['REMOTE_ADDR'] .' ('. gethostbyaddr($_SERVER['REMOTE_ADDR']) .')' : '',

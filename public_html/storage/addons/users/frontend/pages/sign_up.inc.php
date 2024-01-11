@@ -148,7 +148,7 @@
 			$_page->snippets['consent'] = strtr(language::translate('consent:privacy_policy', 'I have read the <a href="%privacy_policy_link" target="_blank">Privacy Policy</a> and I consent.'), $aliases);
 	}
 
-	//echo $_page->render('app://frontend/templates/'.settings::get('template').'/pages/create_account.inc.php');
+	//echo $_page->render('app://frontend/template/pages/create_account.inc.php');
 	extract($_page->snippets);
 
 	$company_type_options = [

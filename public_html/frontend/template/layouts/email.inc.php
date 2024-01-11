@@ -4,19 +4,19 @@
 <meta name="viewport" content="width=device-width">
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo mb_http_output(); ?>">
 <style>
-<?php echo file_get_contents('app://frontend/templates/'.settings::get('template').'/css/email.min.css'); ?>
+<?php echo file_get_contents('app://frontend/template/css/email.min.css'); ?>
 </style>
 </head>
 
 <body>
 
-	<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+	<table class="body" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 
 			<td class="container">
 				<div class="content">
 
-					<table role="presentation" class="main">
+					<table class="main">
 
 						<tr>
 							<td class="wrapper">
@@ -27,7 +27,7 @@
 					</table>
 
 					<div class="footer">
-						<table role="presentation" border="0" cellpadding="0" cellspacing="0">
+						<table border="0" cellpadding="0" cellspacing="0">
 							<tr>
 								<td class="content-block">
 								</td>

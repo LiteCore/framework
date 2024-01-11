@@ -9,7 +9,7 @@
 		'<meta property="og:image" content="'. document::href_rlink('storage://images/logotype.png') .'">',
 	]);
 
-	$_page = new ent_view('app://frontend/templates/'.settings::get('template').'/pages/index.inc.php');
+	$_page = new ent_view('app://frontend/template/pages/index.inc.php');
 
 	//echo $_page;
 	extract($_page->snippets);
