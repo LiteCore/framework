@@ -159,7 +159,6 @@
 		<operation method="before" type="multiline" onerror="warning">
 			<find><![CDATA[
 		$site_footer->snippets['social'] = [
-
 			]]></find>
 
 			<insert><![CDATA[
