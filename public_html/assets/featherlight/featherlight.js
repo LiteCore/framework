@@ -69,18 +69,18 @@
 		if (Featherlight._globalHandlerInstalled !== newState) {
 			Featherlight._globalHandlerInstalled = newState;
 
-		var eventMap = {keyup: 'onKeyUp', resize: 'onResize'};
-		var events = $.map(eventMap, function(_, name) { return name+'.'+Featherlight.prototype.namespace; } ).join(' ');
+			var eventMap = {keyup: 'onKeyUp', resize: 'onResize'};
+			var events = $.map(eventMap, function(_, name) { return name+'.'+Featherlight.prototype.namespace; } ).join(' ');
 
-		$(window)[newState ? 'on' : 'off'](events, function(event) {
-			$.each(Featherlight.opened().reverse(), function() {
-				if (!event.isDefaultPrevented()) {
-					if (this[eventMap[event.type]](event) === false) {
-						event.preventDefault(); event.stopPropagation(); return false;
+			$(window)[newState ? 'on' : 'off'](events, function(event) {
+				$.each(Featherlight.opened().reverse(), function() {
+					if (!event.isDefaultPrevented()) {
+						if (this[eventMap[event.type]](event) === false) {
+							event.preventDefault(); event.stopPropagation(); return false;
+						}
 					}
-				}
+				});
 			});
-		});
 		}
 	}
 

@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
 {{head_tags}}
-{{style}}
 <style>
 :root {
 	--default-text-size: <?php echo !empty($_COOKIE['font_size']) ? $_COOKIE['font_size'] : '14'; ?>px;
@@ -39,7 +38,7 @@
 			<span class="version"><?php echo PLATFORM_VERSION; ?></span>
 		</a>
 
-		<div class="copyright" class="text-center">Copyright &copy; <?php echo date('2012-Y'); ?><br>
+		<div class="copyright" class="text-center">Copyright &copy; <?php echo date('2023-Y'); ?><br>
 			<a href="https://www.litecart.net" target="_blank">www.litecart.net</a>
 		</div>
 	</div>
@@ -139,7 +138,6 @@
 
 {{foot_tags}}
 <script src="<?php echo document::href_rlink('app://backend/template/js/app.min.js'); ?>"></script>
-{{javascript}}
 
 <script>
 	$('button[name="font_size"]').click(function(){

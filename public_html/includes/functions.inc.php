@@ -22,7 +22,11 @@
 	function console_dump(...$vars) { // ... as of PHP 5.6
 
 		ob_start();
-		var_dump($vars);
+
+		foreach ($vars as $var) {
+			var_dump($var);
+		}
+
 		$output = ob_get_clean();
 
 		echo '<script>console.log("'. addcslashes($output, "\"\r\n") .'");</script>';

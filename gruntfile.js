@@ -116,7 +116,7 @@ module.exports = function(grunt) {
 
 		phplint: {
 			options: {
-				phpCmd: 'C:/xampp/php82/php.exe', // Defaults to php
+				//phpCmd: 'C:/xampp/php82/php.exe', // Defaults to php
 				limit: 10,
 				stdout: false
 			},
@@ -133,6 +133,7 @@ module.exports = function(grunt) {
 
 			less: {
 				files: [
+					'public_html/assets/featherlight/featherlight.less',
 					'public_html/backend/template/**/*.less',
 					'public_html/frontend/templates/**/*.less',
 				],
@@ -141,6 +142,7 @@ module.exports = function(grunt) {
 
 			javascripts: {
 				files: [
+					'public_html/assets/featherlight/featherlight.js',
 					'public_html/backend/template/**/js/*.js',
 					'public_html/frontend/templates/**/js/*.js',
 					'!public_html/frontend/templates/**/js/*.min.js',

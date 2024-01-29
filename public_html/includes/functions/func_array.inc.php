@@ -17,7 +17,9 @@
 
 	// Update an array with values that have keys present in another array. The opposite of array_diff_key. Or complement to array_merge() or array_replace() that doesn't insert new keys.
 	function array_update(array $array, array ...$replacements):array {
-		foreach ($replacements as $replacement) $array = array_replace($array, array_intersect_key($replacement, $array));
+		foreach ($replacements as $replacement) {
+			$array = array_replace($array, array_intersect_key($replacement, $array));
+		}
 		return $array;
 	}
 
@@ -91,7 +93,22 @@
 		return $max_depth;
 	}
 
-	function array_flatten($array, $delimiter='.', $prefix = '') {
+	// Filter an array recursively
+	function array_filter_recursive($array) {
+
+		foreach ($array as $index => $node) {
+			if (is_array($node)) {
+				$array[$index] = array_filter_recursive($node);
+			}
+		}
+
+		return array_filter($array, function($value) {
+			return is_array($v) ? !empty($v) : strlen(trim($v));
+		});
+	}
+
+	// Turn an array of [foo => [bar => ...]] into  [foo.bar => ...]
+	function array_flatten_keys($array, $delimiter='.', $prefix = '') {
 
 		$result = [];
 

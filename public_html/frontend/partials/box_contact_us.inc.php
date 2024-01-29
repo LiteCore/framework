@@ -39,10 +39,8 @@
 		}
 	}
 
-	$box_contact_us = new ent_view('app://frontend/template/partials/box_contact_us.inc.php');
-
+	//$box_contact_us = new ent_view('app://frontend/template/partials/box_contact_us.inc.php');
 	//echo $box_contact_us;
-	extract($box_contact_us->snippets);
 ?>
 <section id="box-contact-us" class="card">
 

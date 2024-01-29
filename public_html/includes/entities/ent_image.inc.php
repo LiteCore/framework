@@ -711,7 +711,7 @@
 			return $this->save($destination, $quality, $interlaced);
 		}
 
-		public function save($destination, $quality=90, $interlaced=false) {
+		public function save($destination='', $quality=90, $interlaced=false) {
 
 			if (!$destination) {
 				$destination = $this->_file;
@@ -732,6 +732,10 @@
 			}
 
 			$type = strtolower(pathinfo($destination, PATHINFO_EXTENSION));
+
+			if (!$type) {
+				$type = $this->type;
+			}
 
 			if (!preg_match('#^(avif|gif|jpe?g|png|webp)$#i', $type)) {
 				throw new Exception("Unknown image format ($type)");

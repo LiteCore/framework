@@ -198,39 +198,47 @@
 			return form_textarea($name, $input, $parameters);
 		}
 
-		$columns = array_keys($csv[0]);
+		$html = [
+			'<table class="table table-striped table-hover data-table" data-toggle="csv">',
+			'	<thead>',
+			'		<tr>'
+		];
 
-		$html = '<table class="table table-striped table-hover data-table" data-toggle="csv">' . PHP_EOL
-					. '  <thead>' . PHP_EOL
-					. '    <tr>' . PHP_EOL;
-
-		foreach ($columns as $column) {
-			$html .= '      <th>'. $column .'</th>' . PHP_EOL;
+		foreach (array_keys($csv[0]) as $column) {
+			$html += ['			<th>'. $column .'</th>'];
 		}
 
-		$html .= '      <th><a class="add-column" href="#">'. functions::draw_fonticon('fa-plus', 'style="color: #6c6;"') .'</a></th>' . PHP_EOL
-					 . '    </tr>' . PHP_EOL
-					 . '  </thead>' . PHP_EOL
-					 . '  <tbody>' . PHP_EOL;
-
-		foreach ($csv as $line => $row) {
-			$html .= '    <tr>' . PHP_EOL;
-			foreach ($columns as $column) {
-				$html .= '      <td contenteditable>'. $row[$column] .'</td>' . PHP_EOL;
+		$html += [
+			'			<th><a class="add-column" href="#">'. functions::draw_fonticon('fa-plus', 'style="color: #6c6;"') .'</a></th>',
+			'		</tr>',
+			'	</thead>',
+			'	<tbody>',
+		];
+		
+		foreach ($csv as $row) {
+			$html += ['		<tr>'];
+			foreach ($row as $columns) {
+				$html += ['			<td contenteditable>'. $row[$column] .'</td>'];
 			}
-			$html .= '      <td><a class="btn btn-default btn-sm remove" href="#">'. functions::draw_fonticon('fa-times', 'style="color: #d33"') .'</a></td>' . PHP_EOL
-						 . '    </tr>' . PHP_EOL;
+			$html += [
+				'			<td><a class="btn btn-default btn-sm remove" href="#">'. functions::draw_fonticon('fa-times', 'style="color: #d33"') .'</a></td>',
+				'		</tr>',
+			];
 		}
-
-		$html .= '  </tbody>' . PHP_EOL
-					 . '  <tfoot>' . PHP_EOL
-					 . '    <tr>' . PHP_EOL
-					 . '      <td colspan="'. (count($columns)+1) .'"><a class="add-row" href="#">'. functions::draw_fonticon('fa-plus', 'style="color: #6c6;"') .'</a></td>' . PHP_EOL
-					 . '    </tr>' . PHP_EOL
-					 . '  </tfoot>' . PHP_EOL
-					 . '</table>' . PHP_EOL
-					 . PHP_EOL
-					 . form_textarea($name, $input, 'style="display: none;"');
+	
+		$html += [
+			'	</tbody>',
+			'	<tfoot>',
+			'		<tr>',
+			'			<td colspan="'. (count($columns)+1) .'"><a class="add-row" href="#">'. functions::draw_fonticon('fa-plus', 'style="color: #6c6;"') .'</a></td>',
+			'		</tr>',
+			'	</tfoot>',
+			'</table>',
+			'',
+			form_textarea($name, $input, 'style="display: none;"'),
+		];
+		
+		$html = implode(PHP_EOL, $html);
 
 	 document::$javascript['table2csv'] = implode(PHP_EOL, [
 			"$('table[data-toggle=\"csv\"]').on('click', '.remove', function(e) {",
@@ -403,10 +411,12 @@
 		}
 
 
-		return '<div class="input-group">' . PHP_EOL
-				 . '  ' . form_input_decimal($name, $input, $currency['decimals'], 'step="any" data-type="currency"') . PHP_EOL
-				 . '  <strong class="input-group-text" style="opacity: 0.75; font-family: monospace;">'. functions::escape_html($currency['code']) .'</strong>' . PHP_EOL
-				 . '</div>';
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  ' . form_input_decimal($name, $input, $currency['decimals'], ($parameters ? $parameters .' ' : '') .'step="any" data-type="currency"'),
+			'  <strong class="input-group-text" style="opacity: 0.75; font-family: monospace;">'. functions::escape_html($currency['code']) .'</strong>',
+			'</div>',
+		]);
 	}
 
 	function form_input_number($name, $input=true, $parameters='') {
@@ -955,10 +965,6 @@
 			case 'tags':
 				return form_tags($name, $input, $parameters);
 
-			case 'template':
-			case 'templates':
-				return form_select_template($name, $input, $parameters);
-
 			case 'time':
 				return form_input_time($name, $input, $parameters);
 
@@ -1200,23 +1206,6 @@
 			if (!in_array(strtoupper($row['Support']), ['YES', 'DEFAULT'])) continue;
 			if (!in_array($row['Engine'], ['CSV', 'InnoDB', 'MyISAM', 'Aria'])) continue;
 			$options[] = [$row['Engine'], $row['Engine'] . ' -- '. $row['Comment']];
-		}
-
-		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
-		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select($name, $options, $input, $parameters);
-		}
-	}
-
-	function form_select_template($name, $input=true, $parameters='') {
-
-		$folders = functions::file_search('app://frontend/templates/*', GLOB_ONLYDIR);
-
-		$options = [];
-		foreach ($folders as $folder) {
-			$options[] = basename($folder);
 		}
 
 		if (preg_match('#\[\]$#', $name)) {

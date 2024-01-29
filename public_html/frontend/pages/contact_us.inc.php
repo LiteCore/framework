@@ -67,8 +67,8 @@
 		}
 	}
 
-	$_page = new ent_view();
-	//echo $_page->render('app://frontend/template/pages/contact.inc.php');
+	$_page = new ent_view('app://frontend/template/pages/contact.inc.php');
+	//echo $_page->render();
 	extract($_page->snippets);
 ?>
 <main id="main" class="container">

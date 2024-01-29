@@ -14,23 +14,23 @@
 
 <div id="page">
 
-	<header id="top-wrapper">
+	<header>
 		<?php if ($important_notice = settings::get('important_notice')) { ?>
 		<div id="important-message">
 			<?php echo $important_notice; ?>
 		</div>
 		<?php } ?>
-	
+
 		<?php include 'app://frontend/partials/site_navigation.inc.php'; ?>
 	</header>
 
-	<main id="content-wrapper">
-		
+	<main>
+
 		{{content}}
-	
+
 	</main>
 
-	<footer id="bottom-wrapper">
+	<footer>
 		<?php include 'app://frontend/partials/site_footer.inc.php'; ?>
 	</footer>
 	

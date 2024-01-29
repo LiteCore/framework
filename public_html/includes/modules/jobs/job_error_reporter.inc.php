@@ -39,7 +39,6 @@
 			$log_file = ini_get('error_log');
 
 			if (!is_file($log_file)) return;
-
 			if (!$contents = file_get_contents($log_file)) return;
 
 			$contents = preg_replace('#(\r\n?|\n)#', "\n", $contents);

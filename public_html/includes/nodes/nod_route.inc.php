@@ -196,7 +196,7 @@
 					default:
 						header('Content-Type: '. mime_content_type('app://'.$request_path));
 						break;
-					}
+				}
 
 				header('Content-Length: '. filesize('app://'.$request_path));
 				header('Etag: '. md5_file('app://'.$request_path));

@@ -2,7 +2,7 @@
 
 ## Code Compliance
 
- - PHP code must comply with minimum PHP 5.4+ E_STRICT.
+ - PHP code must comply with minimum PHP 5.6+ E_STRICT.
 
  - HTML code must comply with HTML 5.
 

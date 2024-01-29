@@ -325,8 +325,8 @@
 				$time_type = IntlDateFormatter::FULL;
 				$pattern = '';
 
-					// %c = Preferred date and time stamp based on locale
-					// Example: Tue Feb 5 00:45:10 2009 for February 5, 2009 at 12:45:10 AM
+				// %c = Preferred date and time stamp based on locale
+				// Example: Tue Feb 5 00:45:10 2009 for February 5, 2009 at 12:45:10 AM
 				switch ($format) {
 
 					case '%c':

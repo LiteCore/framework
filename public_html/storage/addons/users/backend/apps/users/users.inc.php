@@ -1,6 +1,6 @@
 <?php
 
-	if (empty($_GET['page']) || !is_numeric($_GET['page'])) {
+	if (empty($_GET['page']) || !is_numeric($_GET['page']) || $_GET['page'] < 1) {
 		$_GET['page'] = 1;
 	}
 
@@ -77,7 +77,7 @@
 			break;
 	}
 
-// Table Rows, Total Number of Rows, Total Number of Pages
+	// Table Rows, Total Number of Rows, Total Number of Pages
 	$users = database::query(
 		"select c.* from ". DB_TABLE_PREFIX ."users c
 		where c.id

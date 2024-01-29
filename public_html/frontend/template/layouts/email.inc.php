@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="<?php echo $language_code; ?>">
 <head>
 <meta name="viewport" content="width=device-width">
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo mb_http_output(); ?>">

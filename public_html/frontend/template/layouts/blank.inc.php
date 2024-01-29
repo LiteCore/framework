@@ -9,12 +9,6 @@
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://frontend/template/css/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://frontend/template/css/app.min.css'); ?>">
 {{head_tags}}
-<style>
-body {
-	display: flex;
-	flex-direction: column;
-}
-</style>
 </head>
 <body>
 

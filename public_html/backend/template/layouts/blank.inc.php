@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
 {{head_tags}}
-{{style}}
 </head>
 <body>
 
@@ -16,6 +15,5 @@
 
 {{foot_tags}}
 <script src="<?php echo document::href_rlink('app://backend/template/js/app.min.js'); ?>"></script>
-{{javascript}}
 </body>
 </html>
