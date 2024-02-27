@@ -707,7 +707,7 @@
 		}
 
 		public function write($destination, $quality=90, $interlaced=false) {
-			trigger_error(__CLASS__.'::write() is deprecated. Instead, use '.__CLASS__.'save()', E_USER_DEPRECATED);
+			trigger_error(__CLASS__.'->write() is deprecated. Instead, use '.__CLASS__.'->save()', E_USER_DEPRECATED);
 			return $this->save($destination, $quality, $interlaced);
 		}
 

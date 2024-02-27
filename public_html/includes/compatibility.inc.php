@@ -1,8 +1,8 @@
 <?php
 
 	// Check version
-	if (version_compare(phpversion(), '5.4.0', '<') == true) {
-		die('This application requires at minimum PHP 5.4 (Detected '. phpversion() .')');
+	if (version_compare(phpversion(), '5.6.0', '<') == true) {
+		die('This application requires at minimum PHP 5.6 (Detected '. phpversion() .')');
 	}
 
 	if (version_compare(phpversion(), '5.5.0', '<') == true) {

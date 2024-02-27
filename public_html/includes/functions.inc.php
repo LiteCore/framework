@@ -32,6 +32,20 @@
 		echo '<script>console.log("'. addcslashes($output, "\"\r\n") .'");</script>';
 	}
 
+	function redirect($url=null, $status_code=302) {
+
+		if (!$url) {
+			$url = $_SERVER['REQUEST_URI'];
+		}
+
+		header('Location: '. $url, $status_code);
+		exit;
+	}
+
+	function reload() {
+		redirect();
+	}
+
 	// Checks if variables are not set, null, (bool)false, (int)0, (float)0.00, (string)"", (string)"0", (string)"0.00", (array)[], or array with nil nodes
 	function nil(&...$args) { // ... as of PHP 5.6
 		foreach ($args as $arg) {

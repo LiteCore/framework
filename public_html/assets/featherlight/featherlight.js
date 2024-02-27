@@ -323,11 +323,11 @@
 		},
 
 		/* Utility function to chain callbacks
-		   [Warning: guru-level]
-		   Used be extensions that want to let users specify callbacks but
-		   also need themselves to use the callbacks.
-		   The argument 'chain' has callback names as keys and function(super, event)
-		   as values. That function is meant to call `super` at some point.
+			 [Warning: guru-level]
+			 Used be extensions that want to let users specify callbacks but
+			 also need themselves to use the callbacks.
+			 The argument 'chain' has callback names as keys and function(super, event)
+			 as values. That function is meant to call `super` at some point.
 		*/
 		chainCallbacks: function(chain) {
 			for (var name in chain) {
@@ -479,7 +479,7 @@
 		},
 
 		/* Does the auto binding on startup.
-		   Meant only to be used by Featherlight and its extensions
+			 Meant only to be used by Featherlight and its extensions
 		*/
 		_onReady: function() {
 			var self = this;
@@ -511,7 +511,7 @@
 		},
 
 		/* Featherlight uses the onKeyUp callback to intercept the escape key.
-		   Private to Featherlight.
+			 Private to Featherlight.
 		*/
 		_callbackChain: {
 			onKeyUp: function(_super, event){

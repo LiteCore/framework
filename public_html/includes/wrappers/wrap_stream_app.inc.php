@@ -17,7 +17,7 @@
 				$this->_directory[$basename] = $file . (is_dir($file) ? '/' : '');
 			}
 
-			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*', GLOB_BRACE) as $file) {
+			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*') as $file) {
 
 				$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
 				$basename = basename($file) . (is_dir($file) ? '/' : '');
@@ -172,7 +172,7 @@
 			$path = $this->_resolve_path($path);
 			$relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $path);
 
-			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path, GLOB_BRACE) as $file) {
+			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path) as $file) {
 				$file = str_replace('\\', '/', $file);
 				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
 				$path = $file;

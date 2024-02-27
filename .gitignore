@@ -14,13 +14,13 @@ public_html/storage/logs/*
 public_html/vendor/*
 
 migrations/.migrated
+public_html/storage/config.inc.php
+public_html/vendor/composer.lock
 public_html/.htaccess
 public_html/.user.ini
 public_html/google*.html
 public_html/BingSiteAuth.xml
 public_html/php.ini
-public_html/storage/config.inc.php
-composer.lock
 package-lock.json
 
 #####################

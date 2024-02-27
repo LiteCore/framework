@@ -387,7 +387,9 @@
 				return $input;
 			}
 
-			if (empty($input)) return '';
+			if (empty($input)) {
+				return '';
+			}
 
 			if (in_array(gettype($input), ['null', 'boolean', 'double', 'integer', 'float'])) {
 				return $input;
@@ -442,7 +444,7 @@
 		}
 
 		public function __set($name, $value) {
-				// Do nothing
+			// Do nothing
 		}
 
 		public function export(&$object) {
@@ -450,7 +452,7 @@
 		}
 
 		public function fields() {
-			$fields = array_column($this->_result->fetch_fields(), 'name');
+			$fields = array_column(mysqli_fetch_fields($this->_result), 'name');
 			return $fields;
 		}
 
@@ -458,7 +460,9 @@
 
 			$timestamp = microtime(true);
 
-			$row = mysqli_fetch_assoc($this->_result);
+			if (!$row = mysqli_fetch_assoc($this->_result)) {
+				return $row;
+			}
 
 			if ($column) {
 				if (isset($row[$column])) {
@@ -480,11 +484,12 @@
 			if ($column || $index_column) {
 
 				$rows = [];
+
 				while ($row = mysqli_fetch_assoc($this->_result)) {
-					if ($index_column) {
-						$rows[$row[$index_column]] = $column ? $row[$column] : $row;
+					if ($index_column && isset($row[$index_column])) {
+						$rows[$row[$index_column]] = $row;
 					} else {
-						$rows[] = $column ? $row[$column] : $row;
+						$rows[] = $row;
 					}
 				}
 
@@ -502,7 +507,7 @@
 			$timestamp = microtime(true);
 
 			$rows = [];
-			while ($row = mysqli_fetch_assoc($this->_result)) {
+			while ($row = $this->fetch(null, $index_column)) {
 
 				if ($row = $function($row)) {
 
@@ -523,7 +528,9 @@
 
 			$timestamp = microtime(true);
 
-			if ($page < 1) $page = 1;
+			if (!is_numeric($page) || $page < 1) {
+				$page = 1;
+			}
 
 			if (!$items_per_page) {
 				$items_per_page = settings::get('data_table_rows_per_page');
@@ -537,7 +544,7 @@
 			$rows = [];
 
 			$i = 0;
-			while ($row = mysqli_fetch_assoc($this->_result)) {
+			while ($row = $this->fetch()) {
 				$rows[] = $row;
 				if (++$i == $items_per_page) break;
 			}
