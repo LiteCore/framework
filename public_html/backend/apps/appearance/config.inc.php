@@ -27,8 +27,8 @@
 				'params' => [],
 			],
 			[
-				'title' => language::translate('title_template', 'Template'),
-				'doc' => 'template',
+				'title' => language::translate('title_template_settings', 'Template Settings'),
+				'doc' => 'template_settings',
 				'params' => [],
 			],
 		],
@@ -37,7 +37,6 @@
 			'edit_styling' => 'edit_styling.inc.php',
 			'favicon' => 'favicon.inc.php',
 			'logotype' => 'logotype.inc.php',
-			'template' => 'template.inc.php',
 			'template_settings' => 'template_settings.inc.php',
 		],
 	];

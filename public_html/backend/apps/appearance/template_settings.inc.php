@@ -7,7 +7,7 @@
 	breadcrumbs::add(language::translate('title_template_settings', 'Template Settings'));
 
 	// Get template settings structure
-	$settings = include 'app://frontend/templates/' . settings::get('template') .'/config.inc.php';
+	$settings = include 'app://frontend/template/config.inc.php';
 
 	if (empty($settings)) $settings = [];
 
@@ -164,7 +164,7 @@
 
 				<?php if (!$settings) { ?>
 				<tr>
-					<td colspan="3"><?php echo language::translate('text_no_template_settings', 'There are no settings available for this template.'); ?></td>
+					<td colspan="3"><?php echo language::translate('text_no_frontend_template_settings', 'There are no settings available for the frontend template.'); ?></td>
 				</tr>
 				<?php } ?>
 			</tbody>
