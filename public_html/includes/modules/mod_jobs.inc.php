@@ -34,9 +34,13 @@
 					limit 1;"
 				);
 
+				if (!$last_run = $this->modules[$module_id]->date_processed) {
+					$last_run = 0; // As null will throw a deprecated notice in PHP 8.2+
+				}
+
 				ob_start();
 				$timestamp = microtime(true);
-				$this->modules[$module_id]->process($force, $this->modules[$module_id]->date_processed);
+				$this->modules[$module_id]->process($force, $last_run);
 				$log = ob_get_clean();
 
 				if (!empty($log)) {
