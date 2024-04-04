@@ -486,8 +486,16 @@
 				$rows = [];
 
 				while ($row = mysqli_fetch_assoc($this->_result)) {
-					if ($index_column && isset($row[$index_column])) {
+					
+					if (isset($index_column) && isset($column)) {
+						$rows[$row[$index_column]] = $row[$column];
+						
+					} else if (isset($index_column)) {
 						$rows[$row[$index_column]] = $row;
+						
+					} else if (isset($column)) {
+						$rows[] = $row[$column];
+						
 					} else {
 						$rows[] = $row;
 					}
