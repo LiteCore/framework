@@ -1,48 +1,78 @@
 <?php
 
 	class wrap_stream_app {
+
+		private static $_cache;
+
 		private $_directory;
 		private $_stream;
 		public $context;
 
 		public function dir_opendir($path, $options) {
 
+			$microtime = microtime(true);
+
 			$path = $this->_resolve_path($path);
 			$relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $path);
 
 			$this->_directory = [];
 
-			foreach (glob($path.'*') as $file) {
-				$basename = basename($file) . (is_dir($file) ? '/' : '');
-				$this->_directory[$basename] = $file . (is_dir($file) ? '/' : '');
-			}
+			if (!isset(self::$_cache[$path])) {
 
-			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*') as $file) {
+				if ($handle = opendir($path)) {
+					while (($file = readdir($handle)) !== false) {
+						if ($file == '.' || $file == '..') continue;
 
-				$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
-				$basename = basename($file) . (is_dir($file) ? '/' : '');
+						if (is_dir($path.$file)) {
+							$file .= '/';
+						}
 
-				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.cache/#', $file)) continue;
-				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
-				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+/vmod\.xml$#', $file)) continue;
-
-				$this->_directory[$basename] = $file;
-			}
-
-			uasort($this->_directory, function($a, $b){
-
-				if (is_dir($a) == is_dir($b)) {
-					return (basename($a) < basename($b)) ? -1 : 1;
+						$this->_directory[$file] = $path.$file;
+					}
 				}
 
-				return is_dir($a) ? -1 : 1;
-			});
+				foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*') as $file) {
+
+					$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
+					$basename = basename($file) . (is_dir($file) ? '/' : '');
+
+					if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.cache/#', $file)) continue;
+					if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
+					if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+/vmod\.xml$#', $file)) continue;
+
+					$this->_directory[$basename] = $file;
+				}
+
+				uasort($this->_directory, function($a, $b){
+
+					if (is_dir($a) == is_dir($b)) {
+						return (basename($a) < basename($b)) ? -1 : 1;
+					}
+
+					return is_dir($a) ? -1 : 1;
+				});
+
+				if (class_exists('stats')) {
+					stats::$data['streamwrappers'] = microtime(true) - $microtime;
+				}
+
+				self::$_cache[$path] = $this->_directory;
+
+			} else {
+				$this->_directory = self::$_cache[$path];
+			}
 
 			return true;
 		}
 
 		public function dir_readdir() {
+
 			$result = key($this->_directory);
+
+			if (!isset($result)) {
+				return false;
+			}
+
 			next($this->_directory);
 
 			return $result;
