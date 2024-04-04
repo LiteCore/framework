@@ -324,20 +324,16 @@
 
 			// Add "To" header
 			if (!empty($this->data['recipients'])) {
-				$tos = [];
-				foreach ($this->data['recipients'] as $to) {
-					$tos[] = $this->format_contact($to);
-				}
-				$headers['To'] = implode(', ', $tos);
+				$headers['Cc'] = implode(', ', array_map(function($recipient) {
+					return $this->format_contact($recipient);
+				}, $this->data['recipients']));
 			}
 
 			// Add "Cc" header
 			if (!empty($this->data['ccs'])) {
-				$ccs = [];
-				foreach ($this->data['ccs'] as $cc) {
-					$ccs[] = $this->format_contact($cc);
-				}
-				$headers['Cc'] = implode(', ', $ccs);
+				$headers['Cc'] = implode(', ', array_map(function($recipient) {
+					return $this->format_contact($recipient);
+				}, $this->data['ccs']));
 			}
 
 			// SMTP does not need a header for BCCs, we will add that for PHP mail() later
@@ -364,7 +360,7 @@
 						'--'. $multipart_boundary_string . "\r\n",
 						implode("\r\n", array_map(function($v, $k) { return $k.':'.$v; }, $multipart['headers'], array_keys($multipart['headers']))) . "\r\n",
 						$multipart['body'],
-					]) . "\r\n";
+					]) . "\r\n\r\n";
 				}
 
 				$body .= '--'. $multipart_boundary_string .'--';
@@ -375,8 +371,8 @@
 				$body .= $this->data['multiparts'][0]['body'];
 			}
 
-			if (empty($body)) {
-				trigger_error('Cannot send email with an empty body', E_USER_WARNING);
+			if (!$body) {
+				trigger_error('Will not send email with an empty body', E_USER_WARNING);
 				return false;
 			}
 

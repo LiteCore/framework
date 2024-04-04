@@ -117,6 +117,7 @@
 			);
 
 			// Zones
+
 			database::query(
 				"delete from ". DB_TABLE_PREFIX ."zones
 				where country_code = '". database::input($this->data['iso_code_2']) ."'

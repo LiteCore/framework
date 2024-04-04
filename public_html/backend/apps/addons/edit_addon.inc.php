@@ -31,7 +31,7 @@
 			if (empty($_POST['aliases'])) $_POST['aliases'] = [];
 			if (empty($_POST['files'])) $_POST['files'] = [];
 
-			$fields = [
+			foreach ([
 				'id',
 				'status',
 				'name',
@@ -44,9 +44,7 @@
 				'uninstall',
 				'upgrades',
 				'files',
-			];
-
-			foreach ($fields as $field) {
+			] as $field) {
 				if (isset($_POST[$field])) {
 					$addon->data[$field] = $_POST[$field];
 				}

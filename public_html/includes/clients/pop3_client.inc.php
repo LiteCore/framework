@@ -6,9 +6,9 @@
 		private $_port = null;
 		private $_log_handle = '';
 
-		function __construct($host, $port=25, $username='', $password='') {
+		function __construct($host, $port=110, $username='', $password='') {
 
-			if ($port == 465) {
+			if ($port == 995) {
 				$this->_host = "ssl://$host:$port";
 			} else {
 				$this->_host = "tcp://$host:$port";
@@ -17,7 +17,7 @@
 			$this->_username = $username;
 			$this->_password = $password;
 
-			$this->_log_handle = fopen('storage://logs/last_smtp.log', 'w');
+			$this->_log_handle = fopen('storage://logs/last_pop3.log', 'w');
 		}
 
 		function __destruct() {
@@ -47,7 +47,7 @@
 
 			$stream_context = $context = stream_context_create([
 				'ssl' => [
-						// set some SSL/TLS specific options
+					// set some SSL/TLS specific options
 					'verify_peer' => false,
 					'verify_peer_name' => false,
 					'allow_self_signed' => true

@@ -10,7 +10,7 @@
 
 			if (empty($this->modules)) return;
 
-			if (empty($modules)) {
+			if (!$modules) {
 				$modules = array_keys($this->modules);
 			}
 
@@ -41,17 +41,18 @@
 				ob_start();
 				$timestamp = microtime(true);
 				$this->modules[$module_id]->process($force, $last_run);
-				$log = ob_get_clean();
 
-				if (!empty($log)) {
+				if ($log = ob_get_clean()) {
 
-					$log = str_repeat('#', 72) . PHP_EOL
-							 . '#'. str_pad(" $module_id executed at ". date('Y-m-d H:i:s') .' ', 71, '#', STR_PAD_RIGHT) . PHP_EOL
-							 . str_repeat('#', 72) . PHP_EOL . PHP_EOL
-							 . $log . PHP_EOL . PHP_EOL
-							 . str_repeat('#', 72) . PHP_EOL
-							 . '#'. str_pad(' Completed in '. round(microtime(true) - $timestamp, 3).' s ', 71, '#', STR_PAD_RIGHT) . PHP_EOL
-							 . str_repeat('#', 72) . PHP_EOL;
+					$log = implode(PHP_EOL, [
+						str_repeat('#', 72),
+						'#'. str_pad(" $module_id executed at ". date('Y-m-d H:i:s') .' ', 71, '#', STR_PAD_RIGHT),
+						str_repeat('#', 72) . PHP_EOL,
+						$log . PHP_EOL,
+						str_repeat('#', 72),
+						'#'. str_pad(' Completed in '. round(microtime(true) - $timestamp, 3).' s ', 71, '#', STR_PAD_RIGHT),
+						str_repeat('#', 72),
+					]);
 
 					$output .= $log;
 

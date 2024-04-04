@@ -40,11 +40,15 @@
 				throw new Exception(language::translate('error_invalid_captcha', 'Invalid CAPTCHA given'));
 			}
 
-			$message = strtr(language::translate('email_user_feedback', "** This is an email message from %sender_name <%sender_email> **\r\n\r\n%message"), [
+			$message = strtr(language::translate('email_user_feedback', implode("\r\n", [
+				'** This is an email message from %sender_name <%sender_email> **',
+				'',
+				'%message',
+			]), [
 				'%sender_name' => $_POST['firstname'] .' '. $_POST['lastname'],
 				'%sender_email' => $_POST['email'],
 				'%message' => $_POST['message'],
-			]);
+			]));
 
 			$email = new ent_email();
 			$email->set_sender($_POST['email'], $_POST['firstname'] .' '. $_POST['lastname'])

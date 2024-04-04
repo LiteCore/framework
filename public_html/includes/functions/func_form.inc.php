@@ -100,11 +100,11 @@
 
 	function form_dropdown($name, $options=[], $input=true, $parameters='') {
 
-		$html = [
+		$html = implode(PHP_EOL, [
 			'<div class="dropdown"'. ($parameters ? ' ' . $parameters : '') .'>',
 			'  <div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>',
 			'  <ul class="dropdown-menu">',
-		];
+		]);
 
 		$is_numerical_index = (array_keys($options) === range(0, count($options) - 1));
 
@@ -119,18 +119,16 @@
 			}
 
 			if (preg_match('#\[\]$#', $name)) {
-				$html[] = '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>';
+				$html .= '<li class="option">' . functions::form_checkbox($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
 			} else {
-				$html[] = '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>';
+				$html .= '<li class="option">' . functions::form_radio_button($name, $option, $input, isset($option[2]) ? $option[2] : '') .'</li>' . PHP_EOL;
 			}
 		}
 
-		$html += [
-			'  </ul>',
-			'</div>',
-		];
+		$html .= '  </ul>' . PHP_EOL
+					 . '</div>';
 
-		return implode(PHP_EOL, $html);
+		return $html;
 	}
 
 	function form_checkbox($name, $value, $input=true, $parameters='') {
