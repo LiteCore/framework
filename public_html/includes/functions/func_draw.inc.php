@@ -45,12 +45,16 @@
 		switch ($class) {
 			case 'add':         return draw_fonticon('fa-plus');
 			case 'cancel':      return draw_fonticon('fa-times');
+			case 'company':     return draw_fonticon('fa-building', 'style="color: #888;"');
 			case 'edit':        return draw_fonticon('fa-pencil');
 			case 'fail':        return draw_fonticon('fa-times', 'color: #c00;"');
+			case 'female':      return draw_fonticon('fa-female', 'style="color: #e77be9;"');
 			case 'folder':      return draw_fonticon('fa-folder', 'style="color: #cc6;"');
 			case 'folder-open': return draw_fonticon('fa-folder-open', 'style="color: #cc6;"');
+			case 'group':       return draw_fonticon('fa-group', 'style="color: #888;"');
 			case 'remove':      return draw_fonticon('fa-times', 'style="color: #c33;"');
 			case 'delete':      return draw_fonticon('fa-trash-o');
+			case 'male':        return draw_fonticon('fa-male', 'style="color: #0a94c3;"');
 			case 'move-up':     return draw_fonticon('fa-arrow-up', 'style="color: #39c;"');
 			case 'move-down':   return draw_fonticon('fa-arrow-down', 'style="color: #39c;"');
 			case 'ok':          return draw_fonticon('fa-check', 'style="color: #8c4;"');
@@ -59,6 +63,7 @@
 			case 'semi-off':    return draw_fonticon('fa-circle', 'style="color: #ded90f;"');
 			case 'save':        return draw_fonticon('fa-floppy-o');
 			case 'send':        return draw_fonticon('fa-paper-plane');
+			case 'user':        return draw_fonticon('fa-user', 'style="color: #888"');
 			case 'warning':     return draw_fonticon('fa-exclamation-triangle', 'color: #c00;"');
 			default: trigger_error('Unknown font icon ('. $class .')', E_USER_WARNING); return;
 		}

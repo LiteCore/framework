@@ -1,7 +1,7 @@
 <?php
 
 	function captcha_draw($id='default', $config=[], $parameters='') {
-		
+
 		$config = [
 			'width' => fallback($config['width'], 100),
 			'height' => fallback($config['height'], 40),

@@ -169,6 +169,10 @@
 				return;
 			}
 
+			stats::start_watch('cache');
+
+			$data = null;
+
 			switch ($token['storage']) {
 
 				case 'file':

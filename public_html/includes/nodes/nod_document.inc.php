@@ -407,7 +407,7 @@
 
 		public static function rlink($resource) {
 
-			if (empty($resource)) {
+			if (!$resource) {
 				return '';
 			}
 

@@ -36,9 +36,8 @@
 					$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
 					$basename = basename($file) . (is_dir($file) ? '/' : '');
 
-					if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.cache/#', $file)) continue;
-					if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
-					if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+/vmod\.xml$#', $file)) continue;
+					$skip_pattern = '(.cache/|.disabled/|/vmod\.xml$)';
+					if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+'. $skip_pattern .'#', $file)) continue;
 
 					$this->_directory[$basename] = $file;
 				}

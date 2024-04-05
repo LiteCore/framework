@@ -26,6 +26,7 @@
 
 			if (!isset(self::$_watches[$id])) {
 				trigger_error('Cannot stop a non-existing timer ('. $id .')', E_USER_NOTICE);
+				return;
 			}
 
 			$elapsed = microtime(true) - self::$_watches[$id];
