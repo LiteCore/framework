@@ -2,9 +2,9 @@
 
 	class wrap_stream_app {
 
-		private static $_cache;
+		private static $_cache = [];
 
-		private $_directory;
+		private $_directory = [];
 		private $_stream;
 		public $context;
 
@@ -19,19 +19,17 @@
 
 			if (!isset(self::$_cache[$path])) {
 
-				if ($handle = opendir($path)) {
-					while (($file = readdir($handle)) !== false) {
-						if ($file == '.' || $file == '..') continue;
+				// glob() seems fastest for this type of operations
 
-						if (is_dir($path.$file)) {
-							$file .= '/';
-						}
+				foreach (glob($path.'*', GLOB_NOSORT) as $file) {
 
-						$this->_directory[$file] = $path.$file;
-					}
+					$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
+					$basename = basename($file) . (is_dir($file) ? '/' : '');
+
+					$this->_directory[$basename] = $file;
 				}
 
-				foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*') as $file) {
+				foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*', GLOB_NOSORT) as $file) {
 
 					$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
 					$basename = basename($file) . (is_dir($file) ? '/' : '');
@@ -120,7 +118,8 @@
 		}
 
 		public function stream_metadata(string $path, int $option, mixed $value): bool {
-			$path = $this->_resolve_path($path);
+
+			$path = $this->_resolve_file($path);
 
 			switch ($option) {
 				case STREAM_META_TOUCH:
@@ -149,16 +148,7 @@
 
 		public function stream_open(string $path, string $mode, int $options, ?string &$opened_path): bool {
 
-			$path = $this->_resolve_path($path);
-			$relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $path);
-
-			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path, GLOB_BRACE) as $file) {
-				$file = str_replace('\\', '/', $file);
-				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
-				$path = $file;
-			}
-
-			$path = vmod::check($path);
+			$path = $this->_resolve_file($path);
 
 			$this->_stream = fopen($path, $mode, $options, $opened_path);
 			return (bool)$this->_stream;
@@ -193,21 +183,17 @@
 		}
 
 		public function unlink(string $path): bool {
-			return unlink($this->_resolve_path($path));
+			$path = $this->_resolve_file($path);
+			return unlink($path);
 		}
 
 		public function url_stat(string $path, int $flags): array|false {
 
-			$path = $this->_resolve_path($path);
-			$relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $path);
+			$path = $this->_resolve_file($path);
 
-			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path) as $file) {
-				$file = str_replace('\\', '/', $file);
-				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
-				$path = $file;
+			if (!file_exists($path)) {
+				return false;
 			}
-
-			if (!file_exists($path)) return false;
 
 			return stat($path);
 		}
@@ -216,5 +202,27 @@
 
 		private function _resolve_path($path) {
 			return preg_replace('#^app://#', FS_DIR_APP, str_replace('\\', '/', $path));
+		}
+	
+		private function _resolve_file($path) {
+
+			$path = $this->_resolve_path($path);
+			$relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $path);
+
+			if (isset(self::$_cache[dirname($path).'/'])) {
+				if (isset(self::$_cache[dirname($path).'/'][basename($path)])) {
+					return self::$_cache[dirname($path).'/'][basename($path)];
+				}
+			}
+		
+			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path) as $file) {
+				$file = str_replace('\\', '/', $file);
+				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
+				$path = $file;
+			}
+
+			$path = vmod::check($path);
+			
+			return $path;
 		}
 	}
