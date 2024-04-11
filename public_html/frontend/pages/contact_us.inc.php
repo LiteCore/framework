@@ -4,14 +4,6 @@
 
 	breadcrumbs::add(language::translate('title_contact_us', 'Contact Us'));
 
-	if (!$_POST && class_exists('user')) {
-		$_POST = [
-			'firstname' => user::$data['firstname'],
-			'lastname' => user::$data['lastname'],
-			'email' => user::$data['email'],
-		];
-	}
-
 	if (!empty($_POST['send'])) {
 
 		try {
@@ -93,7 +85,7 @@
 								<label><?php echo language::translate('title_firstname', 'First Name'); ?></label>
 								<?php echo functions::form_input_text('firstname', true, 'required'); ?>
 							</div>
-	
+
 							<div class="form-group col-md-6">
 								<label><?php echo language::translate('title_lastname', 'Last Name'); ?></label>
 								<?php echo functions::form_input_text('lastname', true, 'required'); ?>

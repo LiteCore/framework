@@ -43,7 +43,6 @@
 
 			$this->reset();
 
-
 			if (is_dir($this->data['location'] = 'storage://addons/'. $id .'/')) {
 				$this->data['folder'] = $id;
 
