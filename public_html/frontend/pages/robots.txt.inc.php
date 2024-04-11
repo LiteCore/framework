@@ -25,4 +25,4 @@
 		echo PHP_EOL . PHP_EOL;
 	}
 
-	exit;
+	exit; // As we don't need app_footer to process this with a template

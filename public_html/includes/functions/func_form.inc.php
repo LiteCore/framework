@@ -106,7 +106,7 @@
 			'  <ul class="dropdown-menu">',
 		]);
 
-		$is_numerical_index = (array_keys($options) === range(0, count($options) - 1));
+		$is_numerical_index = array_is_list($options);
 
 		foreach ($options as $key => $option) {
 
@@ -658,7 +658,7 @@
 
 		$html = '<select '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="form-select"' : '') .' name="'. functions::escape_attr($name) .'"'. ($parameters ? ' ' . $parameters : '') .'>' . PHP_EOL;
 
-		$is_numerical_index = (array_keys($options) === range(0, count($options) - 1));
+		$is_numerical_index = array_is_list($options);
 
 		foreach ($options as $key => $option) {
 
@@ -719,7 +719,7 @@
 		foreach ($groups as $group) {
 			$html .= '  <optgroup label="'. functions::escape_attr($group['label']) .'">' . PHP_EOL;
 
-			$is_numerical_index = (array_keys($group['options']) === range(0, count($group['options']) - 1));
+			$is_numerical_index = array_is_list($group['options']);
 
 			foreach ($group['options'] as $key => $option) {
 
@@ -823,7 +823,7 @@
 
 		$html = '<div '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="btn-group btn-block btn-group-inline"' : '') .' data-toggle="buttons"'. ($parameters ? ' '. $parameters : '') .'>'. PHP_EOL;
 
-		$is_numerical_index = (array_keys($options) === range(0, count($options) - 1));
+		$is_numerical_index = array_is_list($options);
 
 		foreach ($options as $key => $option) {
 
@@ -899,6 +899,7 @@
 			case 'password':
 				return form_input_password($name, $input, $parameters);
 
+			case 'mediumtext':
 			case 'textarea':
 				return form_textarea($name, $input, $parameters . ' rows="5"');
 
@@ -1245,7 +1246,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			switch($preamble) {
+			switch ($preamble) {
 				case 'all':
 					array_unshift($options, ['', '-- '. language::translate('title_all_zones', 'All Zones') . ' --']);
 					break;

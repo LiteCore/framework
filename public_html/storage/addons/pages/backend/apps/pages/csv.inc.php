@@ -82,25 +82,21 @@
 				}
 
 				// Set page data
-				$fields = [
+				foreach ([
 					'parent_id',
 					'status',
-				];
-
-				foreach ($fields as $field) {
+				] as $field) {
 					if (isset($row[$field])) {
 						$page->data[$field] = $row[$field];
 					}
 				}
 
-				$fields = [
+				foreach ([
 					'title',
 					'content',
 					'head_title',
 					'meta_description',
-				];
-
-				foreach ($fields as $field) {
+				] as $field) {
 					if (isset($row[$field])) {
 						$page->data[$field][$row['language_code']] = $row[$field];
 					}

@@ -46,19 +46,18 @@
 				case 'head_title':
 				case 'meta_description':
 
-					$query = database::query(
+					database::query(
 						"select * from ". DB_TABLE_PREFIX ."pages_info
 						where page_id = ". (int)$this->_data['id'] ."
 						and language_code in ('". implode("', '", database::input($this->_language_codes)) ."')
 						order by field(language_code, '". implode("', '", database::input($this->_language_codes)) ."');"
-					);
-
-					while ($row = database::fetch($query)) {
-						foreach ($row as $key => $value) {
+					)->each(function($info){
+						foreach ($info as $key => $value) {
 							if (in_array($key, ['id', 'page_id', 'language_code'])) continue;
-							if (empty($this->_data[$key])) $this->_data[$key] = $row[$key];
+							if (!empty($this->_data[$key])) continue;
+							$this->_data[$key] = $info[$key];
 						}
-					}
+					});
 
 					break;
 

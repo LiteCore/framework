@@ -2,5 +2,4 @@
 {{notices}}
 
 {{content}}
-
 {{javascript}}

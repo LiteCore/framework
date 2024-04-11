@@ -28,32 +28,26 @@
 
       <insert><![CDATA[
 		// Pages
-		$pages_query = database::query(
+		database::query(
 			"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
 			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
 			where status
 			order by p.priority, pi.title;"
-		);
+		)->each(function($page) use ($site_navigation) {
 
-		while ($page = database::fetch($pages_query)) {
-
-			$subitems = [];
-
-			$subpages_query = database::query(
+			$subitems = database::query(
 				"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
 				left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
 				where status
 				and parent_id = ". (int)$page['id'] ."
 				order by p.priority, pi.title;"
-			);
-
-			while ($subpage = database::fetch($subpages_query)) {
-				$subitems[] = [
+			)->fetch_custom(function($subpage) {
+				return [
 					'id' => 'page-'.$subpage['id'],
 					'name' => $subpage['title'],
 					'link' => document::ilink('page', ['page_id' => $subpage['id']]),
 				];
-			}
+			});
 
 			$site_navigation->snippets['items'][] = [
 				'id' => 'page-'.$page['id'],
@@ -61,7 +55,8 @@
 				'link' => document::ilink('page', ['page_id' => $page['id']]),
 				'subitems' => $subitems,
 			];
-		}
+
+		});
       ]]></insert>
     </operation>
   </file>
@@ -162,21 +157,18 @@
       ]]></find>
 
       <insert><![CDATA[
-		$pages_query = database::query(
+		$site_footer->snippets['pages'] = database::query(
 			"select p.id, pi.title from ". DB_TABLE_PREFIX ."pages p
 			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
 			where status
 			order by p.priority, pi.title;"
-		);
-
-		while ($page = database::fetch($pages_query)) {
-			$site_footer->snippets['pages'][$page['id']] = [
+		)->fetch_custom(function($page){
+			return [
 				'id' => $page['id'],
 				'title' => $page['title'],
 				'link' => document::ilink('information', ['page_id' => $page['id']]),
 			];
-		}
-
+		});
       ]]></insert>
     </operation>
   </file>

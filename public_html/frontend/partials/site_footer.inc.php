@@ -28,7 +28,7 @@
 				'title' => 'LinkedIn',
 				'icon' => 'fa-linkedin',
 				'link' => 'https://www.linkedin.com/',
-			]
+			],
 		];
 
 		echo $site_footer;

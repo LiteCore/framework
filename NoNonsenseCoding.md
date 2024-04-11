@@ -39,7 +39,7 @@ Better:
 
 ## No Cryptic Naming
 
-This will just have anyone looking back at code confused and frustrated:
+This will just have anyone looking back at code overwhelmed, confused, or frustrated:
 
     function fmt_CustBillAddr(custObj $c) {
       $result = fmthlp::fmtAddr($c->billAddr->identity['custFName'], $c->billAddr->identity['custLName'], $c->billAddr->identity['custAddr1'], $c->delAddr->identity['custAddr2'], $c->billAddr->identity['zip'], $c->billAddr->identity['country']);
@@ -51,18 +51,18 @@ This will just have anyone looking back at code confused and frustrated:
       return $result;
     }
 
-    fmt_CustBillAddr($custObj);
-    fmt_CustDelAddr($custObj);
+    echo fmt_CustBillAddr($custObj);
+    echo fmt_CustDelAddr($custObj);
 
 Better:
 
-    function formatAddress(array $address) :string {
-      $result = '...';
-      return $result;
+    function formatAddress(array $address) {
+      return = '...';
     }
 
-    formatAddress($customer->billingAddress);
-    formatAddress($customer->deliveryAddress);
+    echo formatAddress($customer->billingAddress);
+    echo formatAddress($customer->deliveryAddress);
+
 
 ## No Duplicate Naming
 
@@ -91,7 +91,7 @@ Variable duplication is a challenge to backtrace. If we have no use of the raw u
 
 Better:
 
-    $_POST['userInput'] = trim(sanitize($_POST['userInput'])); // Let's sanitize it so we don't accidentally use the raw input again
+    $_POST['userInput'] = trim(sanitize($_POST['userInput'])); // Let's sanitize the input so we don't accidentally use the raw input again
 
     passToFunction($_POST['userInput']); // Oh we are passing something that came from a user input
 
@@ -114,24 +114,24 @@ Not using ISO codes you might make it too hard on yourself.
     $country = $_POST['country'];
 
     if (in_array(strtolower($country), ['united states', 'united states of america', 'usa', 'u.s.a.', 'u.s.', 'us'])) {
-      doSomethingWith($_POST['country']);
+      doSomethingWith('US');
+    }
+    
+    if (in_array(strtolower($country), ['great britain', 'britain', 'gb'])) {
+      doSomethingWith('GB');
     }
 
 Better:
 
     $_POST['countryCode'] = strtoupper($_POST['countryCode']);
 
-    if ($_POST['countryCode'] == 'US') {
-      doSomethingWith($_POST['countryCode']);
-    }
+     doSomethingWith($_POST['countryCode']);
 
 
 ## No fat third party libraries for small features
 
-Looking to cut corners with third party libraries will backfire eventually. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can persist of poor management, contain flaws or security problems. Or they can be a complete pain when you want to step up PHP versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
+Looking to cut corners with third party libraries will backfire eventually. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can persist of poor management, contain flaws or security problems. They can be a complete pain when you want to step up PHP versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
 
 There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea to do it.
 
 Try to stay away from third party libraries.
-
-

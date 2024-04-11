@@ -74,7 +74,7 @@ module.exports = function(grunt) {
 				}
 			},
 
-			frontend_default_minified: {
+			frontend_minified: {
 				options: {
 					compress: true,
 					sourceMap: true,
@@ -102,6 +102,15 @@ module.exports = function(grunt) {
 			}
 		},
 
+		phplint: {
+			options: {
+				//phpCmd: 'C:/xampp/php82/php.exe', // Defaults to php
+				limit: 10,
+				stdout: false
+			},
+			files: 'public_html/**/*.php'
+		},
+
 		uglify: {
 			application: {
 				options: {
@@ -112,15 +121,6 @@ module.exports = function(grunt) {
 					'public_html/frontend/template/js/app.min.js': ['public_html/frontend/template/js/app.js'],
 				}
 			},
-		},
-
-		phplint: {
-			options: {
-				//phpCmd: 'C:/xampp/php82/php.exe', // Defaults to php
-				limit: 10,
-				stdout: false
-			},
-			files: 'public_html/**/*.php'
 		},
 
 		watch: {
@@ -166,7 +166,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-text-replace');
 
 	grunt.registerTask('default', ['replace', 'less', 'dart-sass', 'uglify']);
-	grunt.registerTask('compile', ['less', 'dart-sass', 'uglify']);
+	grunt.registerTask('build', ['less', 'dart-sass', 'uglify']);
 
 	require('phplint').gruntPlugin(grunt);
 	grunt.registerTask('test', ['phplint']);

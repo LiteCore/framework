@@ -10,7 +10,7 @@
 
 		$apps = functions::admin_get_apps();
 		$app_themes = array_column($apps, 'theme', 'code');
-		
+
 		$search_results = [];
 
 		foreach (array_column($apps, 'search_results', 'id') as $app => $file) {

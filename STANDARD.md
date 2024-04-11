@@ -8,7 +8,7 @@
 
  - Style definitions must be compliant with CSS 3.
 
- - Any use of JavaScript should honour the jQuery framework.
+ - Any use of JavaScript should honor the jQuery framework.
 
 
 ## Character Encoding

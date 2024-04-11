@@ -552,7 +552,7 @@
 			$rows = [];
 
 			$i = 0;
-			while ($row = $this->fetch()) {
+			while ($row = mysqli_fetch_assoc($this->_result)) {
 				$rows[] = $row;
 				if (++$i == $items_per_page) break;
 			}

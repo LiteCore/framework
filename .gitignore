@@ -5,12 +5,13 @@
 !public_html/**/index.html
 !public_html/**/.htaccess
 
-public_html/storage/addons/.cache/*
 public_html/storage/addons/.*
-public_html/storage/*
+public_html/storage/addons/.cache/*
+public_html/storage/backups/*
 public_html/storage/cache/*
 public_html/storage/data/*
 public_html/storage/logs/*
+public_html/storage/images/*
 public_html/vendor/*
 
 migrations/.migrated
@@ -28,6 +29,8 @@ package-lock.json
 #####################
 
 node_modules/
+public_html/.well-known/*
+public_html/cgi-bin/*
 
 *.bak
 *.old

@@ -1,6 +1,6 @@
 {
-	"name": "litebase",
-	"title": "LiteBase",
+	"name": "litecore",
+	"title": "LiteCore",
 	"description": "Lightweight website core framework built with PHP, jQuery and HTML.",
 	"version": "1.0.0",
 	"author": {
@@ -12,10 +12,10 @@
 	"download": "https://www.litecart.net/download",
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/litecart/litecart.git"
+		"url": "git://github.com/litecart/litecore.git"
 	},
 	"bugs": {
-		"url": "https://github.com/litecart/litecart/issues"
+		"url": "https://github.com/litecart/litecore/issues"
 	},
 	"devDependencies": {
 		"grunt": "^1.6.1",
@@ -31,8 +31,7 @@
 	},
 	"scripts": {
 		"archive": "git archive --format=zip --output latest.zip master",
-		"build": "grunt",
-		"hash": "php .git-hooks/pre-commit.d/calculate_checksums.php",
+		"build": "grunt build",
 		"less": "grunt less",
 		"phplint": "grunt phplint",
 		"test": "grunt test",

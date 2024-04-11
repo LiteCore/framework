@@ -25,7 +25,7 @@
 
 			if (empty($_POST['status'])) $_POST['status'] = 0;
 
-			$fields = [
+			foreach ([
 				'status',
 				'parent_id',
 				'title',
@@ -33,9 +33,7 @@
 				'priority',
 				'head_title',
 				'meta_description',
-			];
-
-			foreach ($fields as $field) {
+			] as $field) {
 				if (isset($_POST[$field])) $page->data[$field] = $_POST[$field];
 			}
 
