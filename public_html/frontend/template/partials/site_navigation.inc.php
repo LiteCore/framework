@@ -4,7 +4,7 @@
 
 		if (!empty($item['subitems'])) {
 			return implode(PHP_EOL, [
-				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_html($item['id']) .'"' : '') .'>',
+				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
 				'	<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">',
 				'		'. $item['name'] .' <span class="caret"></span>',
 				'	</a>',
@@ -16,8 +16,8 @@
 		}
 
 		return implode(PHP_EOL, [
-			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_html($item['id']) .'"' : '') .'>',
-			'	<a class="nav-link" href="'. functions::escape_html($item['link']) .'">',
+			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
+			'	<a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
 			'		'. $item['name'],
 			'	</a>',
 			'</li>',

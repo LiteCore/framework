@@ -99,9 +99,9 @@
 						<td style="width: 50%">
 							<?php
 								if (!empty($setting['multiple'])) {
-									echo functions::form_function('settings['.$setting['key'].'][]', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. functions::escape_html($setting['placeholder']) .'"' : '');
+									echo functions::form_function('settings['.$setting['key'].'][]', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. functions::escape_attr($setting['placeholder']) .'"' : '');
 								} else {
-									echo functions::form_function('settings['.$setting['key'].']', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. functions::escape_html($setting['placeholder']) .'"' : '');
+									echo functions::form_function('settings['.$setting['key'].']', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. functions::escape_attr($setting['placeholder']) .'"' : '');
 								}
 							?>
 						</td>

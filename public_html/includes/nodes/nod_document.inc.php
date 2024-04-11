@@ -259,7 +259,7 @@
 
 			// Add meta description
 			if (!empty(self::$description)) {
-				$_page->snippets['head_tags'][] = '<meta name="description" content="'. functions::escape_html(self::$description) .'">';
+				$_page->snippets['head_tags'][] = '<meta name="description" content="'. functions::escape_attr(self::$description) .'">';
 			}
 
 			// Prepare styles
