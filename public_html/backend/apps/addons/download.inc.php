@@ -2,11 +2,11 @@
 
 	try {
 
-		if (empty($_GET['vmod'])) {
-			throw new Exception(language::translate('error_must_provide_vmod', 'You must provide a vMmod'));
+		if (empty($_GET['addon_id'])) {
+			throw new Exception(language::translate('error_must_provide_an_addon', 'You must provide an add-on'));
 		}
 
-		$vmod = new ent_addon($_GET['vmod']);
+		$addon = new ent_addon($_GET['addon_id']);
 
 		// Create temporary zip archive
 		$tmp_file = functions::file_create_tempfile();
@@ -16,13 +16,17 @@
 			throw new Exception('Failed creating ZIP archive');
 		}
 
-		if (!$files = functions::file_search($vmod->data['location'].'**')) {
+		if (empty($addon->data['location'])) {
+			throw new Exception('Failed to determine addon location');
+		}
+
+		if (!$files = functions::file_search($addon->data['location'].'**')) {
 			throw new Exception('No files to add to ZIP archive');
 		}
 
 		foreach ($files as $file) {
 			if (is_dir($file)) continue;
-			if (!$zip->addFile(functions::file_realpath($file), preg_replace('#^'. preg_quote($vmod->data['location'], '#') .'#', '', $file))) {
+			if (!$zip->addFile(functions::file_realpath($file), preg_replace('#^'. preg_quote($addon->data['location'], '#') .'#', '', $file))) {
 				throw new Exception('Failed adding contents to ZIP archive');
 			}
 		}
@@ -33,7 +37,7 @@
 		header('Cache-Control: must-revalidate');
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
-		header('Content-Disposition: attachment; filename='. functions::format_path_friendly($vmod->data['id']) .'-'. $vmod->data['version'] .'.zip');
+		header('Content-Disposition: attachment; filename='. functions::format_path_friendly($addon->data['id']) . ($addon->data['version'] ? '-'. $addon->data['version'] : '') .'.zip');
 		header('Content-Length: ' . filesize($tmp_file));
 		header('Expires: 0');
 
