@@ -3,9 +3,9 @@
 
 	$module_id = basename($_GET['module_id']);
 
-	switch (__DOC__) {
+	switch (true) {
 
-		case 'edit_job':
+		case (preg_match('#^job_#')):
 			$type = 'job';
 			$return_doc = 'jobs';
 			break;
