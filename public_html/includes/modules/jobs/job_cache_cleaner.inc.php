@@ -14,7 +14,7 @@
 			if (empty($this->settings['status'])) return;
 
 			if (!empty($last_run) && empty($force)) {
-				if (strtotime($last_run) > strtotime('-1 hour')) return;
+				if (strtotime($last_run) > functions::datetime_last_by_interval('Hourly', $lastrun)) return;
 			}
 
 			echo 'Wipe out old cache files...' . PHP_EOL;

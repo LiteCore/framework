@@ -20,20 +20,7 @@
 					if (time() < strtotime("Today $from_time") || time() > strtotime("Today $to_time")) return;
 				}
 
-				switch ($this->settings['frequency']) {
-					case 'Hourly':
-						if (date('Ymdh', strtotime($last_run)) == date('Ymdh')) return;
-						break;
-					case 'Daily':
-						if (date('Ymd', strtotime($last_run)) == date('Ymd')) return;
-						break;
-					case 'Weekly':
-						if (date('W', strtotime($last_run)) == date('W')) return;
-						break;
-					case 'Monthly':
-						if (date('Ym', strtotime($last_run)) == date('Ym')) return;
-						break;
-				}
+				if (strtotime($last_run) > functions::datetime_last_by_interval($this->settings['frequency'], $lastrun)) return;
 			}
 
 			$log_file = ini_get('error_log');
