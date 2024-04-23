@@ -169,7 +169,7 @@
       ]]></find>
 
       <insert><![CDATA[
-			'users' => 'users.inc.php',
+			'user' => 'modules.inc.php',
       ]]></insert>
     </operation>
   </file>
