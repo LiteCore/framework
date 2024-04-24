@@ -20,7 +20,7 @@
 					if (time() < strtotime("Today $from_time") || time() > strtotime("Today $to_time")) return;
 				}
 
-				if (strtotime($last_run) > functions::datetime_last_by_interval($this->settings['frequency'], $lastrun)) return;
+				if (strtotime($last_run) > functions::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
 			}
 
 			$emails = database::query(
