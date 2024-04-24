@@ -23,7 +23,7 @@
 
 		$current_time = new DateTime();
 		$timestamp = new DateTime(@$time);
-		$interval = $current_time->diff($timestamp);
+		$diff = $current_time->diff($timestamp);
 
 		foreach ([
 			'y' => 'year',
@@ -33,9 +33,9 @@
 			'i' => 'minute',
 			's' => 'second'
 		] as $symbol => $description) {
-			if ($interval->$symbol > 0) {
-				$unit = $interval->$symbol;
-				return $unit . " " . ($unit > 1 ? $description . "s" : $description) . " ago";
+			if ($diff->$symbol > 0) {
+				$unit = $diff->$symbol;
+				return $unit . ' ' . ($unit > 1 ? $description . 's' : $description) . ' ago';
 			}
 		}
 
@@ -51,13 +51,13 @@
 
 		$time_elapsed = time() - $timestamp;
 
-		$seconds    = $time_elapsed;
-		$minutes    = round($time_elapsed / 60);
-		$hours      = round($time_elapsed / 3600);
-		$days       = round($time_elapsed / 86400);
-		$weeks      = round($time_elapsed / 604800);
-		$months     = round($time_elapsed / 2600640);
-		$years      = round($time_elapsed / 31207680);
+		$seconds = $time_elapsed;
+		$minutes = round($time_elapsed / 60);
+		$hours   = round($time_elapsed / 3600);
+		$days    = round($time_elapsed / 86400);
+		$weeks   = round($time_elapsed / 604800);
+		$months  = round($time_elapsed / 2600640);
+		$years   = round($time_elapsed / 31207680);
 
 	// Seconds
 		if ($seconds <= 60) {
@@ -78,7 +78,7 @@
 		}
 
 		// Days
-		else if ($days <= 7){
+		else if ($days <= 7) {
 			if ($days == 1) {
 				return language::translate('title_yesterday', 'Yesterday');
 				//return strtr(language::translate('title_yesterday', 'Yesterday') . ' %time', ['%time' => language::strftime(language::$selected['format_time'], $timestamp)]);
@@ -90,33 +90,32 @@
 		// Weeks
 		else if ($weeks <= 4.3) {
 			if ($weeks==1) {
-				return "a week ago";
+				return 'A week ago';
 			} else {
 				return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $weeks, '%unit' => language::translate('time_unit_weeks', 'weeks')]);
 			}
 		}
 
 		// Months
-		else if ($months <=12) {
+		else if ($months <= 12) {
 			if ($months == 1) {
-				return "a month ago";
+				return 'A month ago';
 			} else {
 				return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $months, '%unit' => language::translate('time_unit_months', 'months')]);
 			}
 		}
 
 		// Years
-		else {
-			if ($years == 1) {
-				return "a year ago";
-			} else {
-				if ($years > 100) {
-					return language::translate('text_when_dinosaurs_ruled_earth', 'When dinosaurs ruled earth');
-				} else {
-					return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $years, '%unit' => language::translate('time_unit_years', 'years')]);
-				}
-			}
+		else if ($years == 1) {
+			return 'A year ago';
 		}
+
+		// Ages ago
+		else if ($years > 100) {
+			return language::translate('text_when_dinosaurs_roamed_the_earth', 'When dinosaurs roamed the Earth');
+		}
+
+		return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $years, '%unit' => language::translate('time_unit_years', 'years')]);
 	}
 
 	function datetime_age($date) {
@@ -138,27 +137,27 @@
 			$timestamp = strtotime($timestamp);
 		}
 
-		$Y = date('Y', $timestamp);
+		$y = date('Y', $timestamp);
 		$m = date('m', $timestamp);
 		$d = date('m', $timestamp);
 
 		switch (true) {
 
-			case (strcasecmp($frequency, '5 min')):       return mktime(date('H'), floor(date('i', $timestamp)/5)*5, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, '10 min')):      return mktime(date('H'), floor(date('i', $timestamp)/10)*10, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, '15 min')):      return mktime(date('H'), floor(date('i', $timestamp)/15)*15, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, '30 min')):      return mktime(date('H'), floor(date('i', $timestamp)/30)*30, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, 'Hourly')):      return mktime(date('H'), 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, '2 hours')):     return mktime(floor(date('H', $timestamp)/2)*2, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, '3 hours')):     return mktime(floor(date('H', $timestamp)/3)*3, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, '6 hours')):     return mktime(floor(date('H', $timestamp)/6)*6, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, '12 hours')):    return mktime(floor(date('H', $timestamp)/12)*12, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, 'Daily')):       return mktime(0, 0, 0, $m, $d, $y);
-			case (strcasecmp($frequency, 'Weekly')):      return strtotime('This week 00:00:00', $timestamp);
-			case (strcasecmp($frequency, 'Monthly')):     return mktime(0, 0, 0, null, 1, $Y);
-			case (strcasecmp($frequency, 'Quarterly')):   return mktime(0, 0, 0, ((ceil(date('n', $timestamp)/3)-1)*3)+1, $d, $Y);
-			case (strcasecmp($frequency, 'Half-Yearly')): return mktime(0, 0, 0, ((ceil(date('n', $timestamp)/6)-1)*6)+1, $d, $Y);
-			case (strcasecmp($frequency, 'Yearly')):      return mktime(0, 0, 0, 1, 1, $Y);
+			case (strcasecmp($interval, '5 min')):       return mktime(date('H'), floor(date('i', $timestamp) /5)  *5, 0, $m, $d, $y);
+			case (strcasecmp($interval, '10 min')):      return mktime(date('H'), floor(date('i', $timestamp) /10) *10, 0, $m, $d, $y);
+			case (strcasecmp($interval, '15 min')):      return mktime(date('H'), floor(date('i', $timestamp) /15) *15, 0, $m, $d, $y);
+			case (strcasecmp($interval, '30 min')):      return mktime(date('H'), floor(date('i', $timestamp) /30) *30, 0, $m, $d, $y);
+			case (strcasecmp($interval, 'Hourly')):      return mktime(date('H'), 0, 0, $m, $d, $y);
+			case (strcasecmp($interval, '2 hours')):     return mktime(floor(date('H', $timestamp) /2)  *2,  0, 0, $m, $d, $y);
+			case (strcasecmp($interval, '3 hours')):     return mktime(floor(date('H', $timestamp) /3)  *3,  0, 0, $m, $d, $y);
+			case (strcasecmp($interval, '6 hours')):     return mktime(floor(date('H', $timestamp) /6)  *6,  0, 0, $m, $d, $y);
+			case (strcasecmp($interval, '12 hours')):    return mktime(floor(date('H', $timestamp) /12) *12, 0, 0, $m, $d, $y);
+			case (strcasecmp($interval, 'Daily')):       return mktime(0, 0, 0, $m, $d, $y);
+			case (strcasecmp($interval, 'Weekly')):      return strtotime('This week 00:00:00', $timestamp);
+			case (strcasecmp($interval, 'Monthly')):     return mktime(0, 0, 0, null, 1, $y);
+			case (strcasecmp($interval, 'Quarterly')):   return mktime(0, 0, 0, ((ceil(date('n', $timestamp) /3) -1) *3) +1, $d, $y);
+			case (strcasecmp($interval, 'Half-Yearly')): return mktime(0, 0, 0, ((ceil(date('n', $timestamp) /6) -1) *6) +1, $d, $y);
+			case (strcasecmp($interval, 'Yearly')):      return mktime(0, 0, 0, 1, 1, $y);
 
 			default: trigger_error('Unknown step interval ('. $interval .')', E_USER_WARNING); return false;
 		}
