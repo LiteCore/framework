@@ -5,7 +5,7 @@
 
 	switch (true) {
 
-		case (preg_match('#^job_#')):
+		case (preg_match('#^job_#', $module_id)):
 			$type = 'job';
 			$return_doc = 'jobs';
 			break;

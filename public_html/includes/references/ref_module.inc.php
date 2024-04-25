@@ -1,9 +1,9 @@
 <?php
 
-	class ref_module {
+  class ref_module extends abs_reference_entity {
 
-		private $_data = [];
-		private $_object = null;
+    protected $_data = [];
+    protected $_object = null;
 
 		function __construct($module_id) {
 
@@ -41,28 +41,11 @@
 			$this->_object = $object;
 		}
 
-		public function __call($name) {
-
-			if (!method_exists($name, $this->_object)) {
-				return;
-			}
-
-			return call_user_func_array([$this->_object, $name], array_slice(func_get_args(), 1));
+    public function __call($name, $args) {
+      return method_exists($name, $this->_object) ? call_user_func_array([$this->_object, $name], array_slice($args, 1)) : null;
 		}
 
-		public function &__get($name) {
-			return fallback($this->_object->$name, null);
-		}
-
-		public function &__isset($name) {
-			return $this->__get($name);
-		}
-
-		public function __set($name, $value) {
-			trigger_error('Setting data is prohibited', E_USER_WARNING);
-		}
-
-		private function _load($field) {
+    protected function _load($field) {
 
 			switch($field) {
 
