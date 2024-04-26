@@ -17,26 +17,20 @@
 
 			$this->data = [];
 
-			$fields_query = database::query(
+			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."pages;"
-			);
-
-			while ($field = database::fetch($fields_query)) {
+			)->each(function($field) {
 				$this->data[$field['Field']] = database::create_variable($field);
-			}
+			});
 
-			$info_fields_query = database::query(
+			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."pages_info;"
-			);
-
-			while ($field = database::fetch($info_fields_query)) {
-				if (in_array($field['Field'], ['id', 'page_id', 'language_code'])) continue;
-
-				$this->data[$field['Field']] = [];
+			)->each(function($field) {
+				if (in_array($field['Field'], ['id', 'page_id', 'language_code'])) return;
 				foreach (array_keys(language::$languages) as $language_code) {
 					$this->data[$field['Field']][$language_code] = database::create_variable($field);
 				}
-			}
+			});
 
 			$this->previous = $this->data;
 		}
@@ -61,17 +55,15 @@
 				throw new Exception('Could not find page (ID: '. (int)$page_id .') in database.');
 			}
 
-			$page_info_query = database::query(
+			database::query(
 				"select * from ". DB_TABLE_PREFIX ."pages_info
 				where page_id = ". (int)$this->data['id'] .";"
-			);
-
-			while ($page_info = database::fetch($page_info_query)) {
-				foreach ($page_info as $key => $value) {
+			)->each(function($info) {
+				foreach ($info as $key => $value) {
 					if (in_array($key, ['id', 'page_id', 'language_code'])) continue;
-					$this->data[$key][$page_info['language_code']] = $value;
+					$this->data[$key][$info['language_code']] = $value;
 				}
-			}
+			});
 
 			$this->previous = $this->data;
 		}
@@ -86,7 +78,7 @@
 				throw new Exception(language::translate('error_cannot_attach_page_to_descendant', 'You cannot attach a page to a descendant'));
 			}
 
-			if (empty($this->data['id'])) {
+			if (!$this->data['id']) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."pages
 					(date_created)

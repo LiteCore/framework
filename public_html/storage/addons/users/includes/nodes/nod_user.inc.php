@@ -218,13 +218,11 @@
 
 			session::$data['user'] = [];
 
-			$fields_query = database::query(
+			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."users;"
-			);
-
-			while ($field = database::fetch($fields_query)) {
+			)->each(function($field) {
 				session::$data['user'][$field['Field']] = database::create_variable($field);
-			}
+			});
 		}
 
 		public static function load(int $user_id) {

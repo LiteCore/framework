@@ -17,13 +17,11 @@
 
 			$this->data = [];
 
-			$fields_query = database::query(
+			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."users;"
-			);
-
-			while ($field = database::fetch($fields_query)) {
+			)->each(function($field) {
 				$this->data[$field['Field']] = database::create_variable($field);
-			}
+			});
 
 			$this->data['status'] = 1;
 			$this->data['newsletter'] = 0;
@@ -74,7 +72,7 @@
 
 		public function save() {
 
-			if (empty($this->data['id'])) {
+			if (!$this->data['id']) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."users
 					(email, date_created)
@@ -138,7 +136,7 @@
 
 		public function set_password($password) {
 
-			if (empty($this->data['id'])) {
+			if (!$this->data['id']) {
 				$this->save();
 			}
 

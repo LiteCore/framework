@@ -54,11 +54,9 @@
 
 	// Software
 
-	$version_query = database::query(
+	$mysql_version = database::query(
 		"SHOW VARIABLES LIKE 'version'"
-	);
-
-	$mysql_version = database::fetch($version_query, 'Value');
+	)->fetch('Value');
 
 ?>
 <style>

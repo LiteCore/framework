@@ -75,7 +75,6 @@
 
 					$current = $this;
 					while ($current->parent_id) {
-
 						$this->_data['path'][$current->parent_id] = $current->parent;
 						$current = $current->parent;
 					}
@@ -87,8 +86,6 @@
 				case 'siblings':
 
 					$this->_data['siblings'] = [];
-
-					if (empty($this->parent_id)) return;
 
 					$query = database::query(
 						"select id from ". DB_TABLE_PREFIX ."pages
@@ -133,14 +130,12 @@
 
 					$this->_data['subpages'] = [];
 
-						$page_query = database::query(
+						database::query(
 							"select id, parent_id from ". DB_TABLE_PREFIX ."pages
 							where parent_id = ". (int)$this->_data['id'] .";"
-						);
-
-						while ($page = database::fetch($page_query)) {
+						)->each(function($page) {
 							$this->_data['subpages'][$page['id']] = reference::page($page['id'], $this->_language_codes[0]);
-						}
+						});
 
 					break;
 

@@ -19,13 +19,13 @@
 
 			$this->id = get_called_class();
 
-			$module_query = database::query(
+			$module = database::query(
 				"select * from ". DB_TABLE_PREFIX ."modules
 				where module_id = '". get_called_class() ."'
 				limit 1;"
-			);
+			)->fetch();
 
-			while ($module = database::fetch($module_query)) {
+			if ($module) {
 
 				// Decode settings
 				$settings = json_decode($module['settings'], true);
