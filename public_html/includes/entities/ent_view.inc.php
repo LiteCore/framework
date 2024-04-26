@@ -20,7 +20,7 @@
 				} else {
 					$this->view = 'app://frontend/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
 					if (!is_file($this->view)) {
-						$this->view = 'app://frontend/templates/default/'. $view;
+						$this->view = 'app://frontend/template/'. $view;
 					}
 				}
 			}

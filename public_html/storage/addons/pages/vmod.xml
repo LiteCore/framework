@@ -61,7 +61,7 @@
     </operation>
   </file>
 
-  <file name="frontend/templates/default/partials/site_footer.inc.php">
+  <file name="frontend/template/partials/site_footer.inc.php">
 
     <operation method="after" type="multiline" onerror="warning">
       <find><![CDATA[
@@ -173,7 +173,7 @@
     </operation>
   </file>
 
-  <file name="frontend/templates/default/partials/site_footer.inc.php">
+  <file name="frontend/template/partials/site_footer.inc.php">
 
     <operation method="before" type="multiline" onerror="warning">
       <find><![CDATA[
