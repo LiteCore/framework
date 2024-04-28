@@ -11,20 +11,34 @@
 
 		public function process($force, $last_run) {
 
-			if (empty($force)) {
-				if (empty($this->settings['status'])) return;
+			if (!$force) {
 
-				if (!empty($this->settings['working_hours'])) {
-					list($from_time, $to_time) = explode('-', $this->settings['working_hours']);
-					if (time() < strtotime("Today $from_time") || time() > strtotime("Today $to_time")) return;
+			// Abort if no log file is set
+				if (!$log_file = ini_get('error_log')) return;
+
+			// Abort if log file is missing
+				if (!is_file($log_file)) return;
+
+			// Make sure this is not an urgent matter of a huge log file (100+ MB)
+				if (filesize($log_file) < 100e6) {
+
+				// Abort if disabled
+					if (!$this->settings['status']) return;
+
+				// Abort if not within working hours
+					if (!empty($this->settings['working_hours'])) {
+						list($from_time, $to_time) = explode('-', $this->settings['working_hours']);
+						if (time() < strtotime("Today $from_time") || time() > strtotime("Today $to_time")) return;
+					}
+
+				// Abort if the frequency for running this job is not met
+					if (strtotime($last_run) > functions::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
 				}
+		}
 
-				if (strtotime($last_run) > functions::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
-			}
+		// Disable RAM memory limit usage (in case we are dealing with some major big)
+			ini_set('memory_limit', -1);
 
-			$log_file = ini_get('error_log');
-
-			if (!is_file($log_file)) return;
 			if (!$contents = file_get_contents($log_file)) return;
 
 			$contents = preg_replace('#(\r\n?|\n)#', "\n", $contents);
@@ -53,7 +67,7 @@
 			$buffer = '';
 			foreach ($errors as $checksum => $error) {
 				$buffer .= "[$error[last_occurrence]] ". ($occurrences[$checksum] > 1 ? "[$occurrences[$checksum] times] " : "") ."$error[error]\n"
-								 . (!empty($error['backtrace']) ? "$error[backtrace]\n\n" : "\n");
+								. (!empty($error['backtrace']) ? "$error[backtrace]\n\n" : "\n");
 			}
 
 			if (!$this->settings['email_recipient']) {

@@ -15,6 +15,11 @@
 		return array_column($array, $column_key, $index_key);
 	}
 
+	// Same as array_map but with the callable function first and filtered results
+	function array_each(array $array, callable $function):array {
+		return array_filter(array_map($function, $array));
+	}
+
 	// Update an array with values that have keys present in another array. The opposite of array_diff_key. Or complement to array_merge() or array_replace() that doesn't insert new keys.
 	function array_update(array $array, array ...$replacements):array {
 		foreach ($replacements as $replacement) {
