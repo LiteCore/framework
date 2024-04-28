@@ -8,6 +8,7 @@
 			$apps = [];
 
 			foreach (scandir('app://backend/apps/') as $folder_name) {
+
 				$id = basename($folder_name);
 				$directory = 'app://backend/apps/'. $folder_name .'/';
 

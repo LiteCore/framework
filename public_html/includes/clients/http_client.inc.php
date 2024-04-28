@@ -28,7 +28,7 @@
 			if (empty($parts['port'])) $parts['port'] = ($parts['scheme'] == 'ssl') ? 443 : 80;
 			if (empty($parts['path'])) $parts['path'] = '/';
 
-			if (!empty($data)) {
+			if ($data) {
 				$data = is_array($data) ? http_build_query($data) : $data;
 			} else {
 				$data = '';
@@ -89,6 +89,8 @@
 			}
 
 			fclose($socket);
+			
+			self::$stats['duration'] += microtime(true) - $timestamp;
 
 			$response_headers = substr($response, 0, strpos($response, "\r\n\r\n") + 2);
 			$response_body = substr($response, strpos($response, "\r\n\r\n") + 4);
@@ -110,17 +112,19 @@
 				'bytes' => strlen($response_headers . "\r\n" . $response_body),
 			];
 
-			file_put_contents(functions::file_realpath('storage://logs/http_request_last-'. $parts['host'] .'.log'),
-				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_request['timestamp']) .'] Request ', 70, '#', STR_PAD_RIGHT) . PHP_EOL . PHP_EOL .
-				$this->last_request['headers'] . "\r\n" .
-				$this->last_request['body'] . "\r\n\r\n" .
-				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_response['timestamp']) .'] Response — '. $this->last_response['bytes'] .' bytes transferred in '. $this->last_response['duration'] .' s ', 72, '#', STR_PAD_RIGHT) . PHP_EOL . PHP_EOL .
-				$this->last_response['headers'] . "\r\n" .
-				$this->last_response['body']
-			);
+			file_put_contents(functions::file_realpath('storage://logs/http_request_last-'. $parts['host'] .'.log'), implode("\r\n", [
+				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_request['timestamp']) .'] Request ', 70, '#', STR_PAD_RIGHT),
+				'',
+				$this->last_request['headers'],
+				$this->last_request['body'],
+				'',
+				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_response['timestamp']) .'] Response — '. $this->last_response['bytes'] .' bytes transferred in '. $this->last_response['duration'] .' s ', 72, '#', STR_PAD_RIGHT),
+				'',
+				$this->last_response['headers'],
+				$this->last_response['body'],
+		  ]));
 
 			self::$stats['requests']++;
-			self::$stats['duration'] += microtime(true) - $timestamp;
 
 			// Redirect
 			if ($status_code == 301) {

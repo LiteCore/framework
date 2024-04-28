@@ -104,7 +104,7 @@
 			}
 
 			// Load modifications from disk
-			if (empty(self::$_modifications)) {
+			if (!self::$_modifications) {
 				foreach (scandir(FS_DIR_STORAGE .'addons/') as $folder) {
 					if (in_array($folder, ['.', '..', '.cache'])) continue;
 					if (!is_dir(FS_DIR_STORAGE .'addons/'.$folder)) continue;
@@ -541,6 +541,7 @@
 
 								// Whitespace
 								$find = preg_split('#(\r\n?|\n)#', $find);
+
 								for ($i=0; $i<count($find); $i++) {
 									if ($find[$i] = trim($find[$i])) {
 										$find[$i] = '[ \\t]*' . preg_quote($find[$i], '#') . '[ \\t]*(?:\r\n?|\n|$)';
@@ -548,6 +549,7 @@
 										$find[$i] = '[ \\t]*(?:\r\n?|\n)';
 									}
 								}
+
 								$find = implode($find);
 
 								// Offset

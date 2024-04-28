@@ -407,7 +407,6 @@
 			//$input = rtrim(preg_replace('#(\.'. str_repeat('\d', 2) .')0{1,2}$#', '$1', $input), '.'); // Auto decimals
 		}
 
-
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
 			'  ' . form_input_decimal($name, $input, $currency['decimals'], ($parameters ? $parameters .' ' : '') .'step="any" data-type="currency"'),

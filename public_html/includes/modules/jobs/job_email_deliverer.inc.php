@@ -12,10 +12,10 @@
 
 		public function process($force, $last_run) {
 
-			if (empty($force)) {
-				if (empty($this->settings['status'])) return;
+			if (!$force) {
+				if (!$this->settings['status']) return;
 
-				if (!empty($this->settings['working_hours'])) {
+				if ($this->settings['working_hours']) {
 					list($from_time, $to_time) = explode('-', $this->settings['working_hours']);
 					if (time() < strtotime("Today $from_time") || time() > strtotime("Today $to_time")) return;
 				}

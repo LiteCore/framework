@@ -2,7 +2,6 @@
 
 	#[AllowDynamicProperties]
 	class job_error_reporter extends abs_module {
-
 		public $name = 'Error Reporter';
 		public $description = '';
 		public $author = 'LiteCart Dev Team';
@@ -57,7 +56,7 @@
 								 . (!empty($error['backtrace']) ? "$error[backtrace]\n\n" : "\n");
 			}
 
-			if (empty($this->settings['email_recipient'])) {
+			if (!$this->settings['email_recipient']) {
 				$this->settings['email_recipient'] = settings::get('site_email');
 			}
 

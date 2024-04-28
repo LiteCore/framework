@@ -1,6 +1,6 @@
 <?php
 
-	return $app_config = [
+	return [
 		'name' => language::translate('title_addons', 'Add-ons'),
 		'default' => 'addons',
 		'priority' => 0,

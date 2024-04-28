@@ -1,6 +1,6 @@
 <?php
 
-	return $app_config = [
+	return [
 		'name' => language::translate('title_appearance', 'Appearance'),
 		'default' => 'edit_styling',
 		'priority' => 0,

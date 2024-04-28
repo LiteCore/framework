@@ -161,7 +161,7 @@
 
 		public static function get($token, $max_age=900, $force_cache=false) {
 
-			if (empty($force_cache) && empty(self::$enabled)) {
+			if (!$force_cache && !self::$enabled) {
 				return;
 			}
 

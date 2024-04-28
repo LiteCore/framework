@@ -197,10 +197,12 @@
 					$m[0] = html_entity_decode($m[0]);
 
 					switch ($matches[1][$key]) {
+
 						case 'link':
 							if (!preg_match('#stylesheet#', $m[0])) continue 2;
 							$preloads[$m[0]] = 'style';
 							break;
+
 						case 'script':
 							$preloads[$m[0]] = 'script';
 							break;
@@ -301,19 +303,21 @@
 		}
 
 		public static function add_head_tags($tags, $key=null) {
+
 			if (is_array($tags)) {
-				self::$head_tags[$key] = implode(PHP_EOL, $tags);
-			} else{
-				self::$head_tags[$key] = $tags;
-			}
+        $tags = implode(PHP_EOL, $tags);
+      }
+
+			self::$head_tags[$key] = $tags;
 		}
 
 		public static function add_foot_tags($tags, $key=null) {
+
 			if (is_array($tags)) {
-				self::$foot_tags[$key] = implode(PHP_EOL, $tags);
-			} else{
-				self::$foot_tags[$key] = $tags;
-			}
+        $tags = implode(PHP_EOL, $tags);
+      }
+
+			self::$foot_tags[$key] = $tags;
 		}
 
 		public static function load_style($urls, $key=null) {
@@ -386,7 +390,7 @@
 
 		public static function link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
 
-			if (empty($path)) {
+      if (!$path) {
 				$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 				if ($inherit_params === null) {

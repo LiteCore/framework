@@ -101,10 +101,10 @@
 	function file_is_binary($file) {
 
 		$fh  = fopen($file, "r");
-		$blk = fread($fh, 512);
+    $block = fread($fh, 512);
 		fclose($fh);
 
-		return (substr_count($blk, "^ -~")/512 > 0.3) or (substr_count($blk, "\x00") > 0);
+    return (substr_count($block, "^ -~")/512 > 0.3) or (substr_count($block, "\x00") > 0);
 	}
 
 	function file_move($source, $target, &$results=[]) {

@@ -47,14 +47,14 @@
 					$log = implode(PHP_EOL, [
 						str_repeat('#', 72),
 						'#'. str_pad(" $module_id executed at ". date('Y-m-d H:i:s') .' ', 71, '#', STR_PAD_RIGHT),
-						str_repeat('#', 72) . PHP_EOL,
-						$log . PHP_EOL,
+            str_repeat('#', 72),
+            '',
+            $log,
+            '',
 						str_repeat('#', 72),
 						'#'. str_pad(' Completed in '. round(microtime(true) - $timestamp, 3).' s ', 71, '#', STR_PAD_RIGHT),
 						str_repeat('#', 72),
 					]);
-
-					$output .= $log;
 
 					database::query(
 						"update ". DB_TABLE_PREFIX ."modules
@@ -66,6 +66,6 @@
 				}
 			}
 
-			return $output;
+			return $log;
 		}
 	}

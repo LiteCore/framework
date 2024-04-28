@@ -11,9 +11,9 @@
 
 		public function process($force, $last_run) {
 
-			if (empty($this->settings['status'])) return;
+			if (!$this->settings['status']) return;
 
-			if (!empty($last_run) && empty($force)) {
+			if ($last_run || !$force) {
 				if (strtotime($last_run) > functions::datetime_last_by_interval('Hourly', $last_run)) return;
 			}
 
