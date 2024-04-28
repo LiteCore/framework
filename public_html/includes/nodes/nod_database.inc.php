@@ -456,18 +456,32 @@
 			return $fields;
 		}
 
-		public function fetch($column='') {
+    public function fetch($filter=null) {
 
 			$timestamp = microtime(true);
 
-			if (!$row = mysqli_fetch_assoc($this->_result)) {
-				return $row;
-			}
+      $row = mysqli_fetch_assoc($this->_result);
 
-			if ($column) {
-				if (isset($row[$column])) {
-					$row = $row[$column];
-				} else {
+      if ($filter) {
+        switch (gettype($filter)) {
+
+          case 'array':
+            $row = array_intersect_key($row, array_flip($filter));
+            break;
+
+          case 'string':
+            if (isset($row[$filter])) {
+              $row = $row[$filter];
+            } else {
+              $row = false;
+			}
+            break;
+
+          case 'object':
+            $row = call_user_func($filter, $row);
+            break;
+
+          default:
 					$row = false;
 				}
 			}
@@ -477,25 +491,45 @@
 			return $row;
 		}
 
-		public function fetch_all($column=null, $index_column=null) {
+    public function fetch_all($filter=null, $index_column=null) {
 
 			$timestamp = microtime(true);
 
-			if ($column || $index_column) {
+      if ($filter || $index_column) {
 
 				$rows = [];
 
 				while ($row = mysqli_fetch_assoc($this->_result)) {
 					
-					if (isset($index_column) && isset($column)) {
-						$rows[$row[$index_column]] = $row[$column];
+          if ($filter) {
+            switch (gettype($filter)) {
 						
-					} else if (isset($index_column)) {
-						$rows[$row[$index_column]] = $row;
+              case 'array':
+                $row = array_intersect_key($row, array_flip($filter));
+                break;
+
+              case 'string':
+                if (isset($row[$filter])) {
+                  $row = $row[$filter];
+                } else {
+                  $row = false;
+                }
+                break;
+
+              case 'object':
+                $row = call_user_func($filter, $row);
+                break;
+
+              default:
+                $row = false;
+            }
+          }
 						
-					} else if (isset($column)) {
-						$rows[] = $row[$column];
+          if ($row === false) continue;
+          if (is_array($row) && empty($row)) continue;
 						
+          if ($index_column) {
+            $rows[$row[$index_column]] = $row;
 					} else {
 						$rows[] = $row;
 					}
@@ -510,29 +544,7 @@
 			return $rows;
 		}
 
-		public function fetch_custom($function, $index_column=null) {
-
-			$timestamp = microtime(true);
-
-			$rows = [];
-			while ($row = $this->fetch(null, $index_column)) {
-
-				if ($row = $function($row)) {
-
-					if ($index_column) {
-						$rows[$row[$index_column]] = $row;
-					} else {
-						$rows[] = $row;
-					}
-				}
-			}
-
-			database::$stats['duration'] += microtime(true) - $timestamp;
-
-			return $rows;
-		}
-
-		public function fetch_page($page, $items_per_page=null, &$num_rows=null, &$num_pages=null) {
+		public function fetch_page($page=1, $items_per_page=null, &$num_rows=null, &$num_pages=null) {
 
 			$timestamp = microtime(true);
 

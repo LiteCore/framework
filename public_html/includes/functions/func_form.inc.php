@@ -1001,7 +1001,7 @@
 		$options = database::query(
 			"select id, username from ". DB_TABLE_PREFIX ."administrators
 			order by username;"
-		)->fetch_custom(function($row){
+		)->fetch_all(function($row){
 			return [$administrator['id'], $administrator['username']];
 		});
 
@@ -1042,7 +1042,7 @@
 			"select * from ". DB_TABLE_PREFIX ."countries
 			where status
 			order by name asc;"
-		)->fetch_custom(function($country){
+		)->fetch_all(function($country){
 			return [$country['iso_code_2'], $country['name'], 'data-tax-id-format="'. $country['tax_id_format'] .'" data-postcode-format="'. $country['postcode_format'] .'" data-phone-code="'. $country['phone_code'] .'"'];
 		});
 
@@ -1182,7 +1182,7 @@
 
 		$options = database::query(
 			"SHOW ENGINES;"
-		)->fetch_custom(function($engine){
+		)->fetch_all(function($engine){
 			if (!in_array(strtoupper($engine['Support']), ['YES', 'DEFAULT'])) return;
 			if (!in_array($engine['Engine'], ['CSV', 'InnoDB', 'MyISAM', 'Aria'])) return;
 			return [$engine['Engine'], $engine['Engine'] . ' -- '. $engine['Comment']];
@@ -1235,7 +1235,7 @@
 			"select * from ". DB_TABLE_PREFIX ."zones
 			where country_code = '". database::input($country_code) ."'
 			order by name asc;"
-		)->fetch_custom(function($zone){
+		)->fetch_all(function($zone){
 			return [$zone['code'], $zone['name']];
 		});
 
