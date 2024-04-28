@@ -4,7 +4,7 @@
 
 		public static $layout = 'default';
 
-		public static $title = '';
+    public static $title = [];
 		public static $description = '';
 		public static $head_tags = [];
 		public static $style = [];
@@ -177,9 +177,9 @@
 			if (!empty($javascript)) {
 				$javascript = implode(PHP_EOL, [
 					'<script>',
-					//. '<!--/*--><![CDATA[/*><!--*/', // Do we still need bypassing in 2023?
+					//'<!--/*--><![CDATA[/*><!--*/', // Do we still need bypassing in 2023?
 					implode(PHP_EOL . PHP_EOL, $javascript),
-					//. '/*]]>*/-->',
+					//'/*]]>*/-->',
 					'</script>',
 				]) . PHP_EOL;
 

@@ -95,7 +95,7 @@
 
 		trigger_error('Unknown predefined button ('. functions::escape_html($name) .')', E_USER_WARNING);
 
-		return form_button($name, $value, 'submit', $parameters, $fonticon);
+		return form_button($name, $value, 'submit', $parameters);
 	}
 
 	function form_dropdown($name, $options=[], $input=true, $parameters='') {

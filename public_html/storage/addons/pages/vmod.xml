@@ -41,7 +41,7 @@
 				where status
 				and parent_id = ". (int)$page['id'] ."
 				order by p.priority, pi.title;"
-			)->fetch_custom(function($subpage) {
+			)->fetch_all(function($subpage) {
 				return [
 					'id' => 'page-'.$subpage['id'],
 					'name' => $subpage['title'],
@@ -162,7 +162,7 @@
 			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
 			where status
 			order by p.priority, pi.title;"
-		)->fetch_custom(function($page){
+		)->fetch_all(function($page){
 			return [
 				'id' => $page['id'],
 				'title' => $page['title'],
