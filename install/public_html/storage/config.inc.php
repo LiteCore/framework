@@ -71,6 +71,8 @@
 		ini_set('display_startup_errors', 'On');
 		ini_set('display_errors', 'On');
 	}
+	// Output Compression
+	ini_set('zlib.output_compression', 1);
 
 ######################################################################
 ## Application #######################################################
