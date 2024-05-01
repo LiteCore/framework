@@ -152,7 +152,7 @@ table tbody .toggle {
 			". (empty($_GET['query']) ? "and parent_id = 0" : "") ."
 			". (!empty($sql_where_query) ? "and (". implode(" or ", $sql_where_query) .")" : "") ."
 			order by p.priority, pi.title;"
-		)->fetch_page($_GET['page'], null, $num_rows, $num_pages);
+		)->fetch_page(null, null, $_GET['page'], null, $num_rows, $num_pages);
 
 		foreach ($pages as $page) {
 
