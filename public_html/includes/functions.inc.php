@@ -90,6 +90,11 @@
 		return !filter_var($string, FILTER_VALIDATE_BOOLEAN);
 	}
 
+	// Check if request was loaded via AJAX
+	function is_ajax_load() {
+		return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
+	}
+
 	// Return a sane list of uploaded files $name[subnode][subnode][tmp_name] rather than $name[tmp_name][subnode][subnode]
 	function get_uploaded_files() {
 
