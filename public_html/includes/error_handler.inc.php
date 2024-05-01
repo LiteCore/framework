@@ -65,7 +65,7 @@
 
 			} else {
 
-				if (PHP_SAPI != 'cli' && filter_var(ini_get('html_errors'), FILTER_VALIDATE_BOOLEAN)) {
+				if (($_SERVER['SERVER_SOFTWARE'] == 'CLI') && filter_var(ini_get('html_errors'), FILTER_VALIDATE_BOOLEAN)) {
 					echo $output[0] . PHP_EOL;
 				} else {
 					echo strip_tags($output[0]) . PHP_EOL;

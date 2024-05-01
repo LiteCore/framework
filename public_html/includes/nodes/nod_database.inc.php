@@ -500,10 +500,10 @@
 				$rows = [];
 
 				while ($row = mysqli_fetch_assoc($this->_result)) {
-					
+
           if ($filter) {
             switch (gettype($filter)) {
-						
+
               case 'array':
                 $row = array_intersect_key($row, array_flip($filter));
                 break;
@@ -524,10 +524,10 @@
                 $row = false;
             }
           }
-						
+
           if ($row === false) continue;
           if (is_array($row) && empty($row)) continue;
-						
+
           if ($index_column) {
             $rows[$row[$index_column]] = $row;
 					} else {
@@ -564,7 +564,7 @@
 			$rows = [];
 
 			$i = 0;
-			while ($row = mysqli_fetch_assoc($this->_result)) {
+			while ($row = $this->fetch($filter, $index_column)) {
 				$rows[] = $row;
 				if (++$i == $items_per_page) break;
 			}

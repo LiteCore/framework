@@ -38,11 +38,24 @@
 	mb_regex_encoding('UTF-8');
 	mb_http_output('UTF-8');
 
+	// Errors
+	error_reporting(version_compare(PHP_VERSION, '5.4.0', '>=') ? E_ALL & ~E_STRICT : E_ALL);
+	ini_set('ignore_repeated_errors', 'On');
+	ini_set('log_errors', 'On');
+	ini_set('error_log', FS_DIR_STORAGE . 'logs/errors.log');
+	ini_set('display_startup_errors', 'Off');
+	ini_set('display_errors', 'Off');
+	if (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1'])) {
+		error_reporting(E_ALL);
+		ini_set('display_startup_errors', 'On');
+		ini_set('display_errors', 'On');
+	}
+
+	// Default Script timeout
+	set_time_limit(60);
+
 	// Floating Point Precision
 	ini_set('serialize_precision', 6);
-
-	// Script timeout
-	set_time_limit(60);
 
 	// Sessions
 	ini_set('session.name', 'LCSESSID');
@@ -57,20 +70,8 @@
 	ini_set('session.gc_maxlifetime', 1440);
 
 	// Timezone
-	date_default_timezone_set('Europe/Stockholm');
+	ini_set('date.timezone', 'Europe/Stockholm');
 
-	// Errors
-	error_reporting(version_compare(PHP_VERSION, '5.4.0', '>=') ? E_ALL & ~E_STRICT : E_ALL);
-	ini_set('ignore_repeated_errors', 'On');
-	ini_set('log_errors', 'On');
-	ini_set('error_log', FS_DIR_STORAGE . 'logs/errors.log');
-	ini_set('display_startup_errors', 'Off');
-	ini_set('display_errors', 'Off');
-	if (in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1'])) {
-		error_reporting(E_ALL);
-		ini_set('display_startup_errors', 'On');
-		ini_set('display_errors', 'On');
-	}
 	// Output Compression
 	ini_set('zlib.output_compression', 1);
 
