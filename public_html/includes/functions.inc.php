@@ -109,8 +109,3 @@
 
 		return $result;
 	}
-
-	// Slice a string into two arrays at the nth position
-	function str_slice($string, $position) {
-		return [substr($string, 0, $position), substr($string, $position)];
-	}
