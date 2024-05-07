@@ -8,13 +8,21 @@
 	color: var(--card-text-color);
 
 	.card-header, .card-filter, .card-body, .card-footer {
-		padding: 2em;
+		padding: 1em 2em;
 	}
 
 	.card-filter, .card-body {
 		padding-top: 1em;
 		padding-bottom: 1em;
 	}
+
+  > *[class*="card-"]:first-child {
+    padding-top: 2em;
+    padding-bottom: 1em;
+  }
+  > *[class*="card-"]:last-child {
+    padding-bottom: 2em;
+  }
 
 	.card-header {
 		color: var(--card-header-text-color);

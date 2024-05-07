@@ -3,33 +3,23 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
-		replace: {
-			app_header: {
-				src: ['public_html/includes/app_header.inc.php'],
-				overwrite: true,
-				replacements: [
-					{
-						from: /define\('PLATFORM_VERSION', '([0-9\.]+)'\);/,
-						to: 'define(\'PLATFORM_VERSION\', \'<%= pkg.version %>\');'
-					}
-				]
-			},
-
-			app: {
-				src: [
-					'public_html/index.php',
-					'public_html/install/install.php',
-					'public_html/install/upgrade.php'
-				],
-				overwrite: true,
-				replacements: [
-					{
-						from: /LiteCore™ ([0-9\.]+)/,
-						to: 'LiteCore™ <%= pkg.version %>'
-					}
-				]
-			},
-		},
+    concat: {
+      backend: {
+        //options: {
+        //  stripBanners: true,
+        //  banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+        //    '<%= grunt.template.today("yyyy-mm-dd") %> */',
+        //},
+        files: {
+          'public_html/backend/template/js/app.js': ['public_html/backend/template/js/components/*.js']
+        },
+      },
+      frontend: {
+        files: {
+          //'public_html/frontend/templates/default/js/app.js': ['public_html/frontend/templates/default/js/components/*.js']
+        },
+      }
+    },
 
 		less: {
 			backend_variables: {
@@ -123,6 +113,34 @@ module.exports = function(grunt) {
 			},
 		},
 
+		replace: {
+			app_header: {
+				src: ['public_html/includes/app_header.inc.php'],
+				overwrite: true,
+				replacements: [
+					{
+						from: /define\('PLATFORM_VERSION', '([0-9\.]+)'\);/,
+						to: 'define(\'PLATFORM_VERSION\', \'<%= pkg.version %>\');'
+					}
+				]
+			},
+
+			app: {
+				src: [
+					'public_html/index.php',
+					'public_html/install/install.php',
+					'public_html/install/upgrade.php'
+				],
+				overwrite: true,
+				replacements: [
+					{
+						from: /LiteCore™ ([0-9\.]+)/,
+						to: 'LiteCore™ <%= pkg.version %>'
+					}
+				]
+			},
+		},
+
 		watch: {
 			replace: {
 				files: [
@@ -160,13 +178,14 @@ module.exports = function(grunt) {
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-dart-sass');
 	grunt.loadNpmTasks('grunt-text-replace');
 
-	grunt.registerTask('default', ['replace', 'less', 'dart-sass', 'uglify']);
-	grunt.registerTask('build', ['less', 'dart-sass', 'uglify']);
+	grunt.registerTask('default', ['build']);
+	grunt.registerTask('build', ['replace', 'less', 'dart-sass', 'concat', 'uglify']);
 
 	require('phplint').gruntPlugin(grunt);
 	grunt.registerTask('test', ['phplint']);
