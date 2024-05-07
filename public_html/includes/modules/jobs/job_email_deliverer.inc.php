@@ -65,7 +65,7 @@
 					'default_value' => 'Weekly',
 					'title' => language::translate(__CLASS__.':title_frequency', 'Frequency'),
 					'description' => language::translate(__CLASS__.':description_frequency', 'How often the job should be executed.'),
-					'function' => 'radio("Hourly")',
+					'function' => 'radio("5 Min")',
 				],
 				[
 					'key' => 'working_hours',

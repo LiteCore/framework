@@ -78,7 +78,7 @@
 				<ul class="dropdown-menu">
 					<?php foreach (language::$languages as $language) { ?>
 					<li>
-						<a href="<?php echo document::href_ilink(null, ['language' => $language['code']]); ?>">
+						<a href="<?php echo document::href_ilink(null, [], [], [], $language['code']); ?>">
 							<?php echo $language['name']; ?>
 						</a>
 					</li>

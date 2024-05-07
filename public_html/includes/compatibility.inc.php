@@ -34,5 +34,10 @@
 	// Fix Windows paths
 	$_SERVER['SCRIPT_FILENAME'] = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']);
 
-	if (empty($_SERVER['HTTPS'])) $_SERVER['HTTPS'] = ($_SERVER['SERVER_PROTOCOL'] == 'https') ? 'on' : 'off';
-	if (empty($_SERVER['HTTP_HOST'])) $_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
+  if (empty($_SERVER['HTTPS'])) {
+    $_SERVER['HTTPS'] = ($_SERVER['SERVER_PROTOCOL'] == 'https') ? 'on' : 'off';
+  }
+
+  if (empty($_SERVER['HTTP_HOST'])) {
+    $_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
+  }

@@ -32,11 +32,13 @@ Paths are machine specific. Talk to your web host if you are uncertain where thi
 
 3. Create a new MySQL database and import structure.sql and data.sql using your favourite MySQL manager e.g. phpMyAdmin.
 
-4. Copy the configuration file install/public_html/storage/config.inc.php to your storage/ folder and insert your MySQL credentials.
+4. Go to phpMyAdmin and import the files install/structure.sql and then install/data.sql into your database.
+
+5. Copy the configuration file install/public_html/storage/config.inc.php to your storage/ folder and insert your MySQL credentials.
 
 If everything went well LiteCore should load without errors.
 
 
 ## Support
 
-No support is being provided at this point in time. But some [wiki articles](https://wiki.litecart.net/introduction) by the LiteCart community can be useful.
+No support is being provided at this point in time. But some [wiki articles](https://www.litecart.net/wiki/) by the LiteCart community can be useful.

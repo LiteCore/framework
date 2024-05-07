@@ -2,4 +2,5 @@
 {{notices}}
 
 {{content}}
+
 {{javascript}}

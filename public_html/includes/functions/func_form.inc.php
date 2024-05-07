@@ -985,7 +985,6 @@
 			case 'zone':
 			case 'zones':
 				$option = $options ? $options[0] : '';
-				//if (empty($option)) $option = settings::get('site_country_code');
 				return form_select_zone($name, $option, $input, $parameters);
 
 			default:
@@ -1016,10 +1015,6 @@
 
 		if ($input === true) {
 			$input = form_reinsert_value($name);
-
-			if ($input == '' && file_get_contents('php://input') == '') {
-				$input = settings::get('default_country_code');
-			}
 		}
 
 		switch ($input) {
