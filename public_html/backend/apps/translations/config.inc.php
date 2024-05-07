@@ -2,7 +2,7 @@
 
 	return [
 		'name' => language::translate('title_translations', 'Translations'),
-		'default' => 'search',
+    'default' => 'translations',
 		'priority' => 0,
 
 		'theme' => [
@@ -29,7 +29,7 @@
 		],
 
 		'docs' => [
-			'search' => 'search.inc.php',
+      'translations' => 'translations.inc.php',
 			'scan' => 'scan.inc.php',
 			'csv' => 'csv.inc.php',
 		],
