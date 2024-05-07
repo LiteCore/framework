@@ -276,7 +276,6 @@ INSERT INTO `lc_settings` (`group_key`, `type`, `title`, `description`, `key`, `
 ('email', 'local', 'SMTP Port', 'SMTP port, e.g. 25, 465 (SSL/TLS), or 587 (STARTTLS).', 'smtp_port', '25', 'number()', 0, 12, NOW(), NOW()),
 ('email', 'local', 'SMTP Username', 'Username for SMTP authentication.', 'smtp_username', '', 'text()', 0, 13, NOW(), NOW()),
 ('email', 'local', 'SMTP Password', 'Password for SMTP authentication.', 'smtp_password', '', 'password()', 0, 14, NOW(), NOW()),
-('listings', 'global', 'Development Mode', 'Development mode restricts frontend access to backend users only.', 'development_mode', '', 'toggle()', 0, 2, NOW(), NOW()),
 ('listings', 'global', 'Maintenance Mode', 'Maintenance mode will enable a slash screen that the site is down for maintenance.', 'maintenance_mode', '0', 'toggle()', 0, 2, NOW(), NOW()),
 ('listings', 'global', 'Important Notice', 'An important notice to be displayed above your website.', 'important_notice', '', 'regional_text()', 1, 0, NOW(), NOW()),
 ('listings', 'local', 'Items Per Page', 'The number of items to be displayed per page.', 'items_per_page', '20', 'number()', 0, 10, NOW(), NOW()),
