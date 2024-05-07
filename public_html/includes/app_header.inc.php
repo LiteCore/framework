@@ -3,11 +3,12 @@
 	define('PLATFORM_VERSION', '1.0.0');
 	define('SCRIPT_TIMESTAMP_START', microtime(true));
 
-	// Capture output buffer
-	ob_start();
 
 	// Get config
 	require __DIR__.'/../storage/config.inc.php';
+
+	// Capture output to buffer
+	ob_start(null, 0, PHP_OUTPUT_HANDLER_CLEANABLE | PHP_OUTPUT_HANDLER_REMOVABLE);
 
 	// Virtual File System
 	require FS_DIR_APP .'includes/wrappers/wrap_stream_app.inc.php';
