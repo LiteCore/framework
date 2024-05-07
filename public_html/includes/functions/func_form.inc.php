@@ -442,6 +442,21 @@
 		]);
 	}
 
+	function form_input_password_unmaskable($name, $input='', $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		return implode(PHP_EOL, [
+			'<div class="input-group">',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-key fa-fw') .'</span>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="password" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'"'. ($parameters ? ' '. $parameters : '') .'>',
+			'  <button class="btn btn-default" type="button" onclick="$(this).prev().attr(\'type\', ($(this).prev().attr(\'type\') == \'password\') ? \'text\' : \'password\')">'. functions::draw_fonticon('fa-eye') .'</button>',
+			'</div>',
+		]);
+	}
+
 	function form_input_phone($name, $input=true, $parameters='') {
 
 		if ($input === true) {
