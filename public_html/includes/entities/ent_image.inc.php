@@ -717,8 +717,6 @@
 				$destination = $this->_file;
 			}
 
-			$destination = functions::file_realpath($destination);
-
 			if (is_file($destination)) {
 				throw new Exception("Destination already exists ($destination)");
 			}
@@ -737,7 +735,7 @@
 				$type = $this->type;
 			}
 
-			if (!preg_match('#^(avif|gif|jpe?g|png|webp)$#i', $type)) {
+			if (!preg_match('#^(avif|gif|jpe?g|png|webp|svg)$#i', $type)) {
 				throw new Exception("Unknown image format ($type)");
 			}
 
@@ -786,15 +784,15 @@
 					ImageCopy($new_image, $this->_image, 0, 0, 0, 0, $this->width, $this->height);
 
 					if (in_array($type, ['avif', 'png', 'webp'])) {
-						ImageSaveAlpha($this->_image, true); // png, webp
+						ImageSaveAlpha($this->_image, true);
 					}
 
 					switch (strtolower($type)) {
 						case 'avif': $result = ImageAVIF($new_image, $destination); break;
 						case 'gif': $result = ImageGIF($new_image, $destination); break;
-						case 'jpg': $result = ImageJPEG($new_image, $destination, $quality); break;
+						case 'jpg': $result = ImageJPEG($new_image, $destination, (int)$quality); break;
 						case 'png': $result = ImagePNG($this->_image, $destination); break;
-						case 'webp': $result = ImageWebP($this->_image, $destination, $quality); break;
+						case 'webp': $result = ImageWebP($this->_image, $destination, (int)$quality); break;
 						default: throw new Exception('Unknown output format');
 					}
 

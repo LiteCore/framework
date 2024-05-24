@@ -12,8 +12,9 @@
  *
  */
 
-	require_once('includes/app_header.inc.php');
+	require_once 'includes/app_header.inc.php';
 
+	// Recognize some destinations
 	route::load('app://frontend/routes/url_*.inc.php');
 	route::load('app://backend/routes/url_*.inc.php');
 
@@ -24,6 +25,7 @@
 		'controller' => 'app://frontend/pages/$1.inc.php',
 	]);
 
+	// Find destination for the current request
 	route::identify();
 
 	// Initialize endpoint

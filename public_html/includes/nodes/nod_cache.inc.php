@@ -10,7 +10,10 @@
 
 			self::$enabled = settings::get('cache_enabled');
 
-			if (!isset(session::$data['cache'])) session::$data['cache'] = [];
+      if (!isset(session::$data['cache'])) {
+        session::$data['cache'] = [];
+      }
+
 			self::$_data = &session::$data['cache'];
 
 			if (settings::get('cache_clear')) {
@@ -183,7 +186,6 @@
 						$data = @json_decode(file_get_contents($cache_file), true);
 					}
 
-
 					break;
 
 				case 'memory':
@@ -227,9 +229,9 @@
 
 		public static function set($token, $data) {
 
-			if (empty(self::$enabled)) return;
+      if (!self::$enabled) return;
 
-			if (empty($data)) return;
+      if (!$data) return;
 
 			stats::start_watch('cache');
 
@@ -237,7 +239,7 @@
 
 				case 'file':
 
-					$cache_file = FS_DIR_STORAGE .'cache/'. substr($token['id'], 0, 2) .'/'. $token['id'] .'.cache';
+          $cache_file = 'storage://cache/'. substr($token['id'], 0, 2) .'/'. $token['id'] .'.cache';
 
 					if (!is_dir(dirname($cache_file))) {
 						if (!mkdir(dirname($cache_file))) {
@@ -311,7 +313,9 @@
 
 		public static function end_capture($token=[]) {
 
-			if (empty($token['id'])) $token['id'] = current(array_reverse(self::$_recorders));
+      if (empty($token['id'])) {
+        $token['id'] = current(array_reverse(self::$_recorders));
+      }
 
 			if (!isset(self::$_recorders[$token['id']])) {
 				trigger_error('Could not end buffer recording as token id doesn\'t exist', E_USER_WARNING);
@@ -335,7 +339,7 @@
 		public static function clear_cache($keyword='') {
 
 			// Clear modifications
-			if (empty($keyword)) {
+      if (!$keyword) {
 				foreach (glob('storage://addons/.cache/*.php') as $file) {
 					if (is_file($file)) unlink($file);
 				}
@@ -343,13 +347,13 @@
 
 			// Clear files
 			foreach (glob(FS_DIR_STORAGE .'cache/*', GLOB_ONLYDIR) as $dir) {
-				$search = !empty($keyword) ? '/*_'.$keyword.'*.cache' : '/*.cache';
+        $search = $keyword ? '/*_'.$keyword.'*.cache' : '/*.cache';
 				foreach (glob($dir.$search) as $file) unlink($file);
 			}
 
 			// Clear memory
 			if (function_exists('apcu_delete')) {
-				if (!empty($keyword)) {
+        if ($keyword) {
 					$cached_keys = new APCUIterator('#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
 				} else {
 					$cached_keys = new APCUIterator('#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
@@ -360,7 +364,7 @@
 			}
 
 			if (function_exists('apc_delete')) {
-				if (!empty($keyword)) {
+        if ($keyword) {
 					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
 				} else {
 					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
@@ -370,7 +374,7 @@
 				}
 			}
 
-			if (!empty($keyword)) {
+      if ($keyword) {
 				foreach (array_keys(self::$_data) as $token_id) {
 					if (strpos($keyword, $token_id) !== false) {
 						unset(self::$_data[$token_id]);

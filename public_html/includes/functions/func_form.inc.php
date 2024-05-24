@@ -457,6 +457,20 @@
 		]);
 	}
 
+	function form_input_percent($name, $input=true, $decimals=2, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		return implode(PHP_EOL, [
+		  '<div class="input-group">',
+		  '  ' . form_input_decimal($name, $input=true, $decimals=2, $parameters=''),
+		  '  <span class="input-group-text">%</span>',
+		  '</div>',
+		]);
+	}
+
 	function form_input_phone($name, $input=true, $parameters='') {
 
 		if ($input === true) {
@@ -891,7 +905,6 @@
 				return form_input_datetime($name, $input, $parameters);
 
 			case 'decimal':
-			case 'float':
 				return form_input_decimal($name, $input, 2, $parameters);
 
 			case 'number':
@@ -906,16 +919,6 @@
 
 			case 'color':
 				return form_input_color($name, $input, $parameters);
-
-			case 'text':
-				return form_input_text($name, $input, $parameters);
-
-			case 'password':
-				return form_input_password($name, $input, $parameters);
-
-			case 'mediumtext':
-			case 'textarea':
-				return form_textarea($name, $input, $parameters . ' rows="5"');
 
 			case 'bigtext':
 				return form_textarea($name, $input, $parameters . ' rows="10"');
@@ -935,10 +938,13 @@
 				return form_select_language($name, $input, $parameters);
 
 			case 'password':
-				return functions::form_input_password($name, $input);
+				return form_input_password($name, $input);
+
+			case 'percent':
+				return form_input_percent($name, $input);
 
 			case 'phone':
-				return functions::form_input_phone($name, $input);
+				return form_input_phone($name, $input);
 
 			case 'radio':
 				$html = '';
@@ -972,17 +978,19 @@
 				for ($i=0; $i<count($options); $i++) $options[$i] = [$options[$i]];
 				return form_select($name, $options, $input, $parameters);
 
-			case 'textarea':
-				return form_textarea($name, $input, $parameters);
-
 			case 'tags':
 				return form_tags($name, $input, $parameters);
+
+			case 'text':
+				return form_input_text($name, $input, $parameters);
+
+			case 'textarea':
+				return form_textarea($name, $input, $parameters);
 
 			case 'time':
 				return form_input_time($name, $input, $parameters);
 
 			case 'timezone':
-			case 'timezones':
 				return form_select_timezone($name, $input, $parameters);
 
 			case 'toggle':
@@ -998,7 +1006,6 @@
 				return form_input_wysiwyg($input, $name, $parameters);
 
 			case 'zone':
-			case 'zones':
 				$option = $options ? $options[0] : '';
 				return form_select_zone($name, $option, $input, $parameters);
 
@@ -1014,7 +1021,7 @@
 		$options = database::query(
 			"select id, username from ". DB_TABLE_PREFIX ."administrators
 			order by username;"
-		)->fetch_all(function($row){
+		)->fetch_all(function($administrator){
 			return [$administrator['id'], $administrator['username']];
 		});
 
@@ -1100,6 +1107,61 @@
 			'Windows-1251',
 			'Windows-1252',
 			'Windows-1254',
+		];
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple($name, $options, $input, $parameters);
+		} else {
+			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			return form_select($name, $options, $input, $parameters);
+		}
+	}
+
+	function form_select_form_function($name, $parameters='') {
+
+		if (preg_match('#\[\]$#', $name)) {
+			return form_select_multiple_files($name, $options, $input, $parameters);
+		}
+
+		$options = [
+			'administrator()',
+			'date()',
+			'datetime()',
+			'decimal()',
+			'float()',
+			'number()',
+			'checkbox()',
+			'color()',
+			'text()',
+			'password()',
+			'mediumtext()',
+			'textarea()',
+			'bigtext()',
+			'customer()',
+			'country()',
+			'currency()',
+			'csv()',
+			'email()',
+			'file()',
+			'geo_zone()',
+			'language()',
+			'percent()',
+			'phone()',
+			'radio()',
+			'regional_text()',
+			'regional_textarea()',
+			'regional_wysiwyg()',
+			'select()',
+			'tags()',
+			'time()',
+			'timezone()',
+			'toggle()',
+			'upload()',
+			'tax_class()',
+			'url()',
+			'wysiwyg()',
+			'zone()',
+			'zones()',
 		];
 
 		if (preg_match('#\[\]$#', $name)) {

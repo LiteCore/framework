@@ -22,14 +22,15 @@ module.exports = function(grunt) {
     },
 
 		less: {
-			backend_variables: {
+			variables: {
 				options: {
 					compress: false,
 					sourceMap: false,
 					relativeUrls: true
 				},
 				files: {
-					'public_html/backend/template/css/variables.css' : 'public_html/backend/template/less/variables.less',
+					'public_html/backend/template/css/variables.css'  : 'public_html/backend/template/less/variables.less',
+					'public_html/frontend/template/css/variables.css' : 'public_html/frontend/template/less/variables.less',
 				}
 			},
 
@@ -37,7 +38,7 @@ module.exports = function(grunt) {
 				options: {
 					compress: true,
 					sourceMap: true,
-					sourceMapBasepath: 'public_html/backend/template/less/',
+					//sourceMapBasepath: 'public_html/backend/template/less/',
 					sourceMapRootpath: '../less/',
 					sourceMapURL: function(path) { return path.replace(/.*\//, '') + '.map'; },
 					relativeUrls: true
@@ -60,7 +61,6 @@ module.exports = function(grunt) {
 					'public_html/frontend/template/css/email.css'     : 'public_html/frontend/template/less/email.less',
 					'public_html/frontend/template/css/framework.css' : 'public_html/frontend/template/less/framework.less',
 					'public_html/frontend/template/css/printable.css' : 'public_html/frontend/template/less/printable.less',
-					'public_html/frontend/template/css/variables.css' : 'public_html/frontend/template/less/variables.less'
 				}
 			},
 
@@ -101,18 +101,6 @@ module.exports = function(grunt) {
 			files: 'public_html/**/*.php'
 		},
 
-		uglify: {
-			application: {
-				options: {
-					sourceMap: true,
-				},
-				files: {
-					'public_html/backend/template/js/app.min.js': ['public_html/backend/template/js/app.js'],
-					'public_html/frontend/template/js/app.min.js': ['public_html/frontend/template/js/app.js'],
-				}
-			},
-		},
-
 		replace: {
 			app_header: {
 				src: ['public_html/includes/app_header.inc.php'],
@@ -141,6 +129,18 @@ module.exports = function(grunt) {
 			},
 		},
 
+		uglify: {
+			application: {
+				options: {
+					sourceMap: true,
+				},
+				files: {
+					'public_html/backend/template/js/app.min.js': ['public_html/backend/template/js/app.js'],
+					'public_html/frontend/template/js/app.min.js': ['public_html/frontend/template/js/app.js'],
+				}
+			},
+		},
+
 		watch: {
 			replace: {
 				files: [
@@ -163,7 +163,7 @@ module.exports = function(grunt) {
 					'public_html/assets/featherlight/featherlight.js',
 					'public_html/backend/template/**/js/*.js',
 					'public_html/frontend/template/**/js/*.js',
-					'!public_html/frontend/templat/**/js/*.min.js',
+					'!public_html/frontend/template/**/js/*.min.js',
 				],
 				tasks: ['uglify']
 			},

@@ -18,7 +18,9 @@
 
 		try {
 
-			if (empty($_POST['modules'])) throw new Exception(language::translate('error_must_select_modules', 'You must select modules'));
+      if (empty($_POST['modules'])) {
+        throw new Exception(language::translate('error_must_select_modules', 'You must select modules'));
+      }
 
 			foreach ($_POST['modules'] as $module_id) {
 				$module = new ent_module($module_id);
@@ -91,6 +93,16 @@
 			<?php echo $app_icon; ?> <?php echo $title; ?>
 		</div>
 	</div>
+
+  <div class="card-action">
+
+    <?php if ($type == 'job') { ?>
+    <button id="cron-example" class="btn btn-default" type="button" style="margin-right: 1em;">
+      <?php echo functions::draw_fonticon('fa-info'); ?> <?php echo language::translate('title_cron_job', 'Cron Job'); ?>
+    </button>
+    <?php } ?>
+
+  </div>
 
 	<?php echo functions::form_begin('modules_form', 'post'); ?>
 
@@ -165,6 +177,10 @@
 </div>
 
 <script>
+  $('#cron-example').click(function(){
+    prompt("<?php echo language::translate('title_cron_job_configuration', 'Cron Job Configuration'); ?>", "*/5 * * * * curl --silent <?php echo document::ilink('f:push_jobs'); ?> &>/dev/null");
+  });
+
 	$('.data-table :checkbox').change(function() {
 		$('#actions').prop('disabled', !$('.data-table :checked').length);
 	}).first().trigger('change');

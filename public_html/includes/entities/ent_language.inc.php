@@ -122,7 +122,7 @@
 						);
 
 						$info_tables = [
-							DB_TABLE_PREFIX . "pages_info",
+							//DB_TABLE_PREFIX . "table_info",
 						];
 
 						foreach ($info_tables as $table) {
@@ -188,7 +188,7 @@
 			}
 
 			$info_tables = [
-				DB_TABLE_PREFIX . "pages_info",
+				//DB_TABLE_PREFIX . "table_info",
 			];
 
 			foreach ($info_tables as $table) {

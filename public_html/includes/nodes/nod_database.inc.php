@@ -345,7 +345,7 @@
 
 		public static function create_variable($field, $value=null) {
 
-			if (empty($field)) {
+			if (!$field) {
 				return null;
 			}
 
@@ -392,7 +392,7 @@
 				return $input;
 			}
 
-			if (empty($input)) {
+			if ($input == '') {
 				return '';
 			}
 
@@ -545,19 +545,19 @@
 						continue;
 					}
 
-          if ($index_column) {
+             if ($index_column) {
 
-						if (isset($row[$index_column])) {
-							$rows[$row[$index_column]] = $result;
-					} else {
-							trigger_error('Index column not found in row ('. $index_column .')', E_USER_WARNING);
-							$rows[] = false;
-				}
+                if (isset($row[$index_column])) {
+                  $rows[$row[$index_column]] = $result;
+                } else {
+                  trigger_error('Index column not found in row ('. $index_column .')', E_USER_WARNING);
+                  $rows[] = false;
+                }
 
-			} else {
-						$rows[] = $result;
-			}
-		}
+              } else {
+              			$rows[] = $result;
+              }
+            }
 
           } else {
         $rows = mysqli_fetch_all($this->_result, MYSQLI_ASSOC);
