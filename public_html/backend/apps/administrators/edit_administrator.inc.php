@@ -208,11 +208,12 @@
 						<div class="form-input" style="height: 150px; overflow-y: scroll;">
 							<ul class="flex flex-rows">
 <?php
-	$widgets = functions::admin_get_widgets();
-	foreach ($widgets as $widget) {
-		echo '<li>' . PHP_EOL
-			 . '  '. functions::form_checkbox('widgets['.$widget['id'].']', ['1', $widget['name']], true) . PHP_EOL
-			 . '</li>' . PHP_EOL;
+  foreach (functions::admin_get_widgets() as $widget) {
+    echo implode(PHP_EOL, [
+      '<li>',
+      '  '. functions::form_checkbox('widgets['.$widget['id'].']', ['1', $widget['name']], true),
+      '</li>',
+    ]);
 	}
 ?>
 							</ul>

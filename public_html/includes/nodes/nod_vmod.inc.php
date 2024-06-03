@@ -129,7 +129,7 @@
 		public static function check($file) {
 
 			// Halt if there is nothing to modify
-			if (!self::$enabled || empty($file) || empty(self::$_files_to_modifications)) {
+			if (!self::$enabled || !$file || !self::$_files_to_modifications) {
 				return $file;
 			}
 
@@ -441,7 +441,6 @@
 				'version' => $dom->getElementsByTagName('version')->item(0)->textContent,
 				'author' => !empty($dom->getElementsByTagName('author')) ? $dom->getElementsByTagName('author')->item(0)->textContent : '',
 				'date_modified' => date('Y-m-d H:i:s', filemtime($file)),
-				'settings' => [],
 				'files' => [],
 				'install' => null,
 				'upgrades' => [],
@@ -483,10 +482,11 @@
 				$aliases[$alias_node->getAttribute('key')] = $alias_node->getAttribute('value');
 			}
 
+      $settings = [];
 			foreach ($dom->getElementsByTagName('setting') as $setting_node) {
 				$key = $setting_node->getElementsByTagName('key')->item(0)->textContent;
 				$default_value = $setting_node->getElementsByTagName('default_value')->item(0)->textContent;
-				$vmod['settings'][$key] = isset(self::$_settings[$vmod['id']][$key]) ? self::$_settings[$vmod['id']][$key] : $default_value;
+        $settings[$key] = isset(self::$_settings[$vmod['id']][$key]) ? self::$_settings[$vmod['id']][$key] : $default_value;
 			}
 
 			if (empty($dom->getElementsByTagName('file'))) {
@@ -516,11 +516,17 @@
 						$find_node = $operation_node->getElementsByTagName('find')->item(0);
 						$find = $find_node->textContent;
 
-						if (!empty($aliases)) {
+						if ($aliases) {
 							foreach ($aliases as $key => $value) {
 								$find = str_replace('{alias:'. $key .'}', $value, $insert);
 							}
 						}
+
+            if ($settings) {
+              foreach ($settings as $key => $value) {
+                $find = str_replace('{setting:'. $key .'}', $value, $find);
+              }
+            }
 
 						// Trim
 						if (in_array($operation_node->getAttribute('type'), ['inline', 'regex'])) {
@@ -576,14 +582,14 @@
 					$insert_node = $operation_node->getElementsByTagName('insert')->item(0);
 					$insert = $insert_node->textContent;
 
-					if (!empty($aliases)) {
+          if ($aliases) {
 						foreach ($aliases as $key => $value) {
 							$insert = str_replace('{alias:'. $key .'}', $value, $insert);
 						}
 					}
 
-					if (!empty($vmod['settings'])) {
-						foreach ($vmod['settings'] as $key => $value) {
+          if ($settings) {
+            foreach ($settings as $key => $value) {
 							$insert = str_replace('{setting:'. $key .'}', $value, $insert);
 						}
 					}

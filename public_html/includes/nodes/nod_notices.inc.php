@@ -58,10 +58,15 @@
 
 			if (empty(self::$data)) return '';
 
-			if (route::$selected['endpoint'] == 'backend') {
+			switch (route::$selected['endpoint']) {
+
+				case 'backend':
 				$view = new ent_view('app://backend/template/partials/notices.inc.php');
-			} else {
+					break;
+
+				default:
 				$view = new ent_view('app://frontend/template/partials/notices.inc.php');
+					break;
 			}
 
 			$view->snippets['notices'] = self::$data;

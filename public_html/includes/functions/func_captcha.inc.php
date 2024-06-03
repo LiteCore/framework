@@ -30,8 +30,6 @@
 			$code .= substr($possible, mt_rand(0, strlen($possible) -1), 1);
 		}
 
-		$config['font_size'] = round($config['height'] * 0.75); // font size will be 75% of the image height
-
 		$image = imagecreate($config['width'], $config['height']) or trigger_error('Cannot initialize new GD image stream', E_USER_ERROR);
 
 		// Set colors

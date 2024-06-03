@@ -19,7 +19,7 @@
 
 			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."administrators;"
-			)->each(function($field) {
+      )->each(function($field){
 				$this->data[$field['Field']] = database::create_variable($field);
 			});
 
@@ -59,7 +59,7 @@
 
 		public function save() {
 
-			$administrator = database::query(
+      if (database::query(
 				"select id from ". DB_TABLE_PREFIX ."administrators
 				where (
 					lower(username) = '". database::input(strtolower($this->data['username'])) ."'
@@ -67,9 +67,7 @@
 				)
 				". (!empty($this->data['id']) ? "and id != ". (int)$this->data['id'] : "") ."
 				limit 1;"
-			)->fetch();
-
-			if ($administrator) {
+      )->num_rows) {
 				throw new Exception(language::translate('error_administrator_conflict', 'The administrator conflicts another administrator in the database'));
 			}
 

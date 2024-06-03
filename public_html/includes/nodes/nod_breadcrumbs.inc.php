@@ -26,10 +26,15 @@
         return '';
       }
 
-			if (preg_match('#^'. preg_quote(BACKEND_ALIAS, '#') .'#', route::$request)) {
+			switch (route::$selected['endpoint']) {
+
+				case 'backend':
 				$view = new ent_view('app://backend/template/partials/breadcrumbs.inc.php');
-			} else {
+					break;
+
+				default:
 				$view = new ent_view('app://frontend/template/partials/breadcrumbs.inc.php');
+					break;
 			}
 
 			$view->snippets['breadcrumbs'] = self::$data;

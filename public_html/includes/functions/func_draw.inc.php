@@ -47,7 +47,8 @@
 			case 'cancel':      return draw_fonticon('fa-times');
 			case 'company':     return draw_fonticon('fa-building', 'style="color: #888;"');
 			case 'edit':        return draw_fonticon('fa-pencil');
-			case 'fail':        return draw_fonticon('fa-times', 'color: #c00;"');
+			case 'fail':        return draw_fonticon('fa-times',        'style="color: #c00;"');
+			case 'false':       return draw_fonticon('fa-times',        'style="color: #c00;"');
 			case 'female':      return draw_fonticon('fa-female', 'style="color: #e77be9;"');
 			case 'folder':      return draw_fonticon('fa-folder', 'style="color: #cc6;"');
 			case 'folder-open': return draw_fonticon('fa-folder-open', 'style="color: #cc6;"');
@@ -63,8 +64,9 @@
 			case 'semi-off':    return draw_fonticon('fa-circle', 'style="color: #ded90f;"');
 			case 'save':        return draw_fonticon('fa-floppy-o');
 			case 'send':        return draw_fonticon('fa-paper-plane');
-			case 'user':        return draw_fonticon('fa-user', 'style="color: #888"');
-			case 'warning':     return draw_fonticon('fa-exclamation-triangle', 'color: #c00;"');
+			case 'true':        return draw_fonticon('fa-check',        'style="color: #8c4;"');
+			case 'user':        return draw_fonticon('fa-user',         'style="color: #888;"');
+			case 'warning':     return draw_fonticon('fa-exclamation-triangle', 'style="color: #c00;"');
 			default: trigger_error('Unknown font icon ('. $class .')', E_USER_WARNING); return;
 		}
 	}
@@ -82,9 +84,9 @@
 		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($image) .'" '. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
-	function draw_image_thumbnail($image, $width=null, $height=null, $clipping='fit', $parameters='') {
+	function draw_image_thumbnail($image, $width=0, $height=0, $clipping='fit', $parameters='') {
 
-		$thumbnail_1x = functions::image_thumbnail($image, $width, $height, $clipping);
+		$thumbnail = functions::image_thumbnail($image, $width, $height, $clipping);
 		$thumbnail_2x = functions::image_thumbnail($image, $width*2, $height*2, $clipping);
 
 		if ($width && $height) {
@@ -95,7 +97,7 @@
 			}
 		}
 
-		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($image) .'" srcset="'. document::href_rlink($thumbnail_1x) .' 1x, '. document::href_rlink($thumbnail_2x) .' 2x"'. ($parameters ? ' '. $parameters : '') .'>';
+		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($thumbnail) .'" srcset="'. document::href_rlink($thumbnail) .' 1x, '. document::href_rlink($thumbnail_2x) .' 2x"'. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
 	function draw_lightbox($selector='', $parameters=[]) {
@@ -103,10 +105,10 @@
 		document::$head_tags['featherlight'] = '<link rel="stylesheet" href="'. document::href_rlink('app://assets/featherlight/featherlight.min.css') .'">';
 		document::$foot_tags['featherlight'] = '<script src="'. document::href_rlink('app://assets/featherlight/featherlight.min.js') .'"></script>';
 		document::$javascript['featherlight'] = implode(PHP_EOL, [
-			'  $.featherlight.autoBind = \'[data-toggle="lightbox"]\';',
-			'  $.featherlight.defaults.loading = \'<div class="loader" style="width: 128px; height: 128px; opacity: 0.5;"></div>\';',
-			'  $.featherlight.defaults.closeIcon = \'&#x2716;\';',
-			'  $.featherlight.defaults.targetAttr = \'data-target\';'
+			'$.featherlight.autoBind = \'[data-toggle="lightbox"]\';',
+			'$.featherlight.defaults.loading = \'<div class="loader" style="width: 128px; height: 128px; opacity: 0.5;"></div>\';',
+			'$.featherlight.defaults.closeIcon = \'&#x2716;\';',
+      '$.featherlight.defaults.targetAttr = \'data-target\';',
 		]);
 
 		$selector = str_replace("'", '"', $selector);
@@ -114,44 +116,43 @@
 		if (empty($selector)) return;
 
 		if (preg_match('#^(https?:)?//#', $selector)) {
-			$js = '  $.featherlight(\''. $selector .'\', {' . PHP_EOL;
+      $js = ['$.featherlight(\''. $selector .'\', {'];
 		} else {
-			$js = '  $(\''. $selector .'\').featherlight({' . PHP_EOL;
+      $js = ['$(\''. $selector .'\').featherlight({'];
 		}
 
 		foreach ($parameters as $key => $value) {
 			switch (gettype($parameters[$key])) {
 
 				case 'NULL':
-					$js .= '    '. $key .': null,' . PHP_EOL;
+          $js[] = '  '. $key .': null,';
 					break;
 
 				case 'boolean':
-					$js .= '    '. $key .': '. ($value ? 'true' : 'false') .',' . PHP_EOL;
+          $js[] = '  '. $key .': '. ($value ? 'true' : 'false') .',';
 					break;
 
 				case 'integer':
-					$js .= '    '. $key .': '. $value .',' . PHP_EOL;
+          $js[] = '  '. $key .': '. $value .',';
 					break;
 
 				case 'string':
-					if (preg_match('#^function\s*\(#', $value)) {
-						$js .= '    '. $key .': '. $value .',' . PHP_EOL;
+          if (preg_match('#^\s*function\s*\(#', $value)) {
+            $js[] = '  '. $key .': '. $value .',';
 					} else {
-						$js .= '    '. $key .': "'. addslashes($value) .'",' . PHP_EOL;
+            $js[] = '  '. $key .': "'. addslashes($value) .'",';
 					}
 					break;
 
 				case 'array':
-					$js .= '    '. $key .': ["'. implode('", "', $value) .'"],' . PHP_EOL;
+          $js[] = '  '. $key .': ["'. implode('", "', $value) .'"],';
 					break;
 			}
 		}
 
-		$js = rtrim($js, ",\r\n") . PHP_EOL
-				. '  });';
+    $js[] = '});';
 
-		document::$javascript['featherlight-'.$selector] = $js;
+    document::$javascript['featherlight-'.$selector] = implode(PHP_EOL, $js);
 	}
 
 	function draw_pagination($pages) {

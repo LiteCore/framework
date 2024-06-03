@@ -34,13 +34,13 @@
 	}
 
 	// Return an array of values not including any given keys
-	function array_exclude(array $array, array $skipped_keys):array {
-		return array_diff_key($input, array_flip($skipped_keys));
+	function array_exclude(array $array, array $excluded_keys):array {
+		return array_diff_key($input, array_flip($excluded_keys));
 	}
 
 	// Same as array_exclude(). Return an array of values not including any given keys
-	function array_collect(array $array, array $input, array $skipping_keys):array {
-		return array_replace($array, array_diff_key($input, array_flip($skipping_keys)));
+	function array_collect(array $array, array $input, array $ignored_keys):array {
+		return array_replace($array, array_diff_key($input, array_flip($ignored_keys)));
 	}
 
 	// Function to map array_keys instead of values
@@ -101,9 +101,9 @@
 	// Filter an array recursively
 	function array_filter_recursive($array) {
 
-		foreach ($array as $index => $node) {
+		foreach ($array as $index_key => $node) {
 			if (is_array($node)) {
-				$array[$index] = array_filter_recursive($node);
+				$array[$index_key] = array_filter_recursive($node);
 			}
 		}
 
@@ -113,13 +113,13 @@
 	}
 
 	// Turn an array of [foo => [bar => ...]] into [foo.bar => ...]
-	function array_flatten_keys($array, $delimiter='.') {
+	function array_flatten($array, $delimiter='.') {
 
 		$result = [];
 
 		foreach ($array as $key => $value) {
 			if (is_array($value)) {
-				$result += array_flatten_keys($value, $delimiter, $key.$delimiter);
+				$result[$key] = array_flatten_keys($value, $delimiter, $key.$delimiter);
 			} else {
 				$result[$key] = $value;
 			}
@@ -129,7 +129,7 @@
 	}
 
 	// Turn an array of [foo.bar => ...] into [foo => [bar => ...]]
-	function array_unflatten_keys($array, $delimiter='.') {
+	function array_unflatten($array, $delimiter='.') {
 
 		$result = [];
 

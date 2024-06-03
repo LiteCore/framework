@@ -33,6 +33,8 @@
 				self::$layout = 'ajax';
 			}
 
+			self::$title = [settings::get('site_name')];
+
 			// Set some snippets
 			self::$snippets['language'] = language::$selected['code'];
 			self::$snippets['text_direction'] = language::$selected['direction'];
@@ -50,7 +52,6 @@
 					break;
 			}
 
-			self::$title = [settings::get('site_name')];
 			self::$head_tags['favicon'] = implode(PHP_EOL, [
 				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
 				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
@@ -198,7 +199,7 @@
 			if (!empty($javascript)) {
 				$javascript = implode(PHP_EOL, [
 					'<script>',
-					//'<!--/*--><![CDATA[/*><!--*/', // Do we still need bypassing in 2023?
+					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from bypassing in 2024?
 					implode(PHP_EOL . PHP_EOL, $javascript),
 					//'/*]]>*/-->',
 					'</script>',
@@ -225,7 +226,7 @@
 							break;
 
 						case 'script':
-							$preloads[$m[0]] = 'script';
+              //$preloads[$m[0]] = 'script'; // Avoided as browser may complain about script preloading
 							break;
 					}
 				}

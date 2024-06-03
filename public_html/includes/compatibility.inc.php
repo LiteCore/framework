@@ -2,7 +2,7 @@
 
 	// Check version
 	if (version_compare(phpversion(), '5.6.0', '<') == true) {
-		die('This application requires at minimum PHP 5.6 (Detected '. phpversion() .')');
+    die('This application requires at minimum PHP 5.6+ (Detected '. phpversion() .')');
 	}
 
 	// Polyfill for getallheaders() on non-Apache machines

@@ -342,7 +342,7 @@
 
 						<div class="form-group">
                 <?php echo language::translate('title_collections', 'Collections'); ?>
-                <?php echo functions::form_draw_select_multiple_field('collections[]', array_map(function($c) { return [$c['name'], $c['id']]; }, $collections), true); ?>
+                <?php echo functions::form_select('collections[]', array_map(function($c) { return [$c['id'], $c['name']]; }, $collections), true); ?>
               </ul>
 
             <div class="form-group">

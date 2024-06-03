@@ -19,7 +19,7 @@
 			$source = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', $source);
 
 			if (!is_file($source)) {
-				trigger_error('Could not find source image ('. $source .')', E_USER_WARNING);
+				//trigger_error('Could not find source image ('. $source .')', E_USER_WARNING);
 				$source = 'storage://images/no_image.png';
 			}
 
@@ -177,7 +177,7 @@
 		]);
 	}
 
-	function image_thumbnail($source, $width=0, $height=0, $clipping='fit_only_bigger', $trim=false, $extension='') {
+	function image_thumbnail($source, $width=0, $height=0, $clipping='FIT_ONLY_BIGGER', $trim=false, $extension='') {
 
 		if (pathinfo($source, PATHINFO_EXTENSION) == 'svg') {
 			return $source;

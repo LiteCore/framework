@@ -8,7 +8,7 @@
 		exit(1);
 	}
 
-	function whereami() {
+	function backtrace() {
 		$trace = debug_backtrace();
 		$caller = array_shift($trace);
 		echo $caller['file'] .' on line '. $caller['line'];
@@ -78,13 +78,13 @@
 	}
 */
 
-	// Check if variable indicates a trueish value
+	// Check if variable indicates a truish value
 	function is_true($string) {
 		//return (!empty($string) && preg_match('#^(1|true|yes|on|active|enabled)$#i', $string));
 		return filter_var($string, FILTER_VALIDATE_BOOLEAN);
 	}
 
-	// Check if variable indicates a falesish value
+	// Check if variable indicates a falsish value
 	function is_false($string) {
 		//return (empty($string) || preg_match('#^(0|false|no|off|inactive|disabled)$#i', $string));
 		return !filter_var($string, FILTER_VALIDATE_BOOLEAN);

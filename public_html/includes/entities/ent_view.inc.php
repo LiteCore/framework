@@ -12,16 +12,15 @@
 
 			if ($view) {
 
-				// Absolute path
 				if (preg_match('#^app://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
 					$this->view = $view;
-
-				// Relative path
 				} else {
-					$this->view = 'app://frontend/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
-					if (!is_file($this->view)) {
-						$this->view = 'app://frontend/template/'. $view;
-					}
+				  // Fall back to relative path
+					$this->view = 'app://'. route::$selected['endpoint'] .'/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
+				}
+			
+				if (!is_file($this->view)) {
+					$this->view = 'app://frontend/template/'. $view;
 				}
 			}
 
@@ -134,16 +133,15 @@
 
 			if ($view) {
 
-				// Absolute path
 				if (preg_match('#^app://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
 					$this->view = $view;
-
-				// Relative path
 				} else {
-					$this->view = 'app://frontend/template/' . preg_replace('#^(.*?)(\.inc\.php)?$#', '$1.inc.php', $view);
-					if (!is_file($this->view)) {
-						$this->view = 'app://frontend/template/'. $view;
-					}
+				  // Fall back to relative path
+					$this->view = 'app://'. route::$selected['endpoint'] .'/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
+				}
+
+				if (!is_file($this->view)) {
+					$this->view = 'app://frontend/template/'. $view;
 				}
 
 			} else {
@@ -182,6 +180,7 @@
 			if ($cleanup) {
 				//$html = preg_replace('#'. preg_quote($this->wrapper[0], '#') .'(if|each) .*?'. preg_quote($this->wrapper[0], '#') .'\1'. preg_quote($this->wrapper[1], '#') .'#', '', $html);
 				$html = preg_replace('#'. preg_quote($this->wrapper[0], '#') .'.*?'. preg_quote($this->wrapper[1], '#') .'#', '', $html);
+        $html = str_replace(['\\{\\{', '\\}\\}'], ['{{', '}}'], $html); // Unescape escaped wrappers
 			}
 
 			return $html;

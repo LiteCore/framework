@@ -246,7 +246,7 @@
 
 		$html = implode(PHP_EOL, $html);
 
-	 document::$javascript['table2csv'] = implode(PHP_EOL, [
+		document::$javascript['table2csv'] = implode(PHP_EOL, [
 			"$('table[data-toggle=\"csv\"]').on('click', '.remove', function(e) {",
 			"  e.preventDefault();",
 			"  var parent = $(this).closest('tbody');",
@@ -331,7 +331,7 @@
 			$input = number_format((float)$input, (int)$decimals, '.', '');
 		}
 
-		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="number" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'" data-decimals="'. $decimals .'"'. ($parameters ? ' '. $parameters : '') .'>';
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="number" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'" step="any" data-decimals="'. $decimals .'"'. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
 	function form_input_email($name, $input=true, $parameters='') {
@@ -409,8 +409,8 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-			'  ' . form_input_decimal($name, $input, $currency['decimals'], ($parameters ? $parameters .' ' : '') .'step="any" data-type="currency"'),
 			'  <strong class="input-group-text" style="opacity: 0.75; font-family: monospace;">'. functions::escape_html($currency['code']) .'</strong>',
+			'  ' . form_input_decimal($name, $input, $currency['decimals'], ($parameters ? $parameters .' ' : '') .'step="any" data-type="currency"'),
 			'</div>',
 		]);
 	}
@@ -459,15 +459,11 @@
 
 	function form_input_percent($name, $input=true, $decimals=2, $parameters='') {
 
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
 		return implode(PHP_EOL, [
-		  '<div class="input-group">',
-		  '  ' . form_input_decimal($name, $input=true, $decimals=2, $parameters=''),
-		  '  <span class="input-group-text">%</span>',
-		  '</div>',
+			'<div class="input-group">',
+      '  ' . form_input_decimal($name, $input, $decimals, $parameters),
+			'  <span class="input-group-text">%</span>',
+			'</div>',
 		]);
 	}
 
@@ -895,20 +891,10 @@
 		switch ($matches[1]) {
 
 			case 'administrator':
-			case 'administrators':
 				return form_select_administrator($name, $input, $parameters);
 
-			case 'date':
-				return form_input_date($name, $input, $parameters);
-
-			case 'datetime':
-				return form_input_datetime($name, $input, $parameters);
-
-			case 'decimal':
-				return form_input_decimal($name, $input, 2, $parameters);
-
-			case 'number':
-				return form_input_number($name, $input, $parameters);
+			case 'bigtext':
+				return form_textarea($name, $input, $parameters . ' rows="10"');
 
 			case 'checkbox':
 				$html = '';
@@ -920,11 +906,19 @@
 			case 'color':
 				return form_input_color($name, $input, $parameters);
 
-			case 'bigtext':
-				return form_textarea($name, $input, $parameters . ' rows="10"');
+
 
 			case 'csv':
 				return form_input_csv($name, $input, true, $parameters);
+				
+			case 'date':
+				return form_input_date($name, $input, $parameters);
+
+			case 'datetime':
+				return form_input_datetime($name, $input, $parameters);
+
+			case 'decimal':
+				return form_input_decimal($name, $input, 2, $parameters);
 
 			case 'email':
 				return form_input_email($name, $input, $parameters);
@@ -936,6 +930,9 @@
 			case 'language':
 			case 'languages':
 				return form_select_language($name, $input, $parameters);
+
+			case 'number':
+				return form_input_number($name, $input, $parameters);
 
 			case 'password':
 				return form_input_password($name, $input);
@@ -1125,26 +1122,23 @@
 
 		$options = [
 			'administrator()',
+			'bigtext()',
+			'checkbox()',
+			'color()',
+			'country()',
+			'csv()',
+			'currency()',
+			'customer()',
 			'date()',
 			'datetime()',
 			'decimal()',
-			'float()',
-			'number()',
-			'checkbox()',
-			'color()',
-			'text()',
-			'password()',
-			'mediumtext()',
-			'textarea()',
-			'bigtext()',
-			'customer()',
-			'country()',
-			'currency()',
-			'csv()',
 			'email()',
 			'file()',
 			'geo_zone()',
 			'language()',
+			'mediumtext()',
+			'number()',
+			'password()',
 			'percent()',
 			'phone()',
 			'radio()',
@@ -1153,6 +1147,8 @@
 			'regional_wysiwyg()',
 			'select()',
 			'tags()',
+			'text()',
+			'textarea()',
 			'time()',
 			'timezone()',
 			'toggle()',
@@ -1161,7 +1157,6 @@
 			'url()',
 			'wysiwyg()',
 			'zone()',
-			'zones()',
 		];
 
 		if (preg_match('#\[\]$#', $name)) {

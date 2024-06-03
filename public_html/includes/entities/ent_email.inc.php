@@ -19,7 +19,7 @@
 
 			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."emails;"
-			)->each(function($field) {
+      )->each(function($field){
 				$this->data[$field['Field']] = database::create_variable($field);
 			});
 
@@ -322,7 +322,7 @@
 
 			// Add "To" header
 			if (!empty($this->data['recipients'])) {
-				$headers['Cc'] = implode(', ', array_map(function($recipient) {
+				$headers['To'] = implode(', ', array_map(function($recipient) {
 					return $this->format_contact($recipient);
 				}, $this->data['recipients']));
 			}
