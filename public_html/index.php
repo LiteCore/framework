@@ -6,9 +6,9 @@
  *
  * LiteCore is provided free without warranty.
  *
- * @author    LiteCart Dev Team <development@litecart.net>
+ * @author    LiteCore Dev Team <development@litecore.dev>
  * @license   https://creativecommons.org/licenses/by-nd/4.0/ CC BY-ND 4.0
- * @link      https://www.litecart.net Official Website
+ * @link      https://litecore.dev Official Website
  *
  */
 

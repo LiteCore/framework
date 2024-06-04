@@ -94,7 +94,7 @@ $('body').on('click', '[data-toggle="buttons"] :radio', function(){
 
 /*
  * jQuery Context Menu
- * by LiteCart
+ * by LiteCore
  */
 
 +function($) {

@@ -1,7 +1,7 @@
 
 # No Nonsense Coding
 
-No Nonsense Coding is a provocative coding concept that will probably upset many. Used and promoted by T. Almroth - author of the e-commerce platform LiteCart.
+No Nonsense Coding is a provocative coding concept that will probably upset many. Used and promoted by T. Almroth - author of the LiteCore framework.
 The purpose is to make as much sense as possible with as little effort as possible when writing program code.
 
 
@@ -116,7 +116,7 @@ Not using ISO codes you might make it too hard on yourself.
     if (in_array(strtolower($country), ['united states', 'united states of america', 'usa', 'u.s.a.', 'u.s.', 'us'])) {
       doSomethingWith('US');
     }
-    
+
     if (in_array(strtolower($country), ['great britain', 'britain', 'gb'])) {
       doSomethingWith('GB');
     }

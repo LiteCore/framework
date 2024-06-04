@@ -5,9 +5,9 @@
 		public $id = __CLASS__;
 		public $name = 'Email Deliverer';
 		public $description = 'Deliver emails scheduled for delivery.';
-		public $author = 'LiteCart Dev Team';
+		public $author = 'LiteCore Dev Team';
 		public $version = '1.0';
-		public $website = 'https://www.litecart.net/';
+		public $website = 'https://litecore.dev/';
 		public $priority = 0;
 
 		public function process($force, $last_run) {

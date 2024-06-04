@@ -1,6 +1,6 @@
 /*
  * jQuery Context Menu
- * by LiteCart
+ * by LiteCore
  */
 
 +function($) {
