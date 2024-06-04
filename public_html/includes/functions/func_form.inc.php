@@ -906,11 +906,9 @@
 			case 'color':
 				return form_input_color($name, $input, $parameters);
 
-
-
 			case 'csv':
 				return form_input_csv($name, $input, true, $parameters);
-				
+
 			case 'date':
 				return form_input_date($name, $input, $parameters);
 
@@ -924,11 +922,9 @@
 				return form_input_email($name, $input, $parameters);
 
 			case 'file':
-			case 'files':
 				return form_select_file($name, $options[0], $input, $parameters);
 
 			case 'language':
-			case 'languages':
 				return form_select_language($name, $input, $parameters);
 
 			case 'number':
@@ -1167,10 +1163,10 @@
 		}
 	}
 
-	function form_select_file($name, $parameters='') {
+	function form_select_file($name, $glob_pattern, $input=true, $parameters='') {
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple_files($name, $options, $input, $parameters);
+			return form_select_multiple_files($name, $glob_pattern, $input, $parameters);
 		}
 
 		if ($input === true) {
@@ -1187,7 +1183,7 @@
 		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="file" name="'. functions::escape_attr($name) .'"'. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
-	function form_select_multiple_files($name, $glob, $input=true, $parameters='') {
+	function form_select_multiple_files($name, $glob_pattern, $input=true, $parameters='') {
 
 		if (!preg_match('#\[\]$#', $name)) {
 			return form_select_file($name, $options, $input, $parameters);
@@ -1195,7 +1191,7 @@
 
 		$options = [];
 
-		foreach (functions::file_search($glob) as $file) {
+		foreach (functions::file_search($glob_pattern, GLOB_BRACE) as $file) {
 			$file = preg_replace('#^'. preg_quote('app://', '#') .'#', '', $file);
 			if (is_dir('app://' . $file)) {
 				$options[] = [basename($file).'/', $file.'/'];
