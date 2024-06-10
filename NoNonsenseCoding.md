@@ -81,7 +81,7 @@ Better:
 
 ## No Unnecessary Variable Duplication
 
-Variable duplication is a challenge to backtrace. If we have no use of the raw user input, we can just overwrite them with safer polished and sanitized data.
+Variable duplication is a challenge to backtrace. If we have no use of the raw user input, we can just overwrite it with safer polished and sanitized data.
 
     $userInput = $_POST['userInput'];
     $sanitizeduserInput = sanitize($userInput);
@@ -91,16 +91,18 @@ Variable duplication is a challenge to backtrace. If we have no use of the raw u
 
 Better:
 
-    $_POST['userInput'] = trim(sanitize($_POST['userInput'])); // Let's sanitize the input so we don't accidentally use the raw input again
+    $_POST['userInput'] = trim(sanitize($_POST['userInput'])); // Sanitize or polish the source input so we don't accidentally use the raw input again
 
     passToFunction($_POST['userInput']); // Oh we are passing something that came from a user input
 
 
 ## Use codes others recognize
 
+Very bad:
+
     $country = 'us';     // Invalid. Country codes should be uppercase
     $lang = 'EN';        // Invalid. Language codes should be lowercase
-    $currencyId = 1234;  // Complete nonsense. No one but you recognize your internal IDs and they are hard to migrate
+    $currencyId = 1234;  // Nonsense. No one but you recognize your internal IDs and they are hard to migrate
 
 Better:
 
@@ -109,16 +111,16 @@ Better:
     $currencyCode = 'USD'  // ISO 4217
 
 
-Not using ISO codes you might make it too hard on yourself.
+Refusing ISO codes can be a lot of work:
 
     $country = $_POST['country'];
 
     if (in_array(strtolower($country), ['united states', 'united states of america', 'usa', 'u.s.a.', 'u.s.', 'us'])) {
-      doSomethingWith('US');
+      doSomethingWith('USA');
     }
 
-    if (in_array(strtolower($country), ['great britain', 'britain', 'gb'])) {
-      doSomethingWith('GB');
+    if (in_array(strtolower($country), ['great britain', 'britain', 'gb', 'united kingdom', 'united kingdom of great britain and northern ireland'])) {
+      doSomethingWith('Britain');
     }
 
 Better:

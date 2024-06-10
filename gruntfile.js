@@ -16,7 +16,7 @@ module.exports = function(grunt) {
       },
       frontend: {
         files: {
-          //'public_html/frontend/templates/default/js/app.js': ['public_html/frontend/templates/default/js/components/*.js']
+          //'public_html/frontend/template/js/app.js': ['public_html/frontend/template/js/components/*.js']
         },
       }
     },

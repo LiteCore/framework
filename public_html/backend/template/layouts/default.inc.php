@@ -26,9 +26,8 @@
 			<img class="center-block responsive" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>">
 		</a>
 
-		<div id="search">
-			<?php echo functions::form_input_search('query', false, 'placeholder="'. functions::escape_attr(language::translate('title_search', 'Search')) .'&hellip;" autocomplete="off"'); ?>
-			<div class="results"></div>
+    <div class="filter">
+      <?php echo functions::form_input_search('filter', false, 'placeholder="'. functions::escape_html(language::translate('title_filter', 'Filter')) .'&hellip;" autocomplete="off"'); ?>
 		</div>
 
 		<?php include 'app://backend/partials/box_apps_menu.inc.php'; ?>
@@ -39,7 +38,7 @@
 		</a>
 
 		<div class="copyright" class="text-center">Copyright &copy; <?php echo date('2023-Y'); ?><br>
-			<a href="https://www.litecart.net" target="_blank">www.litecart.net</a>
+			<a href="https://litecore.dev" target="_blank">litecore.dev</a>
 		</div>
 	</div>
 
@@ -57,21 +56,26 @@
 				{{breadcrumbs}}
 			</li>
 
-			<li style="flex-grow: 1;"></li>
+			<li style="flex-grow: 1;">
+				<div id="search" class="dropdown">
+					<?php echo functions::form_input_search('query', false, 'placeholder="'. functions::escape_html(language::translate('title_search_entire_platform', 'Search entire platform')) .'&hellip;" autocomplete="off"'); ?>
+					<div class="results dropdown-menu"></div>
+				</div>
+			</li>
 
 			<li>
-				<div class="btn-group btn-group-inline" data-toggle="buttons">
+        <div class="btn-group" data-toggle="buttons">
 					<button name="font_size" class="btn btn-default btn-sm" type="button" value="decrease"><span style="font-size: .8em;">A</span></button>
 					<button name="font_size" class="btn btn-default btn-sm" type="button" value="increase"><span style="font-size: 1.25em;">A</span></button>
 				</div>
 			</li>
 
-			<li>
-				<div class="btn-group btn-group-inline" data-toggle="buttons">
+      <li>
+        <div class="btn-group" data-toggle="buttons">
 					<label class="btn btn-default btn-sm<?php echo empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_light', 'Light')); ?>"><input type="radio" name="dark_mode" value="0"<?php echo empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-sun-o'); ?></label>
 					<label class="btn btn-default btn-sm<?php echo !empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_dark', 'Dark')); ?>"><input type="radio" name="dark_mode" value="1"<?php echo !empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-moon-o'); ?></label>
-				</div>
-			</li>
+        </div>
+      </li>
 
 			<li class="language dropdown">
 				<a href="#" data-toggle="dropdown"><span style="font-family: monospace" title="<?php echo functions::escape_html(language::$selected['name']); ?>"><?php echo language::$selected['code']; ?><span> <b class="caret"></b></a>
