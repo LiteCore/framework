@@ -1488,9 +1488,7 @@ textarea.warning {
 
 	$('.card-action button[name="delete"]').click(function(e){
 		e.preventDefault();
-		$.featherlight('#modal-uninstall', {
-			seamless: true,
-		});
+		$.featherlight('#modal-uninstall');
 	});
 
 	$('body').on('click', '.featherlight button[name="cancel"]', function(e){

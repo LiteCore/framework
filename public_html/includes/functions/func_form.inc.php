@@ -1245,8 +1245,8 @@
 		$options = database::query(
 			"SHOW ENGINES;"
 		)->fetch_all(function($engine){
-			if (!in_array(strtoupper($engine['Support']), ['YES', 'DEFAULT'])) return;
-			if (!in_array($engine['Engine'], ['CSV', 'InnoDB', 'MyISAM', 'Aria'])) return;
+			if (!in_array(strtoupper($engine['Support']), ['YES', 'DEFAULT'])) return false;
+			if (!in_array($engine['Engine'], ['CSV', 'InnoDB', 'MyISAM', 'Aria'])) return false;
 			return [$engine['Engine'], $engine['Engine'] . ' -- '. $engine['Comment']];
 		});
 
