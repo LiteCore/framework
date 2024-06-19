@@ -35,8 +35,13 @@
 				throw new Exception(language::translate('error_passwords_missmatch', 'The passwords did not match'));
 			}
 
-			if (empty($_POST['apps'])) $_POST['apps'] = [];
-			if (empty($_POST['widgets'])) $_POST['widgets'] = [];
+			if (empty($_POST['apps'])) {
+				$_POST['apps'] = [];
+			}
+
+			if (empty($_POST['widgets'])) {
+				$_POST['widgets'] = [];
+			}
 
 			foreach ([
 				'status',
@@ -179,7 +184,7 @@
 
 				<div class="col-md-3">
 					<div id="app-permissions" class="form-group">
-						<?php echo functions::form_checkbox('apps_toggle', ['1', language::translate('title_apps', 'Apps')]); ?>
+						<?php echo functions::form_checkbox('apps_toggle', ['1', language::translate('title_apps', 'Apps')], !empty($_POST['apps']) ? '1' : '0'); ?>
 						<div class="form-input" style="height: 400px; overflow-y: scroll;">
 							<ul class="flex flex-rows">
 <?php
@@ -204,7 +209,7 @@
 
 				<div class="col-md-3">
 					<div id="widget-permissions" class="form-group">
-						<?php echo functions::form_checkbox('widgets_toggle', ['1', language::translate('title_widgets', 'Widgets')]); ?>
+						<?php echo functions::form_checkbox('widgets_toggle', ['1', language::translate('title_widgets', 'Widgets')], !empty($_POST['widgets']) ? '1' : '0'); ?>
 						<div class="form-input" style="height: 150px; overflow-y: scroll;">
 							<ul class="flex flex-rows">
 <?php
