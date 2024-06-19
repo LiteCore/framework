@@ -1,5 +1,4 @@
 // Toggle Buttons (data-toggle="buttons")
-
 $('body').on('click', '[data-toggle="buttons"] :checkbox', function(){
   if ($(this).is(':checked')) {
     $(this).closest('.btn').addClass('active');

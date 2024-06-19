@@ -13,23 +13,23 @@
   // DROPDOWN CLASS DEFINITION
   // =========================
 
-  var backdrop = '.dropdown-backdrop'
-  var toggle   = '[data-toggle="dropdown"]'
-  var Dropdown = function (element) {
+	let backdrop = '.dropdown-backdrop'
+	let toggle   = '[data-toggle="dropdown"]'
+	let Dropdown = function (element) {
     $(element).on('click.bs.dropdown', this.toggle)
   }
 
   Dropdown.VERSION = '3.4.1'
 
   function getParent($this) {
-    var selector = $this.attr('data-target')
+		let selector = $this.attr('data-target')
 
     if (!selector) {
       selector = $this.attr('href')
       selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
     }
 
-    var $parent = selector !== '#' ? $(document).find(selector) : null
+    let $parent = selector !== '#' ? $(document).find(selector) : null
 
     return $parent && $parent.length ? $parent : $this.parent()
   }
@@ -38,9 +38,9 @@
     if (e && e.which === 3) return
     $(backdrop).remove()
     $(toggle).each(function () {
-      var $this         = $(this)
-      var $parent       = getParent($this)
-      var relatedTarget = { relatedTarget: this }
+			let $this         = $(this)
+			let $parent       = getParent($this)
+			let relatedTarget = { relatedTarget: this }
 
       if (!$parent.hasClass('open')) return
 
@@ -56,12 +56,12 @@
   }
 
   Dropdown.prototype.toggle = function (e) {
-    var $this = $(this)
+		let $this = $(this)
 
     if ($this.is('.disabled, :disabled')) return
 
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
+		let $parent  = getParent($this)
+		let isActive = $parent.hasClass('open')
 
     clearMenus()
 
@@ -74,7 +74,7 @@
           .on('click', clearMenus)
       }
 
-      var relatedTarget = { relatedTarget: this }
+			let relatedTarget = { relatedTarget: this }
       $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
 
       if (e.isDefaultPrevented()) return
@@ -94,27 +94,27 @@
   Dropdown.prototype.keydown = function (e) {
     if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
 
-    var $this = $(this)
+		let $this = $(this)
 
     e.preventDefault()
     e.stopPropagation()
 
     if ($this.is('.disabled, :disabled')) return
 
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
+		let $parent  = getParent($this)
+		let isActive = $parent.hasClass('open')
 
     if (!isActive && e.which != 27 || isActive && e.which == 27) {
       if (e.which == 27) $parent.find(toggle).trigger('focus')
       return $this.trigger('click')
     }
 
-    var desc = ' li:not(.disabled):visible a'
-    var $items = $parent.find('.dropdown-menu' + desc)
+		let desc = ' li:not(.disabled):visible a'
+		let $items = $parent.find('.dropdown-menu' + desc)
 
     if (!$items.length) return
 
-    var index = $items.index(e.target)
+		let index = $items.index(e.target)
 
     if (e.which == 38 && index > 0)                 index--         // up
     if (e.which == 40 && index < $items.length - 1) index++         // down
@@ -129,15 +129,15 @@
 
   function Plugin(option) {
     return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.dropdown')
+			let $this = $(this)
+			let data  = $this.data('bs.dropdown')
 
       if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
       if (typeof option == 'string') data[option].call($this)
     })
   }
 
-  var old = $.fn.dropdown
+	let old = $.fn.dropdown
 
   $.fn.dropdown             = Plugin
   $.fn.dropdown.Constructor = Dropdown

@@ -1,3 +1,5 @@
+
+// Filter
   $('#sidebar input[name="filter"]').on({
   
   	'input': function(){
@@ -57,7 +59,7 @@
       }
   
       clearTimeout(timer_ajax_search);
-  
+
       timer_ajax_search = setTimeout(function() {
         xhr_search = $.ajax({
           type: 'get',

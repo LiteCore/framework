@@ -1,4 +1,5 @@
-// Form required asterix
+
+// Required Input Asterix
   $(':input[required]').closest('.form-group').addClass('required');
 
 // Dropdown select

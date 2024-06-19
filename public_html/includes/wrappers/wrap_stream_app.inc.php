@@ -19,8 +19,8 @@
 
 			if (!isset(self::$_cache[$path])) {
 
-				// glob() seems fastest for this type of operations
 
+				// glob() seems faster than opendir() for this operation
 				foreach (glob($path.'*', GLOB_NOSORT) as $file) {
 
 					$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
@@ -203,7 +203,7 @@
 		private function _resolve_path($path) {
 			return preg_replace('#^app://#', FS_DIR_APP, str_replace('\\', '/', $path));
 		}
-	
+
 		private function _resolve_file($path) {
 
 			$path = $this->_resolve_path($path);
@@ -214,7 +214,7 @@
 					return self::$_cache[dirname($path).'/'][basename($path)];
 				}
 			}
-		
+
 			foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path) as $file) {
 				$file = str_replace('\\', '/', $file);
 				if (preg_match('#^'. preg_quote(FS_DIR_STORAGE .'addons/', '#') .'[^/]+.disabled/#', $file)) continue;
@@ -222,7 +222,7 @@
 			}
 
 			$path = vmod::check($path);
-			
+
 			return $path;
 		}
 	}

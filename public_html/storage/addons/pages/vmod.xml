@@ -119,13 +119,11 @@
     <operation method="after" type="multiline" onerror="warning">
       <find><![CDATA[
 			case 'language':
-			case 'languages':
 				return form_select_language($name, $input, $parameters);
       ]]></find>
 
       <insert><![CDATA[
 			case 'page':
-			case 'pages':
 				return form_select_page($name, $input, $parameters);
       ]]></insert>
     </operation>
