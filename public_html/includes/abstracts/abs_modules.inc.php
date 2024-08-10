@@ -17,13 +17,13 @@
 				$filter = [$filter];
 			}
 
-      database::query(
+			database::query(
 				"select * from ". DB_TABLE_PREFIX ."modules
 				where type = '". database::input(strtr($type, ['jobs' => 'job'])) ."'
 				". (!empty($filter) ? "and module_id in ('". implode("', '", database::input($filter)) ."')" : "") .";"
-      )->each(function($module) use ($type) {
+			)->each(function($module) use ($type) {
 
-      // If module no longer exists, remove traces
+			// If module no longer exists, remove traces
 				if (!is_file('app://includes/modules/'.$type.'/'.$module['module_id'].'.inc.php')) {
 
 					// Remove deleted modules
@@ -33,7 +33,7 @@
 						limit 1;"
 					);
 
-          return;
+					return;
 				}
 
 				// Create object
@@ -60,7 +60,7 @@
 
 				// Add module to list
 				$this->modules[$object->id] = $object;
-      });
+			});
 
 			// Sort modules by priority
 			uasort($this->modules, function($a, $b) {

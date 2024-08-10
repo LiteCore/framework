@@ -19,7 +19,7 @@
 
 			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."languages;"
-      )->each(function($field){
+			)->each(function($field){
 				$this->data[$field['Field']] = database::create_variable($field);
 			});
 
@@ -62,7 +62,7 @@
 				throw new Exception(language::translate('error_cannot_disable_site_language', 'You must change the site language before disabling it.'));
 			}
 
-      if (database::query(
+			if (database::query(
 				"select id from ". DB_TABLE_PREFIX ."languages
 				where (
 					code = '". database::input($this->data['code']) ."'
@@ -70,7 +70,7 @@
 				)
 				". (!empty($this->data['id']) ? "and id != ". (int)$this->data['id'] : "") ."
 				limit 1;"
-      )->num_rows) {
+			)->num_rows) {
 				throw new Exception(language::translate('error_language_conflict', 'The language conflicts with another language in the database'));
 			}
 
@@ -173,10 +173,10 @@
 				limit 1;"
 			);
 
-      if (database::query(
+			if (database::query(
 				"show fields from ". DB_TABLE_PREFIX ."translations
 				where `Field` = 'text_". database::input($this->data['code']) ."';"
-      )->num_rows) {
+			)->num_rows) {
 				database::query(
 					"alter table ". DB_TABLE_PREFIX ."translations
 					drop `text_". database::input($this->data['code']) ."`;"

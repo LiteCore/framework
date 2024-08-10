@@ -122,7 +122,7 @@
 				'',
 				$this->last_response['headers'],
 				$this->last_response['body'],
-		  ]));
+			]));
 
 			self::$stats['requests']++;
 

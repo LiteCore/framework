@@ -1,4 +1,6 @@
-@page-margin: 15mm;
+:root {
+	--page-margin: 10mm;
+}
 
 * {
 	line-height: 125%;
@@ -6,16 +8,40 @@
 
 .page {
 	position: relative;
+	display: flex;
+	flex-direction: column;
+
 	font-size: 12px;
 	font-family: var(--default-text-font);
 	color: #000;
 
-	.footer {
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		font-size: 10px;
+	border-radius: var(--border-radius);
+	overflow: hidden;
+
+	page-break-inside: avoid;
+
+	&[data-size="A4"] {
+		width: 21cm;
+		height: 29.7cm;
+	}
+	&[data-size="A4R"] {
+		width: 29.7cm;
+		height: 21cm;
+	}
+
+	> header {
+		flex: 0 1 auto;
+		padding: var(--page-margin);
+		padding-bottom: 0;
+	}
+	> main {
+		flex: 1 0 auto;
+		padding: 0 var(--page-margin);
+	}
+	> footer {
+		flex: 0 1 auto;
+		padding: var(--page-margin);
+		padding-top: 0;
 	}
 }
 
@@ -26,7 +52,8 @@ hr {
 @media print {
 	@page {
 		size: A4;
-		margin: @page-margin;
+		margin: var(--page-margin);
+		margin: 0;
 		zoom: 100%;
 		padding: 0;
 	}
@@ -34,13 +61,7 @@ hr {
 	.page {
 		position: relative;
 		page-break-after: always;
-
-		&[data-size="A4"] {
-			height: calc(29.7cm - @page-margin - @page-margin);
-		}
-		&[data-size="A4R"] {
-			height: calc(21cm - @page-margin - @page-margin);
-		}
+		height: 100vh;
 	}
 
 	h1 {
@@ -50,11 +71,6 @@ hr {
 	a:link, a:visited, a:hover, a:active {
 		color: #000;
 	}
-
-	.page-break  {
-		page-break-before: always;
-	}
-
 }
 
 @media screen {
@@ -64,29 +80,11 @@ hr {
 
 	.page {
 		margin: 5mm auto;
-		padding: @page-margin;
 		background: #fff;
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 
-		&[data-size="A4"] {
-			width: 21cm;
-			height: 29.7cm;
+		+ .page {
+			margin-top: 10mm;
 		}
-		&[data-size="A4R"] {
-			width: 29.7cm;
-			height: 21cm;
-		}
-
-		.footer {
-			left: @page-margin;
-			right: @page-margin;
-			bottom: @page-margin;
-		}
-	}
-
-	.page-break {
-		border-bottom: 1px #ccc dashed;
-		margin: @page-margin -@page-margin;
-		line-height: 0;
 	}
 }

@@ -14,7 +14,7 @@
 			self::$data = &session::$data['administrator'];
 
 			// Login remembered administrator automatically
-      if (empty(self::$data['id']) && !empty($_COOKIE['remember_me']) && !$_POST) {
+			if (empty(self::$data['id']) && !empty($_COOKIE['remember_me']) && !$_POST) {
 
 				try {
 
@@ -110,7 +110,7 @@
 					if (!isset(session::$data['administrator_security_timestamp']) || session::$data['administrator_security_timestamp'] < strtotime($administrator['date_expire_sessions'])) {
 						self::reset();
 						notices::add('errors', language::translate('error_session_expired_due_to_account_changes', 'Session expired due to changes in the account'));
-            header('Location: '. document::ilink('b:login'));
+						header('Location: '. document::ilink('b:login'));
 						exit;
 					}
 				}
@@ -121,18 +121,18 @@
 
 		public static function reset() {
 
-      $administrator = [];
+			$administrator = [];
 
-      database::query(
+			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."administrators;"
-      )->each(function($field) use (&$administrator) {
-        $administrator[$field['Field']] = database::create_variable($field);
+			)->each(function($field) use (&$administrator) {
+				$administrator[$field['Field']] = database::create_variable($field);
 			});
 
-      $administrator['apps'] = [];
-      $administrator['widgets'] = [];
+			$administrator['apps'] = [];
+			$administrator['widgets'] = [];
 
-      session::$data['administrator'] = $administrator;
+			session::$data['administrator'] = $administrator;
 		}
 
 		public static function load($administrator_id) {

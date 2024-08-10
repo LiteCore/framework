@@ -124,7 +124,7 @@
 
 			// Return language by regional domain
 			foreach ($enabled_languages as $language_code) {
-        if (self::$languages[$language_code]['url_type'] == 'domain') {
+				if (self::$languages[$language_code]['url_type'] == 'domain') {
 					if (!empty(self::$languages[$language_code]['domain_name']) && preg_match('#^'. preg_quote(self::$languages[$language_code]['domain_name'], '#') .'$#', $_SERVER['HTTP_HOST'])) {
 						return $language_code;
 					}
@@ -350,26 +350,26 @@
 				return (new IntlDateFormatter(self::$selected['code'], $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
 			};
 
-      $mappings = [
+			$mappings = [
 				// Day
 				'%a' => $intl_formatter,
 				'%A' => $intl_formatter,
 				'%d' => 'd',
 				'%e' => 'j',
 
-        '%j' => function ($timestamp) { // Day number in year, 001 to 366
+				'%j' => function ($timestamp) { // Day number in year, 001 to 366
 					return sprintf('%03d', $timestamp->format('z')+1);
 				},
 				'%u' => 'N',
 				'%w' => 'w',
 
 				// Week
-        '%U' => function ($timestamp) { // Number of weeks between date and first Sunday of year
+				'%U' => function ($timestamp) { // Number of weeks between date and first Sunday of year
 					$day = new \DateTime(sprintf('%d-01 Sunday', $timestamp->format('Y')));
 					return intval(($timestamp->format('z') - $day->format('z')) / 7);
 				},
 
-        '%W' => function ($timestamp) { // Number of weeks between date and first Monday of year
+				'%W' => function ($timestamp) { // Number of weeks between date and first Monday of year
 					$day = new \DateTime(sprintf('%d-01 Monday', $timestamp->format('Y')));
 					return intval(($timestamp->format('z') - $day->format('z')) / 7);
 				},
@@ -382,7 +382,7 @@
 				'%m' => 'm',
 
 				// Year
-        '%C' => function ($timestamp) { // Century (-1): 19 for 20th century
+				'%C' => function ($timestamp) { // Century (-1): 19 for 20th century
 					return (int) $timestamp->format('Y') / 100;
 				},
 				'%g' => function ($timestamp) {
@@ -417,18 +417,18 @@
 				'%x' => $intl_formatter,
 			];
 
-      $out = preg_replace_callback('/(?<!%)(%[a-zA-Z])/', function ($match) use ($mappings, $timestamp) {
+			$out = preg_replace_callback('/(?<!%)(%[a-zA-Z])/', function ($match) use ($mappings, $timestamp) {
 				if ($match[1] == '%n') {
 					return "\n";
 				} else if ($match[1] == '%t') {
 					return "\t";
 				}
 
-        if (!isset($mappings[$match[1]])) {
+				if (!isset($mappings[$match[1]])) {
 					throw new \InvalidArgumentException(sprintf('Format "%s" is unknown in time format', $match[1]));
 				}
 
-        $replace = $mappings[$match[1]];
+				$replace = $mappings[$match[1]];
 
 				if (is_string($replace)) {
 					return $timestamp->format($replace);

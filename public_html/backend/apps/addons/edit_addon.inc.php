@@ -398,7 +398,7 @@ textarea.warning {
 
 							<div class="form-group">
 								<label><?php echo language::translate('title_id', 'ID'); ?></label>
-								<?php echo functions::form_input_text('id', true, 'required placeholder="my_awesome_addon" pattern="^[0-9a-zA-Z_-]+$"'); ?>
+								<?php echo functions::form_input_text('id', true, 'required placeholder="my_awesome_addon" pattern="[0-9a-zA-Z_-]+"'); ?>
 							</div>
 
 							<div class="row">
@@ -756,7 +756,7 @@ textarea.warning {
 		<p><label><?php echo functions::form_checkbox('cleanup', '1', ''); ?> <?php echo language::translate('text_remove_all_traces_of_the_vmod', 'Remove all traces of the vMod such as database tables, settings, etc.'); ?></label></p>
 
 		<div>
-			<?php echo functions::form_button('delete', language::translate('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger"'); ?>
+			<?php echo functions::form_button('uninstall', language::translate('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger"'); ?>
 			<?php echo functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button'); ?>
 		</div>
 

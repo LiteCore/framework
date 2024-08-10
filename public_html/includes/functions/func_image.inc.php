@@ -5,10 +5,10 @@
 		return [$width, round($width / $x * $y)];
 	}
 
-  function image_scale_by_height($height, $ratio) {
-    list($x, $y) = explode(':', $ratio);
-    return [$height, round($height / $y * $x)];
-  }
+	function image_scale_by_height($height, $ratio) {
+		list($x, $y) = explode(':', $ratio);
+		return [$height, round($height / $y * $x)];
+	}
 
 	function image_process($source, $options) {
 
@@ -205,7 +205,7 @@
 
 	function image_delete_cache($file) {
 
-    $cache_name = sha1(image_relative_file($file));
+		$cache_name = sha1(image_relative_file($file));
 
 		functions::file_delete('storage://cache/'. substr($cache_name, 0, 2) .'/' . $cache_name .'*');
 	}

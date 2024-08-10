@@ -482,11 +482,11 @@
 				$aliases[$alias_node->getAttribute('key')] = $alias_node->getAttribute('value');
 			}
 
-      $settings = [];
+			$settings = [];
 			foreach ($dom->getElementsByTagName('setting') as $setting_node) {
 				$key = $setting_node->getElementsByTagName('key')->item(0)->textContent;
 				$default_value = $setting_node->getElementsByTagName('default_value')->item(0)->textContent;
-        $settings[$key] = isset(self::$_settings[$vmod['id']][$key]) ? self::$_settings[$vmod['id']][$key] : $default_value;
+				$settings[$key] = isset(self::$_settings[$vmod['id']][$key]) ? self::$_settings[$vmod['id']][$key] : $default_value;
 			}
 
 			if (empty($dom->getElementsByTagName('file'))) {
@@ -522,11 +522,11 @@
 							}
 						}
 
-            if ($settings) {
-              foreach ($settings as $key => $value) {
-                $find = str_replace('{setting:'. $key .'}', $value, $find);
-              }
-            }
+						if ($settings) {
+							foreach ($settings as $key => $value) {
+								$find = str_replace('{setting:'. $key .'}', $value, $find);
+							}
+						}
 
 						// Trim
 						if (in_array($operation_node->getAttribute('type'), ['inline', 'regex'])) {
@@ -582,14 +582,14 @@
 					$insert_node = $operation_node->getElementsByTagName('insert')->item(0);
 					$insert = $insert_node->textContent;
 
-          if ($aliases) {
+					if ($aliases) {
 						foreach ($aliases as $key => $value) {
 							$insert = str_replace('{alias:'. $key .'}', $value, $insert);
 						}
 					}
 
-          if ($settings) {
-            foreach ($settings as $key => $value) {
+					if ($settings) {
+						foreach ($settings as $key => $value) {
 							$insert = str_replace('{setting:'. $key .'}', $value, $insert);
 						}
 					}

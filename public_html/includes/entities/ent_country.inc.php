@@ -19,7 +19,7 @@
 
 			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."countries;"
-      )->each(function($field){
+			)->each(function($field){
 				$this->data[$field['Field']] = database::create_variable($field);
 			});
 
@@ -80,7 +80,7 @@
 					or iso_code_2 = '". database::input(strtoupper($this->data['iso_code_3'])) ."'
 				)
 				limit 1;"
-      )->num_rows) {
+			)->num_rows) {
 				throw new Exception(language::translate('error_language_conflict', 'The country conflicts another country in the database'));
 			}
 

@@ -1,5 +1,9 @@
 <?php
 
+	function datetime_age($date, $timezone=null) {
+		return date_diff(date_create($date, $timezone), date_create())->y;
+	}
+
 	function datetime_convert($time, $to_timezone=null, $from_timezone=null) {
 
 
@@ -45,7 +49,7 @@
 
 	function datetime_ago($timestamp, $present=30, $present_output=null) {
 
-		if (!date_is_timestamp($timestamp)) {
+		if (!is_numeric($timestamp)) {
 			if (!$timestamp = strtotime($timestamp)) return false;
 		}
 
@@ -115,16 +119,10 @@
 			return language::translate('text_when_dinosaurs_roamed_the_earth', 'When dinosaurs roamed the Earth');
 		}
 
-		return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $years, '%unit' => language::translate('time_unit_years', 'years')]);
-	}
-
-	function datetime_age($date) {
-
-		$date = new DateTime($date);
-		$currentDate = new DateTime();
-		$age = $currentDate->diff($date);
-
-		return $age->y;
+		return strtr(language::translate('text_n_time_ago', '%n %unit ago'), [
+			'%n' => $years,
+			'%unit' => language::translate('time_unit_years', 'years')
+		]);
 	}
 
 	// Returns the last point in time by step interval
@@ -155,8 +153,11 @@
 			case (strcasecmp($interval, 'Daily')):       return mktime(0, 0, 0, $m, $d, $y);
 			case (strcasecmp($interval, 'Weekly')):      return strtotime('This week 00:00:00', $timestamp);
 			case (strcasecmp($interval, 'Monthly')):     return mktime(0, 0, 0, null, 1, $y);
+			case (strcasecmp($interval, '3 months')):
 			case (strcasecmp($interval, 'Quarterly')):   return mktime(0, 0, 0, ((ceil(date('n', $timestamp) /3) -1) *3) +1, $d, $y);
+			case (strcasecmp($interval, '6 months')):
 			case (strcasecmp($interval, 'Half-Yearly')): return mktime(0, 0, 0, ((ceil(date('n', $timestamp) /6) -1) *6) +1, $d, $y);
+			case (strcasecmp($interval, '12 months')):
 			case (strcasecmp($interval, 'Yearly')):      return mktime(0, 0, 0, 1, 1, $y);
 
 			default: trigger_error('Unknown step interval ('. $interval .')', E_USER_WARNING); return false;

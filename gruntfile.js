@@ -3,23 +3,23 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
-    concat: {
-      backend: {
-        //options: {
-        //  stripBanners: true,
-        //  banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-        //    '<%= grunt.template.today("yyyy-mm-dd") %> */',
-        //},
-        files: {
-          'public_html/backend/template/js/app.js': ['public_html/backend/template/js/components/*.js']
-        },
-      },
-      frontend: {
-        files: {
-          //'public_html/frontend/template/js/app.js': ['public_html/frontend/template/js/components/*.js']
-        },
-      }
-    },
+		concat: {
+			backend: {
+				//options: {
+				//  stripBanners: true,
+				//  banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+				//    '<%= grunt.template.today("yyyy-mm-dd") %> */',
+				//},
+				files: {
+					'public_html/backend/template/js/app.js': ['public_html/backend/template/js/components/*.js']
+				},
+			},
+			frontend: {
+				files: {
+					//'public_html/frontend/template/js/app.js': ['public_html/frontend/template/js/components/*.js']
+				},
+			}
+		},
 
 		less: {
 			variables: {
@@ -175,10 +175,11 @@ module.exports = function(grunt) {
 				tasks: ['dart-sass']
 			},
 		}
+
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-dart-sass');

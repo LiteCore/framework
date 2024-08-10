@@ -30,8 +30,14 @@
 	&.btn-success { .btn("success"); }
 	&.btn-danger { .btn("danger"); }
 
-	&.btn-sm { font-size: 0.8em; }
-	&.btn-lg { font-size: 1.25em; }
+	&.btn-sm {
+		font-size: 0.8em;
+		padding: .5em 1em;
+		line-height: 1;
+	}
+	&.btn-lg {
+		font-size: 1.25em;
+	}
 
 	&.active, &:active { box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.25) !important; }
 	&.disabled, &[disabled] { opacity: 0.5; cursor: not-allowed; }

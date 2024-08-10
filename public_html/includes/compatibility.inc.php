@@ -2,7 +2,7 @@
 
 	// Check version
 	if (version_compare(phpversion(), '5.6.0', '<') == true) {
-    die('This application requires at minimum PHP 5.6+ (Detected '. phpversion() .')');
+		die('This application requires at minimum PHP 5.6+ (Detected '. phpversion() .')');
 	}
 
 	// Polyfill for getallheaders() on non-Apache machines
@@ -34,14 +34,14 @@
 	// Fix Windows paths
 	$_SERVER['SCRIPT_FILENAME'] = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']);
 
-  if (empty($_SERVER['HTTPS'])) {
-    $_SERVER['HTTPS'] = ($_SERVER['SERVER_PROTOCOL'] == 'https') ? 'on' : 'off';
-  }
+	if (empty($_SERVER['HTTPS'])) {
+		$_SERVER['HTTPS'] = ($_SERVER['SERVER_PROTOCOL'] == 'https') ? 'on' : 'off';
+	}
 
-  if (empty($_SERVER['HTTP_HOST'])) {
-    $_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
-  }
+	if (empty($_SERVER['HTTP_HOST'])) {
+		$_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
+	}
 
-  if (!isset($_SERVER['HTTP_USER_AGENT'])) {
-    $_SERVER['HTTP_USER_AGENT'] = '';
-  }
+	if (!isset($_SERVER['HTTP_USER_AGENT'])) {
+		$_SERVER['HTTP_USER_AGENT'] = '';
+	}

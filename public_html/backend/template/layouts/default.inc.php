@@ -26,8 +26,8 @@
 			<img class="center-block responsive" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>">
 		</a>
 
-    <div class="filter">
-      <?php echo functions::form_input_search('filter', false, 'placeholder="'. functions::escape_html(language::translate('title_filter', 'Filter')) .'&hellip;" autocomplete="off"'); ?>
+		<div class="filter">
+			<?php echo functions::form_input_search('filter', false, 'placeholder="'. functions::escape_html(language::translate('title_filter', 'Filter')) .'&hellip;" autocomplete="off"'); ?>
 		</div>
 
 		<?php include 'app://backend/partials/box_apps_menu.inc.php'; ?>
@@ -64,18 +64,18 @@
 			</li>
 
 			<li>
-        <div class="btn-group" data-toggle="buttons">
+				<div class="btn-group" data-toggle="buttons">
 					<button name="font_size" class="btn btn-default btn-sm" type="button" value="decrease"><span style="font-size: .8em;">A</span></button>
 					<button name="font_size" class="btn btn-default btn-sm" type="button" value="increase"><span style="font-size: 1.25em;">A</span></button>
 				</div>
 			</li>
 
-      <li>
-        <div class="btn-group" data-toggle="buttons">
+			<li>
+				<div class="btn-group" data-toggle="buttons">
 					<label class="btn btn-default btn-sm<?php echo empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_light', 'Light')); ?>"><input type="radio" name="dark_mode" value="0"<?php echo empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-sun-o'); ?></label>
 					<label class="btn btn-default btn-sm<?php echo !empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_dark', 'Dark')); ?>"><input type="radio" name="dark_mode" value="1"<?php echo !empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-moon-o'); ?></label>
-        </div>
-      </li>
+				</div>
+			</li>
 
 			<li class="language dropdown">
 				<a href="#" data-toggle="dropdown"><span style="font-family: monospace" title="<?php echo functions::escape_html(language::$selected['name']); ?>"><?php echo language::$selected['code']; ?><span> <b class="caret"></b></a>
@@ -152,10 +152,10 @@
 
 	$('input[name="dark_mode"]').click(function(){
 		if ($(this).val() == 1) {
-      document.cookie = 'dark_mode=1;Path=<?php echo WS_DIR_APP; ?>;Max-Age=2592000';
+			document.cookie = 'dark_mode=1;Path=<?php echo WS_DIR_APP; ?>;Max-Age=2592000';
 			$('html').addClass('dark-mode');
 		} else {
-      document.cookie = 'dark_mode=0;Path=<?php echo WS_DIR_APP; ?>;Max-Age=2592000';
+			document.cookie = 'dark_mode=0;Path=<?php echo WS_DIR_APP; ?>;Max-Age=2592000';
 			$('html').removeClass('dark-mode');
 		}
 	});

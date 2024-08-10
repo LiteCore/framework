@@ -22,9 +22,9 @@
 
 		public static function render() {
 
-      if (!count(self::$data)) {
-        return '';
-      }
+			if (!count(self::$data)) {
+				return '';
+			}
 
 			switch (route::$selected['endpoint']) {
 

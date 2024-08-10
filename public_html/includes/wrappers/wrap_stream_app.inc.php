@@ -3,7 +3,6 @@
 	class wrap_stream_app {
 
 		private static $_cache = [];
-
 		private $_directory = [];
 		private $_stream;
 		public $context;

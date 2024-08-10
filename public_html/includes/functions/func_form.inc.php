@@ -461,7 +461,7 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-      '  ' . form_input_decimal($name, $input, $decimals, $parameters),
+			'  ' . form_input_decimal($name, $input, $decimals, $parameters),
 			'  <span class="input-group-text">%</span>',
 			'</div>',
 		]);
@@ -476,7 +476,7 @@
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
 			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-phone fa-fw') .'</span>',
-			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="tel" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'" pattern="^\+?([0-9]|-| )+$"'. ($parameters ? ' '. $parameters : '') .'>',
+			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="tel" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'" pattern="\+?([0-9]|-| )+"'. ($parameters ? ' '. $parameters : '') .'>',
 			'</div>',
 		]);
 	}
@@ -1003,7 +1003,7 @@
 				return form_select_zone($name, $option, $input, $parameters);
 
 			default:
-				trigger_error('Unknown function name ('. $function .')', E_USER_WARNING);
+				trigger_error('Unknown function name "'. $function .'"', E_USER_WARNING);
 				return form_input_text($name, $input, $parameters);
 				break;
 		}
@@ -1110,7 +1110,7 @@
 		}
 	}
 
-	function form_select_form_function($name, $parameters='') {
+	function form_select_function($name, $parameters='') {
 
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple_files($name, $options, $input, $parameters);

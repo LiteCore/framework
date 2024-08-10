@@ -26,7 +26,7 @@ body {
 		margin: 10px 0;
 		font-weight: bold;
 		color: var(--copyright-text-color);
-  }
+	}
 
 	.copyright {
 		margin-bottom: var(--gutter-size);
@@ -41,7 +41,7 @@ body {
 }
 
 #sidebar-compressed:checked {
-  padding: ~"calc(var(--gutter-size)/2)";
+	padding: ~"calc(var(--gutter-size)/2)";
 
 	~ #sidebar {
 		flex-basis: auto;
@@ -50,15 +50,15 @@ body {
 			display: none;
 		}
 
-    .logotype, .filter, .platform .name, .copyright {
+		.logotype, .filter, .platform .name, .copyright {
 			display: none;
 		}
-  }
+	}
 
-  #box-apps-menu {
-    margin-top: 0;
+	#box-apps-menu {
+		margin-top: 0;
 
-    > .app:hover {
+		> .app:hover {
 
 			&:before {
 				position: absolute;
@@ -103,7 +103,7 @@ body {
 		align-self: center;
 		flex: 0 0 auto;
 		> * {
-      padding: 1em;
+			padding: 1em;
 		}
 
 		> a {
@@ -156,17 +156,17 @@ body {
 			margin-bottom: 5px;
 
 			a {
-        display: block;
+				display: block;
 				color: inherit;
 				text-decoration: none;
-        background: #fff;
-        padding: .5em 1em;
-        border-radius: var(--border-radius);
-        transition: all 100ms linear;
-        &:hover {
-          transform: scale(1.03);
+				background: #fff;
+				padding: .5em 1em;
+				border-radius: var(--border-radius);
+				transition: all 100ms linear;
+				&:hover {
+					transform: scale(1.03);
 			}
-      }
+			}
 
 			.id {
 				opacity: 0.5;
@@ -205,8 +205,8 @@ body {
 			color: var(--sidebar-text-color);
 			border-radius: var(--border-radius);
 
-      &:hover:not(.active) {
-        background: var(--sidebar-background-color-hover);
+			&:hover:not(.active) {
+				background: var(--sidebar-background-color-hover);
 			}
 
 			.fa-stack {
@@ -228,20 +228,20 @@ body {
 
 		&.active {
 			border-color: var(--app-color);
-      background: var(--sidebar-background-color-active);
+			background: var(--sidebar-background-color-active);
 			border-radius: var(--border-radius);
 
 			.docs {
 				display: block;
 			}
 
-      .doc:hover {
-        background: var(--sidebar-background-color-hover);
-        border-radius: var(--border-radius);
-      }
+			.doc:hover {
+				background: var(--sidebar-background-color-hover);
+				border-radius: var(--border-radius);
+			}
 
 			.doc.active > a {
-        background: var(--sidebar-background-color);
+				background: var(--sidebar-background-color);
 				border-radius: var(--border-radius);
 			}
 		}
@@ -281,19 +281,19 @@ body {
 }
 
 .app-icon {
-  display: inline-flex;
+	display: inline-flex;
 	padding: .33em;
 	margin-inline-end: .33em;
 	line-height: 100%;
-  //border-radius: var(--border-radius);
+	//border-radius: var(--border-radius);
 	background: var(--app-color);
 	color: #fff;
-  //clip-path: circle(50%);
-  //clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
-  //clip-path: xywh(0 0 100% 100% round var(--border-radius) 0); // 2-rounded corners
-  clip-path: xywh(0 0 100% 100% round var(--border-radius)); // Standard
-  place-items: center;
-  aspect-ratio: 1;
+	//clip-path: circle(50%);
+	//clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
+	//clip-path: xywh(0 0 100% 100% round var(--border-radius) 0); // 2-rounded corners
+	clip-path: xywh(0 0 100% 100% round var(--border-radius)); // Standard
+	place-items: center;
+	aspect-ratio: 1;
 
 	@media print {
 		display: none !important;

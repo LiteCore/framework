@@ -324,9 +324,9 @@
 
 		public function resample($max_width=1024, $max_height=1024, $clipping='FIT_ONLY_BIGGER') {
 
-      settype($max_width, 'integer');
-      settype($max_height, 'integer');
-      $clipping = strtoupper($clipping);
+			settype($max_width, 'integer');
+			settype($max_height, 'integer');
+			$clipping = strtoupper($clipping);
 
 			if ($max_width == 0 && $max_height == 0) return;
 
@@ -335,23 +335,23 @@
 			}
 
 			// Convert percentage dimensions to pixels
-      if (substr($max_width, -1) == '%') {
-        $max_width = round($this->width * str_replace('%', '', $max_width) / 100);
-      }
-      if (substr($max_height, -1) == '%') {
-        $max_height = round($this->height * str_replace('%', '', $max_height) / 100);
-      }
+			if (substr($max_width, -1) == '%') {
+				$max_width = round($this->width * str_replace('%', '', $max_width) / 100);
+			}
+			if (substr($max_height, -1) == '%') {
+				$max_height = round($this->height * str_replace('%', '', $max_height) / 100);
+			}
 
 			// Calculate source proportion
 			$ratio = $this->width / $this->height;
 
 			// Complete missing target dimensions
-      if ($max_width == 0) {
-        $max_width = round($max_height * $ratio);
-      }
-      if ($max_height == 0) {
-        $max_height = round($max_width / $ratio);
-      }
+			if ($max_width == 0) {
+				$max_width = round($max_height * $ratio);
+			}
+			if ($max_height == 0) {
+				$max_height = round($max_width / $ratio);
+			}
 
 			if (!$this->_image) {
 				$this->load();
@@ -554,93 +554,93 @@
 			}
 		}
 
-    public function filter($filter) {
+		public function filter($filter) {
 
-      if (!$this->_image) {
-        $this->load();
-      }
+			if (!$this->_image) {
+				$this->load();
+			}
 
-      switch($this->_library) {
+			switch($this->_library) {
 
-        case 'imagick':
+				case 'imagick':
 
-          switch($filter) {
+					switch($filter) {
 
-            case 'blur':
-              //return $this->_image->gaussianBlurImage(2, 3);
-              return $this->_image->blurImage(2, 3);
+						case 'blur':
+							//return $this->_image->gaussianBlurImage(2, 3);
+							return $this->_image->blurImage(2, 3);
 
-            case 'contrast':
-              return $this->_image->contrastImage(2);
+						case 'contrast':
+							return $this->_image->contrastImage(2);
 
-            case 'gamma':
-              return $this->_image->gammaImage(1.25);
+						case 'gamma':
+							return $this->_image->gammaImage(1.25);
 
-            case 'pixelate':
-              $width = $this->_image->getImageWidth();
-              $this->_image->scaleImage($width/10, 0);
-              return $this->_image->scaleImage($width, 0);
+						case 'pixelate':
+							$width = $this->_image->getImageWidth();
+							$this->_image->scaleImage($width/10, 0);
+							return $this->_image->scaleImage($width, 0);
 
-            case 'sepia':
-              return $this->_image->sepiaToneImage(80);
+						case 'sepia':
+							return $this->_image->sepiaToneImage(80);
 
-            case 'sharpen':
-              return $this->_image->sharpenImage(2, 3);
+						case 'sharpen':
+							return $this->_image->sharpenImage(2, 3);
 
-            default:
-              throw new Exception('Unknown image filter');
-          }
+						default:
+							throw new Exception('Unknown image filter');
+					}
 
-        case 'gd':
+				case 'gd':
 
-          switch($filter) {
+					switch($filter) {
 
-            case 'contrast':
-              ImageFilter($this->_image, IMG_FILTER_CONTRAST, -2);
-              return true;
+						case 'contrast':
+							ImageFilter($this->_image, IMG_FILTER_CONTRAST, -2);
+							return true;
 
-            case 'gamma':
-              ImageGammaCorrect($this->_image, 1.0, 1.25);
-              return true;
+						case 'gamma':
+							ImageGammaCorrect($this->_image, 1.0, 1.25);
+							return true;
 
-            case 'blur':
-              ImageFilter($this->_image, IMG_FILTER_GAUSSIAN_BLUR);
-              //ImageFilter($this->_image, IMG_FILTER_SELECTIVE_BLUR);
-              return true;
+						case 'blur':
+							ImageFilter($this->_image, IMG_FILTER_GAUSSIAN_BLUR);
+							//ImageFilter($this->_image, IMG_FILTER_SELECTIVE_BLUR);
+							return true;
 
-            case 'pixelate':
-              $imagex = imagesx($this->_image);
-              $imagey = imagesy($this->_image);
-              $blocksize = 12;
+						case 'pixelate':
+							$imagex = imagesx($this->_image);
+							$imagey = imagesy($this->_image);
+							$blocksize = 12;
 
-              for ($x = 0; $x < $imagex; $x += $blocksize) {
-                for ($y = 0; $y < $imagey; $y += $blocksize) {
-                  $rgb = ImageColorAt($this->_image, $x, $y);
-                  ImageFilledRectangle($this->_image, $x, $y, $x + $blocksize - 1, $y + $blocksize - 1, $rgb);
-                }
-              }
+							for ($x = 0; $x < $imagex; $x += $blocksize) {
+								for ($y = 0; $y < $imagey; $y += $blocksize) {
+									$rgb = ImageColorAt($this->_image, $x, $y);
+									ImageFilledRectangle($this->_image, $x, $y, $x + $blocksize - 1, $y + $blocksize - 1, $rgb);
+								}
+							}
 
-              return true;
+							return true;
 
-            case 'sepia':
-              ImageFilter($this->_image, IMG_FILTER_GRAYSCALE);
-              ImageFilter($this->_image, IMG_FILTER_COLORIZE, 100, 50, 0);
-              return true;
+						case 'sepia':
+							ImageFilter($this->_image, IMG_FILTER_GRAYSCALE);
+							ImageFilter($this->_image, IMG_FILTER_COLORIZE, 100, 50, 0);
+							return true;
 
-            case 'sharpen':
-              $matrix = [[-1, -1, -1], [-1, 16, -1], [-1, -1, -1]];
-              $divisor = array_sum(array_map('array_sum', $matrix));
-              $offset = 0;
-              ImageConvolution($this->_image, $matrix, $divisor, $offset);
-              return true;
+						case 'sharpen':
+							$matrix = [[-1, -1, -1], [-1, 16, -1], [-1, -1, -1]];
+							$divisor = array_sum(array_map('array_sum', $matrix));
+							$offset = 0;
+							ImageConvolution($this->_image, $matrix, $divisor, $offset);
+							return true;
 
-            default:
-              throw new Exception('Unknown image filter');
-          }
+						default:
+							throw new Exception('Unknown image filter');
+					}
 
-          break;
-      }
-    }
+					break;
+			}
+		}
 
 		public function trim() {
 
@@ -674,7 +674,7 @@
 
 					if (!function_exists('ImageCropAuto')) { // PHP 5.5
 						trigger_error('Trimming images requires Imagick or PHP 5.5+', E_USER_WARNING);
-            return false;
+						return false;
 					}
 
 					//$result = ImageCropAuto($this->_image, IMG_CROP_THRESHOLD, 100, ImageColorAt($this->_image, 0, 0));
@@ -824,8 +824,8 @@
 
 		public function save($destination='', $quality=90, $interlaced=false) {
 
-      settype($quality, 'integer');
-      settype($interlaced, 'boolean');
+			settype($quality, 'integer');
+			settype($interlaced, 'boolean');
 
 			if (!$destination) {
 				$destination = $this->_file;
@@ -853,9 +853,9 @@
 				throw new Exception("Unknown image format ($type)");
 			}
 
-      if ($this->type == 'svg' && $type == 'svg') {
-        return copy($this->_file, $destination);
-      }
+			if ($this->type == 'svg' && $type == 'svg') {
+				return copy($this->_file, $destination);
+			}
 
 			if (!$this->_image) {
 				$this->load();
@@ -869,15 +869,15 @@
 						$this->_image->setImageDepth(16);
 					}
 
-          switch ($type) {
+					switch ($type) {
 
-            case 'jpg':
+						case 'jpg':
 						 $this->_image->setImageCompression(Imagick::COMPRESSION_JPEG);
-               break;
+							 break;
 
-            default:
+						default:
 						 $this->_image->setImageCompression(Imagick::COMPRESSION_ZIP);
-               break;
+							 break;
 					}
 
 					$this->_image->setImageCompressionQuality((int)$quality);
@@ -900,30 +900,30 @@
 						}
 					}
 
-          if ($type == 'avif' && !function_exists('ImageAVIF')) {
-            return $this->save(preg_replace('#\.avif$#i', '.jpg', $destination), $quality, $interlaced);
-          }
+					if ($type == 'avif' && !function_exists('ImageAVIF')) {
+						return $this->save(preg_replace('#\.avif$#i', '.jpg', $destination), $quality, $interlaced);
+					}
 
-          if ($type == 'webp' && !function_exists('ImageWebP')) {
-            return $this->save(preg_replace('#\.webp$#i', '.jpg', $destination), $quality, $interlaced);
-          }
+					if ($type == 'webp' && !function_exists('ImageWebP')) {
+						return $this->save(preg_replace('#\.webp$#i', '.jpg', $destination), $quality, $interlaced);
+					}
 
 					$new_image = ImageCreateTrueColor($this->width, $this->height);
 
-          if (in_array($type, ['avif', 'png', 'webp'])) {
-            ImageAlphaBlending($new_image, true);
-            ImageSaveAlpha($new_image, true);
-          }
-
-          ImageFill($new_image, 0, 0, ImageColorAllocateAlpha($new_image, $this->_whitespace[0], $this->_whitespace[1], $this->_whitespace[2], 0));
-					ImageCopy($new_image, $this->_image, 0, 0, 0, 0, $this->width, $this->height);
-
-          if ($type == 'gif') {
-            ImageTrueColorToPalette($new_image, false, 255);
+					if (in_array($type, ['avif', 'png', 'webp'])) {
+						ImageAlphaBlending($new_image, true);
+						ImageSaveAlpha($new_image, true);
 					}
 
-          if ($interlaced) {
-            ImageInterlace($new_image, true);
+					ImageFill($new_image, 0, 0, ImageColorAllocateAlpha($new_image, $this->_whitespace[0], $this->_whitespace[1], $this->_whitespace[2], 0));
+					ImageCopy($new_image, $this->_image, 0, 0, 0, 0, $this->width, $this->height);
+
+					if ($type == 'gif') {
+						ImageTrueColorToPalette($new_image, false, 255);
+					}
+
+					if ($interlaced) {
+						ImageInterlace($new_image, true);
 					}
 
 					switch ($type) {

@@ -24,6 +24,9 @@ public_html/BingSiteAuth.xml
 public_html/php.ini
 package-lock.json
 
+google*.html
+BingSiteAuth.xml
+
 #####################
 # Development files #
 #####################

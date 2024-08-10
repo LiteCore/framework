@@ -17,15 +17,15 @@
 	}
 
 	// Adds padding to the beginning of each line of a string
-  function string_pad_lines($string, $padding, $pad_type=STR_PAD_LEFT) {
+	function string_pad_lines($string, $padding, $pad_type=STR_PAD_LEFT) {
 
-    if ($pad_type & STR_PAD_BOTH || $pad_type & STR_PAD_LEFT) {
-      $string = preg_replace('#^#m', preg_quote($padding), $string);
-    }
+		if ($pad_type & STR_PAD_BOTH || $pad_type & STR_PAD_LEFT) {
+			$string = preg_replace('#^#m', preg_quote($padding), $string);
+		}
 
-    if ($pad_type & STR_PAD_BOTH || $pad_type & STR_PAD_RIGHT) {
-      $string = preg_replace('#$#m', preg_quote($padding), $string);
-    }
+		if ($pad_type & STR_PAD_BOTH || $pad_type & STR_PAD_RIGHT) {
+			$string = preg_replace('#$#m', preg_quote($padding), $string);
+		}
 
-    return $string;
-  }
+		return $string;
+	}

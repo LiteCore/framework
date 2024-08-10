@@ -1,6 +1,8 @@
-# EditorConfig: https://EditorConfig.org
-# Notepad++ Plugin: https://github.com/editorconfig/editorconfig-notepad-plus-plus
-# Visual Studio Code Plugin: https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig
+## EditorConfig: https://EditorConfig.org
+# - Atom Plugin: https://github.com/sindresorhus/atom-editorconfig
+# - Notepad++ Plugin: https://github.com/editorconfig/editorconfig-notepad-plus-plus
+# - Sublime Plugin: https://github.com/sindresorhus/editorconfig-sublime
+# - Visual Studio Code Plugin: https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig
 
 root = true
 

@@ -3,7 +3,7 @@
 	class_exists('session', true);
 
 	header('X-Robots-Tag: noindex');
-	header('Content-Type: text/plain; charset=UTF-8');
+	header('Content-Type: text/plain; charset='. mb_http_output());
 
 	$replies = [
 		'Oh it\'s you again!',

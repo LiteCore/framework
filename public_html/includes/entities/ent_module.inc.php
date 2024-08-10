@@ -43,7 +43,7 @@
 
 			database::query(
 				"show fields from ". DB_TABLE_PREFIX ."modules;"
-      )->each(function($field){
+			)->each(function($field){
 				$this->data[$field['Field']] = database::create_variable($field);
 			});
 

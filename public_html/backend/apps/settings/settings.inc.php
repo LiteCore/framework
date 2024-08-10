@@ -28,10 +28,30 @@
 					throw new Exception(language::translate('error_cannot_set_empty_value_for_setting', 'You cannot set an empty value for this setting'));
 				}
 
-				if (substr($setting['function'], 0, 8) == 'regional') {
-					$value = json_encode($_POST['settings'][$key]);
-				} else {
-					$value = $_POST['settings'][$key];
+				switch ($setting['datatype']) {
+
+					case 'boolean':
+						$value = (bool)$_POST['settings'][$key];
+						break;
+
+					case 'csv':
+						$value = implode(',', array_map(function($value){
+							return preg_match('#", \R#', $value) ? '"' . str_replace('"', '""', $value) . '"' : $value;
+						}, $_POST['settings'][$key]));
+						break;
+
+					case 'array':
+					case 'json':
+						$value = json_encode($_POST['settings'][$key], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						break;
+
+					case 'number':
+						$value = (int)$_POST['settings'][$key];
+						break;
+
+					case 'decimal':
+						$value = (float)$_POST['settings'][$key];
+						break;
 				}
 
 				database::query(
@@ -41,6 +61,16 @@
 					where `key` = '". database::input($key) ."'
 					limit 1;"
 				);
+
+				// Specific operations
+				switch ($key) {
+					case 'site_timezone':
+						$file = 'storage://config.inc.php';
+						$contents = file_get_contents($file);
+						$contents = preg_replace('#ini_set\(\'date.timezone\'\, [^\)]+\);#', 'ini_set(\'date.timezone\', \''. addcslashes($value)  .'\');', $contents);
+						file_put_contents($file, $contents);
+						break;
+				}
 			}
 
 			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
@@ -74,15 +104,27 @@
 	foreach ($settings as $i => $setting) {
 		if (isset($_GET['action']) && $_GET['action'] == 'edit' && $_GET['key'] == $setting['key']) {
 
-			switch (true) {
-				case (substr($setting['function'], 0, 14) == 'regional_input'):
-					if (!isset($_POST['settings'][$setting['key']])) {
-						$_POST['settings'][$setting['key']] = !empty($setting['value']) ? json_decode($setting['value'], true) : null;
-					}
+			switch ($setting['datatype']) {
+
+				case 'boolean':
+					settype($setting['value'], 'boolean');
 					break;
 
-				default:
-					$_POST['settings'][$setting['key']] = $setting['value'];
+				case 'csv':
+					$value = str_getcsv($setting['value']);
+					break;
+
+				case 'array':
+				case 'json':
+					$value = json_decode($setting['value'], true);
+					break;
+
+				case 'number':
+					settype($setting['value'], 'integer');
+					break;
+
+				case 'decimal':
+					settype($_POST['settings'][$key], 'float');
 					break;
 			}
 
@@ -160,7 +202,7 @@
 					<td class="text-start"><a class="link" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo language::translate('settings_key:title_'.$setting['key'], $setting['title']); ?></a></td>
 					<td style="white-space: normal;">
 						<div style="max-height: 200px; overflow-y: auto;" title="<?php echo functions::escape_html(language::translate('settings_key:description_'.$setting['key'], $setting['description'])); ?>">
-							<?php echo $setting['value']; ?>
+							<?php echo nl2br($setting['value'], false); ?>
 						</div>
 					</td>
 					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>

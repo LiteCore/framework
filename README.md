@@ -11,8 +11,8 @@ Please note running your own website requires some common sense of web knowledge
 
 What you need:
 
-  * A storage location on an Apache2 web server running PHP 5.6 or higher. Latest stable PHP release recommended for best performance.
-  * A MySQL 5.7+ account.
+	* A storage location on an Apache2 web server running PHP 5.6 or higher. Latest stable PHP release recommended for best performance.
+	* A MySQL 5.7+ account.
 
 Here is what you do:
 
@@ -20,13 +20,13 @@ Here is what you do:
 
 2. Transfer the contents of the folder public_html/ in this archive (yes the contents inside the folder - not the folder itself). Transfer it to your website root directory. Using subdirectories is supported but not recommended.
 
-    Example:
+		Example:
 
-    /var/www/
+		/var/www/
 
-    /home/username/public_html/
+		/home/username/public_html/
 
-    C:\xampp\htdocs\
+		C:\xampp\htdocs\
 
 Paths are machine specific. Talk to your web host if you are uncertain where this folder is.
 

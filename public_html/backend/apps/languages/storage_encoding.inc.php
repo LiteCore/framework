@@ -5,15 +5,15 @@
 	breadcrumbs::add(language::translate('title_languages', 'Languages'), document::ilink(__APP__.'/languages'));
 	breadcrumbs::add(language::translate('title_storage_encoding', 'Storage Encoding'));
 
-  $tables = database::query(
+	$tables = database::query(
 		"SELECT * FROM information_schema.TABLES
 		WHERE TABLE_SCHEMA = '". DB_DATABASE ."'
 		ORDER BY TABLE_NAME;"
-  )->fetch_all();
+	)->fetch_all();
 
-  $defined_tables = array_filter(array_column($tables, 'TABLE_NAME'), function($table){
-    return preg_match('#^'.preg_quote(DB_TABLE_PREFIX, '#').'#', $table);
-  });
+	$defined_tables = array_filter(array_column($tables, 'TABLE_NAME'), function($table){
+		return preg_match('#^'.preg_quote(DB_TABLE_PREFIX, '#').'#', $table);
+	});
 
 	if (!$_POST) {
 		$_POST['tables'] = $defined_tables;

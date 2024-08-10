@@ -4,14 +4,13 @@
 
 		public static $layout = 'default';
 
-    public static $title = [];
+		public static $title = [];
 		public static $description = '';
 		public static $head_tags = [];
 		public static $style = [];
 		public static $content = [];
 		public static $foot_tags = [];
 		public static $javascript = [];
-
 		public static $snippets = [];
 		public static $settings = [];
 		public static $jsenv = [];
@@ -226,7 +225,7 @@
 							break;
 
 						case 'script':
-              //$preloads[$m[0]] = 'script'; // Avoided as browser may complain about script preloading
+							//$preloads[$m[0]] = 'script'; // Avoided as browser may complain about script preloading
 							break;
 					}
 				}
@@ -255,13 +254,13 @@
 
 			switch (route::$selected['endpoint']) {
 			 
-			  case 'backend':
+				case 'backend':
 				$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
-				  break;
-				  
-        default:
+					break;
+					
+				default:
 				$_page = new ent_view('app://frontend/template/layouts/'.self::$layout.'.inc.php');
-				  break;
+					break;
 			}
 
 			$_page->snippets = array_merge(self::$snippets, [
@@ -332,8 +331,8 @@
 		public static function add_head_tags($tags, $key=null) {
 
 			if (is_array($tags)) {
-        $tags = implode(PHP_EOL, $tags);
-      }
+				$tags = implode(PHP_EOL, $tags);
+			}
 
 			self::$head_tags[$key] = $tags;
 		}
@@ -341,8 +340,8 @@
 		public static function add_foot_tags($tags, $key=null) {
 
 			if (is_array($tags)) {
-        $tags = implode(PHP_EOL, $tags);
-      }
+				$tags = implode(PHP_EOL, $tags);
+			}
 
 			self::$foot_tags[$key] = $tags;
 		}
@@ -417,7 +416,7 @@
 
 		public static function link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
 
-      if (!$path) {
+			if (!$path) {
 				$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 				if ($inherit_params === null) {

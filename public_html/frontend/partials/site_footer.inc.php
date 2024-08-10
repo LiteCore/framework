@@ -1,6 +1,7 @@
 <?php
-	$site_footer_cache_token = cache::token('site_footer', ['language', 'login', 'region']);
-	if (cache::capture($site_footer_cache_token)) {
+
+	//$site_footer_cache_token = cache::token('site_footer', ['language', 'login', 'region']);
+	//if (cache::capture($site_footer_cache_token)) {
 
 		$site_footer = new ent_view('app://frontend/template/partials/site_footer.inc.php');
 
@@ -33,5 +34,5 @@
 
 		echo $site_footer;
 
-		cache::end_capture($site_footer_cache_token);
-	}
+	//	cache::end_capture($site_footer_cache_token);
+	//}

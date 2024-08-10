@@ -112,16 +112,16 @@
 		});
 	}
 
-	// Turn an array of [foo => [bar => ...]] into [foo.bar => ...]
-	function array_flatten($array, $delimiter='.') {
+	// Turn an array of [foo => [bar => value]] into [foo.bar => value]
+	function array_flatten($array, $delimiter='.', $prefix='') {
 
 		$result = [];
 
 		foreach ($array as $key => $value) {
 			if (is_array($value)) {
-				$result[$key] = array_flatten_keys($value, $delimiter, $key.$delimiter);
+				$result = $result + array_flatten($value, $delimiter, $key.$delimiter);
 			} else {
-				$result[$key] = $value;
+				$result[$prefix.$key] = $value;
 			}
 		}
 

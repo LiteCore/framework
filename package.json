@@ -5,11 +5,11 @@
 	"version": "1.0.0",
 	"author": {
 		"name": "T. Almroth",
-		"url": "https://www.litecart.net/"
+		"url": "https://www.litecore.dev/"
 	},
 	"license": "CC-BY-ND-4.0",
-	"homepage": "https://www.litecart.net/",
-	"download": "https://www.litecart.net/download",
+	"homepage": "https://www.litecore.dev/",
+	"download": "https://www.litecore.dev/download",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/litecart/litecore.git"
@@ -29,6 +29,9 @@
 		"grunt-text-replace": "^0.4.0",
 		"phplint": "^2.0.5",
 		"sass": "^1.76.0"
+	},
+	"engines": {
+		"node": ">=19"
 	},
 	"scripts": {
 		"archive": "git archive --format=zip --output latest.zip master",

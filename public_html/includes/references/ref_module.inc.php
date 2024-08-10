@@ -1,9 +1,9 @@
 <?php
 
-  class ref_module extends abs_reference_entity {
+	class ref_module extends abs_reference_entity {
 
-    protected $_data = [];
-    protected $_object = null;
+		protected $_data = [];
+		protected $_object = null;
 
 		function __construct($module_id) {
 
@@ -41,11 +41,11 @@
 			$this->_object = $object;
 		}
 
-    public function __call($name, $args) {
-      return method_exists($name, $this->_object) ? call_user_func_array([$this->_object, $name], array_slice($args, 1)) : null;
+		public function __call($name, $args) {
+			return method_exists($name, $this->_object) ? call_user_func_array([$this->_object, $name], array_slice($args, 1)) : null;
 		}
 
-    protected function _load($field) {
+		protected function _load($field) {
 
 			switch($field) {
 
