@@ -53,12 +53,13 @@
 
     <operation method="before" type="multiline" onerror="warning">
       <find><![CDATA[
-		uasort($site_navigation->snippets['items'], function($a, $b) {
+		// Sort menu items by priority
+		$sort_items = function($a, $b) {
 			if (!isset($a['priority'])) $a['priority'] = 0;
 			if (!isset($b['priority'])) $b['priority'] = 0;
 			if ($a['priority'] == $b['priority']) return;
 			return ($a['priority'] < $b['priority']) ? -1 : 1;
-		});
+		};
       ]]></find>
 
       <insert><![CDATA[
@@ -84,7 +85,7 @@
 				];
 			});
 
-			$site_navigation->snippets['items'][] = [
+			$site_navigation->snippets['left'][] = [
 				'id' => 'page-'.$page['id'],
 				'name' => $page['title'],
 				'link' => document::ilink('page', ['page_id' => $page['id']]),

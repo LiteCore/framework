@@ -1,152 +1,45 @@
-	// Keep-alive
-	let keepAlive = setInterval(function(){
-		$.get({
-			url: window._env.platform.path + 'ajax/keep_alive',
-			cache: false
-		});
-	}, 60e3);
-
-	// Alerts
-	$('body').on('click', '.alert .close', function(e){
-		e.preventDefault();
-		$(this).closest('.alert').fadeOut('fast', function(){$(this).remove()});
+// Keep-alive
+let keepAlive = setInterval(function(){
+	$.get({
+		url: window._env.platform.path + 'ajax/keep_alive',
+		cache: false
 	});
+}, 60e3);
 
-	// Form required asterix
-	$(':input[required]').closest('.form-group').addClass('required');
-
-	// Detect scroll direction
-	let lastScrollTop = 0;
-	$(document).on('scroll', function(){
-		 var scrollTop = $(this).scrollTop();
-		 if (scrollTop > lastScrollTop) {
-			 $('body').addClass('scrolling-down');
-		 } else {
-			 $('body').removeClass('scrolling-down');
-		 }
-		 lastScrollTop = (scrollTop < 0) ? 0 : scrollTop;
-	});
-
-	// Tabs (data-toggle="tab")
-	$('.nav-tabs').each(function(){
-		if (!$(this).find('.active').length) {
-			$(this).find('[data-toggle="tab"]:first').addClass('active');
-		}
-
-		$(this).on('select', '[data-toggle="tab"]', function() {
-			$(this).siblings().removeClass('active');
-			$(this).addClass('active');
-			$($(this).attr('href')).show().siblings().hide();
-		});
-
-		$(this).on('click', '[data-toggle="tab"]', function(e) {
-			e.preventDefault();
-			$(this).trigger('select');
-			history.replaceState({}, '', location.toString().replace(/#.*$/, '') + $(this).attr('href'));
-		});
-
-		$(this).find('.active').trigger('select');
-	});
-
-	if (document.location.hash != '') {
-		$('a[data-toggle="tab"][href="' + document.location.hash + '"]').click();
+// Detect scroll direction
+let lastScrollTop = 0;
+$(document).on('scroll', function(){
+	var scrollTop = $(this).scrollTop();
+	if (scrollTop > lastScrollTop) {
+		$('body').addClass('scrolling-down');
+	} else {
+		$('body').removeClass('scrolling-down');
 	}
+	lastScrollTop = (scrollTop < 0) ? 0 : scrollTop;
+});
 
-	// Bootstrap Compatible (data-toggle="buttons")
-	$('body').on('click', '[data-toggle="buttons"] input[type="checkbox"]', function(){
-		if ($(this).is(':checked')) {
-			$(this).closest('.btn').addClass('active');
-		} else {
-			$(this).closest('.btn').removeClass('active');
-		}
-	});
+// Scroll Up
+$(window).scroll(function(){
+	if ($(this).scrollTop() > 100) {
+		$('#scroll-up').fadeIn();
+	} else {
+		$('#scroll-up').fadeOut();
+	}
+});
 
-	$('body').on('click', '[data-toggle="buttons"] input[type="radio"]', function(){
-		$(this).closest('.btn').addClass('active').siblings().removeClass('active');
-	});
+$('#scroll-up').click(function(){
+	$('html, body').animate({scrollTop: 0}, 1000, 'swing');
+	return false;
+});
 
-	// Data-Table Toggle Checkboxes
-	$('body').on('click', '.data-table *[data-toggle="checkbox-toggle"]', function() {
-		$(this).closest('.data-table').find('tbody :checkbox').each(function() {
-			$(this).prop('checked', !$(this).prop('checked'));
-		});
-		return false;
-	});
-
-	$('.data-table tbody tr').click(function(e) {
-		if ($(e.target).is(':input')) return;
-		if ($(e.target).is('a, a *')) return;
-		if ($(e.target).is('th')) return;
-		$(this).find('input:checkbox').trigger('click');
-	});
-
-	// Offcanvas
-	$('[data-toggle="offcanvas"]').click(function(e){
-		e.preventDefault();
-		var target = $(this).data('target');
-		if ($(target).hasClass('show')) {
-			$(target).removeClass('show');
-			$(this).removeClass('toggled');
-			$('body').removeClass('has-offcanvas');
-		} else {
-			$(target).addClass('show');
-			$(this).addClass('toggled');
-			$('body').addClass('has-offcanvas');
-		}
-	});
-
-	$('.offcanvas [data-toggle="dismiss"]').click(function(e){
-		$('.offcanvas').removeClass('show');
-		$('[data-toggle="offcanvas"]').removeClass('toggled');
-		$('body').removeClass('has-offcanvas');
-	});
-
-	// Password Strength
-	$('form').on('input', 'input[type="password"][data-toggle="password-strength"]', function(){
-
-		$(this).siblings('meter').remove();
-
-		if ($(this).val() == '') return;
-
-		var numbers = ($(this).val().match(/[0-9]/g) || []).length,
-		 lowercases = ($(this).val().match(/[a-z]/g) || []).length,
-		 uppercases = ($(this).val().match(/[A-Z]/g) || []).length,
-		 symbols =   ($(this).val().match(/[^\w]/g) || []).length,
-
-		 score = (numbers * 9) + (lowercases * 11.25) + (uppercases * 11.25) + (symbols * 15)
-					 + (numbers ? 10 : 0) + (lowercases ? 10 : 0) + (uppercases ? 10 : 0) + (symbols ? 10 : 0);
-
-		var meter = $('<meter min="0" low="80" high="120" optimum="150" max="150" value="'+ score +'"></meter>').css({
-			position: 'absolute',
-			bottom: '-1em',
-			width: '100%',
-			height: '1em'
-		});
-
-		$(this).after(meter);
-	});
-
-	// Scroll Up
-	$(window).scroll(function(){
-		if ($(this).scrollTop() > 100) {
-			$('#scroll-up').fadeIn();
-		} else {
-			$('#scroll-up').fadeOut();
-		}
-	});
-
-	$('#scroll-up').click(function(){
-		$('html, body').animate({scrollTop: 0}, 1000, 'swing');
-		return false;
-	});
 
 /* ========================================================================
- * Bootstrap: carousel.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#carousel
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
+* Bootstrap: carousel.js v3.4.1
+* https://getbootstrap.com/docs/3.4/javascript/#carousel
+* ========================================================================
+* Copyright 2011-2019 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
 
 +function ($) {
 	'use strict';
@@ -383,12 +276,12 @@
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: collapse.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#collapse
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
+* Bootstrap: collapse.js v3.4.1
+* https://getbootstrap.com/docs/3.4/javascript/#collapse
+* ========================================================================
+* Copyright 2011-2019 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
 
 +function ($) {
 	'use strict';
@@ -400,7 +293,7 @@
 		this.$element      = $(element)
 		this.options       = $.extend({}, Collapse.DEFAULTS, options)
 		this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
-													 '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+														'[data-toggle="collapse"][data-target="#' + element.id + '"]')
 		this.transitioning = null
 
 		if (this.options.parent) {
@@ -593,13 +486,14 @@
 
 }(jQuery);
 
+
 /* ========================================================================
- * Bootstrap: dropdown.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#dropdowns
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
+* Bootstrap: dropdown.js v3.4.1
+* https://getbootstrap.com/docs/3.4/javascript/#dropdowns
+* ========================================================================
+* Copyright 2011-2019 Twitter, Inc.
+* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+* ======================================================================== */
 
 +function ($) {
 	'use strict';
@@ -757,3 +651,115 @@
 		.on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
 
 }(jQuery);
+
+// Form required asterix
+$(':input[required]').closest('.form-group').addClass('required');
+
+
+// Bootstrap Compatible (data-toggle="buttons")
+$('body').on('click', '[data-toggle="buttons"] input[type="checkbox"]', function(){
+	if ($(this).is(':checked')) {
+		$(this).closest('.btn').addClass('active');
+	} else {
+		$(this).closest('.btn').removeClass('active');
+	}
+});
+
+$('body').on('click', '[data-toggle="buttons"] input[type="radio"]', function(){
+	$(this).closest('.btn').addClass('active').siblings().removeClass('active');
+});
+
+// Data-Table Toggle Checkboxes
+$('body').on('click', '.data-table *[data-toggle="checkbox-toggle"]', function() {
+	$(this).closest('.data-table').find('tbody :checkbox').each(function() {
+		$(this).prop('checked', !$(this).prop('checked'));
+	});
+	return false;
+});
+
+$('.data-table tbody tr').click(function(e) {
+	if ($(e.target).is(':input')) return;
+	if ($(e.target).is('a, a *')) return;
+	if ($(e.target).is('th')) return;
+	$(this).find('input:checkbox').trigger('click');
+});
+
+// Password Strength
+$('form').on('input', 'input[type="password"][data-toggle="password-strength"]', function(){
+
+	$(this).siblings('meter').remove();
+
+	if ($(this).val() == '') return;
+
+	var numbers = ($(this).val().match(/[0-9]/g) || []).length,
+		lowercases = ($(this).val().match(/[a-z]/g) || []).length,
+		uppercases = ($(this).val().match(/[A-Z]/g) || []).length,
+		symbols =   ($(this).val().match(/[^\w]/g) || []).length,
+
+		score = (numbers * 9) + (lowercases * 11.25) + (uppercases * 11.25) + (symbols * 15)
+					+ (numbers ? 10 : 0) + (lowercases ? 10 : 0) + (uppercases ? 10 : 0) + (symbols ? 10 : 0);
+
+	var meter = $('<meter min="0" low="80" high="120" optimum="150" max="150" value="'+ score +'"></meter>').css({
+		position: 'absolute',
+		bottom: '-1em',
+		width: '100%',
+		height: '1em'
+	});
+
+	$(this).after(meter);
+});
+// Alerts
+$('body').on('click', '.alert .close', function(e){
+		e.preventDefault();
+		$(this).closest('.alert').fadeOut('fast', function(){
+			$(this).remove()
+		});
+});
+
+
+// Offcanvas
+$('[data-toggle="offcanvas"]').click(function(e){
+	e.preventDefault();
+	var target = $(this).data('target');
+	if ($(target).hasClass('show')) {
+		$(target).removeClass('show');
+		$(this).removeClass('toggled');
+		$('body').removeClass('has-offcanvas');
+	} else {
+		$(target).addClass('show');
+		$(this).addClass('toggled');
+		$('body').addClass('has-offcanvas');
+	}
+});
+
+$('.offcanvas [data-toggle="dismiss"]').click(function(e){
+	$('.offcanvas').removeClass('show');
+	$('[data-toggle="offcanvas"]').removeClass('toggled');
+	$('body').removeClass('has-offcanvas');
+});
+
+
+// Tabs (data-toggle="tab")
+$('.nav-tabs').each(function(){
+	if (!$(this).find('.active').length) {
+		$(this).find('[data-toggle="tab"]:first').addClass('active');
+	}
+
+	$(this).on('select', '[data-toggle="tab"]', function() {
+		$(this).siblings().removeClass('active');
+		$(this).addClass('active');
+		$($(this).attr('href')).show().siblings().hide();
+	});
+
+	$(this).on('click', '[data-toggle="tab"]', function(e) {
+		e.preventDefault();
+		$(this).trigger('select');
+		history.replaceState({}, '', location.toString().replace(/#.*$/, '') + $(this).attr('href'));
+	});
+
+	$(this).find('.active').trigger('select');
+});
+
+if (document.location.hash != '') {
+	$('a[data-toggle="tab"][href="' + document.location.hash + '"]').click();
+}

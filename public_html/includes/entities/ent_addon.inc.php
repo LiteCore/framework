@@ -327,7 +327,7 @@
 			$dom->appendChild( $vmod_node );
 
 			$xml = preg_replace_callback('#^ +#m', function($m) {
-				return str_repeat("\t", strlen($m[0]) / 4); // Replace indentation with tabs
+				return str_repeat("\t", floor(strlen($m[0]) / 4)); // Replace indentation with tabs
 			}, $dom->saveXML());
 
 			// Pretty print

@@ -19,11 +19,11 @@
 		//	'priority' => -1,
 		//];
 
-		//$site_navigation->snippets['items'][] = [
+		//$site_navigation->snippets['left'][] = [
 		//	'id' => '',
 		//	'name' => 'Dropdown',
 		//	'link' => '#',
-		//	'priority' => -1,
+		//	'priority' => 1,
 		//	'subitems' => [],  <-- Put items in here
 		//];
 
@@ -49,7 +49,7 @@
 	}
 
 	//echo $site_navigation;
-	extract($site_navigation->snippets)
+	extract($site_navigation->snippets);
 
 	$draw_menu_item = function($item, $indent = 0, $is_dropdown_item=false) use (&$draw_menu_item) {
 

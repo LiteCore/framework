@@ -150,10 +150,12 @@
 
 		public function add_body($content, $html=false) {
 
-			if (empty($content)) {
-				trigger_error('Cannot add an email body with empty content', E_USER_WARNING);
+			if (!$content) {
+				trigger_error('Cannot add an email body with no content', E_USER_WARNING);
 				return $this;
 			}
+
+			$content = trim($content);
 
 			$view = new ent_view('app://frontend/template/layouts/email.inc.php');
 

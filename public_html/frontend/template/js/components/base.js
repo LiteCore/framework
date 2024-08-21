@@ -64,3 +64,29 @@ let keepAlive = setInterval(function(){
 		cache: false
 	});
 }, 60e3);
+
+// Detect scroll direction
+let lastScrollTop = 0;
+$(document).on('scroll', function(){
+	var scrollTop = $(this).scrollTop();
+	if (scrollTop > lastScrollTop) {
+		$('body').addClass('scrolling-down');
+	} else {
+		$('body').removeClass('scrolling-down');
+	}
+	lastScrollTop = (scrollTop < 0) ? 0 : scrollTop;
+});
+
+// Scroll Up
+$(window).scroll(function(){
+	if ($(this).scrollTop() > 100) {
+		$('#scroll-up').fadeIn();
+	} else {
+		$('#scroll-up').fadeOut();
+	}
+});
+
+$('#scroll-up').click(function(){
+	$('html, body').animate({scrollTop: 0}, 1000, 'swing');
+	return false;
+});

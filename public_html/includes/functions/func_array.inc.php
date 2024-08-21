@@ -20,7 +20,7 @@
 		return array_filter(array_map($function, $array));
 	}
 
-	// Update an array with values that have keys present in another array. The opposite of array_diff_key. Or complement to array_merge() or array_replace() that doesn't insert new keys.
+	// Update an array with values that have keys present in another array. The opposite of array_diff_key. Or complementary to array_merge() or array_replace() that doesn't insert new keys.
 	function array_update(array $array, array ...$replacements):array {
 		foreach ($replacements as $replacement) {
 			$array = array_replace($array, array_intersect_key($replacement, $array));
@@ -51,13 +51,13 @@
 
 	// Get first value from array without shifting it or moving internal cursor
 	function array_first(array $array):mixed {
-		if (empty($array) || !is_array($array)) return false;
+		if (!is_array($array) || !count($array)) return false;
 		return reset($array) || false;
 	}
 
 	// Get last value from array without shifting it or moving internal cursor
 	function array_last(array $array):mixed {
-		if (empty($array) || !is_array($array)) return false;
+		if (!is_array($array) || !count($array)) return false;
 		return end($array) || false;
 	}
 
@@ -112,8 +112,8 @@
 		});
 	}
 
-	// Turn an array of [foo => [bar => value]] into [foo.bar => value]
-	function array_flatten($array, $delimiter='.', $prefix='') {
+	// Turn a multidimensional array [a => [b => 1]]  into a flattened one dimensional array [a.b => 1]
+	function array_flatten($array, $delimiter='.', $preceding='') {
 
 		$result = [];
 
@@ -121,7 +121,7 @@
 			if (is_array($value)) {
 				$result = $result + array_flatten($value, $delimiter, $key.$delimiter);
 			} else {
-				$result[$prefix.$key] = $value;
+				$result[$preceding.$key] = $value;
 			}
 		}
 

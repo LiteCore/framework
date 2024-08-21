@@ -14,7 +14,7 @@
 			self::$data = &session::$data['administrator'];
 
 			// Login remembered administrator automatically
-			if (empty(self::$data['id']) && !empty($_COOKIE['remember_me']) && !$_POST) {
+			if (!self::$data['id'] && !empty($_COOKIE['remember_me']) && !$_POST) {
 
 				try {
 
@@ -165,6 +165,6 @@
 		}
 
 		public static function check_login() {
-			if (!empty(self::$data['id'])) return true;
+			return !empty(self::$data['id']);
 		}
 	}

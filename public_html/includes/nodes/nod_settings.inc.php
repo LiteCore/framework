@@ -36,7 +36,7 @@
 
 						break;
 				}
-	
+
 				self::$_cache[$setting['key']] = $setting['value'];
 			});
 		}

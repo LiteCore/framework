@@ -229,9 +229,9 @@
 
 		public static function set($token, $data) {
 
-			if (!self::$enabled) return;
-
-			if (!$data) return;
+			if (!self::$enabled || !$data) {
+				return;
+			}
 
 			stats::start_watch('cache');
 

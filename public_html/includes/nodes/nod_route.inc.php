@@ -44,21 +44,25 @@
 
 		public static function add($resource, $route) {
 
-			$resource = str_replace('*', self::$request, $resource);
+			if (strpos($resource, ':') === false) {
+				if (!preg_match('#^\w:#', $resource)) {
+					$resource = 'f:'.$resource;
+				}
+			}
 
 			switch (true) {
 
 				case (preg_match('#^b:#', $resource)):
-					$route['endpoint'] = 'backend';
-					break;
+				  $route['endpoint'] = 'backend';
+				  break;
 
 				case (preg_match('#^f:#', $resource)):
-					$route['endpoint'] = 'frontend';
-					break;
+  				$route['endpoint'] = 'frontend';
+  				break;
 
 				default:
-					$route['endpoint'] = 'frontend';
-					break;
+  				$route['endpoint'] = 'frontend';
+  				break;
 			}
 
 			if (!isset($route['patterns'])) {
@@ -87,6 +91,13 @@
 
 					if (preg_match($pattern, self::$request)) {
 
+						// Resolve resource logic
+						if (preg_match('#\*#', $route['resource'])) {
+							$route['resource'] = preg_replace_callback('#^(\w:).*$#', function($matches){
+								return fallback($matches[1], 'f:') . preg_replace('#^'. preg_quote(ltrim(BACKEND_ALIAS . '/', '/'), '#') .'#', '', parse_url(self::$request, PHP_URL_PATH));
+							}, $route['resource']);
+						}
+
 						// Resolve controller logic
 						if (is_string($route['controller'])) {
 							$route['controller'] = preg_replace($pattern, $route['controller'], self::$request);
@@ -106,12 +117,12 @@
 
 		public static function process() {
 
-			if (empty(self::$selected)) {
+			if (!self::$selected) {
 				self::identify();
 			}
 
 			// Forward to rewritten URL (if necessary)
-			if (!empty(self::$selected)) {
+			if (self::$selected) {
 
 				$requested_url = document::link($_SERVER['REQUEST_URI']);
 				$rewritten_url = document::ilink(self::$selected['resource'], $_GET);
@@ -341,7 +352,7 @@
 				return $link;
 			}
 
-			if (empty($language_code)) {
+			if (!$language_code) {
 				$language_code = language::$selected['code'];
 			}
 

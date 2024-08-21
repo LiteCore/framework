@@ -44,6 +44,10 @@
 			// Determine last modified date
 			$last_modified = null;
 
+			if (($self_last_modified = filemtime(__FILE__)) > $last_modified) {
+				$last_modified = $self_last_modified;
+			}
+
 			if (($folder_last_modified = filemtime(FS_DIR_STORAGE .'addons/')) > $last_modified) {
 				$last_modified = $folder_last_modified;
 			}
@@ -211,11 +215,14 @@
 
 					if (!$found) {
 						switch ($operation['onerror']) {
+
 							case 'abort':
 								trigger_error("Modification \"$vmod[name]\" failed during operation #$i in $original_file: Search not found [ABORTED]", E_USER_WARNING);
 								continue 3;
+
 							case 'ignore':
 								continue 2;
+
 							case 'warning':
 							default:
 								trigger_error("Modification \"$vmod[name]\" failed during operation #$i in $original_file: Search not found", E_USER_WARNING);
@@ -612,15 +619,15 @@
 								break;
 
 							case 'top':
-								$find = '#^#s';
+								$find = '#^(\<\?php\R)?#';
 								$indexes = '';
-								$insert = addcslashes($insert, '\\$').'$0';
+								$insert = '$1'.addcslashes($insert, '\\$');
 								break;
 
 							case 'bottom':
-								$find = '#$#s';
+								$find = '#(\R*?\?\>)?\z#';
 								$indexes = '';
-								$insert = '$0'.addcslashes($insert, '\\$');
+								$insert = addcslashes($insert, '\\$').'$1';
 								break;
 
 							case 'replace':

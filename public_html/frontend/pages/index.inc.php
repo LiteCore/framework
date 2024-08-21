@@ -64,7 +64,7 @@
 		</button>
 	</div>
 
-	<nav id="code-menu" class="navbar-collapse collapse">
+	<nav class="navbar-collapse collapse">
 
 		<ul class="nav navbar-nav">
 			<li>
@@ -72,7 +72,9 @@
 			</li>
 
 			<li class="dropdown">
-				<a href="#" data-toggle="dropdown" class="dropdown-toggle">Dropdown <b class="caret"></b></a>
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+					Dropdown <b class="caret"></b>
+				</a>
 				<ul class="dropdown-menu">
 					<li><a href="#">Item 1</a></li>
 					<li><a href="#">Item 2</a></li>

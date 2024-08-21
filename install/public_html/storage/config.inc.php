@@ -27,7 +27,6 @@
 	define('DB_PASSWORD', '');
 	define('DB_DATABASE', '');
 	define('DB_TABLE_PREFIX', 'lc_');
-	define('DB_CONNECTION_CHARSET', 'utf8mb4');
 
 	######################################################################
 	## System ############################################################
@@ -75,9 +74,19 @@
 	// Output Compression
 	ini_set('zlib.output_compression', 1);
 
-######################################################################
-## Application #######################################################
-######################################################################
+	######################################################################
+	## Application #######################################################
+	######################################################################
 
 	// Ability to disable vMods
 	define('VMOD_DISABLED', false);
+
+	// Session Platform ID
+  define('SESSION_UNIQUE_ID', 'intranet');
+
+	// Password Encryption Salt
+  define('PASSWORD_SALT', '459u09jfgosdmvrointr90293gmvldsbnviodfnhwqpomfrhg03');
+
+	// BitBucket
+  define('BITBUCKET_REPOSITORY_UUID', '{9c4f5356-0980-43b4-bb50-4ada9bd8bd68}');
+  define('BITBUCKET_REPOSITORY_BRANCH', 'dev');
