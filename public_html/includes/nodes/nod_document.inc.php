@@ -207,7 +207,8 @@
 				$output = preg_replace('#</body>#is', addcslashes($javascript . '</body>', '\\$'), $output, 1);
 			}
 
-			// Define some resources for preloading
+/*
+			// Preload some resources (Not always a good idea)
 			if (preg_match_all('#<(link|script)[^>]+>#', $output, $matches)) {
 
 				$preloads = [];
@@ -234,6 +235,7 @@
 					header('Link: <'.$link.'>; rel=preload; as='.$type, false);
 				}
 			}
+*/
 
 			// Remove HTML comments
 			$output = preg_replace_callback('#(<html[^>]*>)(.*)(</html>)#is', function($matches) {
@@ -455,7 +457,6 @@
 				$webpath = preg_replace('#^('. preg_quote(DOCUMENT_ROOT, '#') .')#', '', str_replace('\\', '/', $resource));
 			}
 
-			//return self::link($webpath, ['_' => filemtime($resource)]);
 			return self::link($webpath, is_file($resource) ? ['_' => filemtime($resource)] : []);
 		}
 

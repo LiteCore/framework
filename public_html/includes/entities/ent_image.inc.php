@@ -384,7 +384,7 @@
 							case 'FIT_USE_WHITESPACING':
 								return $this->_image->thumbnailImage($max_width, $max_height, true, true);
 
-							case 'fit_only_bigger_use_whitespacing':
+							case 'FIT_ONLY_BIGGER_USE_WHITESPACING':
 								if ($this->width <= $max_width && $this->height <= $max_height) {
 									$_newimage = new Imagick();
 									$_newimage->newImage($max_width, $max_height, 'rgba('.$this->_whitespace[0].','.$this->_whitespace[1].','.$this->_whitespace[2].',0)');

@@ -70,7 +70,7 @@
 			}
 
 			self::$_routes[] = [
-				'resource' => preg_replace('#^\w:#', '', $resource),
+				'resource' => $resource,
 				'patterns' => fallback($route['patterns'], ''),
 				'endpoint' => fallback($route['endpoint'], 'frontend'),
 				'controller' => fallback($route['controller']),
@@ -404,7 +404,7 @@
 			} else {
 				$use_rewrite = false;
 			}
-		
+
 			// Set language to URL
 			switch (language::$languages[$language_code]['url_type']) {
 

@@ -140,7 +140,8 @@ textarea.form-input {
 }
 
 .dropdown .form-select + .dropdown-menu {
-	> .active {
+	.option:has(input[type="checkbox"]:checked)
+	.option:has(input[type="radio"]:checked) {
 		font-weight: bold;
 	}
 }

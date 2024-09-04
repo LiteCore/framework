@@ -29,7 +29,7 @@
 			selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
 		}
 
-		let $parent = selector !== '#' ? $(document).find(selector) : null
+		var $parent = selector !== '#' ? $(document).find(selector) : null
 
 		return $parent && $parent.length ? $parent : $this.parent()
 	}
@@ -50,7 +50,6 @@
 
 			if (e.isDefaultPrevented()) return
 
-			$this.attr('aria-expanded', 'false')
 			$parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
 		})
 	}
@@ -79,9 +78,7 @@
 
 			if (e.isDefaultPrevented()) return
 
-			$this
-				.trigger('focus')
-				.attr('aria-expanded', 'true')
+			$this.trigger('focus')
 
 			$parent
 				.toggleClass('open')
@@ -123,7 +120,6 @@
 		$items.eq(index).trigger('focus')
 	}
 
-
 		// DROPDOWN PLUGIN DEFINITION
 		// ==========================
 
@@ -142,7 +138,6 @@
 	$.fn.dropdown             = Plugin
 	$.fn.dropdown.Constructor = Dropdown
 
-
 		// DROPDOWN NO CONFLICT
 		// ====================
 
@@ -150,7 +145,6 @@
 		$.fn.dropdown = old
 		return this
 	}
-
 
 		// APPLY TO STANDARD DROPDOWN ELEMENTS
 		// ===================================

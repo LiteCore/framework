@@ -200,7 +200,7 @@
 			return [
 				'id' => $page['id'],
 				'title' => $page['title'],
-				'link' => document::ilink('information', ['page_id' => $page['id']]),
+				'link' => document::ilink('page', ['page_id' => $page['id']]),
 			];
 		});
       ]]></insert>
@@ -219,7 +219,7 @@
 					<section class="information col-xs-6 col-sm-3">
 						<h3 class="title"><?php echo language::translate('title_information', 'Information'); ?></h3>
 						<ul class="list-unstyled">
-							<?php foreach ($pages as $page) echo '<li><a href="'. htmlspecialchars($page['link']) .'">'. $page['title'] .'</a></li>' . PHP_EOL; ?>
+							<?php foreach ($pages as $page) echo '<li><a href="'. functions::escape_attr($page['link']) .'">'. $page['title'] .'</a></li>' . PHP_EOL; ?>
 						</ul>
 					</section>
 

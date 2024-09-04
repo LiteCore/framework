@@ -171,7 +171,9 @@
 
 	function file_relative_path($target, $base = FS_DIR_APP) {
 
-		if ($base === null) $base = getcwd();
+		if ($base === null) {
+			$base = getcwd();
+		}
 
 		$base = explode('/', rtrim(str_replace('\\', '/', file_realpath($base)), '/'));
 		$target = explode('/', rtrim(str_replace('\\', '/', file_realpath($target)), '/'));
