@@ -16,9 +16,9 @@ What you need:
 
 Here is what you do:
 
-1. Connect to your web host via FTP using your favourite FTP software.
+1. Connect to your web host via FTP using your favorite FTP software.
 
-2. Transfer the contents of the folder public_html/ in this archive (yes the contents inside the folder - not the folder itself). Transfer it to your website root directory. Using subdirectories is supported but not recommended.
+2. Transfer the contents of the folder `public_html/` in this archive (yes the contents inside the folder - not the folder itself). Transfer it to your website root directory. Using subdirectories is supported but not recommended.
 
 		Example:
 
@@ -30,13 +30,11 @@ Here is what you do:
 
 Paths are machine specific. Talk to your web host if you are uncertain where this folder is.
 
-3. Create a new MySQL database and import structure.sql and data.sql using your favourite MySQL manager e.g. phpMyAdmin.
+3. Create a new MySQL database and import `install/structure.sql` and then `install/data.sql` using your favorite MySQL manager, e.g. phpMyAdmin.
 
-4. Go to phpMyAdmin and import the files install/structure.sql and then install/data.sql into your database.
+4. Copy the configuration file `install/public_html/storage/config.inc.php` to your `storage/` folder and insert your MySQL credentials.
 
-5. Copy the configuration file install/public_html/storage/config.inc.php to your storage/ folder and insert your MySQL credentials.
-
-If everything went well LiteCore should load without errors.
+If everything went well, LiteCore should load without errors.
 
 
 ## Support
