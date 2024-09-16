@@ -34,7 +34,7 @@
 		"node": ">=19"
 	},
 	"scripts": {
-		"archive": "git archive --format=zip --output latest.zip master",
+		"archive": "git archive --format=zip --output latest.zip",
 		"build": "grunt build",
 		"less": "grunt less",
 		"phplint": "grunt phplint",
