@@ -42,27 +42,30 @@
 
 		public static function render() {
 
-			// Page parse time
-			$page_parse_time = microtime(true) - SCRIPT_TIMESTAMP_START;
+			if (class_exists('administrator', false) && !empty(administrator::$data['id'])) {
 
-			$output = implode(PHP_EOL, [
-				'<!--',
-				'  - Cache Enabled: '. (cache::$enabled ? 'Yes' : 'No'),
-				'  - Memory Peak: ' . number_format(memory_get_peak_usage(true) / 1e6, 2, '.', ' ') . ' MB / '. ini_get('memory_limit'),
-				'  - Included Files: ' . count(get_included_files()),
-				'  - Page Load: ' . number_format($page_parse_time * 1000, 0, '.', ' ') . ' ms',
-				'    - Before Content: ' . number_format(self::$data['before_content'] * 1000, 0, '.', ' ') . ' ms',
-				'    - Content Capturing: ' . number_format(self::$data['content_capture'] * 1000, 0, '.', ' ') . ' ms',
-				'    - After Content: ' . number_format(self::$data['after_content'] * 1000, 0, '.', ' ') . ' ms',
-				'    - Rendering: ' . number_format(self::$data['rendering'] * 1000, 0, '.', ' ') . ' ms',
-				'  - Database Queries: ' . number_format(database::$stats['queries'], 0, '.', ' '),
-				'  - Database Duration: ' . number_format(database::$stats['duration'] * 1000, 0, '.', ' ') . ' ms',
-				'  - Network Requests: ' . number_format(http_client::$stats['requests'], 0, '.', ' '),
-				'  - Network Duration: ' . number_format(http_client::$stats['duration'] * 1000, 0, '.', ' ') . ' ms',
-				'  - vMod: ' . number_format(vmod::$time_elapsed * 1000, 0, '.', ' ') . ' ms',
-				'-->',
-			]);
+				// Page parse time
+				$page_parse_time = microtime(true) - SCRIPT_TIMESTAMP_START;
 
-			return $output;
+				$output = implode(PHP_EOL, [
+					'<!--',
+					'  - Cache Enabled: '. (cache::$enabled ? 'Yes' : 'No'),
+					'  - Memory Peak: ' . number_format(memory_get_peak_usage(true) / 1e6, 2, '.', ' ') . ' MB / '. ini_get('memory_limit'),
+					'  - Included Files: ' . count(get_included_files()),
+					'  - Page Load: ' . number_format($page_parse_time * 1000, 0, '.', ' ') . ' ms',
+					'    - Before Content: ' . number_format(self::$data['before_content'] * 1000, 0, '.', ' ') . ' ms',
+					'    - Content Capturing: ' . number_format(self::$data['content_capture'] * 1000, 0, '.', ' ') . ' ms',
+					'    - After Content: ' . number_format(self::$data['after_content'] * 1000, 0, '.', ' ') . ' ms',
+					'    - Rendering: ' . number_format(self::$data['rendering'] * 1000, 0, '.', ' ') . ' ms',
+					'  - Database Queries: ' . number_format(database::$stats['queries'], 0, '.', ' '),
+					'  - Database Duration: ' . number_format(database::$stats['duration'] * 1000, 0, '.', ' ') . ' ms',
+					'  - Network Requests: ' . number_format(http_client::$stats['requests'], 0, '.', ' '),
+					'  - Network Duration: ' . number_format(http_client::$stats['duration'] * 1000, 0, '.', ' ') . ' ms',
+					'  - vMod: ' . number_format(vmod::$time_elapsed * 1000, 0, '.', ' ') . ' ms',
+					'-->',
+				]);
+
+				return $output;
+			}
 		}
 	}

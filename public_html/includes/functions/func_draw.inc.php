@@ -62,6 +62,7 @@
 			case 'ok':          return draw_fonticon('fa-check', 'style="color: #8c4;"');
 			case 'on':          return draw_fonticon('fa-circle', 'style="color: #8c4;"');
 			case 'off':         return draw_fonticon('fa-circle', 'style="color: #f64;"');
+			case 'secure':      return draw_fonticon('fa-lock');
 			case 'semi-off':    return draw_fonticon('fa-circle', 'style="color: #ded90f;"');
 			case 'save':        return draw_fonticon('fa-floppy-o');
 			case 'send':        return draw_fonticon('fa-paper-plane');

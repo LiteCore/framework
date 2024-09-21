@@ -1,3 +1,60 @@
+
+// Stylesheet Loader
+$.loadStylesheet = function(url, options) {
+
+	options = $.extend(options || {}, {
+		rel: 'stylesheet',
+		href: url,
+		cache: true
+	});
+
+	$('<link>', options).appendTo('head');
+}
+
+// JavaScript Loader
+$.loadScript = function(url, options) {
+
+	options = $.extend(options || {}, {
+		method: 'GET',
+		dataType: 'script',
+		cache: true
+	});
+
+	return jQuery.ajax(url, options);
+};
+
+// Escape HTML
+function escapeHTML(string) {
+	let entityMap = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'/': '&#x2F;'
+	};
+	return String(string).replace(/[&<>"'\/]/g, function (s) {
+		return entityMap[s];
+	});
+};
+
+// Money Formatting
+Number.prototype.toMoney = function(use_html = false) {
+	var n = this,
+		c = _env.session.currency.decimals,
+		d = _env.session.language.decimal_point,
+		t = _env.session.language.thousands_separator,
+		p = _env.session.currency.prefix,
+		x = _env.session.currency.suffix,
+		u = _env.session.currency.code,
+		s = n < 0 ? '-' : '',
+		i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + '',
+		f = n - i,
+		j = (j = i.length) > 3 ? j % 3 : 0;
+
+	return s + p + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + (c ? d + Math.abs(f).toFixed(c).slice(2) : '') + x;
+}
+
 // Keep-alive
 let keepAlive = setInterval(function(){
 	$.get({
@@ -32,6 +89,20 @@ $('#scroll-up').click(function(){
 	return false;
 });
 
+// Toggle Buttons (data-toggle="buttons")
+
+$('body').on('click', '[data-toggle="buttons"] :checkbox', function(){
+	if ($(this).is(':checked')) {
+		$(this).closest('.btn').addClass('active');
+	} else {
+		$(this).closest('.btn').removeClass('active');
+	}
+});
+
+$('body').on('click', '[data-toggle="buttons"] :radio', function(){
+	$(this).closest('.btn').addClass('active').siblings().removeClass('active');
+});
+
 
 /* ========================================================================
 * Bootstrap: carousel.js v3.4.1
@@ -47,7 +118,7 @@ $('#scroll-up').click(function(){
 		// CAROUSEL CLASS DEFINITION
 		// =========================
 
-	var Carousel = function (element, options) {
+	let Carousel = function (element, options) {
 		this.$element    = $(element)
 		this.$indicators = this.$element.find('.carousel-indicators')
 		this.options     = options
@@ -104,18 +175,18 @@ $('#scroll-up').click(function(){
 	}
 
 	Carousel.prototype.getItemForDirection = function (direction, active) {
-		var activeIndex = this.getItemIndex(active)
-		var willWrap = (direction == 'prev' && activeIndex === 0)
+		let activeIndex = this.getItemIndex(active)
+		let willWrap = (direction == 'prev' && activeIndex === 0)
 								|| (direction == 'next' && activeIndex == (this.$items.length - 1))
 		if (willWrap && !this.options.wrap) return active
-		var delta = direction == 'prev' ? -1 : 1
-		var itemIndex = (activeIndex + delta) % this.$items.length
+		let delta = direction == 'prev' ? -1 : 1
+		let itemIndex = (activeIndex + delta) % this.$items.length
 		return this.$items.eq(itemIndex)
 	}
 
 	Carousel.prototype.to = function (pos) {
-		var that        = this
-		var activeIndex = this.getItemIndex(this.$active = this.$element.find('.item.active'))
+		let that        = this
+		let activeIndex = this.getItemIndex(this.$active = this.$element.find('.item.active'))
 
 		if (pos > (this.$items.length - 1) || pos < 0) return
 
@@ -149,16 +220,16 @@ $('#scroll-up').click(function(){
 	}
 
 	Carousel.prototype.slide = function (type, next) {
-		var $active   = this.$element.find('.item.active')
-		var $next     = next || this.getItemForDirection(type, $active)
-		var isCycling = this.interval
-		var direction = type == 'next' ? 'left' : 'right'
-		var that      = this
+		let $active   = this.$element.find('.item.active')
+		let $next     = next || this.getItemForDirection(type, $active)
+		let isCycling = this.interval
+		let direction = type == 'next' ? 'left' : 'right'
+		let that      = this
 
 		if ($next.hasClass('active')) return (this.sliding = false)
 
-		var relatedTarget = $next[0]
-		var slideEvent = $.Event('slide.bs.carousel', {
+		let relatedTarget = $next[0]
+		let slideEvent = $.Event('slide.bs.carousel', {
 			relatedTarget: relatedTarget,
 			direction: direction
 		})
@@ -171,11 +242,11 @@ $('#scroll-up').click(function(){
 
 		if (this.$indicators.length) {
 			this.$indicators.find('.active').removeClass('active')
-			var $nextIndicator = $(this.$indicators.children()[this.getItemIndex($next)])
+			let $nextIndicator = $(this.$indicators.children()[this.getItemIndex($next)])
 			$nextIndicator && $nextIndicator.addClass('active')
 		}
 
-		var slidEvent = $.Event('slid.bs.carousel', { relatedTarget: relatedTarget, direction: direction }) // yes, "slid"
+		let slidEvent = $.Event('slid.bs.carousel', { relatedTarget: relatedTarget, direction: direction }) // yes, "slid"
 		if ($.support.transition && this.$element.hasClass('slide')) {
 			$next.addClass(type)
 			if (typeof $next === 'object' && $next.length) {
@@ -205,16 +276,15 @@ $('#scroll-up').click(function(){
 		return this
 	}
 
-
 		// CAROUSEL PLUGIN DEFINITION
 		// ==========================
 
 	function Plugin(option) {
 		return this.each(function () {
-			var $this   = $(this)
-			var data    = $this.data('bs.carousel')
-			var options = $.extend({}, Carousel.DEFAULTS, $this.data(), typeof option == 'object' && option)
-			var action  = typeof option == 'string' ? option : options.slide
+			let $this   = $(this)
+			let data    = $this.data('bs.carousel')
+			let options = $.extend({}, Carousel.DEFAULTS, $this.data(), typeof option == 'object' && option)
+			let action  = typeof option == 'string' ? option : options.slide
 
 			if (!data) $this.data('bs.carousel', (data = new Carousel(this, options)))
 			if (typeof option == 'number') data.to(option)
@@ -223,11 +293,10 @@ $('#scroll-up').click(function(){
 		})
 	}
 
-	var old = $.fn.carousel
+	let old = $.fn.carousel
 
 	$.fn.carousel             = Plugin
 	$.fn.carousel.Constructor = Carousel
-
 
 		// CAROUSEL NO CONFLICT
 		// ====================
@@ -236,7 +305,6 @@ $('#scroll-up').click(function(){
 		$.fn.carousel = old
 		return this
 	}
-
 
 		// CAROUSEL DATA-API
 		// =================
@@ -251,6 +319,7 @@ $('#scroll-up').click(function(){
 
 		var options = $.extend({}, $target.data(), $this.data())
 		var slideIndex = $this.attr('data-slide-to')
+
 		if (slideIndex) options.interval = false
 
 		Plugin.call($target, options)
@@ -268,12 +337,13 @@ $('#scroll-up').click(function(){
 
 	$(window).on('load', function () {
 		$('[data-ride="carousel"]').each(function () {
-			var $carousel = $(this)
+			let $carousel = $(this)
 			Plugin.call($carousel, $carousel.data())
 		})
 	})
 
 }(jQuery);
+
 
 /* ========================================================================
 * Bootstrap: collapse.js v3.4.1
@@ -488,12 +558,12 @@ $('#scroll-up').click(function(){
 
 
 /* ========================================================================
-* Bootstrap: dropdown.js v3.4.1
-* https://getbootstrap.com/docs/3.4/javascript/#dropdowns
-* ========================================================================
-* Copyright 2011-2019 Twitter, Inc.
-* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-* ======================================================================== */
+ * Bootstrap: dropdown.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2019 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
 
 +function ($) {
 	'use strict';
@@ -501,16 +571,16 @@ $('#scroll-up').click(function(){
 		// DROPDOWN CLASS DEFINITION
 		// =========================
 
-	var backdrop = '.dropdown-backdrop'
-	var toggle   = '[data-toggle="dropdown"]'
-	var Dropdown = function (element) {
+	let backdrop = '.dropdown-backdrop'
+	let toggle   = '[data-toggle="dropdown"]'
+	let Dropdown = function (element) {
 		$(element).on('click.bs.dropdown', this.toggle)
 	}
 
 	Dropdown.VERSION = '3.4.1'
 
 	function getParent($this) {
-		var selector = $this.attr('data-target')
+		let selector = $this.attr('data-target')
 
 		if (!selector) {
 			selector = $this.attr('href')
@@ -526,9 +596,9 @@ $('#scroll-up').click(function(){
 		if (e && e.which === 3) return
 		$(backdrop).remove()
 		$(toggle).each(function () {
-			var $this         = $(this)
-			var $parent       = getParent($this)
-			var relatedTarget = { relatedTarget: this }
+			let $this         = $(this)
+			let $parent       = getParent($this)
+			let relatedTarget = { relatedTarget: this }
 
 			if (!$parent.hasClass('open')) return
 
@@ -538,18 +608,17 @@ $('#scroll-up').click(function(){
 
 			if (e.isDefaultPrevented()) return
 
-			$this.attr('aria-expanded', 'false')
 			$parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
 		})
 	}
 
 	Dropdown.prototype.toggle = function (e) {
-		var $this = $(this)
+		let $this = $(this)
 
 		if ($this.is('.disabled, :disabled')) return
 
-		var $parent  = getParent($this)
-		var isActive = $parent.hasClass('open')
+		let $parent  = getParent($this)
+		let isActive = $parent.hasClass('open')
 
 		clearMenus()
 
@@ -562,14 +631,12 @@ $('#scroll-up').click(function(){
 					.on('click', clearMenus)
 			}
 
-			var relatedTarget = { relatedTarget: this }
+			let relatedTarget = { relatedTarget: this }
 			$parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
 
 			if (e.isDefaultPrevented()) return
 
-			$this
-				.trigger('focus')
-				.attr('aria-expanded', 'true')
+			$this.trigger('focus')
 
 			$parent
 				.toggleClass('open')
@@ -582,27 +649,27 @@ $('#scroll-up').click(function(){
 	Dropdown.prototype.keydown = function (e) {
 		if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
 
-		var $this = $(this)
+		let $this = $(this)
 
 		e.preventDefault()
 		e.stopPropagation()
 
 		if ($this.is('.disabled, :disabled')) return
 
-		var $parent  = getParent($this)
-		var isActive = $parent.hasClass('open')
+		let $parent  = getParent($this)
+		let isActive = $parent.hasClass('open')
 
 		if (!isActive && e.which != 27 || isActive && e.which == 27) {
 			if (e.which == 27) $parent.find(toggle).trigger('focus')
 			return $this.trigger('click')
 		}
 
-		var desc = ' li:not(.disabled):visible a'
-		var $items = $parent.find('.dropdown-menu' + desc)
+		let desc = ' li:not(.disabled):visible a'
+		let $items = $parent.find('.dropdown-menu' + desc)
 
 		if (!$items.length) return
 
-		var index = $items.index(e.target)
+		let index = $items.index(e.target)
 
 		if (e.which == 38 && index > 0)                 index--         // up
 		if (e.which == 40 && index < $items.length - 1) index++         // down
@@ -611,25 +678,23 @@ $('#scroll-up').click(function(){
 		$items.eq(index).trigger('focus')
 	}
 
-
 		// DROPDOWN PLUGIN DEFINITION
 		// ==========================
 
 	function Plugin(option) {
 		return this.each(function () {
-			var $this = $(this)
-			var data  = $this.data('bs.dropdown')
+			let $this = $(this)
+			let data  = $this.data('bs.dropdown')
 
 			if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
 			if (typeof option == 'string') data[option].call($this)
 		})
 	}
 
-	var old = $.fn.dropdown
+	let old = $.fn.dropdown
 
 	$.fn.dropdown             = Plugin
 	$.fn.dropdown.Constructor = Dropdown
-
 
 		// DROPDOWN NO CONFLICT
 		// ====================
@@ -638,7 +703,6 @@ $('#scroll-up').click(function(){
 		$.fn.dropdown = old
 		return this
 	}
-
 
 		// APPLY TO STANDARD DROPDOWN ELEMENTS
 		// ===================================
@@ -654,35 +718,6 @@ $('#scroll-up').click(function(){
 
 // Form required asterix
 $(':input[required]').closest('.form-group').addClass('required');
-
-
-// Bootstrap Compatible (data-toggle="buttons")
-$('body').on('click', '[data-toggle="buttons"] input[type="checkbox"]', function(){
-	if ($(this).is(':checked')) {
-		$(this).closest('.btn').addClass('active');
-	} else {
-		$(this).closest('.btn').removeClass('active');
-	}
-});
-
-$('body').on('click', '[data-toggle="buttons"] input[type="radio"]', function(){
-	$(this).closest('.btn').addClass('active').siblings().removeClass('active');
-});
-
-// Data-Table Toggle Checkboxes
-$('body').on('click', '.data-table *[data-toggle="checkbox-toggle"]', function() {
-	$(this).closest('.data-table').find('tbody :checkbox').each(function() {
-		$(this).prop('checked', !$(this).prop('checked'));
-	});
-	return false;
-});
-
-$('.data-table tbody tr').click(function(e) {
-	if ($(e.target).is(':input')) return;
-	if ($(e.target).is('a, a *')) return;
-	if ($(e.target).is('th')) return;
-	$(this).find('input:checkbox').trigger('click');
-});
 
 // Password Strength
 $('form').on('input', 'input[type="password"][data-toggle="password-strength"]', function(){
@@ -736,6 +771,21 @@ $('.offcanvas [data-toggle="dismiss"]').click(function(e){
 	$('.offcanvas').removeClass('show');
 	$('[data-toggle="offcanvas"]').removeClass('toggled');
 	$('body').removeClass('has-offcanvas');
+});
+
+// Data-Table Toggle Checkboxes
+$('body').on('click', '.data-table *[data-toggle="checkbox-toggle"]', function() {
+	$(this).closest('.data-table').find('tbody :checkbox').each(function() {
+		$(this).prop('checked', !$(this).prop('checked'));
+	});
+	return false;
+});
+
+$('.data-table tbody tr').click(function(e) {
+	if ($(e.target).is(':input')) return;
+	if ($(e.target).is('a, a *')) return;
+	if ($(e.target).is('th')) return;
+	$(this).find('input:checkbox').trigger('click');
 });
 
 

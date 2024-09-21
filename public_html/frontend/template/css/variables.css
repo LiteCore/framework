@@ -1,3 +1,4 @@
+/* Media Breakpoints */
 /* Fonts */
 @font-face {
   font-family: 'Asap';
@@ -150,19 +151,19 @@
   --copyright-background-color: #e2e2e7;
   --copyright-text-color: var(--default-text-color);
 }
-@media (min-width: 768px) {
+@media (min-width: 576px) {
   :root {
     --gutter-x: 1rem;
     --gutter-y: 1rem;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   :root {
     --gutter-x: 1.5rem;
     --gutter-y: 1.5rem;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 992px) {
   :root {
     --gutter-x: 2rem;
     --gutter-y: 2rem;
