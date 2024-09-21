@@ -121,12 +121,6 @@
 
 				<ul class="navbar-nav">
 
-					<li class="nav-item">
-						<a class="nav-link" href="<?php echo document::href_ilink(''); ?>">
-							<?php echo functions::draw_fonticon('fa-home hidden-xs hidden-sm'); ?> <span class="hidden-md hidden-lg hidden-xl hidden-xxl"><?php echo language::translate('title_home', 'Home'); ?></span>
-						</a>
-					</li>
-
 					<?php if ($left) { ?>
 					<?php foreach ($left as $item) echo $draw_menu_item($item); ?>
 					<?php } ?>
