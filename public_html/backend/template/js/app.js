@@ -4,12 +4,11 @@ $.loadStylesheet = function(url, options) {
 
 	options = $.extend(options || {}, {
 		rel: 'stylesheet',
-		href: url
-		//onload: callback,
-		//onerror: fallback
+		href: url,
+		cache: true
 	});
 
-	$('<link/>', options).appendTo('head');
+	$('<link>', options).appendTo('head');
 }
 
 // JavaScript Loader
@@ -27,15 +26,15 @@ $.loadScript = function(url, options) {
 // Escape HTML
 function escapeHTML(string) {
 	let entityMap = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#39;',
-			'/': '&#x2F;'
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'/': '&#x2F;'
 	};
 	return String(string).replace(/[&<>"'\/]/g, function (s) {
-			return entityMap[s];
+		return entityMap[s];
 	});
 };
 
@@ -54,21 +53,6 @@ Number.prototype.toMoney = function(use_html = false) {
 		j = (j = i.length) > 3 ? j % 3 : 0;
 
 	return s + p + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + (c ? d + Math.abs(f).toFixed(c).slice(2) : '') + x;
-}
-
-// Money Formatting (HTML)
-Number.prototype.toMoneyHTML = function(currency_code) {
-	var n = this,
-	c = _env.session.currency.decimals,
-	d = _env.session.language.decimal_point,
-	t = _env.session.language.thousands_separator,
-	p = _env.session.currency.prefix,
-	x = _env.session.currency.suffix,
-	s = n < 0 ? '-' : '',
-	i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + '',
-	f = n - i,
-	j = (j = i.length) > 3 ? j % 3 : 0;
-
 }
 
 // Keep-alive
@@ -443,57 +427,6 @@ $('#search input[name="query"]').on({
 	}
 });
 
-// Tabs (data-toggle="tab")
-+function($) {
-	'use strict';
-	$.fn.Tabs = function(){
-		this.each(function(){
-
-			let self = this;
-
-			this.$element = $(this);
-
-			this.$element.find('[data-toggle="tab"]').each(function(){
-				let $link = $(this);
-
-				$link.on('select', function(){
-					self.$element.find('.active').removeClass('active');
-
-					if ($link.hasClass('nav-link')) {
-						$link.addClass('active');
-					}
-
-					$link.closest('.nav-item').addClass('active');
-
-					$($link.attr('href')).show().siblings().hide();
-				});
-
-				$link.on('click', function(e) {
-					e.preventDefault();
-					history.replaceState(null, null, this.hash);
-					$link.trigger('select');
-				});
-			});
-
-			if (!this.$element.find('.active').length) {
-				this.$element.find('[data-toggle="tab"]').first().select();
-			} else {
-				this.$element.find('[data-toggle="tab"].active').select();
-			}
-		});
-	}
-
-	$('.nav-tabs').Tabs();
-
-	if (document.location.hash && document.location.hash.match(/^#tab-/)) {
-		$('[data-toggle="tab"][href="' + document.location.hash +'"]').trigger('select');
-	}
-
-	$(document).on('ajaxcomplete', function(){
-		$('.nav-tabs').Tabs();
-	});
-}(jQuery);
-
 // Data-Table Toggle Checkboxes
 $('body').on('click', '.data-table *[data-toggle="checkbox-toggle"], .data-table .checkbox-toggle', function() {
 	$(this).closest('.data-table').find('tbody td:first-child :checkbox').each(function() {
@@ -575,3 +508,54 @@ $('.table-sortable thead th[data-sort]').click(function(){
 
 	window.location.search = $.param(params);
 });
+
+// Tabs (data-toggle="tab")
++function($) {
+	'use strict';
+	$.fn.Tabs = function(){
+		this.each(function(){
+
+			let self = this;
+
+			this.$element = $(this);
+
+			this.$element.find('[data-toggle="tab"]').each(function(){
+				let $link = $(this);
+
+				$link.on('select', function(){
+					self.$element.find('.active').removeClass('active');
+
+					if ($link.hasClass('nav-link')) {
+						$link.addClass('active');
+					}
+
+					$link.closest('.nav-item').addClass('active');
+
+					$($link.attr('href')).show().siblings().hide();
+				});
+
+				$link.on('click', function(e) {
+					e.preventDefault();
+					history.replaceState(null, null, this.hash);
+					$link.trigger('select');
+				});
+			});
+
+			if (!this.$element.find('.active').length) {
+				this.$element.find('[data-toggle="tab"]').first().select();
+			} else {
+				this.$element.find('[data-toggle="tab"].active').select();
+			}
+		});
+	}
+
+	$('.nav-tabs').Tabs();
+
+	if (document.location.hash && document.location.hash.match(/^#tab-/)) {
+		$('[data-toggle="tab"][href="' + document.location.hash +'"]').trigger('select');
+	}
+
+	$(document).on('ajaxcomplete', function(){
+		$('.nav-tabs').Tabs();
+	});
+}(jQuery);

@@ -10,7 +10,6 @@
 			'right' => [],
 		];
 
-
 		//$site_navigation->snippets['left'][] = [
 		//	'id' => 'home',
 		//	'icon' => '',
@@ -21,12 +20,21 @@
 		//];
 
 		$site_navigation->snippets['left'][] = [
+			'id' => 'css-framework',
+			'icon' => '',
+			'name' => 'CSS',
+			'link' => document::ilink('css'),
+			'badge' => '',
+			'priority' => 1,
+		];
+
+		$site_navigation->snippets['left'][] = [
 			'id' => 'printables',
 			'icon' => '',
 			'name' => 'Printables',
 			'link' => document::ilink('printables'),
 			'badge' => '',
-			'priority' => 1,
+			'priority' => 2,
 		];
 
 		//$site_navigation->snippets['left'][] = [
@@ -66,23 +74,23 @@
 		if (!empty($item['subitems'])) {
 			return implode(PHP_EOL, [
 				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
-				'	<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">',
+				'  <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">',
 				'		'. $item['name'],
 				!empty($item['badge']) ? '   <div class="badge">'. $item['badge'] .'</div>' : '',
-				'	</a>',
-				'	<ul class="dropdown-menu">',
-				'		'. implode(PHP_EOL, array_map($draw_menu_item, $item['subitems'], [$indent+1], [true])),
-				'	</ul>',
+				'  </a>',
+				'  <ul class="dropdown-menu">',
+				'    '. implode(PHP_EOL, array_map($draw_menu_item, $item['subitems'], [$indent+1], [true])),
+				'  </ul>',
 				'</li>',
 			]);
 		}
 
 		return implode(PHP_EOL, [
 			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
-			'	<a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
-			'		'. $item['name'],
-			!empty($item['badge']) ? '   <div class="badge">'. $item['badge'] .'</div>' : '',
-			'	</a>',
+			'  <a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
+			'    '. $item['name'],
+			!empty($item['badge']) ? '    <div class="badge">'. $item['badge'] .'</div>' : '',
+			'  </a>',
 			'</li>',
 		]);
 	};
@@ -110,7 +118,7 @@
 			</div>
 
 			<div class="offcanvas-body">
-				<?php if ($left) { ?>
+
 				<ul class="navbar-nav">
 
 					<li class="nav-item">
@@ -119,9 +127,10 @@
 						</a>
 					</li>
 
+					<?php if ($left) { ?>
 					<?php foreach ($left as $item) echo $draw_menu_item($item); ?>
+					<?php } ?>
 				</ul>
-				<?php } ?>
 
 				<?php if ($right) { ?>
 				<ul class="navbar-nav">

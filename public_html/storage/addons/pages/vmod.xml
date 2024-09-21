@@ -68,6 +68,7 @@
 			"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
 			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
 			where status
+			and parent_id = 0
 			order by p.priority, pi.title;"
 		)->each(function($page) use ($site_navigation) {
 
@@ -90,8 +91,8 @@
 				'name' => $page['title'],
 				'link' => document::ilink('page', ['page_id' => $page['id']]),
 				'subitems' => $subitems,
+				'priority' => $page['priority'],
 			];
-
 		});
       ]]></insert>
     </operation>

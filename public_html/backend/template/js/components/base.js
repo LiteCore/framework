@@ -4,10 +4,8 @@ $.loadStylesheet = function(url, options) {
 
 	options = $.extend(options || {}, {
 		rel: 'stylesheet',
-		href: url
+		href: url,
 		cache: true
-		//onload: callback,
-		//onerror: fallback
 	});
 
 	$('<link>', options).appendTo('head');
@@ -28,15 +26,15 @@ $.loadScript = function(url, options) {
 // Escape HTML
 function escapeHTML(string) {
 	let entityMap = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#39;',
-			'/': '&#x2F;'
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'/': '&#x2F;'
 	};
 	return String(string).replace(/[&<>"'\/]/g, function (s) {
-			return entityMap[s];
+		return entityMap[s];
 	});
 };
 
