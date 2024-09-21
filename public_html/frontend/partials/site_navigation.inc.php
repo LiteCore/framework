@@ -10,6 +10,7 @@
 			'right' => [],
 		];
 
+
 		//$site_navigation->snippets['left'][] = [
 		//	'id' => 'home',
 		//	'icon' => '',
@@ -18,6 +19,15 @@
 		//	'badge' => '',
 		//	'priority' => -1,
 		//];
+
+		$site_navigation->snippets['left'][] = [
+			'id' => 'printables',
+			'icon' => '',
+			'name' => 'Printables',
+			'link' => document::ilink('printables'),
+			'badge' => '',
+			'priority' => 1,
+		];
 
 		//$site_navigation->snippets['left'][] = [
 		//	'id' => '',
