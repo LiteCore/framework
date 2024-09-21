@@ -28,9 +28,9 @@
 		//];
 
 		$site_navigation->snippets['right'][] = [
-			'id' => 'contact-us',
-			'name' => language::translate('title_contact_us', 'Contact Us'),
-			'link' => document::ilink('contact_us'),
+			'id' => 'contact',
+			'name' => language::translate('title_contact', 'Contact'),
+			'link' => document::ilink('contact'),
 			'priority' => 99,
 		];
 
