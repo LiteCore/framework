@@ -2,19 +2,18 @@
 
 	class document {
 
-		public static $layout = 'default';
-
-		public static $title = [];
+		public static $content = [];
 		public static $description = '';
 		public static $head_tags = [];
-		public static $style = [];
-		public static $content = [];
 		public static $foot_tags = [];
 		public static $javascript = [];
-		public static $snippets = [];
-		public static $settings = [];
 		public static $jsenv = [];
+		public static $layout = 'default';
 		public static $schema = [];
+		public static $settings = [];
+		public static $snippets = [];
+		public static $style = [];
+		public static $title = [];
 
 		public static function init() {
 
@@ -142,14 +141,14 @@
 			// Extract styling
 			$output = preg_replace_callback('#(<html[^>]*>)(.*)(</html>)#is', function($matches) use (&$stylesheets, &$styles, &$javascripts, &$javascript) {
 
-				// Extract stylesheets
+				// Extract external stylesheets
 				$stylesheets = [];
 
 				$matches[2] = preg_replace_callback('#<link([^>]*rel="stylesheet"[^>]*)>\R*#is', function($match) use (&$stylesheets) {
 					 $stylesheets[] = trim($match[0]);
 				}, $matches[2]);
 
-				// Extract inline styling
+				// Extract internal styling
 				$styles = [];
 
 				$matches[2] = preg_replace_callback('#<style[^>]*>(.+?)</style>\R*#is', function($match) use (&$styles) {
@@ -162,14 +161,14 @@
 			// Extract javascripts
 			$output = preg_replace_callback('#(<body[^>]*>)(.*)(</body>)#is', function($matches) use (&$javascripts, &$javascript) {
 
-				// Extract javascript resources
+				// Extract external scripts
 				$javascripts = [];
 
 				$matches[2] = preg_replace_callback('#\R?<script([^>]+src="[^"]+"[^>]*)></script>\R*#is', function($match) use (&$javascripts) {
 					$javascripts[] = trim($match[0]);
 				}, $matches[2]);
 
-				// Extract inline scripts
+				// Extract internal scripts
 				$javascript = [];
 
 				$matches[2] = preg_replace_callback('#<script[^>]*(?!src="[^"]+")[^>]*>(.+?)</script>\R*#is', function($match) use (&$javascript) {
@@ -179,16 +178,16 @@
 				return $matches[1] . $matches[2] . $matches[3];
 			}, $output);
 
-			// Reinsert extracted stylesheets
+			// Reinsert external stylesheets
 			if (!empty($stylesheets)) {
 				$stylesheets = implode(PHP_EOL, $stylesheets) . PHP_EOL;
 				$output = preg_replace('#</head>#', addcslashes($stylesheets . '</head>', '\\$'), $output, 1);
 			}
 
-			// Reinsert inline styles
+			// Reinsert internal styles
 			if (!empty($styles)) {
 
-				// Minify Inline CSS
+				// Minify internal CSS
 				$search_replace = [
 					'#/\*(?:.(?!/)|[^\*](?=/)|(?<!\*)/)*\*/#s' => '', // Remove comments
 					'#([a-zA-Z0-9 \#=",-:()\[\]]+\{\s*\}\s*)#' => '', // Remove empty selectors
@@ -200,7 +199,7 @@
 
 				$styles = implode(PHP_EOL, [
 					'<style>',
-					 //'<!--/*--><![CDATA[/*><!--*/', // Do we still need bypassing in 2023?
+					 //'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing in 2024?
 					 preg_replace(array_keys($search_replace), array_values($search_replace), implode(PHP_EOL . PHP_EOL, $styles)),
 					 //'/*]]>*/-->',
 					 '</style>',
@@ -209,17 +208,17 @@
 				$output = preg_replace('#</head>#', addcslashes($styles . '</head>', '\\$'), $output, 1);
 			}
 
-			// Reinsert javascript resources
+			// Reinsert external javascripts
 			if (!empty($javascripts)) {
 				$javascripts = implode(PHP_EOL, $javascripts) . PHP_EOL;
 				$output = preg_replace('#</body>#is', addcslashes($javascripts .'</body>', '\\$'), $output, 1);
 			}
 
-			// Reinsert inline javascripts
+			// Reinsert internal javascript
 			if (!empty($javascript)) {
 				$javascript = implode(PHP_EOL, [
 					'<script>',
-					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from bypassing in 2024?
+					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing in 2024?
 					implode(PHP_EOL . PHP_EOL, $javascript),
 					//'/*]]>*/-->',
 					'</script>',
@@ -229,7 +228,7 @@
 			}
 
 /*
-			// Preload some resources (Not always a good idea)
+			// Preload static resources (Generally not a good idea)
 			if (preg_match_all('#<(link|script)[^>]+>#', $output, $matches)) {
 
 				$preloads = [];
@@ -331,7 +330,7 @@
 				]);
 			}
 
-			// Prepare javascript
+			// Prepare internal javascript
 			if (!empty(self::$javascript)) {
 				$_page->snippets['foot_tags'][] = implode(PHP_EOL, [
 					'<script>',
@@ -385,8 +384,7 @@
 			}
 
 			self::$head_tags[$key] = implode(PHP_EOL, array_map(function($url){
-				if (!$url) return;
-				return '<link rel="stylesheet" href="'. self::href_rlink($url) .'">';
+				if ($url) return '<link rel="stylesheet" href="'. self::href_rlink($url) .'">';
 			}, $urls));
 		}
 
@@ -397,8 +395,7 @@
 			}
 
 			self::$foot_tags[$key] = implode(PHP_EOL, array_map(function($url){
-				if (!$url) return;
-				return '<script src="'. self::href_rlink($url) .'"></script>';
+				if ($url) return '<script src="'. self::href_rlink($url) .'"></script>';
 			}, $urls));
 		}
 
