@@ -14,8 +14,29 @@
 		public static $snippets = [];
 		public static $settings = [];
 		public static $jsenv = [];
+		public static $schema = [];
 
 		public static function init() {
+
+			// Set schema
+			self::$schema['website'] = [
+				'@context' => 'https://schema.org/',
+				'@type' => 'Website',
+				'name' => settings::get('site_name'),
+				'url' => self::ilink(''),
+				'countryOfOrigin' => settings::get('site_country_code'),
+			];
+
+			self::$schema['organization'] = [
+				'@context' => 'https://schema.org/',
+				'@type' => 'Organization',
+				'name' => settings::get('site_name'),
+				'url' => self::ilink(''),
+				'logo' => self::rlink(FS_DIR_STORAGE . 'images/logotype.png'),
+				'email' => settings::get('site_email'),
+				'availableLanguage' => array_column(language::$languages, 'name'),
+			];
+
 			event::register('before_capture', [__CLASS__, 'before_capture']);
 			event::register('after_capture', [__CLASS__, 'after_capture']);
 		}
@@ -292,7 +313,16 @@
 				$_page->snippets['head_tags'][] = '<meta name="description" content="'. functions::escape_attr(self::$description) .'">';
 			}
 
-			// Prepare styles
+			// Prepare JSON Schema
+			if (!empty(self::$schema)) {
+				$_page->snippets['head_tags']['schema_json'] = implode(PHP_EOL, [
+					'<script type="application/ld+json">',
+					json_encode(array_values(self::$schema), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+					'</script>',
+				]);
+			}
+
+			// Prepare internal styles
 			if (!empty(self::$style)) {
 				$_page->snippets['head_tags'][] = implode(PHP_EOL, [
 					'<style>',
