@@ -170,7 +170,7 @@
 					'Content-Transfer-Encoding' => '8bit',
 					'Content-Language' => $this->data['language_code'],
 				],
-				'body' => (string)$view,
+				'body' => wordwrap((string)$view, 70, "\r\n"),
 			];
 
 			return $this;

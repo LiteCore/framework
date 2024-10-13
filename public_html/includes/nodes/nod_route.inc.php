@@ -29,9 +29,9 @@
 
 		######################################################################
 
-		public static function load($glob_pattern) {
+		public static function load($pattern) {
 
-			foreach (functions::file_search($glob_pattern) as $file) {
+			foreach (functions::file_search($pattern) as $file) {
 
 				$routes = include $file;
 				if (!$routes) continue;

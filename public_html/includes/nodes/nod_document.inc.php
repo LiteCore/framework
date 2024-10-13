@@ -55,7 +55,7 @@
 				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
 				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
 				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
-				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="255x255">',
+				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
 			]);
 			self::$head_tags['manifest'] = '<link rel="manifest" href="'. self::href_ilink('manifest.json') .'">'; // No namespace as relative to endpoint
 			self::$head_tags['fontawesome'] = '<link rel="stylesheet" href="'. self::href_rlink('app://assets/fontawesome/font-awesome.min.css') .'">';
@@ -255,11 +255,11 @@
 			stats::start_watch('rendering');
 
 			switch (route::$selected['endpoint']) {
-			 
+
 				case 'backend':
 				$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
 					break;
-					
+
 				default:
 				$_page = new ent_view('app://frontend/template/layouts/'.self::$layout.'.inc.php');
 					break;
