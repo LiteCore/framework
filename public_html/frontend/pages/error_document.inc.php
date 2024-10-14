@@ -1,5 +1,11 @@
 <?php
 
+	/*!
+	 * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+	 *
+	 *   ~/frontend/template/pages/error_document.inc.php
+	 */
+
 	document::$layout = 'blank';
 
 	if (!empty($_GET['code'])) {
@@ -12,6 +18,9 @@
 	}
 
 	$_page = new ent_view('app://frontend/template/pages/error_document.inc.php');
+
+	// Place your snippets here
+	// ...
 
 	switch (http_response_code()) {
 
@@ -49,8 +58,13 @@
 
 	$_page->snippets['status_code'] = http_response_code();
 
-	//echo $_page;
-	extract($_page->snippets);
+	if (is_file($_page->view)) {
+		echo $_page->render();
+		return;
+	} else {
+		extract($_page->snippets);
+	}
+
 ?>
 <style>
 #box-error-document .code {

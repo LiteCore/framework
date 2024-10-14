@@ -1,5 +1,11 @@
 <?php
 
+	/*!
+	 * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+	 *
+	 *   ~/frontend/template/pages/css.inc.php
+	 */
+
 	document::$title = [language::translate('index:head_title', ''), settings::get('site_name')];
 	document::$description = language::translate('index:meta_description', '');
 	document::$head_tags['canonical'] = '<link rel="canonical" href="'. document::href_ilink('') .'">';
@@ -9,8 +15,17 @@
 		'<meta property="og:image" content="'. document::href_rlink('storage://images/logotype.png') .'">',
 	]);
 
-	//$_page = new ent_view('app://frontend/template/pages/index.inc.php');
-	//echo $_page;
+	$_page = new ent_view('app://frontend/template/pages/css.inc.php');
+
+	// Place your snippets here
+	// ...
+
+	if (is_file($_page->view)) {
+		echo $_page->render();
+		return;
+	} else {
+		extract($_page->snippets);
+	}
 
 ?>
 <style>

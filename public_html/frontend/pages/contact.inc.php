@@ -1,8 +1,15 @@
 <?php
-	document::$title[] = language::translate('contact:head_title', 'Contact Us');
+
+	/*!
+	 * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+	 *
+	 *   ~/frontend/template/pages/contact.inc.php
+	 */
+
+	document::$title[] = language::translate('contact:head_title', 'Contact');
 	document::$description = language::translate('contact:meta_description', '');
 
-	breadcrumbs::add(language::translate('title_contact_us', 'Contact Us'));
+	breadcrumbs::add(language::translate('title_contact', 'Contact'));
 
 	if (!empty($_POST['send'])) {
 
@@ -64,8 +71,17 @@
 	}
 
 	$_page = new ent_view('app://frontend/template/pages/contact.inc.php');
-	//echo $_page->render();
-	extract($_page->snippets);
+
+	// Place your snippets here
+	// ...
+
+	if (is_file($_page->view)) {
+		echo $_page->render();
+		return;
+	} else {
+		extract($_page->snippets);
+	}
+
 ?>
 <main id="main" class="container">
 
@@ -76,7 +92,7 @@
 				<div class="card-body">
 					{{notices}}
 
-					<h1><?php echo language::translate('title_contact_us', 'Contact Us'); ?></h1>
+					<h1><?php echo language::translate('title_contact', 'Contact'); ?></h1>
 
 					<?php echo functions::form_begin('contact_form', 'post'); ?>
 

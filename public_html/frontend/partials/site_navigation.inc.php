@@ -1,16 +1,22 @@
 <?php
 
-	$site_navigation = new ent_view('app://frontend/template/partials/site_navigation.inc.php');
+	/*!
+	 * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+	 *
+	 *   ~/frontend/template/partials/site_navigation.inc.php
+	 */
+
+	$_partial = new ent_view('app://frontend/template/partials/site_navigation.inc.php');
 
 	$site_navigation_cache_token = cache::token('site_navigation', ['language']);
-	if (!$site_navigation->snippets = cache::get($site_navigation_cache_token)) {
+	if (!$_partial->snippets = cache::get($site_navigation_cache_token)) {
 
-		$site_navigation->snippets = [
+		$_partial->snippets = [
 			'left' => [],
 			'right' => [],
 		];
 
-		//$site_navigation->snippets['left'][] = [
+		//$_partial->snippets['left'][] = [
 		//	'id' => 'home',
 		//	'icon' => '',
 		//	'name' => functions::draw_fonticon('fa-home'),
@@ -19,7 +25,7 @@
 		//	'priority' => -1,
 		//];
 
-		$site_navigation->snippets['left'][] = [
+		$_partial->snippets['left'][] = [
 			'id' => 'css-framework',
 			'icon' => '',
 			'name' => 'CSS',
@@ -28,7 +34,7 @@
 			'priority' => 1,
 		];
 
-		$site_navigation->snippets['left'][] = [
+		$_partial->snippets['left'][] = [
 			'id' => 'printables',
 			'icon' => '',
 			'name' => 'Printables',
@@ -37,7 +43,7 @@
 			'priority' => 2,
 		];
 
-		//$site_navigation->snippets['left'][] = [
+		//$_partial->snippets['left'][] = [
 		//	'id' => '',
 		//	'name' => 'Dropdown',
 		//	'link' => '#',
@@ -45,7 +51,7 @@
 		//	'subitems' => [],  <-- Put items in here
 		//];
 
-		$site_navigation->snippets['right'][] = [
+		$_partial->snippets['right'][] = [
 			'id' => 'contact',
 			'name' => language::translate('title_contact', 'Contact'),
 			'link' => document::ilink('contact'),
@@ -60,14 +66,18 @@
 			return ($a['priority'] < $b['priority']) ? -1 : 1;
 		};
 
-		uasort($site_navigation->snippets['left'], $sort_items);
-		uasort($site_navigation->snippets['right'], $sort_items);
+		uasort($_partial->snippets['left'], $sort_items);
+		uasort($_partial->snippets['right'], $sort_items);
 
-		cache::set($site_navigation_cache_token, $site_navigation->snippets);
+		cache::set($site_navigation_cache_token, $_partial->snippets);
 	}
 
-	//echo $site_navigation;
-	extract($site_navigation->snippets);
+	if (is_file($_partial->view)) {
+		echo $_partial->render();
+		return;
+	} else {
+		extract($_partial->snippets);
+	}
 
 	$draw_menu_item = function($item, $indent = 0, $is_dropdown_item=false) use (&$draw_menu_item) {
 

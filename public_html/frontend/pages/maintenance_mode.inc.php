@@ -1,10 +1,26 @@
 <?php
+
+	/*!
+	 * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+	 *
+	 *   ~/frontend/template/pages/maintenance_mode.inc.php
+	 */
+
 	document::$layout = 'blank';
 
 	http_response_code(503);
 
-	//$_page = new ent_view('app://frontend/template/pages/maintenance_mode.inc.php');
-	//echo $_page;
+	$_page = new ent_view('app://frontend/template/pages/maintenance_mode.inc.php');
+
+	// Place your snippets here
+	// ...
+
+	if (is_file($_page->view)) {
+		echo $_page->render();
+		return;
+	} else {
+		extract($_page->snippets);
+	}
 
 ?>
 <style>

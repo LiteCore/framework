@@ -1,6 +1,24 @@
 <?php
 
+/*!
+ * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+ *
+ *   ~/frontend/template/partials/site_cookie_notice.inc.php
+ */
+
 	if (!settings::get('cookie_policy')) return;
+
+	$_partial = new ent_view('app://frontend/template/partials/site_cookie_notice.inc.php');
+
+	// Place your snippets here
+	// ...
+
+	if (is_file($_partial->view)) {
+		echo $_partial->render();
+		return;
+	} else {
+		extract($_partial->snippets);
+	}
 
 ?>
 

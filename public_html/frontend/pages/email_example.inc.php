@@ -1,11 +1,29 @@
 <?php
 
+	/*!
+	 * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+	 *
+	 *   ~/frontend/template/pages/email_example.inc.php
+	 */
+
 	administrator::require_login();
 
 	header('X-Robots-Tag: noindex');
 
 	document::$layout = 'email';
 	document::$snippets['language_code'] = language::$selected['code'];
+
+	$_page = new ent_view('app://frontend/template/pages/email_example.inc.php');
+
+	// Place your snippets here
+	// ...
+
+	if (is_file($_page->view)) {
+		echo $_page->render();
+		return;
+	} else {
+		extract($_page->snippets);
+	}
 
 ?>
 <h1>Lorem Ipsum Dolor</h1>

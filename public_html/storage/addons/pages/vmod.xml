@@ -70,7 +70,7 @@
 			where status
 			and parent_id = 0
 			order by p.priority, pi.title;"
-		)->each(function($page) use ($site_navigation) {
+		)->each(function($page) use ($_partial) {
 
 			$subitems = database::query(
 				"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
@@ -86,7 +86,7 @@
 				];
 			});
 
-			$site_navigation->snippets['left'][] = [
+			$_partial->snippets['left'][] = [
 				'id' => 'page-'.$page['id'],
 				'name' => $page['title'],
 				'link' => document::ilink('page', ['page_id' => $page['id']]),
@@ -188,11 +188,11 @@
 
     <operation method="before" type="multiline" onerror="warning">
       <find><![CDATA[
-		$site_footer->snippets['social'] = [
+		$_partial->snippets['social'] = [
       ]]></find>
 
       <insert><![CDATA[
-		$site_footer->snippets['pages'] = database::query(
+		$_partial->snippets['pages'] = database::query(
 			"select p.id, pi.title from ". DB_TABLE_PREFIX ."pages p
 			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
 			where status

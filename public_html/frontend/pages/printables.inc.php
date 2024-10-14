@@ -1,6 +1,24 @@
 <?php
 
+	/*!
+	 * If you would like to maintain visual changes in a separate file, create the following template file for your HTML:
+	 *
+	 *   ~/frontend/template/pages/printables.inc.php
+	 */
+
 	document::$layout = 'printable';
+
+	$_page = new ent_view('app://frontend/template/pages/printables.inc.php');
+
+	// Place your snippets here
+	// ...
+
+	if (is_file($_page->view)) {
+		echo $_page->render();
+		return;
+	} else {
+		extract($_page->snippets);
+	}
 
 ?>
 
