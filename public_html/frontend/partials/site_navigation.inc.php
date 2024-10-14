@@ -43,6 +43,15 @@
 			'priority' => 2,
 		];
 
+		$_partial->snippets['left'][] = [
+			'id' => 'email_example',
+			'icon' => '',
+			'name' => 'Email',
+			'link' => document::ilink('email_example'),
+			'badge' => '',
+			'priority' => 3,
+		];
+
 		//$_partial->snippets['left'][] = [
 		//	'id' => '',
 		//	'name' => 'Dropdown',

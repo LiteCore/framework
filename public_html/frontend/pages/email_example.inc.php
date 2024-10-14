@@ -6,7 +6,7 @@
 	 *   ~/frontend/template/pages/email_example.inc.php
 	 */
 
-	administrator::require_login();
+	//administrator::require_login();
 
 	header('X-Robots-Tag: noindex');
 
