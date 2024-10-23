@@ -140,7 +140,7 @@
 			$timestamp = microtime(true);
 
 			if (!is_file($file)) {
-					// check here if there is a modification creating the file
+				// check here if there is a modification creating the file
 				self::$time_elapsed += microtime(true) - $timestamp;
 				return $file;
 			} else {

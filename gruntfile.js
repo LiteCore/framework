@@ -4,79 +4,17 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 
 		concat: {
-			backend: {
+			application: {
 				//options: {
-				//  stripBanners: true,
-				//  banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-				//    '<%= grunt.template.today("yyyy-mm-dd") %> */',
+				//	stripBanners: true,
+				//	banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+				//		'<%= grunt.template.today("yyyy-mm-dd") %> */',
 				//},
 				files: {
-					'public_html/backend/template/js/app.js': ['public_html/backend/template/js/components/*.js']
-				},
-			},
-			frontend: {
-				files: {
+					'public_html/backend/template/js/app.js': ['public_html/backend/template/js/components/*.js'],
 					'public_html/frontend/template/js/app.js': ['public_html/frontend/template/js/components/*.js']
 				},
-			}
-		},
-
-		less: {
-			variables: {
-				options: {
-					compress: false,
-					sourceMap: false,
-					relativeUrls: true
-				},
-				files: {
-					'public_html/backend/template/css/variables.css'  : 'public_html/backend/template/less/variables.less',
-					'public_html/frontend/template/css/variables.css' : 'public_html/frontend/template/less/variables.less',
-				}
 			},
-
-			backend_minified: {
-				options: {
-					compress: true,
-					sourceMap: true,
-					//sourceMapBasepath: 'public_html/backend/template/less/',
-					sourceMapRootpath: '../less/',
-					sourceMapURL: function(path) { return path.replace(/.*\//, '') + '.map'; },
-					relativeUrls: true
-				},
-				files: {
-					'public_html/backend/template/css/app.min.css'			 : 'public_html/backend/template/less/app.less',
-					'public_html/backend/template/css/framework.min.css' : 'public_html/backend/template/less/framework.less',
-					'public_html/backend/template/css/printable.min.css' : 'public_html/backend/template/less/printable.less'
-				}
-			},
-
-			frontend: {
-				options: {
-					compress: false,
-					sourceMap: false,
-					relativeUrls: true
-				},
-				files: {
-					'public_html/frontend/template/css/app.css'       : 'public_html/frontend/template/less/app.less',
-					'public_html/frontend/template/css/email.css'     : 'public_html/frontend/template/less/email.less',
-					'public_html/frontend/template/css/framework.css' : 'public_html/frontend/template/less/framework.less',
-					'public_html/frontend/template/css/printable.css' : 'public_html/frontend/template/less/printable.less',
-				}
-			},
-
-			frontend_minified: {
-				options: {
-					compress: true,
-					sourceMap: true,
-					relativeUrls: true
-				},
-				files: {
-					'public_html/frontend/template/css/app.min.css'       : 'public_html/frontend/template/less/app.less',
-					'public_html/frontend/template/css/email.min.css'     : 'public_html/frontend/template/less/email.less',
-					'public_html/frontend/template/css/framework.min.css' : 'public_html/frontend/template/less/framework.less',
-					'public_html/frontend/template/css/printable.min.css' : 'public_html/frontend/template/less/printable.less'
-				}
-			}
 		},
 
 		'dart-sass': {
@@ -89,12 +27,60 @@ module.exports = function(grunt) {
 				files: {
 					'public_html/assets/trumbowyg/ui/trumbowyg.min.css': 'public_html/assets/trumbowyg/ui/trumbowyg.scss'
 				}
-			}
+			},
+		},
+
+		less: {
+			variables: {
+				options: {
+					compress: false,
+					sourceMap: false,
+					relativeUrls: true
+				},
+				files: {
+					'public_html/backend/template/css/variables.css': 'public_html/backend/template/less/variables.less',
+					'public_html/frontend/template/css/variables.css': 'public_html/frontend/template/less/variables.less',
+				}
+			},
+
+			application: {
+				options: {
+					compress: true,
+					sourceMap: true,
+					sourceMapRootpath: '../less/',
+					sourceMapURL: function(path) { return path.replace(/.*\//, '') + '.map'; },
+					relativeUrls: true
+				},
+				files: {
+					'public_html/backend/template/css/app.min.css': 'public_html/backend/template/less/app.less',
+					'public_html/backend/template/css/framework.min.css': 'public_html/backend/template/less/framework.less',
+					'public_html/backend/template/css/printable.min.css': 'public_html/backend/template/less/printable.less',
+
+					'public_html/frontend/template/css/app.min.css': 'public_html/frontend/template/less/app.less',
+					'public_html/frontend/template/css/email.min.css': 'public_html/frontend/template/less/email.less',
+					'public_html/frontend/template/css/framework.min.css': 'public_html/frontend/template/less/framework.less',
+					'public_html/frontend/template/css/printable.min.css': 'public_html/frontend/template/less/printable.less'
+				}
+			},
+
+			featherlight: {
+				options: {
+					compress: true,
+					sourceMap: false,
+					//sourceMapBasepath: 'public_html/assets/featherlight/',
+					//sourceMapRootpath: './',
+					//sourceMapURL: function(path) { return path.replace(/.*\//, '') + '.map'; },
+					relativeUrls: true
+				},
+				files: {
+					'public_html/assets/featherlight/featherlight.min.css': 'public_html/assets/featherlight/featherlight.less',
+				}
+			},
 		},
 
 		phplint: {
 			options: {
-				//phpCmd: 'C:/xampp/php82/php.exe', // Defaults to php
+				//phpCmd: 'C:/xampp/php83/php.exe', // Defaults to php
 				limit: 10,
 				stdout: false
 			},
@@ -139,6 +125,14 @@ module.exports = function(grunt) {
 					'public_html/frontend/template/js/app.min.js': ['public_html/frontend/template/js/app.js'],
 				}
 			},
+			featherlight: {
+				options: {
+					sourceMap: false,
+				},
+				files: {
+					'public_html/assets/featherlight/featherlight.min.js': ['public_html/assets/featherlight/featherlight.js'],
+				}
+			},
 		},
 
 		watch: {
@@ -152,8 +146,8 @@ module.exports = function(grunt) {
 			less: {
 				files: [
 					'public_html/assets/featherlight/featherlight.less',
-					'public_html/backend/template/**/*.less',
-					'public_html/frontend/template/**/*.less',
+					'public_html/backend/template/less/*.less',
+					'public_html/frontend/template/less/*.less',
 				],
 				tasks: ['less']
 			},
@@ -161,11 +155,11 @@ module.exports = function(grunt) {
 			javascripts: {
 				files: [
 					'public_html/assets/featherlight/featherlight.js',
-					'public_html/backend/template/**/js/*.js',
-					'public_html/frontend/template/**/js/*.js',
-					'!public_html/frontend/template/**/js/*.min.js',
+					'public_html/backend/template/**/js/components/*.js',
+					'public_html/frontend/template/**/js/components/*.js',
+					'!**/*.min.js',
 				],
-				tasks: ['uglify']
+				tasks: ['concat', 'uglify']
 			},
 
 			sass: {
@@ -186,7 +180,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-text-replace');
 
 	grunt.registerTask('default', ['build']);
-	grunt.registerTask('build', ['replace', 'less', 'dart-sass', 'concat', 'uglify']);
+	grunt.registerTask('build', ['replace', 'less', 'dart-sass', 'concat', 'uglify', 'watch']);
 
 	require('phplint').gruntPlugin(grunt);
 	grunt.registerTask('test', ['phplint']);

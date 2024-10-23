@@ -136,7 +136,7 @@
 			].join(''));
 
 			/* close when click on backdrop/anywhere/null or closebox */
-			self.$instance.on('click.'+self.namespace, function(event) {
+			self.$instance.on('mousedown.'+self.namespace, function(event) {
 				if (event.isDefaultPrevented()) {
 					return;
 				}
@@ -337,8 +337,8 @@
 	};
 
 	$.extend(Featherlight, {
-		id: 0,                                      /* Used to id single featherlight instances */
-		defaults:       Featherlight.prototype,     /* You can access and override all defaults using $.featherlight.defaults, which is just a synonym for $.featherlight.prototype */
+		id: 0,                                /* Used to id single featherlight instances */
+		defaults: Featherlight.prototype,     /* You can access and override all defaults using $.featherlight.defaults, which is just a synonym for $.featherlight.prototype */
 		/* Contains the logic to determine content */
 		contentFilters: {
 

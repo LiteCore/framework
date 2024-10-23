@@ -2,6 +2,7 @@
 
 	class document {
 
+		public static $canonical = '';
 		public static $content = [];
 		public static $description = '';
 		public static $head_tags = [];
@@ -101,7 +102,7 @@
 				'url' => self::ilink('f:'),
 			];
 
-			if (!empty(administrator::$data['id'])) {
+			if (administrator::check_login()) {
 				self::$jsenv['backend'] = [
 					'path' => WS_DIR_APP . BACKEND_ALIAS .'/',
 					'url' => self::ilink('b:'),
@@ -312,6 +313,11 @@
 				$_page->snippets['head_tags'][] = '<meta name="description" content="'. functions::escape_attr(self::$description) .'">';
 			}
 
+			// Add canonical URL
+			if (!empty(self::$canonical)) {
+				$_page->snippets['head_tags'][] = '<link rel="canonical" href="'. functions::escape_attr(self::$canonical) .'">';
+			}
+
 			// Prepare JSON Schema
 			if (!empty(self::$schema)) {
 				$_page->snippets['head_tags']['schema_json'] = implode(PHP_EOL, [
@@ -325,8 +331,8 @@
 			if (!empty(self::$style)) {
 				$_page->snippets['head_tags'][] = implode(PHP_EOL, [
 					'<style>',
-					 implode(PHP_EOL . PHP_EOL, self::$style),
-					 '</style>',
+					implode(PHP_EOL . PHP_EOL, self::$style),
+					'</style>',
 				]);
 			}
 
@@ -334,8 +340,8 @@
 			if (!empty(self::$javascript)) {
 				$_page->snippets['foot_tags'][] = implode(PHP_EOL, [
 					'<script>',
-					 implode(PHP_EOL . PHP_EOL, self::$javascript),
-					 '</script>',
+					implode(PHP_EOL . PHP_EOL, self::$javascript),
+					'</script>',
 				]);
 			}
 

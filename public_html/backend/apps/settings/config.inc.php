@@ -18,11 +18,13 @@
 		"select * from ". DB_TABLE_PREFIX ."settings_groups
 		order by priority, `key`;"
 	)->each(function($group) use (&$app_config) {
+
 		$app_config['menu'][] = [
 			'title' => language::translate('settings_group:title_'.$group['key'], $group['name']),
 			'doc' => $group['key'],
 			'params' => [],
 		];
+
 		$app_config['docs'][$group['key']] = 'settings.inc.php';
 	});
 

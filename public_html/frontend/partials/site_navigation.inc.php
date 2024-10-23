@@ -81,14 +81,7 @@
 		cache::set($site_navigation_cache_token, $_partial->snippets);
 	}
 
-	if (is_file($_partial->view)) {
-		echo $_partial->render();
-		return;
-	} else {
-		extract($_partial->snippets);
-	}
-
-	$draw_menu_item = function($item, $indent = 0, $is_dropdown_item=false) use (&$draw_menu_item) {
+	$_partial->snippets['draw_menu_item'] = function($item, $indent = 0, $is_dropdown_item=false) use (&$draw_menu_item) {
 
 		if (!empty($item['subitems'])) {
 			return implode(PHP_EOL, [
@@ -113,6 +106,9 @@
 			'</li>',
 		]);
 	};
+
+	//echo $_partial->render();
+	extract($_partial->snippets);
 
 ?>
 <header id="header" class="container">

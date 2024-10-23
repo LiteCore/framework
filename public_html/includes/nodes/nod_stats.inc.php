@@ -11,7 +11,7 @@
 
 		public static function after_capture() {
 			if (($page_parse_time = microtime(true) - SCRIPT_TIMESTAMP_START) > 10) {
-				notices::add('warnings', language::translate('text_long_execution_time', 'We apologize for the inconvenience that the server seems temporary overloaded right now.'));
+				//notices::add('warnings', language::translate('text_long_execution_time', 'We apologize for the inconvenience that the server seems temporary overloaded right now.'));
 				error_log('Warning: Long page execution time '. number_format($page_parse_time, 3, '.', ' ') .' s - '. $_SERVER['REQUEST_URI']);
 			}
 		}
@@ -42,7 +42,7 @@
 
 		public static function render() {
 
-			if (class_exists('administrator', false) && !empty(administrator::$data['id'])) {
+			if (class_exists('administrator', false) && administrator::check_login()) {
 
 				// Page parse time
 				$page_parse_time = microtime(true) - SCRIPT_TIMESTAMP_START;

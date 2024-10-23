@@ -60,8 +60,6 @@
 			}
 		}
 
-		######################################################################
-
 		public static function token($keyword, $dependencies=[], $storage='memory', $ttl=900) {
 
 			if (!in_array($storage, ['file', 'memory', 'session'])) {
@@ -353,22 +351,26 @@
 
 			// Clear memory
 			if (function_exists('apcu_delete')) {
+
 				if ($keyword) {
 					$cached_keys = new APCUIterator('#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
 				} else {
 					$cached_keys = new APCUIterator('#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
 				}
+
 				foreach ($cached_keys as $key) {
 					apcu_delete($key);
 				}
 			}
 
 			if (function_exists('apc_delete')) {
+
 				if ($keyword) {
 					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*'. preg_quote($keyword, '#') .'.*#', APC_ITER_KEY);
 				} else {
 					$cached_keys = new APCIterator('user', '#^'. preg_quote($_SERVER['HTTP_HOST'], '#') .':.*#', APC_ITER_KEY);
 				}
+
 				foreach ($cached_keys as $key) {
 					apc_delete($key);
 				}

@@ -1,45 +1,45 @@
 <?php
 
-	function draw_fonticon($class, $parameters=null) {
+	function draw_fonticon($class, $parameters='') {
 
 		switch(true) {
 
 			// Bootstrap Icons
 			case (substr($class, 0, 3) == 'bi-'):
 				document::$head_tags['bootstrap-icons'] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">';
-				return '<i class="bi '. $class .'"'. (!empty($parameters) ? ' ' . $parameters : '') .'></i>';
+				return '<i class="bi '. $class .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
 
 			// Fontawesome 4
 			case (substr($class, 0, 3) == 'fa-'):
 				//document::$head_tags['fontawesome'] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontawesome/4.7.0/css/font-awesome.min.css">'; // Uncomment if removed from lib_document
-				return '<i class="fa '. $class .'"'. (!empty($parameters) ? ' ' . $parameters : '') .'></i>';
+				return '<i class="fa '. $class .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
 
 			// Fontawesome 5
 			case (substr($class, 0, 7) == 'far fa-'):
 			case (substr($class, 0, 7) == 'fab fa-'):
 			case (substr($class, 0, 7) == 'fas fa-'):
 				document::$head_tags['fontawesome5'] = '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">';
-				return '<i class="'. $class .'"'. (!empty($parameters) ? ' ' . $parameters : '') .'></i>';
+				return '<i class="'. $class .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
 
 			// Foundation
 			case (substr($class, 0, 3) == 'fi-'):
 				document::$head_tags['foundation-icons'] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation-icons/latest/foundation-icons.min.css">';
-				return '<i class="'. $class .'"'. (!empty($parameters) ? ' ' . $parameters : '') .'></i>';
+				return '<i class="'. $class .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
 
 			// Glyphicon
 			case (substr($class, 0, 10) == 'glyphicon-'):
 				//document::$head_tags['glyphicon'] = '<link rel="stylesheet" href="'/path/to/glyphicon.min.css">'; // Not embedded in release
-				return '<span class="glyphicon '. $class .'"'. (!empty($parameters) ? ' ' . $parameters : '') .'></span>';
+				return '<span class="glyphicon '. $class .'"'. ($parameters ? ' ' . $parameters : '') .'></span>';
 
 			// Ion Icons
 			case (substr($class, 0, 4) == 'ion-'):
 				document::$head_tags['ionicons'] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/latest/css/ionicons.min.css">';
-				return '<i class="'. $class .'"'. (!empty($parameters) ? ' ' . $parameters : '') .'></i>';
+				return '<i class="'. $class .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
 
 			// Material Design Icons
 			case (substr($class, 0, 4) == 'mdi-'):
 				document::$head_tags['material-design-icons'] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">';
-				return '<i class="mdi '. $class .'"'. (!empty($parameters) ? ' ' . $parameters : '') .'></i>';
+				return '<i class="mdi '. $class .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
 		}
 
 		switch ($class) {

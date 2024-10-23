@@ -63,6 +63,15 @@ let keepAlive = setInterval(function(){
 	});
 }, 60e3);
 
+// Alerts
+$('body').on('click', '.alert .close', function(e){
+	e.preventDefault();
+	$(this).closest('.alert').fadeOut('fast', function(){$(this).remove()});
+});
+
+// Form required asterix
+$(':input[required]').closest('.form-group').addClass('required');
+
 // Detect scroll direction
 let lastScrollTop = 0;
 $(document).on('scroll', function(){

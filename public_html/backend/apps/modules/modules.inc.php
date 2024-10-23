@@ -3,6 +3,7 @@
 	switch (__DOC__) {
 
 		case 'jobs':
+
 			$title = language::translate('title_job_modules', 'Job Modules');
 			$files = functions::file_search('app://includes/modules/jobs/*.inc.php');
 			$mod_class = new mod_jobs();

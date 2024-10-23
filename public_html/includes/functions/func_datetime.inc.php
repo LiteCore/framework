@@ -6,7 +6,6 @@
 
 	function datetime_convert($time, $to_timezone=null, $from_timezone=null) {
 
-
 		if ($from_timezone === null) {
 			$from_timezone = date_default_timezone_get();
 		}
@@ -140,6 +139,8 @@
 		$d = date('m', $timestamp);
 
 		switch (true) {
+
+			case (!$interval): return false;
 
 			case (strcasecmp($interval, '5 min')):       return mktime(date('H'), floor(date('i', $timestamp) /5)  *5, 0, $m, $d, $y);
 			case (strcasecmp($interval, '10 min')):      return mktime(date('H'), floor(date('i', $timestamp) /10) *10, 0, $m, $d, $y);

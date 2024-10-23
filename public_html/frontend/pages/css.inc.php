@@ -651,6 +651,26 @@
 		<input type="text" class="form-input" placeholder="Lorem ipsum dolor...">
 	</div>
 </fieldset>
+
+<div class="form-group">
+	<label>Toggle</label>
+	<?php echo functions::form_toggle('toggle', [['one', 'One'], ['two', 'Two'], ['three', 'Three']], 'one'); ?>
+</div>
+
+<div class="form-group">
+	<label>Toggle</label>
+	<?php echo functions::form_toggle('toggle[]', [['one', 'One'], ['two', 'Two'], ['three', 'Three']], ['one', 'two']); ?>
+</div>
+
+<div class="form-group">
+	<label>Switch</label>
+	<?php echo functions::form_switch('switch', '1'); ?>
+</div>
+
+<div class="form-group">
+	<label>Tags</label>
+	<?php echo functions::form_input_tags('tags[]'); ?>
+</div>
 				</div>
 
 				<div class="col-md-6 code">

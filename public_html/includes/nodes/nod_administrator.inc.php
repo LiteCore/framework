@@ -156,11 +156,19 @@
 		}
 
 		public static function require_login() {
+
 			if (!self::check_login()) {
 				//notices::add('warnings', language::translate('warning_must_login_page', 'You must be logged in to view the page.'));
 				$redirect_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
 				header('Location: ' . document::ilink('b:login', ['redirect_url' => $redirect_url]));
 				exit;
+			}
+
+			if (!empty(session::$data['security_verification'])) {
+				if (!in_array(route::$selected['resource'], ['b:login', 'b:logout', 'b:verify'])) {
+					header('Location: ' . document::ilink('b:verify', ['redirect_url' => $_SERVER['REQUEST_URI']]));
+					exit;
+				}
 			}
 		}
 

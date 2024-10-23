@@ -39,7 +39,7 @@
 
 			$administrator = database::query(
 				"select * from ". DB_TABLE_PREFIX ."administrators
-				". (preg_match('#^[0-9]+$#', $administrator_id) ? "where id = '". (int)$administrator_id ."'" : "") ."
+				". (preg_match('#^[0-9]+$#', $administrator_id) ? "where id = ". (int)$administrator_id : "") ."
 				". (!preg_match('#^[0-9]+$#', $administrator_id) ? "where lower(username) = '". database::input(strtolower($administrator_id)) ."'" : "") ."
 				". (preg_match('#@#', $administrator_id) ? "where lower(email) = '". database::input(strtolower($administrator_id)) ."'" : "") ."
 				limit 1;"
@@ -72,6 +72,7 @@
 			}
 
 			if (!$this->data['id']) {
+
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."administrators
 					(date_created)
@@ -83,11 +84,12 @@
 
 			database::query(
 				"update ". DB_TABLE_PREFIX ."administrators
-				set status = '". (empty($this->data['status']) ? 0 : 1) ."',
+				set status = ". (!empty($this->data['status']) ? 1 : 0) .",
 					username = '". database::input(strtolower($this->data['username'])) ."',
 					email = '". database::input(strtolower($this->data['email'])) ."',
 					apps = '". database::input(json_encode($this->data['apps'], JSON_UNESCAPED_SLASHES)) ."',
 					widgets = '". database::input(json_encode($this->data['widgets'], JSON_UNESCAPED_SLASHES)) ."',
+					two_factor_auth = ". (!empty($this->data['two_factor_auth']) ? 1 : 0) .",
 					date_valid_from = ". (empty($this->data['date_valid_from']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['date_valid_from'])) ."'") .",
 					date_valid_to = ". (empty($this->data['date_valid_to']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['date_valid_to'])) ."'") .",
 					date_updated = '". ($this->data['date_updated'] = date('Y-m-d H:i:s')) ."'

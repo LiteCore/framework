@@ -7,6 +7,7 @@
 		'User-agent: *',
 		'Allow: /',
 		'Disallow: /storage/cache/*',
+		//'Crawl-Delay: 10',
 	];
 
 	// Sitemap

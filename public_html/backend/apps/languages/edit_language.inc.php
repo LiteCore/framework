@@ -34,14 +34,14 @@
 				if (empty($_POST['domain_name'])) {
 					throw new Exception(language::translate('error_must_provide_domain', 'You must provide a domain name'));
 				}
-	
-					if (!empty($language->data['id'])) {
-						if (database::query(
-							"select id from ". DB_TABLE_PREFIX ."languages
-							where domain_name = '". database::input($_POST['domain_name']) ."'
-							and id != ". (int)$language->data['id'] ."
-							limit 1;"
-						)->num_rows) {
+
+				if (!empty($language->data['id'])) {
+					if (database::query(
+						"select id from ". DB_TABLE_PREFIX ."languages
+						where domain_name = '". database::input($_POST['domain_name']) ."'
+						and id != ". (int)$language->data['id'] ."
+						limit 1;"
+					)->num_rows) {
 						throw new Exception(language::translate('error_domain_in_use_by_other_language', 'The domain name is already in use by another domain name.'));
 					}
 				}
@@ -229,25 +229,25 @@
 		'\'' => language::translate('char_single_quote', 'Single quote'),
 	];
 
-// Prefillable Languages
+	// Prefillable Languages
 	if (empty($language->data['id'])) {
 
-	// Get all existing languages
+		// Get all existing languages
 		$existing_languages = database::query(
 			"select code from ". DB_TABLE_PREFIX ."languages;"
 		)->fetch_all('code');
 
-	// Get languages from i18n repository
+		// Get languages from i18n repository
 		$client = new http_client();
 		$result = $client->call('GET', 'https://raw.githubusercontent.com/litecart/i18n/master/languages.csv');
 		$available_languages = functions::csv_decode($result);
 
-	// Filter already added
+		// Filter already added
 		$available_languages = array_filter($available_languages, function($a) use ($existing_languages) {
 			return !in_array($a['code'], $existing_languages);
 		});
 
-	// Sort by code
+		// Sort by code
 		uasort($available_languages, function($a, $b){
 			return ($a['code'] < $b['code']) ? -1 : 1;
 		});
@@ -256,7 +256,7 @@
 
 			$prefillable_language_options = [['', '-- '. language::translate('title_select', 'Select') .' --']];
 
-		// Append to array of options
+			// Append to array of options
 			foreach ($available_languages as $available_language) {
 				$prefillable_language_options[] = [
 					$available_language['code'],

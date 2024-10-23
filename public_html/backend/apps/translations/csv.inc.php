@@ -121,35 +121,35 @@
 								limit 1;"
 							);
 
-						$updated++;
-					}
+							$updated++;
+						}
 
-				} else {
+					} else {
 
-					if (empty($_POST['insert'])) continue;
+						if (empty($_POST['insert'])) continue;
 
-					database::query(
-						"insert into ". DB_TABLE_PREFIX ."translations
-						(code) values ('". database::input($row['code']) ."');"
-					);
+						database::query(
+							"insert into ". DB_TABLE_PREFIX ."translations
+							(code) values ('". database::input($row['code']) ."');"
+						);
 
-					foreach ($language_codes as $language_code) {
+						foreach ($language_codes as $language_code) {
 
-						if (empty($row[$language_code])) continue;
+							if (empty($row[$language_code])) continue;
 
 							if (!in_array($language_code, $installed_language_codes)) continue;
 
-						database::query(
-							"update ". DB_TABLE_PREFIX ."translations
-							set text_". $language_code ." = '". database::input($row[$language_code], true) ."'
-							where code = '". database::input($row['code']) ."'
-							limit 1;"
-						);
+							database::query(
+								"update ". DB_TABLE_PREFIX ."translations
+								set text_". $language_code ." = '". database::input($row[$language_code], true) ."'
+								where code = '". database::input($row['code']) ."'
+								limit 1;"
+							);
 
-						$inserted++;
+							$inserted++;
+						}
 					}
 				}
-			}
 			}
 
 			cache::clear_cache();
@@ -339,7 +339,7 @@
 					<fieldset>
 						<legend><?php echo language::translate('title_export', 'Export'); ?></legend>
 
-						<div class="form-group">
+							<div class="form-group">
 								<?php echo language::translate('title_collections', 'Collections'); ?>
 								<?php echo functions::form_select('collections[]', array_map(function($c) { return [$c['id'], $c['name']]; }, $collections), true); ?>
 							</ul>

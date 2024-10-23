@@ -256,7 +256,9 @@
 					->add_body(
 						wordwrap("This is a list of the last 100 requests made to your website that did not have a destination. Most of these reports usually contain scans and attacks by evil robots. But some URLs may be indexed by search engines requiring a redirect to a proper destination.", 72, "\r\n") . "\r\n\r\n" .
 						PLATFORM_NAME .' '. PLATFORM_VERSION ."\r\n\r\n" .
-						implode("\r\n", $lines)
+						implode("\r\n", array_map($lines, function($line){
+							return wordwrap($line);
+						}))
 					)
 					->send();
 
@@ -292,7 +294,7 @@
 
 		public static function create_link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null, $rewrite=false) {
 
-			if (!$language_code){
+			if (!$language_code) {
 				$language_code = language::$selected['code'];
 			}
 

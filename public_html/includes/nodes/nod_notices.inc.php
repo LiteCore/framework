@@ -61,11 +61,11 @@
 			switch (route::$selected['endpoint']) {
 
 				case 'backend':
-				$view = new ent_view('app://backend/template/partials/notices.inc.php');
+					$view = new ent_view('app://backend/template/partials/notices.inc.php');
 					break;
 
 				default:
-				$view = new ent_view('app://frontend/template/partials/notices.inc.php');
+					$view = new ent_view('app://frontend/template/partials/notices.inc.php');
 					break;
 			}
 

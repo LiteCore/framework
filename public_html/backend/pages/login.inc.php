@@ -2,8 +2,9 @@
 
 	document::$layout = 'blank';
 
+	document::$title[] = language::translate('title_login', 'Login');
 	document::$head_tags[] = '<meta name="viewport" content="width=device-width, initial-scale=1">';
-	
+
 	if (!session_name()) {
 		notices::add('notices', language::translate('error_missing_session_cookie', 'We failed to identify your browser session. Make sure your browser has cookies enabled or try another browser.'));
 	}
@@ -29,7 +30,10 @@
 				where lower(username) = '". database::input(strtolower($_POST['username'])) ."'
 				or lower(email) = '". database::input(strtolower($_POST['username'])) ."'
 				limit 1;"
-			)->fetch();
+			)->fetch(function($administrator){
+				$administrator['known_ips'] = preg_split('#\s*,\s*#', $administrator['known_ips'], -1, PREG_SPLIT_NO_EMPTY);
+				return $administrator;
+			});
 
 			if (!$administrator) {
 				throw new Exception(language::translate('error_administrator_not_found', 'The administrator could not be found in our database'));
@@ -40,11 +44,11 @@
 			}
 
 			if (!empty($administrator['date_valid_from']) && date('Y-m-d H:i:s') < $administrator['date_valid_from']) {
-				throw new Exception(sprintf(language::translate('error_account_is_blocked', 'The account is blocked until %s'), language::strftime(language::$selected['format_datetime'], strtotime($administrator['date_valid_from']))));
+				throw new Exception(sprintf(language::translate('error_account_is_blocked', 'The account is blocked until %s'), language::strftime('datetime', $administrator['date_valid_from'])));
 			}
 
 			if (!empty($administrator['date_valid_to']) && date('Y-m-d H:i:s') > $administrator['date_valid_to']) {
-				throw new Exception(sprintf(language::translate('error_account_expired', 'The account expired %s'), language::strftime(language::$selected['format_datetime'], strtotime($administrator['date_valid_to']))));
+				throw new Exception(sprintf(language::translate('error_account_expired', 'The account expired %s'), language::strftime('datetime', $administrator['date_valid_to'])));
 			}
 
 			if (!password_verify($_POST['password'], $administrator['password_hash'])) {
@@ -82,11 +86,11 @@
 							'%user_agent' => $_SERVER['HTTP_USER_AGENT'],
 						];
 
-						$subject = language::translate('administrator_account_blocked:email_subject', 'Administrator Account Blocked');
+						$subject = language::translate('title_administrator_account_blocked', 'Administrator Account Blocked');
 						$message = strtr(language::translate('administrator_account_blocked:email_body', implode("\r\n", [
-							'Your administrator account %username has been blocked until %expires because of too many invalid attempts.',
+							'Your administrator account %username has been blocked until %expires because of too many invalid login attempts.',
 							'',
-							'Client: %hostname (%ip_address)',
+							'Client: %ip_address (%hostname)',
 							'%user_agent',
 							'',
 							'%site_name',
@@ -115,8 +119,12 @@
 				);
 			}
 
-			if (!empty($administrator['last_hostname']) && $administrator['last_hostname'] != gethostbyaddr($_SERVER['REMOTE_ADDR'])) {
-				notices::add('warnings', strtr(language::translate('warning_account_previously_used_by_another_host', 'Your account was previously used by another location or hostname (%hostname). If this was not you then your login credentials might be compromised.'), ['%hostname' => $administrator['last_hostname']]));
+			if (!empty($administrator['last_ip_address']) && $administrator['last_ip_address'] != $_SERVER['REMOTE_ADDR']) {
+				notices::add('warnings', strtr(language::translate('warning_account_previously_used_by_another_ip', 'Your account was previously used by another IP address %ip_address (%hostname). If this was not you then your login credentials might be compromised.'), [
+					'%username' => $administrator['username'],
+					'%ip_address' => $administrator['last_ip_address'],
+					'%hostname' => $administrator['last_hostname'],
+				]));
 			}
 
 			database::query(
@@ -135,6 +143,49 @@
 
 			session::$data['administrator_security_timestamp'] = time();
 			session::regenerate_id();
+			
+			unset(session::$data['security_verification']);
+
+			if (!in_array($_SERVER['REMOTE_ADDR'], $administrator['known_ips']) && !empty($administrator['two_factor_auth']) && !empty($administrator['email'])) {
+
+				session::$data['security_verification'] = [
+					'code' => mt_rand(100000, 999999),
+					'expires' => strtotime('+15 minutes'),
+					'attempts' => 0,
+				];
+
+				$email = new ent_email();
+				$email->add_recipient($administrator['email'])
+							->set_subject(language::translate('title_verification_code', 'Verification Code'))
+							->add_body(strtr(language::translate('email_verification_code', 'Verification code: %code'), ['%code' => session::$data['security_verification']['code']]))
+							->send();
+
+				notices::add('notices', language::translate('notice_verification_code_sent_via_email', 'A verification code was sent via email'));
+
+				if (!empty($_POST['redirect_url'])) {
+					header('Location: '. document::ilink('verify', ['redirect_url' => $_POST['redirect_url']]));
+				} else {
+					header('Location: '. document::ilink('verify'));
+				}
+
+				exit;
+
+			} else {
+
+				array_unshift($administrator['known_ips'], $_SERVER['REMOTE_ADDR']);
+				$administrator['known_ips'] = array_unique($administrator['known_ips']);
+
+				if (count($administrator['known_ips']) > 5) {
+					array_pop($administrator['known_ips']);
+				}
+
+				database::query(
+					"update ". DB_TABLE_PREFIX ."administrators
+					set known_ips = '". database::input(implode(',', $administrator['known_ips'])) ."'
+					where id = ". (int)$administrator['id'] ."
+					limit 1;"
+				);
+			}
 
 			if (!empty($_POST['remember_me'])) {
 				$checksum = sha1($administrator['username'] . $administrator['password_hash'] . $_SERVER['REMOTE_ADDR'] . ($_SERVER['HTTP_USER_AGENT'] ? $_SERVER['HTTP_USER_AGENT'] : ''));
@@ -160,5 +211,5 @@
 		}
 	}
 
-	$page_login = new ent_view('app://backend/template/pages/login.inc.php');
-	echo $page_login;
+	$_page = new ent_view('app://backend/template/pages/login.inc.php');
+	echo $_page;

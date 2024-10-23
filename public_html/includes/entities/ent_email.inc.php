@@ -404,7 +404,9 @@
 						$recipients[] = $bcc['email'];
 					}
 
-					array_walk($headers, function (&$v, $k) { $v = "$k: $v"; });
+					array_walk($headers, function (&$v, $k) {
+						$v = "$k: $v";
+					});
 
 					$data = implode("\r\n", $headers) . "\r\n\r\n"
 							. $body;
@@ -425,18 +427,14 @@
 
 				// PHP mail() needs a header for BCCs
 				if (!empty($this->data['bccs'])) {
-					$bccs = [];
-					foreach ($this->data['bccs'] as $bcc) {
-						$bccs[] = $this->format_contact($bcc);
-					}
-					$headers['Bcc'] = implode(', ', $bccs);
+					$headers['Bcc'] = implode(', ', array_map(function($recipient){
+						return $this->format_contact($recipient);
+					}, $this->data['bccs']));
 				}
 
-				$recipients = [];
-				foreach ($this->data['recipients'] as $recipient) {
-					$recipients[] = $this->format_contact($recipient);
-				}
-				$recipients = implode(', ', $recipients);
+				$recipients = implode(', ', array_map(function(){
+					return $this->format_contact($recipient);
+				}, $this->data['recipients']));
 
 				$subject = mb_encode_mimeheader($this->data['subject']);
 
@@ -448,7 +446,7 @@
 				}
 			}
 
-			if (!empty($result)) {
+			if ($result) {
 				$this->data['status'] = 'sent';
 				$this->data['date_sent'] = date('Y-m-d H:i:s');
 			} else {
@@ -457,7 +455,7 @@
 
 			$this->save();
 
-			return !empty($result);
+			return $result ? true : false;
 		}
 
 		public function delete() {

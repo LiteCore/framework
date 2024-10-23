@@ -146,47 +146,63 @@ textarea.form-input {
 	}
 }
 
-.form-switch {
-	display: block;
-	input[type="checkbox"] {
-		clip: rect(0,0,0,0);
-		height: 1px;
-		margin: -1px;
-		overflow: hidden;
-		position: absolute;
-		width: 1px;
-	}
-	.switch {
+.form-switch label {
+  position: relative;
+	display: inline-block;
+  background: #ccc;
+  border-radius: 1em;
+  width: 4em;
+  height: 2em;
+  transition: background 0.25s;
+	&::before {
+		content: "";
 		display: inline-block;
-		position: relative;
-		height: .8rem;
-		width: 1.6rem;
-		background: #bcc3ce;
-		background-clip: padding-box;
-		border: .05rem solid #bcc3ce;
-		border-radius: .45rem;
-		cursor: pointer;
-		transition: background .2s, border .2s, box-shadow .2s, color .2s;
-
-		&:before {
-			content: '';
-			display: block;
-			background: #fff;
-			border-radius: 50%;
-			width: .7rem;
-			height: .7rem;
-			position: absolute;
-			left: 0;
-			top: 0;
-			transition: background .2s, border .2s, box-shadow .2s, color .2s, left .2s;
+		background: #fff;
+		border-radius: 50%;
+		width: 1.45em;
+		height: 1.45em;
+		position: absolute;
+		top: .25em;
+		left: .25em;
+		transition: left 0.25s;
+	}
+	&:has(:checked) {
+		background: #2196f3;
+		&::before {
+			left: 2.25em;
 		}
 	}
+}
 
-	input[type="checkbox"]:checked + .switch {
-		background: #254461;
-		border-color: #254461;
-		&:before {
-			left: 11px;
+.form-toggle {
+	display: flex;
+	flex-direction: row;
+	padding: .25em;
+	gap: .25em;
+	background: #d5d5db;
+	color: #fff;
+	border-radius: var(--border-radius);
+
+	label {
+		flex: 1 1 auto;
+		display: inline-block;
+		border-radius: var(--border-radius);
+		padding: var(--input-padding-y) var(--input-padding-x);
+		text-align: center;
+		&:has(:checked) {
+			background: #fff;
+			color: #000;
+		}
+		&:hover:not(:has(:checked)):not(:has(:disabled)) {
+			background: #fff3;
+			cursor: pointer;
+		}
+		&:has(:focus) {
+			outline: 0;
+			border-color: var(--input-border-color-focus);
+		}
+		&:has(:disabled) {
+			opacity: .5;
 		}
 	}
 }
@@ -260,4 +276,41 @@ fieldset[disabled] > :not(legend),
 [data-toggle="buttons"] input[type="checkbox"],
 [data-toggle="buttons"] input[type="radio"] {
 	display: none;
+}
+
+
+input[data-toggle="tags"] + .form-input {
+	.tokens {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		list-style: none;
+		padding: 0;
+		margin: -.5em;
+		cursor: text;
+	}
+	.tag {
+		background: rgba(0, 93, 152, 0.2);
+		padding: 0.25em 0.5em;
+		margin: .25em;
+		border-radius: .25em;
+		cursor: default;
+		.remove {
+			background: rgba(255, 15, 15, 0.4);
+			color: #fff;
+			border-radius: .25em;
+			padding: 0 .25em;
+			cursor: pointer;
+			&:hover {
+				background: rgba(255, 15, 15, 0.6);
+			}
+		}
+	}
+	.input {
+		flex: 1 1 auto;
+		background: transparent;
+		border: none;
+		outline: none;
+		padding: .5em .5em;
+	}
 }

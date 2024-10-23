@@ -42,7 +42,7 @@
 					"select id, code, if(text_". self::$selected['code'] ." != '', text_". self::$selected['code'] .", text_en) as text from ". DB_TABLE_PREFIX ."translations
 					where ". ((isset(route::$request['endpoint']) && route::$request['endpoint'] == 'backend') ? "backend = 1" : "frontend = 1") ."
 					having text != '';"
-				)->each(function($translation) {
+				)->each(function($translation){
 					self::$_cache['translations'][self::$selected['code']][$translation['code']] = $translation['text'];
 				});
 			}
@@ -117,7 +117,7 @@
 			$enabled_languages = [];
 
 			foreach (self::$languages as $language) {
-				if (!empty(administrator::$data['id']) || $language['status'] == 1) {
+				if (administrator::check_login() || $language['status'] == 1) {
 					$enabled_languages[] = $language['code'];
 				}
 			}
@@ -153,23 +153,16 @@
 			}
 
 			// Return language from country (TLD)
-			if (database::query(
-				"select table_name from information_schema.tables
-				where table_schema = '". database::input(DB_DATABASE) ."'
-				and table_name = '". database::input(DB_TABLE_PREFIX .'countries') ."'
-				limit 1;"
-			)->fetch()) {
-				if (preg_match('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
+			if (!preg_replace('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
 
-					$country = database::query(
-						"select * from ". DB_TABLE_PREFIX ."countries
-						where iso_code_2 = '". database::input(strtoupper($matches[1])) ."'
-						limit 1;"
-					)->fetch();
+				$country = database::query(
+					"select * from ". DB_TABLE_PREFIX ."countries
+					where iso_code_2 = '". database::input(strtoupper($matches[1])) ."'
+					limit 1;"
+				)->fetch();
 
-					if (!empty($country['language_code']) && in_array($country['language_code'], $enabled_languages)){
-						return $country['language_code'];
-					}
+				if ($country && in_array($country['language_code'], $enabled_languages)){
+					return $country['language_code'];
 				}
 			}
 
@@ -191,7 +184,7 @@
 			}
 
 			// Return default language
-			if (in_array(settings::get('default_language_code'), $all_languages)){
+			if (in_array(settings::get('default_language_code'), $all_languages)) {
 				return settings::get('default_language_code');
 			}
 
@@ -302,6 +295,22 @@
 			if (!($timestamp instanceof \DateTimeInterface)) {
 				trigger_error('$timestamp argument is neither a valid UNIX timestamp, a valid date-time string or a DateTime object.', E_USER_WARNING);
 				return 'n/a';
+			}
+
+			// Format aliases
+			switch ($format) {
+
+				case 'date':
+					$format = self::$selected['format_date'];
+					break;
+
+				case 'datetime':
+					$format = self::$selected['format_datetime'];
+					break;
+
+				case 'time':
+					$format = self::$selected['format_time'];
+					break;
 			}
 
 			$intl_formats = [

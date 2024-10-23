@@ -322,14 +322,14 @@
 				<legend><?php echo language::translate('text_with_selected', 'With selected'); ?>:</legend>
 
 				<ul class="list-inline">
-					<li><?php echo functions::form_button('delete', language::translate('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(\''. language::translate('text_are_you_sure', 'Are you sure?') .'\')) return false;"', 'delete'); ?></li>
+					<li><?php echo functions::form_button_predefined('delete'); ?></li>
 				</ul>
 			</fieldset>
 		</div>
 
 		<div class="card-action">
 			<?php echo functions::form_button('translator_tool', language::translate('title_translator_tool', 'Translator Tool'), 'button', 'class="btn btn-default translator-tool" data-toggle="lightbox" data-target="#translator-tool" data-width="980px"'); ?>
-			<?php echo functions::form_button('save', language::translate('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
+			<?php echo functions::form_button_predefined('save'); ?>
 		</div>
 
 	<?php echo functions::form_end(); ?>

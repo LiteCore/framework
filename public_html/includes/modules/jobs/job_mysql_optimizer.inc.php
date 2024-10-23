@@ -1,10 +1,10 @@
 <?php
 
 	#[AllowDynamicProperties]
-	class job_mysql_optimizer {
+	class job_mysql_optimizer extends abs_module {
 		public $id = __CLASS__;
 		public $name = 'MySQL Optimizer';
-		public $description = 'Optimize your MySQL databases.';
+		public $description = 'Optimize your MySQL database.';
 		public $author = 'LiteCore Dev Team';
 		public $version = '1.0';
 		public $website = 'https://litecore.dev';

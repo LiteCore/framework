@@ -140,7 +140,7 @@
 
 ## Code Commenting
 
-	Comments should having the same indentation as the code:
+	Comments should have the same indentation as the code:
 
 		// Line describing comment
 		echo 'Hello World!';
