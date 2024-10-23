@@ -12,7 +12,7 @@
 		http_response_code($_GET['code']);
 	}
 
-	if (preg_match('#\.(avif|gif|jpg|png|webp)$#', route::$request)) {
+	if (preg_match('#\.(a?png|avif|gif|jpg|png|svg|webp)$#', route::$request)) {
 		echo file_get_contents('images/no_image.png');
 		exit;
 	}

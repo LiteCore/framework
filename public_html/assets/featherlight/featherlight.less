@@ -26,8 +26,6 @@ body.featherlight-open {
 	/* insures that the ::before pseudo element doesn't force wrap with fixed width content; */
 	white-space: nowrap;
 
-	cursor: pointer;
-
 	z-index: 999;
 
 	animation: featherlight-fadein 100ms linear;
@@ -53,7 +51,7 @@ body.featherlight-open {
 		vertical-align: middle;
 	}
 
-	.featherlight-content {
+	.featherlight-modal {
 		position: relative;
 
 		/* position: centering vertical and horizontal */
@@ -83,14 +81,14 @@ body.featherlight-open {
 
 	.featherlight-close-icon {
 		position: absolute;
-		top: -.75em;
-		right: -.75em;
+		top: .5em;
+		right: .5em;
 		z-index: 9999;
 
 		width: 2em;
 		line-height: 2em;
 
-		background: #c00;
+		background: #c54040;
 		border-radius: @border-radius;
 		border: none;
 		color: #fff;
@@ -101,12 +99,12 @@ body.featherlight-open {
 		font-family: Arial, sans-serif;
 	}
 
-	.featherlight-content > img {
+	.featherlight-modal > img {
 		max-width: 100%;
 		max-height: ~"calc(100vh - 80px)";
 	}
 
-	.featherlight-content > iframe {
+	.featherlight-modal > iframe {
 		width: 100%;
 		height: 100%;
 		border: none;
@@ -123,7 +121,7 @@ body.featherlight-open {
 		animation: featherlight-spin 2s linear infinite;
 		opacity: 0.25;
 	}
-	.featherlight-content {
+	.featherlight-modal {
 		background: none;
 		box-shadow: none;
 	}
@@ -133,15 +131,15 @@ body.featherlight-open {
 .featherlight {
 	 perspective: 2048px;
 
-	.featherlight-content {
-		transition: transform 0.25s linear, filter 0.25s linear;
+	.featherlight-modal {
+		transition: transform 250ms linear, filter 250ms linear;
 		transform: -400px;
 		transform: scale(0.8) rotateY(45deg) translateZ(-400px);
 		transform-style: preserve-3d;
 		filter: blur(@blur-size/2);
 	}
 
-	&.active .featherlight-content {
+	&.active .featherlight-modal {
 		transform: none !important;
 		filter: none !important;
 	}

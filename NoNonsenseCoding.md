@@ -1,7 +1,7 @@
 
 # No Nonsense Coding
 
-No Nonsense Coding is a provocative coding concept that will probably upset many. Used and promoted by T. Almroth - author of LiteCart and the LiteCore framework.
+No Nonsense Coding is a provocative coding concept that probably upsets many. Used and promoted by T. Almroth - author of LiteCart and the LiteCore framework.
 The purpose is to make as much sense as possible with as little effort as possible when writing program code.
 
 
@@ -132,7 +132,7 @@ Better:
 
 ## No fat third party libraries for small features
 
-Looking to cut corners with third party libraries will eventually backfire. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can persist of poor management, contain flaws or security problems. They can be a complete pain when you want to step up PHP versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
+Looking to cut corners with third party libraries will backfire eventually. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can persist of poor management, contain flaws or security problems. They can be a complete pain when you want to step up PHP versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
 
 There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea to do it.
 

@@ -9,7 +9,7 @@
 	document::$title[] = language::translate('contact:head_title', 'Contact');
 	document::$description = language::translate('contact:meta_description', '');
 
-	breadcrumbs::add(language::translate('title_contact', 'Contact'));
+	breadcrumbs::add(language::translate('title_contact', 'Contact'), document::ilink('contact'));
 
 	if (!empty($_POST['send'])) {
 

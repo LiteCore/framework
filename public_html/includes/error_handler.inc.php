@@ -4,7 +4,7 @@
 
 		if (!(error_reporting() & $errno)) return;
 
-		$errfile = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '~/', functions::file_realpath($errfile));
+		$errfile = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', str_replace('\\', '/', $errfile));
 
 		$output = [];
 

@@ -12,13 +12,16 @@
 
 			if ($view) {
 
+				// Absolute path
 				if (preg_match('#^app://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
 					$this->view = $view;
+
+				// Relative path
 				} else {
 					// Fall back to relative path
 					$this->view = 'app://'. route::$selected['endpoint'] .'/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
 				}
-			
+
 				if (!is_file($this->view)) {
 					$this->view = 'app://frontend/template/'. $view;
 				}
@@ -133,8 +136,11 @@
 
 			if ($view) {
 
+				// Absolute path
 				if (preg_match('#^app://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
 					$this->view = $view;
+
+				// Relative path
 				} else {
 					// Fall back to relative path
 					$this->view = 'app://'. route::$selected['endpoint'] .'/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';

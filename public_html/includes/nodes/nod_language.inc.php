@@ -153,7 +153,7 @@
 			}
 
 			// Return language from country (TLD)
-			if (!preg_replace('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
+			if (preg_match('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
 
 				$country = database::query(
 					"select * from ". DB_TABLE_PREFIX ."countries

@@ -2,13 +2,13 @@
 
 ## Code Compliance
 
- - PHP code must comply with minimum PHP 5.6+ E_STRICT.
+ - PHP code must comply with PHP standards no earlier than 5.6+ E_STRICT.
 
  - HTML code must comply with HTML 5.
 
  - Style definitions must be compliant with CSS 3.
 
- - Any use of JavaScript should honor the jQuery framework.
+ - Any use of JavaScript should honour the jQuery framework.
 
 
 ## Character Encoding
@@ -18,7 +18,7 @@
 
 ## PHP File Paths
 
-	ALWAYS use Linux/Unix directory separator slash (/) as it also work on Mac and Windows.
+	ALWAYS use Linux/Unix directory separator slash (/) as it also works on Mac and Windows.
 	Windows backslash (\) does not work on Mac or Linux.
 
 	Incorrect:
@@ -115,15 +115,15 @@
 
 ## Indentation
 
-	Committed code should use an indentation of one tab characters.
-	Indentation will be automatically handled if your editor has support for [.editorconfig](https://editorconfig.org/). If you would like to render a different the tab width this can be set in indent_size = 2.
+	Indentations are made using tabs with one tab character per depth level.
+	You can set the size of a tab character to your preference in the [.editorconfig](https://editorconfig.org/) file.
 
 	Incorrect (using multiple spaces):
 
-		Level 1
-			Level 2
-				Level 3
-					Level 4
+    Level 1
+        Level 2
+            Level 3
+                Level 4
 
 	Correct (using TABs):
 
@@ -145,7 +145,7 @@
 		// Line describing comment
 		echo 'Hello World!';
 
-	Inline sidenotes are made at the end of the line:
+	Inline side notes are made at the end of the line:
 
 		$array = [
 			'foo' => 'bar', // Side note
@@ -213,7 +213,10 @@
 
 		echo '<a href="http://www.site.com">Hello World</a>';
 
-		database::query("select * from Table where id = 'string'");
+		database::query(
+			"select * from `tablename`
+			 where `column` = 'string';"
+		);
 
 		$('input[name="value"]').val();
 
@@ -255,7 +258,7 @@
 
 		$CUSTOMER_ADDRESS // Yelling
 		$custaddr // Weird shortenings
-		$kund_adress // Foreign language
+		$kundadress // Foreign language
 		$customerStreetAddress // Mixed cases
 		$customer['customer_address1'] // Duplicate prefix
 		$customer_shipping_street_address_name // Annoyingly long
@@ -470,12 +473,12 @@
 
 	Incorrect:
 
-		$string = sprintf('Text with %2$s %1$s', $b, $a);
+		$string = sprintf('Text with %1$s %2$s', $a, $b);
 		$string = str_replace(['%a', %b], [$a, $b], 'Text with %a %b');
 
 	Correct:
 
-		$string = strtr('Text with %b %a', [
+		$string = strtr('Text with %a %b', [
 			'%a' => $a,
 			'%b' => $b,
 		]);
@@ -487,7 +490,7 @@
 
 		$query = database::query(
 			"select * from ". DB_TABLE_NAME ."
-			where id = '". (int)$integrer ."'
+			where id = ". (int)$integrer ."
 			". (isset($string) ? "and string = '". database::input($string) ."'" : "") ."
 			limit 1;"
 		);
@@ -518,18 +521,3 @@
 		);
 
 		echo '<input value="<?php echo htmlspecialchars($_POST['variable']); ?>" />
-
-
-## No Sloppy HTML
-
-	No sloppy coding for single HTML tags. We use the strict standard:
-
-	Incorrect:
-
-				<img src="">
-				<br>
-
-	Correct:
-
-				<img src="" />
-				<br />

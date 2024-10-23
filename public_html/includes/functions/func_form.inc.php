@@ -755,7 +755,7 @@
 	function form_select_optgroup($name, $groups=[], $input=true, $parameters='') {
 
 		if (!is_array($groups)) {
-			 $groups = [$groups];
+			$groups = [$groups];
 		}
 
 		$html = '<select class="form-select" name="'. functions::escape_attr($name) .'"'. (preg_match('#\[\]$#', $name) ? ' multiple' : '') . ($parameters ? ' ' . $parameters : '') .'>' . PHP_EOL;

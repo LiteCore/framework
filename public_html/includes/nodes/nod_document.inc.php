@@ -43,6 +43,8 @@
 
 		public static function before_capture() {
 
+			//self::$snippets['nonce'] = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(32/62))), 0, 32);
+
 			header('Content-Security-Policy: frame-ancestors \'self\';'); // Clickjacking Protection
 			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data from own domain
 			header('X-Frame-Options: SAMEORIGIN'); // Clickjacking Protection
@@ -80,7 +82,7 @@
 			]);
 			self::$head_tags['manifest'] = '<link rel="manifest" href="'. self::href_ilink('manifest.json') .'">'; // No namespace as relative to endpoint
 			self::$head_tags['fontawesome'] = '<link rel="stylesheet" href="'. self::href_rlink('app://assets/fontawesome/font-awesome.min.css') .'">';
-			self::$foot_tags['jquery'] = '<script src="'. self::href_rlink('app://assets/jquery/jquery-3.7.1.min.js') .'"></script>';
+			self::$foot_tags['jquery'] = '<script src="'. self::href_rlink('app://assets/jquery/jquery-4.0.0.min.js') .'"></script>';
 
 			// Hreflang
 			if (route::$selected['endpoint'] == 'frontend') {
