@@ -9,7 +9,8 @@
 			if (!empty($id)) {
 				$id = basename($id);
 				$this->load($id);
-			} else {
+			}
+			else {
 				$this->reset();
 			}
 		}
@@ -45,11 +46,11 @@
 
 			if (is_dir($this->data['location'] = 'storage://addons/'. $id .'/')) {
 				$this->data['folder'] = $id;
-
-			} else if (is_dir($this->data['location'] = 'storage://addons/'. $id .'.disabled/')) {
+			}
+			elseif (is_dir($this->data['location'] = 'storage://addons/'. $id .'.disabled/')) {
 				$this->data['folder'] = $id.'.disabled';
-
-			} else {
+			}
+			else {
 				throw new Exception('Invalid vMod ('. $id .')');
 			}
 
@@ -134,14 +135,15 @@
 						'find' => [],
 						'insert' => [],
 						'onerror' => $operation_node->getAttribute('onerror'),
+						'op_note' => $operation_node->getAttribute('op_note'),
 					];
 
 					if ($find_node = $operation_node->getElementsByTagName('find')->item(0)) {
 
 						if (in_array($operation_node->getAttribute('type'), ['inline', 'regex'])) {
 							$find_node->textContent = trim($find_node->textContent);
-
-						} else if (in_array($operation_node->getAttribute('type'), ['multiline', ''])) {
+						}
+						elseif (in_array($operation_node->getAttribute('type'), ['multiline', ''])) {
 							$find_node->textContent = preg_replace('#^(\r\n?|\n)?#s', '', $find_node->textContent); // Trim beginning of CDATA
 							$find_node->textContent = preg_replace('#(\r\n?|\n)[\t ]*$#s', '', $find_node->textContent); // Trim end of CDATA
 						}
@@ -158,8 +160,8 @@
 
 						if (in_array($operation_node->getAttribute('type'), ['inline', 'regex'])) {
 							$insert_node->textContent = trim($insert_node->textContent);
-
-						} else if (in_array($operation_node->getAttribute('type'), ['multiline', ''])) {
+						}
+						elseif (in_array($operation_node->getAttribute('type'), ['multiline', ''])) {
 							$insert_node->textContent = preg_replace('#^(\r\n?|\n)#s', '', $insert_node->textContent); // Trim beginning of CDATA
 							$insert_node->textContent = preg_replace('#(\r\n?|\n)[\t ]*$#s', '', $insert_node->textContent); // Trim end of CDATA
 						}
@@ -192,8 +194,8 @@
 
 			if (empty($this->previous['folder'])) {
 				mkdir($this->data['location']);
-
-			} else if ($this->data['folder'] != $this->previous['folder']) {
+			}
+			elseif ($this->data['folder'] != $this->previous['folder']) {
 				if (!rename($this->previous['location'], $this->data['location'])) {
 					$this->data['location'] = $this->previous['location'];
 					$this->data['folder'] = $this->previous['folder'];
@@ -277,7 +279,7 @@
 				foreach ($file['operations'] as $operation) {
 					$operation_node = $dom->createElement('operation');
 
-					foreach (['method', 'type', 'onerror'] as $attribute_name) {
+					foreach (['method', 'type', 'onerror', 'op_note'] as $attribute_name) {
 						if (!empty($operation[$attribute_name])) {
 							$attribute = $dom->createAttribute($attribute_name);
 							$attribute->value = $operation[$attribute_name];
@@ -287,7 +289,6 @@
 
 					// Find
 					if (!in_array($operation['method'], ['top', 'bottom', 'all'])) {
-
 						$find_node = $dom->createElement('find');
 
 						foreach (['offset-before', 'offset-after', 'index'] as $attribute_name) {
@@ -300,7 +301,8 @@
 
 						if (in_array($operation['type'], ['inline', 'regex'])) {
 							$find_node->appendChild( $dom->createCDATASection($operation['find']['content']) );
-						} else {
+						}
+						else {
 							$find_node->appendChild( $dom->createCDATASection(PHP_EOL . $operation['find']['content'] . PHP_EOL . str_repeat(' ', 6)) );
 						}
 
@@ -312,7 +314,8 @@
 
 					if (in_array($operation['type'], ['inline', 'regex'])) {
 						$insert_node->appendChild( $dom->createCDATASection($operation['insert']['content']) );
-					} else {
+					}
+					else {
 						$insert_node->appendChild( $dom->createCDATASection(PHP_EOL . $operation['insert']['content'] . PHP_EOL . str_repeat(' ', 6)) );
 					}
 
@@ -327,14 +330,14 @@
 			$dom->appendChild( $vmod_node );
 
 			$xml = preg_replace_callback('#^ +#m', function($m) {
-				return str_repeat("\t", floor(strlen($m[0]) / 4)); // Replace indentation with tabs
+				return str_repeat("\t", floor(strlen($m[0]) / 4));  // Replace indentation with tabs.
 			}, $dom->saveXML());
 
-			// Pretty print
-			$xml = preg_replace('#( |\t)+(\r\n?|\n)#', '$2', $xml); // Remove trailing whitespace
-			$xml = preg_replace('#(\r\n?|\n)#', PHP_EOL, $xml); // Convert line endings
-			$xml = preg_replace('#^( +<(alias|setting|install|uninstall|upgrade|file|operation|insert)[^>]*>)#m', PHP_EOL . '$1', $xml); // Add some empty lines
-			$xml = preg_replace('#(\r\n?|\n){3,}#', PHP_EOL . PHP_EOL, $xml); // Remove exceeding line breaks
+			// Pretty print.
+			$xml = preg_replace('#( |\t)+(\r\n?|\n)#', '$2', $xml);  // Remove trailing whitespace.
+			$xml = preg_replace('#(\r\n?|\n)#', PHP_EOL, $xml);  // Convert line endings.
+			$xml = preg_replace('#^( +<(alias|setting|install|uninstall|upgrade|file|operation|insert)[^>]*>)#m', PHP_EOL . '$1', $xml);  // Add some empty lines.
+			$xml = preg_replace('#(\r\n?|\n){3,}#', PHP_EOL . PHP_EOL, $xml);  // Remove exceeding line breaks.
 
 			file_put_contents($this->data['location'] . 'vmod.xml', $xml);
 
