@@ -2,8 +2,7 @@
 
 	if (!empty($_GET['addon_id'])) {
 		$addon = new ent_addon($_GET['addon_id']);
-	}
-	else {
+	} else {
 		$addon = new ent_addon();
 	}
 
@@ -153,8 +152,8 @@
 
 			header('Location: ' . document::link());
 			exit;
-		}
-		catch (Exception $e) {
+
+		} catch (Exception $e) {
 			die($e->getMessage());
 			http_response_code(400);
 			notices::add('errors', $e->getMessage());
@@ -182,7 +181,7 @@
 		'regex' => language::translate('title_regex', 'RegEx'),
 	];
 
-	// List of files.
+	// List of files
 	$files_datalist = [];
 
 	$skip_list = [
@@ -210,7 +209,8 @@
 		$files_datalist[] = $relative_path;
 	}
 
-	// Files tree.
+	// Files tree
+
 	$draw_folder_contents = function($directory) use ($addon, &$draw_folder_contents) {
 		$output = '';
 
@@ -223,8 +223,8 @@
 			$relative_path = preg_replace('#^'. preg_quote('storage://addons/'.$addon->data['id'].'/', '#') .'#', '', $directory . $file);
 			if (is_dir($directory.$file)) {
 				$output .= '<li>'. functions::draw_fonticon('fa-folder fa-lg', 'style="color: #7ccdff;"') .' <span class="item" data-path="'. $relative_path .'">'. $file .'/</span>'. $draw_folder_contents($directory.$file.'/') .'</li>';
-			}
-			else {
+
+			} else {
 				$output .= '<li>'. functions::draw_fonticon('fa-file-o') .' <span class="item" data-path="'. $relative_path .'">'. $file .'</span><li>';
 			}
 		}
@@ -347,13 +347,11 @@ fieldset {
 	padding: 0;
 }
 
-input[name*="[op_note]"],
 input[name*="[find]"][name$="[content]"],
 input[name*="[insert]"][name$="[content]"] {
 	height: initial;
 }
 
-textarea[name*="[op_note]"],
 textarea[name*="[find]"][name$="[content]"],
 textarea[name*="[insert]"][name$="[content]"] {
 	height: auto;
@@ -578,10 +576,6 @@ textarea.warning {
 												<?php } else { ?>
 												<?php echo functions::form_input_code('files['.$f.'][operations]['.$o.'][insert][content]', true); ?>
 												<?php }?>
-											</div>
-											<div class="form-group">
-												<h4><?php echo language::translate('title_op_note', 'Notes'); ?></h4>
-												<?php echo functions::form_textarea('files['.$f.'][operations]['.$o.'][op_note]', true); ?>
 											</div>
 
 										</fieldset>
@@ -847,10 +841,6 @@ textarea.warning {
 			<h4><?php echo language::translate('title_insert', 'Insert'); ?></h4>
 			<?php echo functions::form_input_code('files[current_tab_index][operations][new_operation_index][insert][content]', '', 'class="form-code"'); ?>
 		</div>
-		<div class="form-group">
-			<h4><?php echo language::translate('title_op_note', 'Notes'); ?></h4>
-			<?php echo functions::form_textarea('files[current_tab_index][operations][new_operation_index][op_note]', true); ?>
-		</div>
 
 	</fieldset>
 </div>
@@ -898,8 +888,8 @@ textarea.warning {
 
 		if ($tab.prev('[data-toggle="tab"]').length) {
 			$tab.prev('[data-toggle="tab"]').trigger('click');
-		}
-		else if ($tab.next('[data-toggle="tab"]').length) {
+
+		} else if ($tab.next('[data-toggle="tab"]').length) {
 			$tab.next('[data-toggle="tab"').trigger('click');
 		}
 
@@ -986,8 +976,7 @@ textarea.warning {
 						files.push(file);
 						resolve(file);
 					});
-				}
-				else if (item.isDirectory) {
+				} else if (item.isDirectory) {
 					let dirReader = item.createReader();
 					dirReader.readEntries(entries => {
 						let entriesPromises = [];
@@ -1213,8 +1202,7 @@ textarea.warning {
 
 		if ($(this).is('.move-up') && $row.prevAll().length > 0) {
 			$row.insertBefore($row.prev());
-		}
-		else if ($(this).is('.move-down') && $row.nextAll().length > 0) {
+		} else if ($(this).is('.move-down') && $row.nextAll().length > 0) {
 			$row.insertAfter($row.next());
 		}
 
@@ -1234,7 +1222,7 @@ textarea.warning {
 		$operations.find(':input[name$="[find][content]"]').trigger('input');
 	});
 
-	// Validate operation.
+	// Validate operation
 	$('#files').on('input', ':input[name*="[find]"]', function() {
 
 		let $tab = $(this).closest('.tab-pane'),
@@ -1246,7 +1234,6 @@ textarea.warning {
 			offset_before = $operation.find(':input[name$="[offset-before]"]').val(),
 			offset_after = $operation.find(':input[name$="[offset-after]"]').val()
 			onerror = $operation.find(':input[name$="[onerror]"]').val(),
-			op_note = $operation.find(':input[name$="[op_note]"]').val(),
 			regex_flags = 's';
 
 		try {
@@ -1280,12 +1267,12 @@ textarea.warning {
 
 						find_operators = 'g'+find.substr(find.lastIndexOf(find.substr(0, 1))+1);
 						find = find.substr(1, find.lastIndexOf(find.substr(0, 1))-1);
-					}
-					else if (type == 'inline') {
+
+					} else if (type == 'inline') {
 
 						find = find.replace(/[\-\[\]{}()*+?.,\\\^$|#]/g, "\\$&");
-					}
-					else {
+
+					} else {
 
 						// Whitespace
 						find = find.split(/\r\n?|\n/);
@@ -1293,8 +1280,7 @@ textarea.warning {
 						for (let i=0; i < find.length; i++) {
 							if (find[i] = find[i].trim()) {
 								find[i] = '[ \t]*'+ find[i].replace(/[\-\[\]{}()*+?.,\\\^$|#]/g, "\\$&") +'[ \t]*(?:\r\n?|\n|$)';
-							}
-							else if (i != (find.length -1)) {
+							} else if (i != (find.length -1)) {
 								find[i] = '[ \t]*(?:\r\n?|\n)';
 							}
 						}
@@ -1343,8 +1329,7 @@ textarea.warning {
 
 		if ($tab.find(':input.warning').length) {
 			$('.nav-link[href="#'+ $tab.attr('id') +'"]').addClass('warning');
-		}
-		else {
+		} else {
 			$('.nav-link[href="#'+ $tab.attr('id') +'"]').removeClass('warning');
 		}
 	});
@@ -1393,8 +1378,7 @@ textarea.warning {
 
 		if ($(this).is('button[name$="[move_up]"]') && $row.prevAll().length > 0) {
 			$row.insertBefore($row.prev());
-		}
-		else if ($(this).is('button[name$="[move_down]"]') && $row.nextAll().length > 0) {
+		} else if ($(this).is('button[name$="[move_down]"]') && $row.nextAll().length > 0) {
 			$row.insertAfter($row.next());
 		}
 	});
@@ -1466,8 +1450,7 @@ textarea.warning {
 
 		if ($(this).is('button[name$="[move_up]"]') && $row.prevAll().length > 0) {
 			$row.insertBefore($row.prev());
-		}
-		else if ($(this).is('button[name$="[move_down]"]') && $row.nextAll().length > 0) {
+		} else if ($(this).is('button[name$="[move_down]"]') && $row.nextAll().length > 0) {
 			$row.insertAfter($row.next());
 		}
 	});
