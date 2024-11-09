@@ -1,6 +1,6 @@
 <?php
 
-// Define collections
+	// Define collections
 	return [
 		[
 			'id' => 'translations',

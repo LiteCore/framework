@@ -28,11 +28,6 @@
 					if (is_file($file)) {
 						$source = file_get_contents($file);
 
-						if (!preg_match('#\#\[AllowDynamicProperties\]#', $source)) {
-							$source = preg_replace('#([ \t]*)class [a-zA-Z0-9_-]+ *\{(\n|\r\n?)#', '$1#[AllowDynamicProperties]$2$0', $source);
-							file_put_contents($file, $source);
-						}
-
 						if (!preg_match('#class [a-zA-Z0-9_-]+ extends abs_module#', $source)) {
 							$source = preg_replace('#(class [a-zA-Z0-9_-]+) *\{#', '$1 extends abs_module {', $source);
 							file_put_contents($file, $source);

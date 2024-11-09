@@ -79,7 +79,7 @@ Better:
 		}
 
 
-## No Unnecessary Variable Duplication
+## No Variable Duplication
 
 Variable duplication is a challenge to backtrace. If we have no use of the raw user input, we can just overwrite it with safer polished and sanitized data.
 
@@ -94,6 +94,28 @@ Better:
 		$_POST['userInput'] = trim(sanitize($_POST['userInput'])); // Sanitize or polish the source input so we don't accidentally use the raw input again
 
 		passToFunction($_POST['userInput']); // Oh we are passing something that came from a user input
+
+
+## No One-Time Variables
+
+	Creating variables for one-time use should be avoided (unless it is inconvenient).
+
+	Incorrect:
+
+		$array = ['foo', 'bar'];
+
+		foreach ($array as $item) {
+			echo $item;
+		}
+
+	Correct:
+
+		foreach ([
+			'foo',
+			'bar',
+		] as $item) {
+			echo $item;
+		}
 
 
 ## Use codes others recognize

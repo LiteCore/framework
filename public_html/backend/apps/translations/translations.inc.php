@@ -12,7 +12,7 @@
 
 	document::$snippets['title'][] = language::translate('title_translations', 'Translations');
 
-	breadcrumbs::add(language::translate('title_translations', 'Translations'));
+	breadcrumbs::add(language::translate('title_translations', 'Translations'), document::ilink());
 
 	$collections = include __DIR__.'/collections.inc.php';
 
@@ -60,7 +60,7 @@
 				}
 			}
 
-			notices::add('success', language::translate('title_changes_sasved', 'Changes saved'));
+			notices::add('success', language::translate('title_changes_saved', 'Changes saved'));
 			header('Location: '. $_SERVER['REQUEST_URI']);
 			exit;
 
@@ -89,7 +89,7 @@
 				);
 			}
 
-			notices::add('success', language::translate('title_changes_sasved', 'Changes saved'));
+			notices::add('success', language::translate('title_changes_saved', 'Changes saved'));
 			header('Location: '. $_SERVER['REQUEST_URI']);
 			exit;
 
@@ -98,7 +98,7 @@
 		}
 	}
 
-// Union select tables
+	// Union select tables
 
 	$sql_union = [];
 
@@ -148,7 +148,7 @@
 		}
 	}
 
-// Table Rows
+	// Table Rows
 
 	$translations = database::query(
 		"select * from (
@@ -162,7 +162,7 @@
 		order by x.date_updated desc;"
 	)->fetch_page(null, null, $_GET['page'], settings::get('data_table_rows_per_page'), $num_rows, $num_pages);
 
-// Reinsert post data
+	// Reinsert post data
 	if (!$_POST) {
 		$_POST['translations'] = $translations;
 	}
@@ -212,9 +212,11 @@
 			<div class="expandable"><?php echo functions::form_input_search('query', true, 'placeholder="'. language::translate('text_search_phrase_or_keyword', 'Search phrase or keyword') .'"'); ?></div>
 
 			<div class="dropdown">
+
 				<div class="form-select" data-toggle="dropdown">
 					<?php echo language::translate('title_languages', 'Languages'); ?>
 				</div>
+
 				<ul class="dropdown-menu">
 					<?php foreach (language::$languages as $language) { ?>
 					<li>
@@ -227,9 +229,11 @@
 			</div>
 
 			<div class="dropdown">
+
 				<div class="form-select" data-toggle="dropdown">
 					<?php echo language::translate('title_endpoint', 'Endpoint'); ?>
 				</div>
+
 				<ul class="dropdown-menu">
 					<li>
 						<label class="option"><?php echo functions::form_checkbox('endpoint[]', 'frontend', true); ?>
@@ -245,9 +249,11 @@
 			</div>
 
 			<div class="dropdown">
+
 				<div class="form-select" data-toggle="dropdown">
 					<?php echo language::translate('title_collections', 'Collections'); ?>
 				</div>
+
 				<ul class="dropdown-menu">
 					<?php foreach ($collections as $collection) { ?>
 					<li>
@@ -260,9 +266,11 @@
 			</div>
 
 			<div class="dropdown">
+
 				<div class="form-select" data-toggle="dropdown">
 					<?php echo language::translate('title_filters', 'Filters'); ?>
 				</div>
+
 				<ul class="dropdown-menu">
 					<li>
 						<label class="option"><?php echo functions::form_checkbox('untranslated', '1', true); ?>
@@ -272,7 +280,9 @@
 				</ul>
 			</div>
 
-			<div><?php echo functions::form_button('filter', language::translate('title_search', 'Search'), 'submit'); ?></div>
+			<div>
+				<?php echo functions::form_button('filter', language::translate('title_search', 'Search'), 'submit'); ?>
+			</div>
 		</div>
 	<?php echo functions::form_end(); ?>
 
@@ -431,7 +441,7 @@
 		$(this).height('auto').height($(this).prop('scrollHeight') + 'px');
 	}).trigger('input');
 
-// Translator Tool
+	// Translator Tool
 
 	$('.data-table :checkbox').change(function() {
 		$('#actions').prop('disabled', !$('.data-table :checked').length);
@@ -461,11 +471,11 @@
 		$modal.find(':input[name="source"]').val(translations).select();
 	});
 
-	$('#translator-tool :input[name="source"]').focus(function(e){
+	$('#translator-tool :input[name="source"]').on('focus', function(e){
 		$(this).select();
 	});
 
-	$('#translator-tool button[name="prefill_fields"]').click(function(){
+	$('#translator-tool button[name="prefill_fields"]').on('click', function(){
 		var $modal = $(this).closest('.featherlight'),
 			 translated = $modal.find(':input[name="result"]').val().trim();
 

@@ -12,8 +12,8 @@
 
 		'menu' => [
 			[
-				'title' => language::translate('title_search_translations', 'Search Translations'),
-				'doc' => 'search',
+				'title' => language::translate('title_translations', 'Translations'),
+				'doc' => 'translations',
 				'params' => [],
 			],
 			[

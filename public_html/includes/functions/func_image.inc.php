@@ -14,12 +14,10 @@
 
 		try {
 
-			$source = str_replace('\\', '/', functions::file_realpath($source));
 			$source = preg_replace('#^'. preg_quote(FS_DIR_STORAGE, '#') .'#', 'storage://', $source);
 			$source = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', $source);
 
 			if (!is_file($source)) {
-				//trigger_error('Could not find source image ('. $source .')', E_USER_WARNING);
 				$source = 'storage://images/no_image.png';
 			}
 
@@ -27,7 +25,7 @@
 				'destination' => fallback($options['destination'], 'storage://cache/'),
 				'width' => fallback($options['width'], 0),
 				'height' => fallback($options['height'], 0),
-				'clipping' => fallback($options['clipping'], 'fit_only_bigger'),
+				'clipping' => fallback($options['clipping'], 'FIT_ONLY_BIGGER'),
 				'quality' => fallback($options['quality'], settings::get('image_quality')),
 				'trim' => fallback($options['trim'], false),
 				'interlaced' => !empty($options['interlaced']),
@@ -116,7 +114,9 @@
 				} else {
 					return $options['destination'];
 				}
-			} else if (!is_dir(dirname($options['destination']))) {
+			}
+
+			if (!is_dir(dirname($options['destination']))) {
 				if (!mkdir(dirname($options['destination']), 0777, true)) {
 					trigger_error('Could not create destination folder', E_USER_WARNING);
 					return false;
@@ -179,6 +179,10 @@
 
 	function image_thumbnail($source, $width=0, $height=0, $clipping='FIT_ONLY_BIGGER', $trim=false, $extension='') {
 
+		if (!is_file($source)) {
+			$source = 'storage://images/no_image.png';
+		}
+
 		if (pathinfo($source, PATHINFO_EXTENSION) == 'svg') {
 			return $source;
 		}
@@ -190,7 +194,6 @@
 			'trim' => $trim,
 			'quality' => settings::get('image_thumbnail_quality'),
 			'interlaced' => settings::get('image_thumbnail_interlaced'),
-			'extension' => $extension,
 		]);
 	}
 
@@ -200,7 +203,7 @@
 		$file = preg_replace('#^(storage://|'. preg_quote(FS_DIR_STORAGE, '#') .')#', '', $file);
 		$file = preg_replace('#^(app://|'. preg_quote(FS_DIR_APP, '#') .')#', '', $file);
 
-		return $file;
+		return preg_replace('#^'. preg_quote(DOCUMENT_ROOT, '#') .'#', '', $file);
 	}
 
 	function image_delete_cache($file) {

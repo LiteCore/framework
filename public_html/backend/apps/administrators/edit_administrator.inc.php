@@ -118,15 +118,13 @@
 
 			<div class="row">
 
-				<div class="col-md-6">
+				<div class="col-md-8">
 					<div class="row">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_status', 'Status'); ?></label>
 							<?php echo functions::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
 						</div>
-					</div>
 
-					<div class="row">
 						<div class="form-group col-sm-6">
 							<label><?php echo language::translate('title_username', 'Username'); ?></label>
 							<?php echo functions::form_input_text('username', true, 'autocomplete="off" required'); ?>
@@ -196,36 +194,33 @@
 					<?php } ?>
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					<div id="app-permissions" class="form-group">
-						<?php echo functions::form_checkbox('apps_toggle', ['1', language::translate('title_apps', 'Apps')], !empty($_POST['apps']) ? '1' : '0'); ?>
+						<?php echo functions::form_checkbox('apps_toggle', ['1', language::translate('title_apps', 'Apps')]); ?>
 						<div class="form-input" style="height: 400px; overflow-y: scroll;">
-							<ul class="flex flex-rows">
+							<ul class="list-unstyled">
 <?php
-	$apps = functions::admin_get_apps();
-	foreach ($apps as $app) {
-		echo '  <li data-app="'. functions::escape_attr($app['id']) .'">' . PHP_EOL
-			 . '  '. functions::form_checkbox('apps['.$app['id'].'][status]', ['1', $app['name']], true) . PHP_EOL;
-		if (!empty($app['docs'])) {
-			echo '  <ul class="flex flex-rows">' . PHP_EOL;
-			foreach ($app['docs'] as $doc => $file) {
-				echo '    <li data-doc="'. functions::escape_attr($doc) .'"><label>'. functions::form_checkbox('apps['.$app['id'].'][docs][]', $doc, true) .' '. $doc .'</label>' . PHP_EOL;
-			}
-			echo '  </ul>' . PHP_EOL;
-		}
-		echo '</li>' . PHP_EOL;
+	foreach (functions::admin_get_apps() as $app) {
+		echo implode(PHP_EOL, [
+			'<li data-app="'. functions::escape_attr($app['id']) .'">',
+			'  '. functions::form_checkbox('apps['.$app['id'].'][status]', ['1', $app['name']], true),
+			'  <ul class="list-unstyled">',
+			implode(PHP_EOL, array_map(function($doc) use ($app) {
+				return '    <li data-doc="'. functions::escape_attr($doc) .'">'. functions::form_checkbox('apps['.$app['id'].'][docs][]', [$doc], true) .'</li>';
+			}, array_keys($app['docs']))),
+			'  </ul>',
+			'</li>',
+		]);
 	}
 ?>
 							</ul>
 						</div>
 					</div>
-				</div>
 
-				<div class="col-md-3">
 					<div id="widget-permissions" class="form-group">
-						<?php echo functions::form_checkbox('widgets_toggle', ['1', language::translate('title_widgets', 'Widgets')], !empty($_POST['widgets']) ? '1' : '0'); ?>
+						<?php echo functions::form_checkbox('widgets_toggle', ['1', language::translate('title_widgets', 'Widgets')]); ?>
 						<div class="form-input" style="height: 150px; overflow-y: scroll;">
-							<ul class="flex flex-rows">
+							<ul class="list-unstyled">
 <?php
 	foreach (functions::admin_get_widgets() as $widget) {
 		echo implode(PHP_EOL, [

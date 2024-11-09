@@ -28,12 +28,12 @@
 		return $array;
 	}
 
-	// Return an array of values by a given list of keys
+	// Return a filtered array of values from a given list of keys
 	function array_grep(array $array, array $matching_keys):array {
 		return array_intersect_key($array, array_flip($matching_keys));
 	}
 
-	// Return an array of values not including any given keys
+	// Return an array of values not defined by the given keys
 	function array_exclude(array $array, array $excluded_keys):array {
 		return array_diff_key($input, array_flip($excluded_keys));
 	}
@@ -51,13 +51,13 @@
 
 	// Get first value from array without shifting it or moving internal cursor
 	function array_first(array $array):mixed {
-		if (!is_array($array) || !count($array)) return false;
+		if (empty($array) || !is_array($array)) return false;
 		return reset($array) || false;
 	}
 
 	// Get last value from array without shifting it or moving internal cursor
 	function array_last(array $array):mixed {
-		if (!is_array($array) || !count($array)) return false;
+		if (empty($array) || !is_array($array)) return false;
 		return end($array) || false;
 	}
 
@@ -112,7 +112,7 @@
 		});
 	}
 
-	// Turn a multidimensional array [a => [b => 1]]  into a flattened one dimensional array [a.b => 1]
+	// Turn an array of [foo => [bar => ...]] into foo.bar
 	function array_flatten($array, $delimiter='.', $preceding='') {
 
 		$result = [];

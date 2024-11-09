@@ -411,7 +411,7 @@
 					});
 
 					$data = implode("\r\n", $headers) . "\r\n\r\n"
-							. $body;
+					      . $body;
 
 					$result = $smtp->send(settings::get('site_email'), $recipients, $data);
 
@@ -434,7 +434,7 @@
 					}, $this->data['bccs']));
 				}
 
-				$recipients = implode(', ', array_map(function(){
+				$recipients = implode(', ', array_map(function($recipient){
 					return $this->format_contact($recipient);
 				}, $this->data['recipients']));
 

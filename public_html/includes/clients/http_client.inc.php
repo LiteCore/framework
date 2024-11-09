@@ -113,7 +113,7 @@
 			}
 
 			fclose($socket);
-			
+
 			self::$stats['duration'] += microtime(true) - $timestamp;
 
 			$response_headers = substr($response, 0, strpos($response, "\r\n\r\n") + 2);

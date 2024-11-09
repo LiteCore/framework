@@ -56,10 +56,6 @@
 				  $route['endpoint'] = 'backend';
 				  break;
 
-				case (preg_match('#^f:#', $resource)):
-  				$route['endpoint'] = 'frontend';
-  				break;
-
 				default:
   				$route['endpoint'] = 'frontend';
   				break;

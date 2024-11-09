@@ -1,4 +1,3 @@
-
 // Filter
 $('#sidebar input[name="filter"]').on({
 

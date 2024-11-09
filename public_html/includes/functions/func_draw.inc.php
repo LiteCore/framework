@@ -46,26 +46,29 @@
 			case 'add':         return draw_fonticon('fa-plus');
 			case 'cancel':      return draw_fonticon('fa-times');
 			case 'company':     return draw_fonticon('fa-building', 'style="color: #888;"');
+			case 'delete':      return draw_fonticon('fa-trash-o');
 			case 'download':    return draw_fonticon('fa-download');
 			case 'edit':        return draw_fonticon('fa-pencil');
-			case 'fail':        return draw_fonticon('fa-times', 'style="color: #c00;"');
+			case 'failed':      return draw_fonticon('fa-times', 'style="color: #c00;"');
 			case 'false':       return draw_fonticon('fa-times', 'style="color: #c00;"');
 			case 'female':      return draw_fonticon('fa-female', 'style="color: #e77be9;"');
 			case 'folder':      return draw_fonticon('fa-folder', 'style="color: #cc6;"');
 			case 'folder-open': return draw_fonticon('fa-folder-open', 'style="color: #cc6;"');
 			case 'group':       return draw_fonticon('fa-group', 'style="color: #888;"');
 			case 'remove':      return draw_fonticon('fa-times', 'style="color: #c33;"');
-			case 'delete':      return draw_fonticon('fa-trash-o');
 			case 'male':        return draw_fonticon('fa-male', 'style="color: #0a94c3;"');
 			case 'move-up':     return draw_fonticon('fa-arrow-up', 'style="color: #39c;"');
 			case 'move-down':   return draw_fonticon('fa-arrow-down', 'style="color: #39c;"');
 			case 'ok':          return draw_fonticon('fa-check', 'style="color: #8c4;"');
 			case 'on':          return draw_fonticon('fa-circle', 'style="color: #8c4;"');
 			case 'off':         return draw_fonticon('fa-circle', 'style="color: #f64;"');
+			case 'print':       return draw_fonticon('fa-print', 'style="color: #ded90f;"');
+			case 'remove':      return draw_fonticon('fa-times', 'style="color: #c00;"');
 			case 'secure':      return draw_fonticon('fa-lock');
 			case 'semi-off':    return draw_fonticon('fa-circle', 'style="color: #ded90f;"');
 			case 'save':        return draw_fonticon('fa-floppy-o');
 			case 'send':        return draw_fonticon('fa-paper-plane');
+			case 'success':     return draw_fonticon('fa-check', 'style="color: #8c4;"');
 			case 'true':        return draw_fonticon('fa-check', 'style="color: #8c4;"');
 			case 'user':        return draw_fonticon('fa-user', 'style="color: #888;"');
 			case 'warning':     return draw_fonticon('fa-exclamation-triangle', 'style="color: #c00;"');
@@ -88,24 +91,67 @@
 
 	function draw_image_thumbnail($image, $width=0, $height=0, $clipping='fit', $parameters='') {
 
+		if (!is_file($image)) {
+			$image = 'storage://images/no_image.png';
+		}
+
+		if (!$width && !$height) {
+			$entity = new ent_image($image);
+			$width = $entity->width;
+			$height = $entity->height;
+		}
+
+		if (!$width) {
+			$aspect_ratio = (new ent_image($image))->aspect_ratio;
+			list($width, $height) = functions::image_scale_by_height($height, $aspect_ratio);
+		}
+
+		if (!$height) {
+			$aspect_ratio = (new ent_image($image))->aspect_ratio;
+			list($width, $height) = functions::image_scale_by_width($width, $aspect_ratio);
+		}
+
+		if (empty($aspect_ratio)) {
+			$aspect_ratio = functions::image_aspect_ratio($width, $height);
+		}
+
+		switch (strtolower($clipping)) {
+
+			case '':
+				$clipping = '';
+				break;
+
+			case 'fit':
+				$clipping = 'fit';
+				break;
+
+			case 'crop':
+				$clipping = 'crop';
+				break;
+
+			default:
+				trigger_error('Invalid clipping mode ('. $clipping .')', E_USER_WARNING);
+				break;
+		}
+
 		$thumbnail = functions::image_thumbnail($image, $width, $height, $clipping);
 		$thumbnail_2x = functions::image_thumbnail($image, $width*2, $height*2, $clipping);
 
 		if ($width && $height) {
 			if (preg_match('#style="#', $parameters)) {
-				$parameters = preg_replace('#style="(.*?)"#', 'style="$1 aspect-ratio: '. functions::image_aspect_ratio($width, $height) .';"', $parameters);
+				$parameters = preg_replace('#style="(.*?)"#', 'style="$1 aspect-ratio: '. $aspect_ratio .';"', $parameters);
 			} else {
-				$parameters .= ' style="aspect-ratio: '. functions::image_aspect_ratio($width, $height) .';"';
+				$parameters .= ' style="aspect-ratio: '. $aspect_ratio .';"';
 			}
 		}
 
-		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($thumbnail) .'" srcset="'. document::href_rlink($thumbnail) .' 1x, '. document::href_rlink($thumbnail_2x) .' 2x"'. ($parameters ? ' '. $parameters : '') .'>';
+		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="thumbnail '. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($thumbnail) .'" srcset="'. document::href_rlink($thumbnail) .' 1x, '. document::href_rlink($thumbnail_2x) .' 2x"'. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
 	function draw_lightbox($selector='', $parameters=[]) {
 
-		document::$head_tags['featherlight'] = '<link rel="stylesheet" href="'. document::href_rlink('app://assets/featherlight/featherlight.min.css') .'">';
-		document::$foot_tags['featherlight'] = '<script src="'. document::href_rlink('app://assets/featherlight/featherlight.min.js') .'"></script>';
+		document::load_style('app://assets/featherlight/featherlight.min.css', 'featherlight');
+		document::load_script('app://assets/featherlight/featherlight.min.js', 'featherlight');
 		document::$javascript['featherlight'] = implode(PHP_EOL, [
 			'$.featherlight.autoBind = \'[data-toggle="lightbox"]\';',
 			'$.featherlight.defaults.loading = \'<div class="loader" style="width: 128px; height: 128px; opacity: 0.5;"></div>\';',

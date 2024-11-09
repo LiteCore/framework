@@ -1,7 +1,8 @@
 <?php
 
-	//! The original imagecopyresampled function is broken. This is a fixed version of it.
 	/*!
+	 * The original imagecopyresampled function is broken. This is a fixed version of it.
+	 *
 	 *  \param dst_im Destination image
 	 *  \param src_im Source image
 	 *  \param dstX X coordinate of the top left corner of the destination area
@@ -43,7 +44,9 @@
 				$this->_data['library'] = $library;
 			}
 
-			$this->_whitespace = preg_split('#\s*,\s*#', settings::get('image_whitespace_color'), -1, PREG_SPLIT_NO_EMPTY);
+			if (settings::get('image_whitespace_color')) {
+				$this->_whitespace = preg_split('#\s*,\s*#', settings::get('image_whitespace_color'), -1, PREG_SPLIT_NO_EMPTY);
+			}
 		}
 
 		public function &__get($name) {
@@ -168,15 +171,15 @@
 
 				case 'aspect_ratio':
 
-					$ratio = [$this->width, $this->height];
+					$aspect_ratio = [$this->width, $this->height];
 
-					for ($x = $ratio[1]; $x > 1; $x--) {
-						if (($ratio[0] % $x) == 0 && ($ratio[1] % $x) == 0) {
-							$ratio = [$ratio[0] / $x, $ratio[1] / $x];
+					for ($x = $aspect_ratio[1]; $x > 1; $x--) {
+						if (($aspect_ratio[0] % $x) == 0 && ($aspect_ratio[1] % $x) == 0) {
+							$aspect_ratio = [$aspect_ratio[0] / $x, $aspect_ratio[1] / $x];
 						}
 					}
 
-					$this->data['ratio'] = implode('/', $ratio);
+					$this->_data['aspect_ratio'] = implode('/', $aspect_ratio);
 					break;
 			}
 
@@ -200,7 +203,7 @@
 			unset($this->_data['height']);
 			unset($this->_data['aspect_ratio']);
 
-			if (empty($file)) {
+			if (!$file) {
 				throw new Exception('Could not set image to an empty source file');
 			}
 
@@ -817,11 +820,6 @@
 			}
 		}
 
-		public function write($destination, $quality=90, $interlaced=false) {
-			trigger_error(__CLASS__.'->write() is deprecated. Instead, use '.__CLASS__.'->save()', E_USER_DEPRECATED);
-			return $this->save($destination, $quality, $interlaced);
-		}
-
 		public function save($destination='', $quality=90, $interlaced=false) {
 
 			settype($quality, 'integer');
@@ -872,12 +870,12 @@
 					switch ($type) {
 
 						case 'jpg':
-						 $this->_image->setImageCompression(Imagick::COMPRESSION_JPEG);
-							 break;
+							$this->_image->setImageCompression(Imagick::COMPRESSION_JPEG);
+							break;
 
 						default:
-						 $this->_image->setImageCompression(Imagick::COMPRESSION_ZIP);
-							 break;
+							$this->_image->setImageCompression(Imagick::COMPRESSION_ZIP);
+							break;
 					}
 
 					$this->_image->setImageCompressionQuality((int)$quality);
@@ -886,7 +884,7 @@
 						$this->_image->setInterlaceScheme(Imagick::INTERLACE_PLANE);
 					}
 
-					return $this->_image->writeImage($type.':'.$destination);
+					return $this->_image->writeImage($type.':'. functions::file_realpath($destination));
 
 					break;
 

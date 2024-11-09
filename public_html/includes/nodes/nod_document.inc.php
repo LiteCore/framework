@@ -280,11 +280,11 @@
 			switch (route::$selected['endpoint']) {
 
 				case 'backend':
-				$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
+					$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
 					break;
 
 				default:
-				$_page = new ent_view('app://frontend/template/layouts/'.self::$layout.'.inc.php');
+					$_page = new ent_view('app://frontend/template/layouts/'.self::$layout.'.inc.php');
 					break;
 			}
 

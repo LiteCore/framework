@@ -3,7 +3,7 @@
 	document::$title[] = language::translate('title_favicon', 'Favicon');
 
 	breadcrumbs::add(language::translate('title_appearance', 'Appearance'));
-	breadcrumbs::add(language::translate('title_favicon', 'Favicon'));
+	breadcrumbs::add(language::translate('title_favicon', 'Favicon'), document::ilink());
 
 	$icon_sizes = [96, 64, 48, 32];
 	$thumbnail_sizes = [256, 192, 128];
@@ -108,7 +108,7 @@
 				<?php foreach ($thumbnail_sizes as $size) { ?>
 				<?php if (is_file($icon = FS_DIR_STORAGE . 'images/favicons/favicon-'.$size.'x'.$size.'.png')) { ?>
 				<div class="icon">
-					<img class="thumbnail" src="<?php echo document::href_rlink($icon); ?>" width="256" height="256" alt="">
+					<img class="thumbnail" src="<?php echo document::href_rlink($icon); ?>" alt="">
 					<div><?php echo basename($icon); ?></div>
 				</div>
 				<?php } ?>

@@ -1,5 +1,19 @@
 <?php
 
+	// Replace parts of string with contents from recursive array (like strtr() but recursively)
+	function string_translate($string, $array) {
+
+		foreach ($arr as $key => $value) {
+			if (is_array($value)) {
+				$string = string_translate($str, $value);
+			} else {
+				$string = str_replace($key, $value, $str);
+			}
+		}
+
+		return $string;
+	}
+
 	// Collapse the middle part of a long string using ellipsis
 	function string_ellipsis($text, $maxlength=72) {
 

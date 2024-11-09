@@ -1,12 +1,12 @@
 <?php
 
-	class wrap_stream_app {
-
-		private static $_cache = [];
+	class stream_app {
 		private $_directory = [];
 		private $_stream;
 		public $context;
 
+		private static $_cache = [];
+	
 		public function dir_opendir($path, $options) {
 
 			$microtime = microtime(true);
@@ -18,6 +18,19 @@
 
 			if (!isset(self::$_cache[$path])) {
 
+/*
+				if ($handle = opendir($path)) {
+					while (($file = readdir($handle)) !== false) {
+						if ($file == '.' || $file == '..') continue;
+
+						if (is_dir($path.$file)) {
+							$file .= '/';
+						}
+
+						$this->_directory[$file] = $path.$file;
+					}
+				}
+*/
 
 				// glob() seems faster than opendir() for this operation
 				foreach (glob($path.'*', GLOB_NOSORT) as $file) {
@@ -150,6 +163,7 @@
 			$path = $this->_resolve_file($path);
 
 			$this->_stream = fopen($path, $mode, $options, $opened_path);
+
 			return (bool)$this->_stream;
 		}
 

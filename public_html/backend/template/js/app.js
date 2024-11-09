@@ -1,3 +1,9 @@
+/*!
+ * LiteCore v1.0.0 - Lightweight website core framework built with PHP, jQuery and HTML.
+ * @link https://www.litecore.dev/
+ * @license CC-BY-ND-4.0
+ * @author T. Almroth
+ */
 
 // Stylesheet Loader
 $.loadStylesheet = function(url, options) {
@@ -63,6 +69,7 @@ let keepAlive = setInterval(function(){
 	});
 }, 60e3);
 
+
 // Toggle Buttons (data-toggle="buttons")
 $('body').on('click', '[data-toggle="buttons"] :checkbox', function(){
 	if ($(this).is(':checked')) {
@@ -75,6 +82,7 @@ $('body').on('click', '[data-toggle="buttons"] :checkbox', function(){
 $('body').on('click', '[data-toggle="buttons"] :radio', function(){
 	$(this).closest('.btn').addClass('active').siblings().removeClass('active');
 });
+
 
 /*
  * jQuery Context Menu
@@ -98,6 +106,77 @@ $('body').on('click', '[data-toggle="buttons"] :radio', function(){
 	}
 
 }(jQuery);
+
+
+// Dragmove
+
+$('style').first().append([
+	'.dragmove-horizontal {',
+	'  cursor: e-resize;',
+	'  user-select: none;',
+	'}',
+	'.dragmove-vertical {',
+	'  cursor: n-resize;',
+	'  user-select: none;',
+	'}',
+	'.dragmove-vertical.grabbed,',
+	'.dragmove-horizontal.grabbed	{',
+	'  user-input: unset;',
+	'  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);',
+	'}',
+].join('\n'));
+
+$('body').on('click', '.dragmove', function(e){
+	e.preventDefault();
+	return false;
+});
+
+$('body').on('mousedown', '.dragmove-vertical, .dragmove-horizontal', function(e){
+
+	let $item = $(e.target).closest('.dragmove'),
+		sy = e.pageY,
+		drag;
+
+	if ($(e.target).is('.dragmove')) {
+		$item = $(e.target);
+	}
+
+	let index = $item.index();
+
+	$item.addClass('grabbed');
+	$item.closest('tbody').css('user-input', 'unset');
+
+	function move(e) {
+
+		if (!drag && Math.abs(e.pageY - sy) < 10) return;
+		drag = true;
+
+		$item.siblings().each(function() {
+
+			let s = $(this), i = s.index(), y = s.offset().top;
+
+			if (e.pageY >= y && e.pageY < y + s.outerHeight()) {
+				if (i < $item.index()) s.insertAfter($item);
+				else s.insertBefore($item);
+				return false;
+			}
+		});
+	}
+
+	function up(e) {
+
+		if (drag && index != $item.index()) {
+			drag = false;
+		}
+
+		$(document).off('mousemove', move).off('mouseup', up);
+		$item.removeClass('grabbed');
+		$item.closest('tbody').css('user-input', '');
+	}
+
+	$(document).mousemove(move).mouseup(up);
+});
+
 
 
 /* ========================================================================
@@ -265,6 +344,43 @@ $('body').on('click', '[data-toggle="buttons"] :radio', function(){
 
 }(jQuery);
 
+
+
+// Required Input Asterix
+$(':input[required]').closest('.form-group').addClass('required');
+
+// Dropdown select
+$('.dropdown .form-select + .dropdown-menu :input').on('input', function(e){
+	let $dropdown = $(this).closest('.dropdown');
+	let $input = $dropdown.find(':input:checked');
+
+	if (!$dropdown.find(':input:checked').length) return;
+
+	$dropdown.find('li.active').removeClass('active');
+
+	if ($input.data('title')) {
+		$dropdown.find('.form-select').text( $input.data('title') );
+	} else if ($input.closest('.option').find('.title').length) {
+		$dropdown.find('.form-select').text( $input.closest('.option').find('.title').text() );
+	} else {
+		$dropdown.find('.form-select').text( $input.parent().text() );
+	}
+
+	$input.closest('li').addClass('active');
+	$dropdown.trigger('click.bs.dropdown');
+
+}).trigger('input');
+
+// Input Number Decimals
+$('body').on('change', 'input[type="number"][data-decimals]', function(){
+		var value = parseFloat($(this).val()),
+			decimals = $(this).data('decimals');
+	if (decimals != '') {
+		$(this).val(value.toFixed(decimals));
+	}
+});
+
+
 /* Form Input Tags */
 
 	$('input[data-toggle="tags"]').each(function() {
@@ -348,40 +464,6 @@ $('body').on('click', '[data-toggle="buttons"] :radio', function(){
 		$(this).hide().after($tagField);
 	});
 
-
-// Required Input Asterix
-$(':input[required]').closest('.form-group').addClass('required');
-
-// Dropdown select
-$('.dropdown .form-select + .dropdown-menu :input').on('input', function(e){
-	let $dropdown = $(this).closest('.dropdown');
-	let $input = $dropdown.find(':input:checked');
-
-	if (!$dropdown.find(':input:checked').length) return;
-
-	$dropdown.find('li.active').removeClass('active');
-
-	if ($input.data('title')) {
-		$dropdown.find('.form-select').text( $input.data('title') );
-	} else if ($input.closest('.option').find('.title').length) {
-		$dropdown.find('.form-select').text( $input.closest('.option').find('.title').text() );
-	} else {
-		$dropdown.find('.form-select').text( $input.parent().text() );
-	}
-
-	$input.closest('li').addClass('active');
-	$dropdown.trigger('click.bs.dropdown');
-
-}).trigger('input');
-
-// Input Number Decimals
-$('body').on('change', 'input[type="number"][data-decimals]', function(){
-		var value = parseFloat($(this).val()),
-			decimals = $(this).data('decimals');
-	if (decimals != '') {
-		$(this).val(value.toFixed(decimals));
-	}
-});
 
 // Alerts
 $('body').on('click', '.alert .close', function(e){
@@ -510,6 +592,7 @@ $('#search input[name="query"]').on({
 	}
 });
 
+
 // Data-Table Toggle Checkboxes
 $('body').on('click', '.data-table *[data-toggle="checkbox-toggle"], .data-table .checkbox-toggle', function() {
 	$(this).closest('.data-table').find('tbody td:first-child :checkbox').each(function() {
@@ -526,7 +609,7 @@ $('body').on('click', '.data-table tbody tr', function(e) {
 
 // Data-Table Shift Check Multiple Checkboxes
 let lastTickedCheckbox = null;
-$('.data-table td:first-child :checkbox').click(function(e){
+$('.data-table td:first-child :checkbox').on('click', function(e){
 
 	let $chkboxes = $('.data-table td:first-child :checkbox');
 
@@ -544,43 +627,8 @@ $('.data-table td:first-child :checkbox').click(function(e){
 	lastTickedCheckbox = this;
 });
 
-// Data-Table Dragable
-$('body').on('click', '.table-dragable tbody .grabable', function(e){
-	e.preventDefault();
-	return false;
-});
-
-$('body').on('mousedown', '.table-dragable tbody .grabable', function(e){
-	let tr = $(e.target).closest('tr'), sy = e.pageY, drag;
-	if ($(e.target).is('tr')) tr = $(e.target);
-	let index = tr.index();
-	$(tr).addClass('grabbed');
-	$(tr).closest('tbody').css('unser-input', 'unset');
-	function move(e) {
-		if (!drag && Math.abs(e.pageY - sy) < 10) return;
-		drag = true;
-		tr.siblings().each(function() {
-			let s = $(this), i = s.index(), y = s.offset().top;
-			if (e.pageY >= y && e.pageY < y + s.outerHeight()) {
-				if (i < tr.index()) s.insertAfter(tr);
-				else s.insertBefore(tr);
-				return false;
-			}
-		});
-	}
-	function up(e) {
-		if (drag && index != tr.index()) {
-			drag = false;
-		}
-		$(document).off('mousemove', move).off('mouseup', up);
-		$(tr).removeClass('grabbed');
-		$(tr).closest('tbody').css('unser-input', '');
-	}
-	$(document).mousemove(move).mouseup(up);
-});
-
 // Data-Table Sorting (Page Reload)
-$('.table-sortable thead th[data-sort]').click(function(){
+$('.table-sortable thead th[data-sort]').on('click', function(){
 	let params = {};
 
 	window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
@@ -591,6 +639,7 @@ $('.table-sortable thead th[data-sort]').click(function(){
 
 	window.location.search = $.param(params);
 });
+
 
 // Tabs (data-toggle="tab")
 +function($) {

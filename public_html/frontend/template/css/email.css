@@ -74,7 +74,7 @@ h4 {
   font-weight: 400;
   line-height: 1.4;
   margin: 0;
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
 }
 h1 {
   font-size: 35px;
@@ -117,8 +117,8 @@ a {
   text-align: center;
 }
 .btn a {
-  background-color: #fff;
-  border: solid 1px #7393cb;
+  background-color: #7393cb;
+  border: 1px solid #fff;
   border-radius: 5px;
   box-sizing: border-box;
   color: #7393cb;

@@ -1,6 +1,6 @@
 <?php
 
-	class wrap_stream_storage {
+	class stream_storage {
 		private $_directory;
 		private $_stream;
 		public $context;
@@ -44,7 +44,7 @@
 			return rmdir($this->_resolve_path($path));
 		}
 
-		public function stream_cast(int $cast_as) {
+		public function stream_cast(int $cast_as): object {
 			return $this->_stream;
 		}
 

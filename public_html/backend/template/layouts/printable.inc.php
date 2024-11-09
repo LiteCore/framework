@@ -7,11 +7,14 @@
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/printable.min.css'); ?>">
 {{head_tags}}
+{{style}}
 </head>
 <body>
 
 {{content}}
 
 {{foot_tags}}
+{{javascript}}
+
 </body>
 </html>

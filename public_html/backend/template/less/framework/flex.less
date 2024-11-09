@@ -1,4 +1,4 @@
-// Flexbox
+/* Flexbox */
 .flex,
 .list-unstyled,
 .list-inline {
@@ -21,7 +21,7 @@
 		flex-direction: column;
 	}
 	&.list-inline,
-	&.flex-gap {
+	&:not(.flex-nogap) {
 		gap: ~"calc(var(--gutter-size)/2)" var(--gutter-size);
 	}
 	&.flex-wrap {

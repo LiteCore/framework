@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
 {{head_tags}}
+{{style}}
 <style>
 :root {
 	--default-text-size: <?php echo !empty($_COOKIE['font_size']) ? $_COOKIE['font_size'] : '14'; ?>px;
@@ -32,10 +33,12 @@
 
 		<?php include 'app://backend/partials/box_apps_menu.inc.php'; ?>
 
-		<a class="platform text-center" href="<?php echo document::ilink('about'); ?>">
-			<span class="name"><?php echo PLATFORM_NAME; ?>®</span>
-			<span class="version"><?php echo PLATFORM_VERSION; ?></span>
-		</a>
+		<div class="text-center">
+			<a class="platform" href="<?php echo document::href_ilink('about'); ?>">
+				<span class="name"><?php echo PLATFORM_NAME; ?>®</span>
+				<span class="version"><?php echo PLATFORM_VERSION; ?></span>
+			</a>
+		</div>
 
 		<div class="copyright" class="text-center">Copyright &copy; <?php echo date('2023-Y'); ?><br>
 			<a href="https://litecore.dev" target="_blank">litecore.dev</a>
@@ -52,13 +55,9 @@
 				</div>
 			</li>
 
-			<li>
-				{{breadcrumbs}}
-			</li>
-
 			<li style="flex-grow: 1;">
 				<div id="search" class="dropdown">
-					<?php echo functions::form_input_search('query', false, 'placeholder="'. functions::escape_html(language::translate('title_search_entire_platform', 'Search entire platform')) .'&hellip;" autocomplete="off"'); ?>
+					<?php echo functions::form_input_search('query', false, 'placeholder="'. functions::escape_attr(language::translate('title_search_entire_platform', 'Search entire platform')) .'&hellip;" autocomplete="off"'); ?>
 					<div class="results dropdown-menu"></div>
 				</div>
 			</li>
@@ -71,10 +70,7 @@
 			</li>
 
 			<li>
-				<div class="btn-group" data-toggle="buttons">
-					<label class="btn btn-default btn-sm<?php echo empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_light', 'Light')); ?>"><input type="radio" name="dark_mode" value="0"<?php echo empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-sun-o'); ?></label>
-					<label class="btn btn-default btn-sm<?php echo !empty($_COOKIE['dark_mode']) ? ' active' : ''; ?>" title="<?php echo functions::escape_html(language::translate('title_dark', 'Dark')); ?>"><input type="radio" name="dark_mode" value="1"<?php echo !empty($_COOKIE['dark_mode']) ? ' checked' : ''; ?>> <?php echo functions::draw_fonticon('fa-moon-o'); ?></label>
-				</div>
+				<?php echo functions::form_toggle('dark_mode', ['0' => functions::draw_fonticon('fa-sun-o'), '1' => functions::draw_fonticon('fa-moon-o')]); ?>
 			</li>
 
 			<li class="language dropdown">
@@ -134,17 +130,24 @@
 		</ul>
 
 		<div id="content">
+
 			{{notices}}
+
+			{{breadcrumbs}}
+
 			{{content}}
+
 		</div>
 	</main>
 </div>
 
 {{foot_tags}}
+{{javascript}}
+
 <script src="<?php echo document::href_rlink('app://backend/template/js/app.min.js'); ?>"></script>
 
 <script>
-	$('button[name="font_size"]').click(function(){
+	$('button[name="font_size"]').on('click', function(){
 		let new_size = parseInt($(':root').css('--default-text-size').split('px')[0]) + (($(this).val() == 'increase') ? 1 : -1);
 		$(':root').css('--default-text-size', new_size + 'px');
 		document.cookie = 'font_size='+ new_size +';Path=<?php echo WS_DIR_APP; ?>;Max-Age=2592000';

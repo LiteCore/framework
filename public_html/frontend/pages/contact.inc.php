@@ -126,7 +126,7 @@
 						<?php if (settings::get('captcha_enabled')) { ?>
 						<div class="form-group" style="max-width: 250px;">
 							<label><?php echo language::translate('title_captcha', 'CAPTCHA'); ?></label>
-							<?php echo functions::form_input_captcha('contact_us'); ?>
+							<?php echo functions::form_captcha('contact_us'); ?>
 						</div>
 						<?php } ?>
 

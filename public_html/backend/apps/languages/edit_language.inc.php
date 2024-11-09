@@ -119,7 +119,7 @@
 				);
 			}
 
-			if (!empty($_POST['set_store'])) {
+			if (!empty($_POST['set_site'])) {
 				database::query(
 					"update ". DB_TABLE_PREFIX ."settings
 					set `value` = '". database::input($_POST['code']) ."'
@@ -229,6 +229,23 @@
 		'\'' => language::translate('char_single_quote', 'Single quote'),
 	];
 
+	$url_types = [
+		'none' => language::translate('title_none', 'None'),
+		'path' => language::translate('title_path_prefix', 'Path Prefix'),
+		'domain' => language::translate('title_domain', 'Domain'),
+	];
+
+	$text_directions = [
+		'ltr' => language::translate('title_left_to_right', 'Left To Right'),
+		'rtl' => language::translate('title_right_to_left', 'Right To Left'),
+	];
+
+	$statuses = [
+		'1' => language::translate('title_enabled', 'Enabled'),
+		'-1' => language::translate('title_hidden', 'Hidden'),
+		'0' => language::translate('title_disabled', 'Disabled'),
+	];
+
 	// Prefillable Languages
 	if (empty($language->data['id'])) {
 
@@ -262,7 +279,7 @@
 					$available_language['code'],
 					$available_language['code'] .' &ndash; '. $available_language['native'],
 					implode(' ', array_map(function($k, $v){
-						return 'data-'. str_replace('_', '-', $k) .'="'. functions::escape_html($v) .'"';
+						return 'data-'. str_replace('_', '-', $k) .'="'. functions::escape_attr($v) .'"';
 					}, array_keys($available_language), array_values($available_language))),
 				];
 			}
@@ -290,11 +307,7 @@
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_status', 'Status'); ?></label>
-					<div class="btn-group btn-block btn-group-inline" data-toggle="buttons">
-						<label class="btn btn-default<?php echo (isset($_POST['status']) && $_POST['status'] == 1) ? ' active' : ''; ?>"><?php echo functions::form_radio_button('status', '1', true); ?> <?php echo language::translate('title_enabled', 'Enabled'); ?></label>
-						<label class="btn btn-default<?php echo (isset($_POST['status']) && $_POST['status']  == -1) ? ' active' : ''; ?>"><?php echo functions::form_radio_button('status', '-1', true); ?><?php echo language::translate('title_hidden', 'Hidden'); ?></label>
-						<label class="btn btn-default<?php echo empty($_POST['status']) ? ' active' : ''; ?>"><?php echo functions::form_radio_button('status', '0', true); ?><?php echo language::translate('title_disabled', 'Disabled'); ?></label>
-					</div>
+					<?php echo functions::form_toggle('status', $statuses); ?>
 				</div>
 			</div>
 
@@ -306,10 +319,7 @@
 
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_text_direction', 'Text Direction'); ?></label>
-					<div class="btn-group btn-block btn-group-inline" data-toggle="buttons">
-					<label class="btn btn-default<?php echo (!isset($_POST['direction']) || $_POST['direction'] == 'ltr') ? ' active' : ''; ?>" style="text-align: left;"><?php echo functions::form_radio_button('direction', 'ltr', true); ?> <?php echo language::translate('title_left_to_right', 'Left To Right'); ?></label>
-					<label class="btn btn-default<?php echo (isset($_POST['direction']) && $_POST['direction'] == 'rtl') ? ' active' : ''; ?>" style="text-align: right;"><?php echo functions::form_radio_button('direction', 'rtl', true); ?><?php echo language::translate('title_right_to_left', 'Right To Left'); ?></label>
-					</div>
+					<?php echo functions::form_toggle('direction', $text_directions); ?>
 				</div>
 			</div>
 
@@ -333,11 +343,7 @@
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_url_type', 'URL Type'); ?></label>
-					<div class="btn-group btn-block btn-group-inline" data-toggle="buttons">
-					<label class="btn btn-default<?php echo (!empty($_POST['url_type']) && $_POST['url_type'] == 'none') ? ' active' : ''; ?>"><?php echo functions::form_radio_button('url_type', 'none', !empty($_POST['url_type']) ? true : 'none'); ?> <?php echo language::translate('title_none', 'None'); ?></label>
-					<label class="btn btn-default<?php echo (!empty($_POST['url_type']) && $_POST['url_type'] == 'path') ? ' active' : ''; ?>"><?php echo functions::form_radio_button('url_type', 'path', true); ?> <?php echo language::translate('title_path_prefix', 'Path Prefix'); ?></label>
-					<label class="btn btn-default<?php echo (!empty($_POST['url_type']) && $_POST['url_type'] == 'domain') ? ' active' : ''; ?>"><?php echo functions::form_radio_button('url_type', 'domain', true); ?> <?php echo language::translate('title_domain', 'Domain'); ?></label>
-					</div>
+					<?php echo functions::form_toggle('url_type', $url_types); ?>
 				</div>
 
 				<div class="form-group col-md-6">
@@ -392,7 +398,7 @@
 			<div class="row">
 				<div class="form-group col-md-6">
 					<?php echo functions::form_checkbox('set_default', ['1', language::translate('description_set_as_default_language', 'Set as default language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('default_language_code')) ? '1' : true); ?>
-					<?php echo functions::form_checkbox('set_store', ['1', language::translate('description_set_as_site_language', 'Set as site language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('site_language_code')) ? '1' : true); ?></label>
+					<?php echo functions::form_checkbox('set_site', ['1', language::translate('description_set_as_site_language', 'Set as site language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('site_language_code')) ? '1' : true); ?></label>
 				</div>
 			</div>
 
@@ -419,16 +425,16 @@
 
 	<?php if (!empty($available_languages)) { ?>
 	$('select[name="prefill"]').on('change', function() {
-		
+
 		$.each($(this).find('option:selected').data(), function(key, value) {
-			
+
 			var field_name = key.replace(/([A-Z])/, '_$1').toLowerCase()
 													.replace(/^date_format$/, 'format_date')
 													.replace(/^time_format$/, 'format_time');
-													
+
 			$(':input[name="'+field_name+'"]').not('[type="checkbox"]').not('[type="radio"]').val(value);
 			$('input[name="'+field_name+'"][type="checkbox"][value="'+value+'"], input[name="'+field_name+'"][type="radio"][value="'+value+'"]').prop('checked', true);
-			
+
 			if (key == 'direction') {
 				$('input[name="'+field_name+'"]:checked').parent('.btn').addClass('active').siblings().removeClass('active');
 			}

@@ -14,7 +14,7 @@ $('body').on('click', '.data-table tbody tr', function(e) {
 
 // Data-Table Shift Check Multiple Checkboxes
 let lastTickedCheckbox = null;
-$('.data-table td:first-child :checkbox').click(function(e){
+$('.data-table td:first-child :checkbox').on('click', function(e){
 
 	let $chkboxes = $('.data-table td:first-child :checkbox');
 
@@ -32,43 +32,8 @@ $('.data-table td:first-child :checkbox').click(function(e){
 	lastTickedCheckbox = this;
 });
 
-// Data-Table Dragable
-$('body').on('click', '.table-dragable tbody .grabable', function(e){
-	e.preventDefault();
-	return false;
-});
-
-$('body').on('mousedown', '.table-dragable tbody .grabable', function(e){
-	let tr = $(e.target).closest('tr'), sy = e.pageY, drag;
-	if ($(e.target).is('tr')) tr = $(e.target);
-	let index = tr.index();
-	$(tr).addClass('grabbed');
-	$(tr).closest('tbody').css('unser-input', 'unset');
-	function move(e) {
-		if (!drag && Math.abs(e.pageY - sy) < 10) return;
-		drag = true;
-		tr.siblings().each(function() {
-			let s = $(this), i = s.index(), y = s.offset().top;
-			if (e.pageY >= y && e.pageY < y + s.outerHeight()) {
-				if (i < tr.index()) s.insertAfter(tr);
-				else s.insertBefore(tr);
-				return false;
-			}
-		});
-	}
-	function up(e) {
-		if (drag && index != tr.index()) {
-			drag = false;
-		}
-		$(document).off('mousemove', move).off('mouseup', up);
-		$(tr).removeClass('grabbed');
-		$(tr).closest('tbody').css('unser-input', '');
-	}
-	$(document).mousemove(move).mouseup(up);
-});
-
 // Data-Table Sorting (Page Reload)
-$('.table-sortable thead th[data-sort]').click(function(){
+$('.table-sortable thead th[data-sort]').on('click', function(){
 	let params = {};
 
 	window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
