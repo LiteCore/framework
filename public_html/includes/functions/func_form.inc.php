@@ -133,7 +133,7 @@
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .' type="checkbox" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($value) .'" '. (is_array($input) && in_array($value, $input) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>';
+			return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .' type="checkbox" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($value) .'" '. ((is_array($input) && in_array($value, $input)) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>';
 		} else {
 			return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-check"' : '') .' type="checkbox" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($value) .'" '. (!strcmp($input, $value) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>';
 		}
@@ -469,7 +469,7 @@
 			$input = form_reinsert_value($name);
 		}
 
-		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-radio"' : '') .' type="checkbox" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($value) .'" '. (!strcmp($input, $value) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>';
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-radio"' : '') .' type="radio" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($value) .'" '. (!strcmp($input, $value) ? ' checked' : '') . ($parameters ? ' ' . $parameters : '') .'>';
 	}
 
 	function form_input_range($name, $input=true, $min='', $max='', $step='', $parameters='') {
@@ -543,6 +543,21 @@
 			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'"'. ($parameters ? ' '. $parameters : '') .'>',
 			'</div>',
 		]);
+	}
+
+	function form_input_week($name, $input=true, $parameters='') {
+
+		if ($input === true) {
+			$input = form_reinsert_value($name);
+		}
+
+		if ($input && !in_array(substr($input, 0, 10), ['0000-00-00', '1970-01-01'])) {
+			$input = date('Y-\WW', strtotime($input));
+		} else {
+			$input = '';
+		}
+
+		return '<input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="week" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'" maxlength="7" pattern="[0-9]{4}-W[0-9]{2}" placeholder="YYYY-WW"'. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
 	function form_input_wysiwyg($name, $input=true, $parameters='') {
@@ -780,47 +795,57 @@
 			$input = form_reinsert_value($name);
 		}
 
-		switch (true) {
+		if (is_string($options)) {
+			switch ($options) {
 
-			case (is_string($options) && $options == 'a/i'):
+				case 'a/i':
 				$options = [
 					'1' => language::translate('title_active', 'Active'),
 					'0' => language::translate('title_inactive', 'Inactive'),
 				];
 				break;
 
-			case (is_string($options) && $options == 'e/d'):
+				case 'e/d':
 				$options = [
 					'1' => language::translate('title_enabled', 'Enabled'),
 					'0' => language::translate('title_disabled', 'Disabled'),
 				];
 				break;
 
-			case (is_string($options) && $options == 'y/n'):
+				case 'y/n':
 				$options = [
 					'1' => language::translate('title_yes', 'Yes'),
 					'0' => language::translate('title_no', 'No'),
 				];
 				break;
 
-			case (is_string($options) && $options == 'o/o'):
+				case 'o/o':
 				$options = [
 					'1' => language::translate('title_on', 'On'),
 					'0' => language::translate('title_off', 'Off'),
 				];
 				break;
 
-			case (is_string($options) && $options == 't/f'):
+				case 't/f':
+					$options = [
+						'1' => language::translate('title_true', 'True'),
+						'0' => language::translate('title_false', 'False'),
+					];
+					break;
+
+				default:
+					trigger_error('Invalid option ("'. $options.'")', E_USER_WARNING);
 				$options = [
 					'1' => language::translate('title_true', 'True'),
 					'0' => language::translate('title_false', 'False'),
 				];
 				break;
 		}
+		}
 
 		$html = '<div '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="form-toggle"' : '') .''. ($parameters ? ' '. $parameters : '') .'>'. PHP_EOL;
 
-		$is_numerical_index = array_is_list($options);
+		$is_numerical_index = (is_array($options) && array_is_list($options)) ? true : false;
 
 		foreach ($options as $key => $option) {
 
@@ -835,7 +860,7 @@
 			if (preg_match('#\[\]$#', $name)) {
 				$html .= implode(PHP_EOL, [
 					'  <label>',
-					'    <input type="checkbox" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($option[0]) .'" hidden'. (in_array($option[0], $input) ? ' checked' : '') . (!empty($option[2]) ? ' '. $option[2] : '') .'>'. $option[1],
+					'    <input type="checkbox" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($option[0]) .'" hidden'. ((is_array($input) && in_array($option[0], $input)) ? ' checked' : '') . (!empty($option[2]) ? ' '. $option[2] : '') .'>'. $option[1],
 					'  </label>',
 				]) . PHP_EOL;
 			} else {
@@ -913,10 +938,10 @@
 				return form_input_number($name, $input, $parameters);
 
 			case 'password':
-				return form_input_password($name, $input);
+				return form_input_password($name, $input, $parameters);
 
 			case 'password_unmaskable':
-				return form_input_password_unmaskable($name, $input);
+				return form_input_password_unmaskable($name, $input, $parameters);
 
 			case 'percent':
 				return form_input_percent($name, $input);

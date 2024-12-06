@@ -53,9 +53,9 @@
 		} catch (Exception $e) {
 			$administrator['warning'] = $e->getMessage();
 		}
-	
+
 		return $administrator;
-	
+
 	}, null, $_GET['page'], null, $num_rows, $num_pages);
 
 ?>

@@ -69,13 +69,13 @@ Better:
 This will just take longer to type, longer to read, longer to analyze, and leave a bigger footprint:
 
 		foreach ($webshopCustomers as $webshopCustomer) {
-			foobar($webshopCustomer['webshopCustomerShippingAddress']['webshopCustomerShippingAddressStreetName']);
+			printWebshopCustomerShippingStreetName($webshopCustomer['webshopCustomerShippingAddress']['webshopCustomerShippingAddressStreetName']);
 		}
 
 Better:
 
 		foreach ($customers as $customer) {
-			foobar($customer['shippingAddress']['street']);
+			printStreetName($customer['shippingAddress']['streetName']);
 		}
 
 
@@ -91,14 +91,15 @@ Variable duplication is a challenge to backtrace. If we have no use of the raw u
 
 Better:
 
-		$_POST['userInput'] = trim(sanitize($_POST['userInput'])); // Sanitize or polish the source input so we don't accidentally use the raw input again
+		$_POST['userInput'] = sanitize($_POST['userInput']); // Sanitize so we don't accidentally use the raw input again
+		$_POST['userInput'] = polish($_POST['userInput']); // Do some polishing
 
 		passToFunction($_POST['userInput']); // Oh we are passing something that came from a user input
 
 
-## No One-Time Variables
+## Avoid Single-Use Variables
 
-	Creating variables for one-time use should be avoided (unless it is inconvenient).
+	Creating variables for one-time use should be avoided unless serving a good purpose.
 
 	Incorrect:
 
