@@ -196,11 +196,11 @@
 		'#^storage/#',
 	];
 
-	$scripts = functions::file_search('app://' . '**.php', GLOB_BRACE);
+	$scripts = functions::file_search(FS_DIR_APP . '**.php', GLOB_BRACE);
 
 	foreach ($scripts as $script) {
 
-		$relative_path = preg_replace('#^app://#', '', $script);
+		$relative_path = functions::file_relative_path($script);
 
 		foreach ($skip_list as $pattern) {
 			if (preg_match($pattern, $relative_path)) continue 2;
