@@ -8,12 +8,9 @@
 
 	document::$title = [language::translate('index:head_title', ''), settings::get('site_name')];
 	document::$description = language::translate('index:meta_description', '');
-	document::$head_tags['canonical'] = '<link rel="canonical" href="'. document::href_ilink('') .'">';
-	document::$head_tags['opengraph'] = implode(PHP_EOL, [
-		'<meta property="og:url" content="'. document::href_ilink('') .'">',
-		'<meta property="og:type" content="website">',
-		'<meta property="og:image" content="'. document::href_rlink('storage://images/logotype.png') .'">',
-	]);
+	document::$opengraph['url'] = document::href_ilink('');
+	document::$opengraph['type'] = 'website';
+	document::$opengraph['image'] = document::href_rlink('storage://images/logotype.png');
 
 	$_page = new ent_view('app://frontend/template/pages/css.inc.php');
 

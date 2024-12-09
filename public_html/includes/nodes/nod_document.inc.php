@@ -240,36 +240,6 @@
 				$output = preg_replace('#</body>#is', addcslashes($javascript . '</body>', '\\$'), $output, 1);
 			}
 
-/*
-			// Preload static resources (Generally not a good idea)
-			if (preg_match_all('#<(link|script)[^>]+>#', $output, $matches)) {
-
-				$preloads = [];
-				foreach ($matches[0] as $key => $match) {
-
-					if (!preg_match('#(?<==")(https?:)?//[^"]+(?=")#is', $match, $m)) continue;
-
-					$m[0] = html_entity_decode($m[0]);
-
-					switch ($matches[1][$key]) {
-
-						case 'link':
-							if (!preg_match('#stylesheet#', $m[0])) continue 2;
-							$preloads[$m[0]] = 'style';
-							break;
-
-						case 'script':
-							//$preloads[$m[0]] = 'script'; // Avoided as browser may complain about script preloading
-							break;
-					}
-				}
-
-				foreach ($preloads as $link => $type) {
-					header('Link: <'.$link.'>; rel=preload; as='.$type, false);
-				}
-			}
-*/
-
 			// Remove HTML comments
 			$output = preg_replace_callback('#(<html[^>]*>)(.*)(</html>)#is', function($matches) {
 				return preg_replace('#<!--.*?-->#ms', '', $matches[0]);
