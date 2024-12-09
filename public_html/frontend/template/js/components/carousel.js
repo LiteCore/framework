@@ -1,17 +1,15 @@
-
-/* ========================================================================
+/*
 * Bootstrap: carousel.js v3.4.1
 * https://getbootstrap.com/docs/3.4/javascript/#carousel
-* ========================================================================
+ *
 * Copyright 2011-2019 Twitter, Inc.
 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-* ======================================================================== */
+ */
 
 +function ($) {
-	'use strict';
+	'use strict'
 
 		// CAROUSEL CLASS DEFINITION
-		// =========================
 
 	let Carousel = function (element, options) {
 		this.$element    = $(element)
@@ -172,7 +170,6 @@
 	}
 
 		// CAROUSEL PLUGIN DEFINITION
-		// ==========================
 
 	function Plugin(option) {
 		return this.each(function () {
@@ -194,7 +191,6 @@
 	$.fn.carousel.Constructor = Carousel
 
 		// CAROUSEL NO CONFLICT
-		// ====================
 
 	$.fn.carousel.noConflict = function () {
 		$.fn.carousel = old
@@ -202,18 +198,15 @@
 	}
 
 		// CAROUSEL DATA-API
-		// =================
 
-	var clickHandler = function (e) {
-		var $this   = $(this)
-		var href    = $this.attr('href')
-		var target  = $this.attr('data-target') || href
-		var $target = $(document).find(target)
-
+	let clickHandler = function (e) {
+		let href
+		let $this   = $(this)
+		let $target = $($this.attr('data-target') || $this.closest('.carousel'))
 		if (!$target.hasClass('carousel')) return
 
-		var options = $.extend({}, $target.data(), $this.data())
-		var slideIndex = $this.attr('data-slide-to')
+		let options = $.extend({}, $target.data(), $this.data())
+		let slideIndex = $this.attr('data-slide-to')
 
 		if (slideIndex) options.interval = false
 
@@ -237,4 +230,4 @@
 		})
 	})
 
-}(jQuery);
+}(jQuery)

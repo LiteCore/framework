@@ -1,3 +1,10 @@
+/*!
+ * LiteCore v1.0.0 - Lightweight website core framework built with PHP, jQuery and HTML.
+ * @link https://www.litecore.dev/
+ * @license CC-BY-ND-4.0
+ * @author T. Almroth
+ */
+
 /* Media Breakpoints */
 /* Fonts */
 @font-face {
@@ -49,7 +56,7 @@
   --default-text-font: Inter, Arial, 'Helvetica Neue', Helvetica, sans-serif;
   --default-text-color: #444;
   --default-text-size: 14px;
-  --breadcrumbs-background-color: transparent;
+  --breadcrumbs-background-color: #d7d9df;
   --breadcrumbs-text-color: #3c3c3c;
   --breadcrumbs-border-color: transparent;
   --card-background-color: #fff;
@@ -192,6 +199,7 @@ html.dark-mode {
   --input-addon-background-color: #3d485e;
   --input-text-color: #acb6c2;
   --input-checkbox-background-color-active: #495abd;
+  --breadcrumbs-background-color: #283144;
   --breadcrumbs-text-color: var(--default-text-color);
   --copyright-text-color: #acb6c2;
   --link-text-color: #acb6c7;
