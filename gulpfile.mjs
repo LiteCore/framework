@@ -52,10 +52,10 @@ gulp.task('less-frontend', function() {
     .src('public_html/frontend/template/less/vari*bles.less') // non-globstar pattern will fail on some windows paths
     .pipe(less())
     .pipe(header(banner, { pkg: packageData }))
-    .pipe(gulp.dest('public_html/frontend/templates/default/css/', { overwrite: true }))
+    .pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
 
   return gulp
-    .src(['public_html/frontend/template/less/*.less', '!public_html/frontend/templates/default/less/variables*.less'])
+    .src(['public_html/frontend/template/less/*.less', '!public_html/frontend/template/less/variables*.less'])
 		.pipe(sourcemaps.init())
 		.pipe(less())
     .pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
@@ -63,7 +63,7 @@ gulp.task('less-frontend', function() {
     .pipe(header(banner, { pkg: packageData }))
     .pipe(rename({ extname: '.min.css' }))
     .pipe(sourcemaps.write('.', { includeContent: false }))
-    .pipe(gulp.dest('public_html/frontend/templates/default/css/', { overwrite: true }))
+    .pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
 })
 
 // Build and uglify JS files
@@ -82,15 +82,15 @@ gulp.task('js-backend', function() {
 
 gulp.task('js-frontend', function() {
   return gulp
-    .src('public_html/frontend/templates/default/js/components/*.js')
+    .src('public_html/frontend/template/js/components/*.js')
 		.pipe(sourcemaps.init())
       .pipe(concat('app.js', {'newLine': '\r\n\r\n'}))
       .pipe(header(banner, { pkg: packageData }))
-    .pipe(gulp.dest('public_html/frontend/templates/default/js/', { overwrite: true }))
+    .pipe(gulp.dest('public_html/frontend/template/js/', { overwrite: true }))
 		.pipe(uglify())
       .pipe(rename({ extname: '.min.js' }))
     .pipe(sourcemaps.write('.', { includeContent: false }))
-    .pipe(gulp.dest('public_html/frontend/templates/default/js/', { overwrite: true }))
+    .pipe(gulp.dest('public_html/frontend/template/js/', { overwrite: true }))
 })
 
 // Task to compile and minify Trumbowyg SCSS
