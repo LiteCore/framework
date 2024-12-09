@@ -248,22 +248,22 @@
 				<div class="col-md-6 source">
 <div class="alerts">
 	<div class="alert alert-danger">
-		<i class="fa fa-exclamation-triangle"></i> Lorem ipsum dolor
+		<i class="fa icon-exclamation-triangle"></i> Lorem ipsum dolor
 		<a href="#" class="close" data-dismiss="alert">&times;</a>
 	</div>
 
 	<div class="alert alert-warning">
-		<i class="fa fa-exclamation-triangle"></i> Lorem ipsum dolor
+		<i class="fa icon-exclamation-triangle"></i> Lorem ipsum dolor
 		<a href="#" class="close" data-dismiss="alert">&times;</a>
 	</div>
 
 	<div class="alert alert-default">
-		<i class="fa fa-info-circle"></i> Lorem ipsum dolor
+		<i class="fa icon-info-circle"></i> Lorem ipsum dolor
 		<a href="#" class="close" data-dismiss="alert">&times;</a>
 	</div>
 
 	<div class="alert alert-success">
-		<i class="fa fa-check-circle"></i> Lorem ipsum dolor
+		<i class="fa icon-check-circle"></i> Lorem ipsum dolor
 		<a href="#" class="close" data-dismiss="alert">&times;</a>
 	</div>
 </div>
@@ -365,10 +365,10 @@
 	</ol>
 
 	<a class="carousel-control left" href="#carousel-code" role="button" data-slide="prev">
-		<span class="icon-next"><i class="fa fa-chevron-left"></i></span>
+		<span class="icon-next"><i class="fa icon-chevron-left"></i></span>
 	</a>
 	<a class="carousel-control right" href="#carousel-code" role="button" data-slide="next">
-		<span class="icon-next"><i class="fa fa-chevron-right"></i></span>
+		<span class="icon-next"><i class="fa icon-chevron-right"></i></span>
 	</a>
 </div>
 				</div>
@@ -574,7 +574,7 @@
 <div class="form-group">
 	<label>Input Group Icon</label>
 	<div class="input-group">
-		<span class="input-group-icon"><i class="fa fa-envelope-o"></i></span>
+		<span class="input-group-icon"><i class="fa icon-envelope-o"></i></span>
 		<input type="email" class="form-input" placeholder="Email">
 	</div>
 </div>

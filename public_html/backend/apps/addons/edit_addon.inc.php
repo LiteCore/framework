@@ -196,11 +196,11 @@
 		'#^storage/#',
 	];
 
-	$scripts = functions::file_search(FS_DIR_APP . '**.php', GLOB_BRACE);
+	$scripts = functions::file_search('app://' . '**.php', GLOB_BRACE);
 
 	foreach ($scripts as $script) {
 
-		$relative_path = functions::file_relative_path($script);
+		$relative_path = preg_replace('#^app://#', '', $script);
 
 		foreach ($skip_list as $pattern) {
 			if (preg_match($pattern, $relative_path)) continue 2;
@@ -222,10 +222,10 @@
 
 			$relative_path = preg_replace('#^'. preg_quote('storage://addons/'.$addon->data['id'].'/', '#') .'#', '', $directory . $file);
 			if (is_dir($directory.$file)) {
-				$output .= '<li>'. functions::draw_fonticon('fa-folder fa-lg', 'style="color: #7ccdff;"') .' <span class="item" data-path="'. $relative_path .'">'. $file .'/</span>'. $draw_folder_contents($directory.$file.'/') .'</li>';
+				$output .= '<li>'. functions::draw_fonticon('icon-folder icon-lg', 'style="color: #7ccdff;"') .' <span class="item" data-path="'. $relative_path .'">'. $file .'/</span>'. $draw_folder_contents($directory.$file.'/') .'</li>';
 
 			} else {
-				$output .= '<li>'. functions::draw_fonticon('fa-file-o') .' <span class="item" data-path="'. $relative_path .'">'. $file .'</span><li>';
+				$output .= '<li>'. functions::draw_fonticon('icon-file-o') .' <span class="item" data-path="'. $relative_path .'">'. $file .'</span><li>';
 			}
 		}
 
@@ -308,10 +308,10 @@ html.dark-mode .operation {
 	background: #232a3e;
 }
 
-.nav-tabs .fa-times-circle {
+.nav-tabs .icon-times-circle {
 	color: #c00;
 }
-.nav-tabs .fa-plus {
+.nav-tabs .icon-plus {
 	color: #0c0;
 }
 
@@ -451,7 +451,7 @@ textarea.warning {
 
 										<?php if (!empty($addon->data['id'])) { ?>
 										<ul class="list flex flex-rows">
-											<li><strong><?php echo functions::draw_fonticon('fa-folder fa-lg', 'style="color: #7ccdff;"'); ?> [<?php echo language::translate('title_root', 'Root'); ?>]</strong>
+											<li><strong><?php echo functions::draw_fonticon('icon-folder icon-lg', 'style="color: #7ccdff;"'); ?> [<?php echo language::translate('title_root', 'Root'); ?>]</strong>
 												<?php echo $draw_folder_contents($addon->data['location']); ?>
 											</li>
 										</ul>
@@ -486,10 +486,10 @@ textarea.warning {
 					<nav class="nav nav-tabs">
 						<?php foreach (array_keys($addon->data['files']) as $f) { ?>
 						<a class="nav-link" data-toggle="tab" href="#tab-<?php echo $f; ?>">
-							<span class="file"><?php echo functions::escape_html($_POST['files'][$f]['name']); ?></span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('fa-times-circle'); ?></span>
+							<span class="file"><?php echo functions::escape_html($_POST['files'][$f]['name']); ?></span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span>
 						</a>
 						<?php } ?>
-						<a class="nav-link add" href="#"><?php echo functions::draw_fonticon('fa-plus'); ?></a>
+						<a class="nav-link add" href="#"><?php echo functions::draw_fonticon('icon-plus'); ?></a>
 					</nav>
 
 					<div id="files" class="tab-content">
@@ -534,7 +534,7 @@ textarea.warning {
 
 												<div class="form-group col-md-6">
 													<label><?php echo language::translate('title_match_type', 'Match Type'); ?></label>
-													<?php echo functions::form_toggle_buttons('files['.$f.'][operations]['.$o.'][type]', $type_options, (!isset($_POST['files'][$f]['operations'][$o]['type']) || $_POST['files'][$f]['operations'][$o]['type'] == '') ? 'multiline' : true); ?>
+													<?php echo functions::form_toggle('files['.$f.'][operations]['.$o.'][type]', $type_options, (!isset($_POST['files'][$f]['operations'][$o]['type']) || $_POST['files'][$f]['operations'][$o]['type'] == '') ? 'multiline' : true); ?>
 												</div>
 
 												<div class="form-group col-md-3">
@@ -585,7 +585,7 @@ textarea.warning {
 
 									<div class="text-end">
 										<a class="btn btn-default add" href="#">
-											<?php echo functions::draw_fonticon('fa-plus', 'style="color: #0c0;"'); ?> <?php echo language::translate('title_add_operation', 'Add Operation'); ?>
+											<?php echo functions::draw_fonticon('icon-plus', 'style="color: #0c0;"'); ?> <?php echo language::translate('title_add_operation', 'Add Operation'); ?>
 										</a>
 									</div>
 
@@ -779,7 +779,7 @@ textarea.warning {
 
 			<div class="col-md-6">
 				<div class="operations"></div>
-				<div><a class="btn btn-default add" href="#"><?php echo functions::draw_fonticon('fa-plus', 'style="color: #0c0;"'); ?> <?php echo language::translate('title_add_operation', 'Add Operation'); ?></a></div>
+				<div><a class="btn btn-default add" href="#"><?php echo functions::draw_fonticon('icon-plus', 'style="color: #0c0;"'); ?> <?php echo language::translate('title_add_operation', 'Add Operation'); ?></a></div>
 			</div>
 		</div>
 
@@ -864,7 +864,7 @@ textarea.warning {
 	$('.nav-tabs .add').click(function(e){
 		e.preventDefault();
 
-		let tab = '<a class="nav-link" data-toggle="tab" href="#tab-'+ new_tab_index +'"><span class="file">new'+ new_tab_index +'</span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('fa-times-circle'); ?></span></a>'
+		let tab = '<a class="nav-link" data-toggle="tab" href="#tab-'+ new_tab_index +'"><span class="file">new'+ new_tab_index +'</span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span></a>'
 			.replace(/new_tab_index/g, new_tab_index);
 
 		let tab_pane = $('#new-tab-pane-template').html()
@@ -1011,8 +1011,8 @@ textarea.warning {
 		let $contextmenu = $([
 			'<nav class="context-menu">',
 			'  <ul class="flex flex-rows">',
-			'    <li class="item rename"><?php echo functions::draw_fonticon('fa-pencil'); ?> <?php echo language::translate('title_rename', 'Rename'); ?></a>',
-			'    <li class="item delete"><?php echo functions::draw_fonticon('fa-trash'); ?> <?php echo language::translate('title_delete', 'Delete'); ?></a>',
+			'    <li class="item rename"><?php echo functions::draw_fonticon('icon-pencil'); ?> <?php echo language::translate('title_rename', 'Rename'); ?></a>',
+			'    <li class="item delete"><?php echo functions::draw_fonticon('icon-trash'); ?> <?php echo language::translate('title_delete', 'Delete'); ?></a>',
 			'  </ul>',
 			'</nav>',
 		].join('\n'));

@@ -99,7 +99,7 @@
 
 		<?php if ($type == 'job') { ?>
 		<button id="cron-example" class="btn btn-default" type="button" style="margin-right: 1em;">
-			<?php echo functions::draw_fonticon('fa-info'); ?> <?php echo language::translate('title_cron_job', 'Cron Job'); ?>
+			<?php echo functions::draw_fonticon('icon-info'); ?> <?php echo language::translate('title_cron_job', 'Cron Job'); ?>
 		</button>
 		<?php } ?>
 
@@ -110,7 +110,7 @@
 		<table class="table table-striped table-hover data-table">
 			<thead>
 				<tr>
-					<th><?php echo functions::draw_fonticon('fa-check-square-o fa-fw', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th><?php echo functions::draw_fonticon('icon-check-square-o', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th></th>
 					<th class="main"><?php echo language::translate('title_name', 'Name'); ?></th>
 					<th></th>

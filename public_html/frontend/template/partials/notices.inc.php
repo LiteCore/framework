@@ -7,7 +7,7 @@
 				case 'errors':
 					echo implode(PHP_EOL, [
 						'<div class="alert alert-danger">',
-						'  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice,
+						'  '. functions::draw_fonticon('icon-exclamation-triangle') . ' ' . $notice,
 						'  <a href="#" class="close" data-dismiss="alert">&times;</a>',
 						'</div>',
 					]);
@@ -16,7 +16,7 @@
 				case 'warnings':
 					echo implode(PHP_EOL, [
 						'<div class="alert alert-warning">'
-						 . '  '. functions::draw_fonticon('fa-exclamation-triangle') . ' ' . $notice
+						 . '  '. functions::draw_fonticon('icon-exclamation-triangle') . ' ' . $notice
 						 . '<a href="#" class="close" data-dismiss="alert">&times;</a>'
 						 . '</div>',
 					]);
@@ -25,7 +25,7 @@
 				case 'notices':
 					echo implode(PHP_EOL, [
 						'<div class="alert alert-info">',
-						'  '. functions::draw_fonticon('fa-info-circle') . ' ' . $notice,
+						'  '. functions::draw_fonticon('icon-info-circle') . ' ' . $notice,
 						'  <a href="#" class="close" data-dismiss="alert">&times;</a>',
 						'</div>',
 					]);
@@ -33,7 +33,7 @@
 
 				case 'success':
 					echo implode(PHP_EOL, ['<div class="alert alert-success">',
-						'  '. functions::draw_fonticon('fa-check-circle') . ' ' . $notice,
+						'  '. functions::draw_fonticon('icon-check-circle') . ' ' . $notice,
 						'  <a href="#" class="close" data-dismiss="alert">&times;</a>',
 						'</div>',
 					]);

@@ -19,7 +19,7 @@
 		//$_partial->snippets['left'][] = [
 		//	'id' => 'home',
 		//	'icon' => '',
-		//	'name' => functions::draw_fonticon('fa-home'),
+		//	'name' => functions::draw_fonticon('icon-home'),
 		//	'link' => document::ilink(''),
 		//	'badge' => '',
 		//	'priority' => -1,
@@ -35,12 +35,21 @@
 		];
 
 		$_partial->snippets['left'][] = [
+			'id' => 'fonticons',
+			'icon' => '',
+			'name' => 'Font Icons',
+			'link' => document::ilink('fonticons'),
+			'badge' => '',
+			'priority' => 2,
+		];
+
+		$_partial->snippets['left'][] = [
 			'id' => 'printables',
 			'icon' => '',
 			'name' => 'Printables',
 			'link' => document::ilink('printables'),
 			'badge' => '',
-			'priority' => 2,
+			'priority' => 3,
 		];
 
 		$_partial->snippets['left'][] = [
@@ -49,7 +58,7 @@
 			'name' => 'Email',
 			'link' => document::ilink('email_example'),
 			'badge' => '',
-			'priority' => 3,
+			'priority' => 4,
 		];
 
 		//$_partial->snippets['left'][] = [
@@ -129,7 +138,7 @@
 		<div id="offcanvas" class="offcanvas">
 			<div class="offcanvas-header">
 				<div class="offcanvas-title"><?php echo settings::get('site_name'); ?></div>
-				<button type="button" class="btn btn-default" data-toggle="dismiss"><?php echo functions::draw_fonticon('fa-times'); ?></button>
+				<button type="button" class="btn btn-default" data-toggle="dismiss"><?php echo functions::draw_fonticon('icon-times'); ?></button>
 			</div>
 
 			<div class="offcanvas-body">

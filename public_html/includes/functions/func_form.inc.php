@@ -200,7 +200,7 @@
 		}
 
 		$html += [
-			'			<th><a class="add-column" href="#">'. functions::draw_fonticon('fa-plus', 'style="color: #6c6;"') .'</a></th>',
+			'			<th><a class="add-column" href="#">'. functions::draw_fonticon('icon-plus', 'style="color: #6c6;"') .'</a></th>',
 			'		</tr>',
 			'	</thead>',
 			'	<tbody>',
@@ -212,7 +212,7 @@
 				$html += ['			<td contenteditable>'. $row[$column] .'</td>'];
 			}
 			$html += [
-				'			<td><a class="btn btn-default btn-sm remove" href="#">'. functions::draw_fonticon('fa-times', 'style="color: #d33"') .'</a></td>',
+				'			<td><a class="btn btn-default btn-sm remove" href="#">'. functions::draw_fonticon('icon-times', 'style="color: #d33"') .'</a></td>',
 				'		</tr>',
 			];
 		}
@@ -221,7 +221,7 @@
 			'	</tbody>',
 			'	<tfoot>',
 			'		<tr>',
-			'			<td colspan="'. (count($columns)+1) .'"><a class="add-row" href="#">'. functions::draw_fonticon('fa-plus', 'style="color: #6c6;"') .'</a></td>',
+			'			<td colspan="'. (count($columns)+1) .'"><a class="add-row" href="#">'. functions::draw_fonticon('icon-plus', 'style="color: #6c6;"') .'</a></td>',
 			'		</tr>',
 			'	</tfoot>',
 			'</table>',
@@ -243,7 +243,7 @@
 			"  e.preventDefault();",
 			"  var n = $(this).closest('table').find('thead th:not(:last-child)').length;",
 			"  $(this).closest('table').find('tbody').append(",
-			"    '<tr>' + ('<td contenteditable></td>'.repeat(n)) + '<td><a class=\"remove\" href=\"#\"><i class=\"fa fa-times-circle\" style=\"color: #d33;\"></i></a></td>' +'</tr>'",
+			"    '<tr>' + ('<td contenteditable></td>'.repeat(n)) + '<td><a class=\"remove\" href=\"#\"><i class=\"fa icon-times-circle\" style=\"color: #d33;\"></i></a></td>' +'</tr>'",
 			"  ).trigger('keyup');",
 			"});",
 			"",
@@ -327,7 +327,7 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-envelope-o fa-fw') .'</span>',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('icon-envelope-o') .'</span>',
 			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="email" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'"'. ($parameters ? ' '. $parameters : '') .'>',
 			'</div>',
 		]);
@@ -409,7 +409,7 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-key fa-fw') .'</span>',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('icon-key') .'</span>',
 			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="password" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'"'. ($parameters ? ' '. $parameters : '') .'>',
 			'</div>',
 		]);
@@ -423,9 +423,9 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-key fa-fw') .'</span>',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('icon-key') .'</span>',
 			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="password" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'"'. ($parameters ? ' '. $parameters : '') .'>',
-			'  <button class="btn btn-default" type="button" onclick="$(this).prev().attr(\'type\', ($(this).prev().attr(\'type\') == \'password\') ? \'text\' : \'password\')">'. functions::draw_fonticon('fa-eye') .'</button>',
+			'  <button class="btn btn-default" type="button" onclick="$(this).prev().attr(\'type\', ($(this).prev().attr(\'type\') == \'password\') ? \'text\' : \'password\')">'. functions::draw_fonticon('icon-eye') .'</button>',
 			'</div>',
 		]);
 	}
@@ -448,7 +448,7 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-phone fa-fw') .'</span>',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('icon-phone') .'</span>',
 			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="tel" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'" pattern="\+?([0-9]|-| )+"'. ($parameters ? ' '. $parameters : '') .'>',
 			'</div>',
 		]);
@@ -489,7 +489,7 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-search fa-fw') .'</span>',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('icon-search') .'</span>',
 			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="search" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'"'. ($parameters ? ' '. $parameters : '') .'>',
 			'</div>',
 		]);
@@ -539,7 +539,7 @@
 
 		return implode(PHP_EOL, [
 			'<div class="input-group">',
-			'  <span class="input-group-icon">'. functions::draw_fonticon('fa-user fa-fw') .'</span>',
+			'  <span class="input-group-icon">'. functions::draw_fonticon('icon-user') .'</span>',
 			'  <input'. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="form-input"' : '') .' type="text" name="'. functions::escape_attr($name) .'" value="'. functions::escape_attr($input) .'"'. ($parameters ? ' '. $parameters : '') .'>',
 			'</div>',
 		]);

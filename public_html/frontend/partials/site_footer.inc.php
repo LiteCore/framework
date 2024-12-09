@@ -24,19 +24,19 @@
 			[
 				'type' => 'facebook',
 				'title' => 'Facebook',
-				'icon' => 'fa-facebook',
+				'icon' => 'icon-brand-facebook',
 				'link' => 'https://www.facebook.com/',
 			],
 			[
-				'type' => 'twitter',
-				'title' => 'Twitter',
-				'icon' => 'fa-twitter',
-				'link' => 'https://www.twitter.com/',
+				'type' => 'x',
+				'title' => 'X',
+				'icon' => 'icon-brand-x',
+				'link' => 'https://www.x.com/',
 			],
 			[
 				'type' => 'linkedin',
 				'title' => 'LinkedIn',
-				'icon' => 'fa-linkedin',
+				'icon' => 'icon-brand-linkedin',
 				'link' => 'https://www.linkedin.com/',
 			],
 		];
@@ -64,12 +64,12 @@
 
 						<?php if (settings::get('site_phone')) { ?>
 						<p class="phone">
-							<?php echo functions::draw_fonticon('fa-phone'); ?> <a href="tel:<?php echo $phone_number; ?>"><?php echo $phone_number; ?></a>
+							<?php echo functions::draw_fonticon('icon-phone'); ?> <a href="tel:<?php echo $phone_number; ?>"><?php echo $phone_number; ?></a>
 						<p>
 						<?php } ?>
 
 						<p class="email">
-							<?php echo functions::draw_fonticon('fa-envelope'); ?> <a href="mailto:<?php echo $email_address; ?>"><?php echo $email_address; ?></a>
+							<?php echo functions::draw_fonticon('icon-envelope'); ?> <a href="mailto:<?php echo $email_address; ?>"><?php echo $email_address; ?></a>
 						</p>
 					</section>
 
@@ -83,7 +83,7 @@
 
 				<ul class="social-bookmarks flex flex-inline flex-gap text-center">
 					<?php foreach ($social as $bookmark) { ?>
-					<li><a href="<?php echo htmlspecialchars($bookmark['link']); ?>" class="thumbnail"><?php echo functions::draw_fonticon($bookmark['icon'] .' fa-fw', 'title="'. htmlspecialchars($bookmark['title']) .'"'); ?></a></li>
+					<li><a href="<?php echo htmlspecialchars($bookmark['link']); ?>" class="thumbnail"><?php echo functions::draw_fonticon($bookmark['icon'] .'', 'title="'. htmlspecialchars($bookmark['title']) .'"'); ?></a></li>
 					<?php } ?>
 				</ul>
 			</section>

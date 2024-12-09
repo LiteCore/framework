@@ -208,7 +208,7 @@
 		<table class="table table-striped table-hover data-table">
 			<thead>
 				<tr>
-					<th><?php echo functions::draw_fonticon('fa-check-square-o fa-fw', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th><?php echo functions::draw_fonticon('icon-check-square-o', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th></th>
 					<th class="main"><?php echo language::translate('title_name', 'Name'); ?> / <?php echo language::translate('title_version', 'Version'); ?></th>
 					<th><?php echo language::translate('title_vmod_health', 'vMod Health'); ?></th>
@@ -231,7 +231,7 @@
 						<span style="color: #c00"><?php echo functions::draw_fonticon('warning'); ?> <?php echo language::translate('title_fail', 'Fail'); ?></span>
 						<?php } ?>
 					</td>
-					<td class="text-center"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/download', ['addon_id' => $addon['id']]); ?>" title="<?php echo language::translate('title_download', 'Download'); ?>"><?php echo functions::draw_fonticon('fa-download'); ?> <?php echo language::translate('title_download', 'Download'); ?></a></td>
+					<td class="text-center"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/download', ['addon_id' => $addon['id']]); ?>" title="<?php echo language::translate('title_download', 'Download'); ?>"><?php echo functions::draw_fonticon('icon-download'); ?> <?php echo language::translate('title_download', 'Download'); ?></a></td>
 					<td></td>
 					<td><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_addon', ['addon_id' => $addon['id']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
 				</tr>
