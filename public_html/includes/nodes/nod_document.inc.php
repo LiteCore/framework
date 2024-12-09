@@ -10,6 +10,8 @@
 		public static $javascript = [];
 		public static $jsenv = [];
 		public static $layout = 'default';
+		public static $opengraph = [];
+		public static $preloads = [];
 		public static $schema = [];
 		public static $settings = [];
 		public static $snippets = [];
@@ -18,7 +20,15 @@
 
 		public static function init() {
 
-			// Set schema
+			// Set Default OpenGraph Content
+			self::$opengraph = [
+				'title' => settings::get('site_name'),
+				'type' => 'website',
+				'url' => document::href_ilink(''),
+				'image' => document::href_rlink('storage://images/logotype.png'),
+			];
+
+			// Set Default Schema Data
 			self::$schema['website'] = [
 				'@context' => 'https://schema.org/',
 				'@type' => 'Website',
@@ -80,7 +90,6 @@
 				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
 				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
 			]);
-			self::$head_tags['manifest'] = '<link rel="manifest" href="'. self::href_ilink('manifest.json') .'">'; // No namespace as relative to endpoint
 			self::$head_tags['fontawesome'] = '<link rel="stylesheet" href="'. self::href_rlink('app://assets/fontawesome/font-awesome.min.css') .'">';
 			self::$foot_tags['jquery'] = '<script src="'. self::href_rlink('app://assets/jquery/jquery-4.0.0.min.js') .'"></script>';
 
@@ -275,8 +284,14 @@
 
 		public static function render() {
 
+			// Preloading of resources
+			foreach (self::$preloads as $link => $type) {
+				header('Link: <'.$link.'>; rel=preload; as='.$type, false);
+			}
+
 			stats::start_watch('rendering');
 
+			// Set view
 			switch (route::$selected['endpoint']) {
 
 				case 'backend':
@@ -327,6 +342,13 @@
 					json_encode(array_values(self::$schema), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
 					'</script>',
 				]);
+			}
+
+			// Prepare OpenGraph Tags
+			if (!empty(self::$opengraph)) {
+				$_page->snippets['head_tags']['opengraph'] = implode(PHP_EOL, array_map(function($property, $content) {
+					return '<meta property="og:'. functions::escape_attr($property) .'" content="'. functions::escape_attr($content) .'">';
+				}, array_keys(self::$opengraph), self::$opengraph));
 			}
 
 			// Prepare internal styles
@@ -416,6 +438,25 @@
 			self::$javascript[$key] = implode(PHP_EOL, array_map(function($line){
 				return '	'.$line;
 			}, $lines));
+		}
+
+		public static function add_preload($url, $type=null) {
+
+			if (!$type) {
+				$path = parse_url($url, PHP_URL_PATH);
+
+				switch (true) {
+					case (preg_match('#\.css$#', $path)):
+						$type = 'style';
+						break;
+
+					case (preg_match('#\.js$#', $path)):
+						$type = 'script';
+						break;
+				}
+			}
+
+			self::$preloads[$link] = $type;
 		}
 
 		public static function ilink($resource=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {

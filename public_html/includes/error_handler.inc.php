@@ -98,7 +98,7 @@
 				]));
 			}
 
-			$output[] = 'Elapsed Time: '. number_format((microtime(true) - SCRIPT_START_TIME) * 1000, 0, '.', ' ') .' ms';
+			$output[] = 'Elapsed Time: '. number_format((microtime(true) - SCRIPT_TIMESTAMP_START) * 1000, 0, '.', ' ') .' ms';
 			$output[] = 'Platform: '. PLATFORM_NAME .'/'. PLATFORM_VERSION;
 
 			error_log(html_entity_decode(strip_tags(

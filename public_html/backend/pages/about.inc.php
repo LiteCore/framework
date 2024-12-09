@@ -19,8 +19,12 @@
 			$content = preg_replace('#(\r\n?|\n)#', PHP_EOL, file_get_contents($log_file));
 
 			foreach ($_POST['errors'] as $error) {
+
 				$content = preg_replace('#\[\d{1,2}-[a-zA-Z]+-\d{4} \d\d\:\d\d\:\d\d [a-zA-Z/]+\] '. preg_quote($error, '#') . addcslashes(PHP_EOL, "\r\n") .'[^\[]*#s', '', $content, -1, $count);
-				if (!$count) throw new Exception('Failed deleting error from log');
+
+				if (!$count) {
+					throw new Exception('Failed deleting error from log');
+				}
 			}
 
 			file_put_contents($log_file, $content);
@@ -90,7 +94,7 @@
 	$errors = [];
 
 	if ($log_file = ini_get('error_log')) {
-			
+
 		if (($filesize = filesize($log_file)) > 1024e6) {
 			notices::add('warnings', language::translate('warning_truncating_extremely_large_log_file', 'Truncating an extremely large log file') .' ('. language::number_format($filesize / (1024 * 1024)) .' Mbytes)');
 			file_put_contents($logfile, '');
@@ -110,6 +114,7 @@
 						'backtrace' => $matches[3][$i],
 						'occurrences' => 1,
 						'last_occurrence' => strtotime($matches[1][$i]),
+						'critical' => preg_match('#(Parse|Fatal) error:#s', $matches[2][$i]) ? true : false,
 					];
 				} else {
 					$errors[$checksum]['occurrences']++;
@@ -120,10 +125,16 @@
 		}
 
 		uasort($errors, function($a, $b) {
-			if ($a['occurrences'] == $b['occurrences']) {
-				return ($a['last_occurrence'] > $b['last_occurrence']) ? -1 : 1;
+
+			if ($a['critical'] != $b['critical']) {
+				return ($a['critical'] > $b['critical']) ? -1 : 1;
 			}
-			return ($a['occurrences'] > $b['occurrences']) ? -1 : 1;
+
+			if ($a['occurrences'] != $b['occurrences']) {
+				return ($a['occurrences'] > $b['occurrences']) ? -1 : 1;
+			}
+
+			return ($a['last_occurrence'] > $b['last_occurrence']) ? -1 : 1;
 		});
 	}
 

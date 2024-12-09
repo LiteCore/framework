@@ -25,6 +25,9 @@
 #box-about meter {
 	width: 500px;
 }
+#box-error-log tr.critical {
+	background: #c002;
+}
 #box-error-log td {
 	white-space: wrap !important;
 	cursor: default;
@@ -224,7 +227,7 @@
 
 						<tbody>
 							<?php foreach ($errors as $error) { ?>
-							<tr>
+							<tr<?php echo $error['critical'] ? ' class="critical"' : ''; ?>>
 								<td><?php echo functions::form_checkbox('errors[]', $error['error'], !empty($_POST['parse']) ? 'disabled' : ''); ?></td>
 								<td style="white-space: normal;"><?php echo functions::escape_html($error['error']); ?><br>
 									<div class="backtrace">
