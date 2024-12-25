@@ -137,7 +137,7 @@
 			if (!empty($options['watermark'])) {
 
 				if ($options['watermark'] === true) {
-					$options['watermark'] = 'storage://images/logotype.png';
+					$options['watermark'] = 'storage://images/logotype.svg';
 				}
 
 				if (!$image->watermark($options['watermark'], 'RIGHT', 'BOTTOM')) return;

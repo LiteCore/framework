@@ -369,11 +369,10 @@
 			}
 
 			// Strip logic from string
-			$ipath = self::strip_url_logic($link->path);
+			$link->path = self::strip_url_logic($link->path);
 
-			if (!preg_match('#^\w:#', $ipath)) {
-				$ipath = 'f:'.$ipath;
-			}
+			// Set logical resource including endpoint
+			$ipath = (!preg_match('#^\w:#', $link->path) ? 'f:' : '') . $link->path;
 
 			// Rewrite link
 			foreach (self::$_routes as $ilink => $route) {

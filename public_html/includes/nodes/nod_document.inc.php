@@ -25,7 +25,7 @@
 				'title' => settings::get('site_name'),
 				'type' => 'website',
 				'url' => document::href_ilink(''),
-				'image' => document::href_rlink('storage://images/logotype.png'),
+				'image' => document::href_rlink('storage://images/logotype.svg'),
 			];
 
 			// Set Default Schema Data
@@ -42,7 +42,7 @@
 				'@type' => 'Organization',
 				'name' => settings::get('site_name'),
 				'url' => self::ilink(''),
-				'logo' => self::rlink(FS_DIR_STORAGE . 'images/logotype.png'),
+				'logo' => self::rlink(FS_DIR_STORAGE . 'images/logotype.svg'),
 				'email' => settings::get('site_email'),
 				'availableLanguage' => array_column(language::$languages, 'name'),
 			];
@@ -121,16 +121,6 @@
 				];
 			}
 
-			self::$jsenv['session'] = [
-				'id' => session::get_id(),
-				'language' => [
-					'code' => language::$selected['code'],
-					'name' => language::$selected['name'],
-					'decimal_point' => language::$selected['decimal_point'],
-					'thousands_separator' => language::$selected['thousands_sep'],
-				],
-			];
-
 			self::$jsenv['template'] = [
 				'settings' => self::$settings,
 			];
@@ -145,6 +135,15 @@
 					self::$jsenv['template']['url'] = WS_DIR_APP . 'frontend/template/';
 					break;
 			}
+
+			self::$jsenv['session']['id'] = session::get_id();
+
+			document::$jsenv['language'] = [
+				'code' => &language::$selected['code'],
+				'name' => &language::$selected['name'],
+				'decimal_point' => &language::$selected['decimal_point'],
+				'thousands_separator' => &language::$selected['thousands_sep'],
+			];
 
 			self::$head_tags[] = '<script>window._env = '. json_encode(self::$jsenv, JSON_UNESCAPED_SLASHES) .';</script>';
 		}

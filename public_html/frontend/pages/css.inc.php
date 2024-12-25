@@ -10,7 +10,7 @@
 	document::$description = language::translate('index:meta_description', '');
 	document::$opengraph['url'] = document::href_ilink('');
 	document::$opengraph['type'] = 'website';
-	document::$opengraph['image'] = document::href_rlink('storage://images/logotype.png');
+	document::$opengraph['image'] = document::href_rlink('storage://images/logotype.svg');
 
 	$_page = new ent_view('app://frontend/template/pages/css.inc.php');
 

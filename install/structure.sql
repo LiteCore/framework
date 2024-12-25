@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `lc_administrators` (
 	`last_ip_address` VARCHAR(39) NOT NULL DEFAULT '',
 	`last_hostname` VARCHAR(128) NOT NULL DEFAULT '',
 	`last_user_agent` VARCHAR(255) NOT NULL DEFAULT '',
+	`known_ips` VARCHAR(255) NOT NULL DEFAULT '',
 	`date_valid_from` TIMESTAMP NULL DEFAULT NULL,
 	`date_valid_to` TIMESTAMP NULL DEFAULT NULL,
 	`date_active` TIMESTAMP NULL DEFAULT NULL,

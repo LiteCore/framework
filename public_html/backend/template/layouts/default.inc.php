@@ -24,7 +24,7 @@
 	<div id="sidebar" class="hidden-print">
 
 		<a class="logotype" href="<?php echo document::href_ilink(''); ?>">
-			<img class="center-block responsive" src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>">
+			<img class="center-block responsive" src="<?php echo document::href_rlink('storage://images/logotype.svg'); ?>" alt="<?php echo settings::get('site_name'); ?>">
 		</a>
 
 		<div class="filter">

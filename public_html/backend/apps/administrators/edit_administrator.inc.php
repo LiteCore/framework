@@ -116,7 +116,7 @@
 	<div class="card-body">
 		<?php echo functions::form_begin('administrator_form', 'post', false, false, 'autocomplete="off"'); ?>
 
-			<div class="row">
+			<div class="row" style="max-width: 1200px;">
 
 				<div class="col-md-8">
 					<div class="row">
@@ -125,7 +125,7 @@
 							<?php echo functions::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
 						</div>
 
-						<div class="form-group col-sm-6">
+						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_username', 'Username'); ?></label>
 							<?php echo functions::form_input_text('username', true, 'autocomplete="off" required'); ?>
 						</div>
@@ -198,13 +198,13 @@
 					<div id="app-permissions" class="form-group">
 						<?php echo functions::form_checkbox('apps_toggle', ['1', language::translate('title_apps', 'Apps')]); ?>
 						<div class="form-input" style="height: 400px; overflow-y: scroll;">
-							<ul class="list-unstyled">
+							<ul class="flex flex-rows flex-nogap">
 <?php
 	foreach (functions::admin_get_apps() as $app) {
 		echo implode(PHP_EOL, [
 			'<li data-app="'. functions::escape_attr($app['id']) .'">',
 			'  '. functions::form_checkbox('apps['.$app['id'].'][status]', ['1', $app['name']], true),
-			'  <ul class="list-unstyled">',
+			'  <ul class="flex flex-rows flex-nogap">',
 			implode(PHP_EOL, array_map(function($doc) use ($app) {
 				return '    <li data-doc="'. functions::escape_attr($doc) .'">'. functions::form_checkbox('apps['.$app['id'].'][docs][]', [$doc], true) .'</li>';
 			}, array_keys($app['docs']))),
@@ -220,7 +220,7 @@
 					<div id="widget-permissions" class="form-group">
 						<?php echo functions::form_checkbox('widgets_toggle', ['1', language::translate('title_widgets', 'Widgets')]); ?>
 						<div class="form-input" style="height: 150px; overflow-y: scroll;">
-							<ul class="list-unstyled">
+							<ul class="flex flex-rows flex-nogap">
 <?php
 	foreach (functions::admin_get_widgets() as $widget) {
 		echo implode(PHP_EOL, [

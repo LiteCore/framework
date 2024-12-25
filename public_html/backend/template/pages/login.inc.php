@@ -47,7 +47,7 @@ html.dark-mode body {
 <div id="box-login" class="card">
 	<div class="card-header text-center">
 		<a href="<?php echo document::href_ilink(''); ?>">
-			<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>">
+			<img src="<?php echo document::href_rlink('storage://images/logotype.svg'); ?>" alt="<?php echo settings::get('site_name'); ?>">
 		</a>
 	</div>
 
