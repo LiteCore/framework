@@ -1,4 +1,5 @@
 <?php
+
 	define('PLATFORM_NAME', 'LiteCore');
 	define('PLATFORM_VERSION', '1.0.0');
 	define('SCRIPT_TIMESTAMP_START', microtime(true));

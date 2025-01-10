@@ -795,36 +795,40 @@
 			$input = form_reinsert_value($name);
 		}
 
+		if (!$options) {
+			$options = 't/f';
+		}
+
 		if (is_string($options)) {
 			switch ($options) {
 
 				case 'a/i':
-				$options = [
-					'1' => language::translate('title_active', 'Active'),
-					'0' => language::translate('title_inactive', 'Inactive'),
-				];
-				break;
+					$options = [
+						'1' => language::translate('title_active', 'Active'),
+						'0' => language::translate('title_inactive', 'Inactive'),
+					];
+					break;
 
 				case 'e/d':
-				$options = [
-					'1' => language::translate('title_enabled', 'Enabled'),
-					'0' => language::translate('title_disabled', 'Disabled'),
-				];
-				break;
+					$options = [
+						'1' => language::translate('title_enabled', 'Enabled'),
+						'0' => language::translate('title_disabled', 'Disabled'),
+					];
+					break;
 
 				case 'y/n':
-				$options = [
-					'1' => language::translate('title_yes', 'Yes'),
-					'0' => language::translate('title_no', 'No'),
-				];
-				break;
+					$options = [
+						'1' => language::translate('title_yes', 'Yes'),
+						'0' => language::translate('title_no', 'No'),
+					];
+					break;
 
 				case 'o/o':
-				$options = [
-					'1' => language::translate('title_on', 'On'),
-					'0' => language::translate('title_off', 'Off'),
-				];
-				break;
+					$options = [
+						'1' => language::translate('title_on', 'On'),
+						'0' => language::translate('title_off', 'Off'),
+					];
+					break;
 
 				case 't/f':
 					$options = [
@@ -835,12 +839,12 @@
 
 				default:
 					trigger_error('Invalid option ("'. $options.'")', E_USER_WARNING);
-				$options = [
-					'1' => language::translate('title_true', 'True'),
-					'0' => language::translate('title_false', 'False'),
-				];
-				break;
-		}
+					$options = [
+						'1' => language::translate('title_true', 'True'),
+						'0' => language::translate('title_false', 'False'),
+					];
+					break;
+			}
 		}
 
 		$html = '<div '. (!preg_match('#class="([^"]+)?"#', $parameters) ? 'class="form-toggle"' : '') .''. ($parameters ? ' '. $parameters : '') .'>'. PHP_EOL;

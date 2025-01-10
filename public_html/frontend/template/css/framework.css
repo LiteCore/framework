@@ -725,130 +725,123 @@ ul.breadcrumb li a {
 .dropdown [data-toggle="dropdown"] {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right var(--input-padding-x) center;
+  background-position: right 1em center;
   background-size: 0.8em;
-  padding-inline-end: calc(var(--input-padding-x) + 1.5em) !important;
+  padding-inline-end: 2.5em !important;
 }
-.dropdown.open {
-  z-index: 999;
+.dropdown .dropdown-content,
+.dropdown .dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  transform-origin: 0px 0px;
+  transform: rotateX(-25deg);
+  transition: 250ms;
+  visibility: hidden;
+  opacity: 0;
 }
-.dropdown.open > .dropdown-menu {
+.dropdown.open,
+.dropdown:focus-within {
+  z-index: 1;
+}
+.dropdown.open > .dropdown-content,
+.dropdown:focus-within > .dropdown-content,
+.dropdown.open > .dropdown-menu,
+.dropdown:focus-within > .dropdown-menu {
   visibility: visible;
   transform: rotateX(0);
   opacity: 1;
 }
-.dropdown.open > a {
-  outline: 0;
+.dropdown.dropdown > .dropdown-content,
+.dropdown.dropdown > .dropdown-menu,
+.dropdown.dropdown-start > .dropdown-content,
+.dropdown.dropdown-start > .dropdown-menu {
+  inset-inline-start: 0;
+  inset-inline-end: auto;
 }
-.dropdown .dropdown-menu {
-  position: absolute;
-  visibility: hidden;
-  top: 100%;
-  left: 0;
-  min-width: 160px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  text-align: left;
-  background-color: var(--dropdown-menu-background-color);
+.dropdown.dropdown-end > .dropdown-content,
+.dropdown.dropdown-end > .dropdown-menu,
+.dropdown.dropdown-end > .dropdown-content,
+.dropdown.dropdown-end > .dropdown-menu {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+.dropdown .dropdown .dropdown-content,
+.dropdown .dropdown .dropdown-menu {
+  top: 0;
+  inset-inline-start: 100%;
+}
+.dropdown-menu,
+.dropdown-content {
+  position: fixed;
+  width: max-content;
+  text-align: start;
+  color: var(--default-text-color);
+  background-color: #fff;
   border: 1px solid var(--default-border-color);
   border-radius: var(--border-radius);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box;
-  transform-origin: 0px 0px;
-  transform: rotateX(-25deg);
-  transition: 250ms;
-  opacity: 0;
 }
-.dropdown .dropdown-menu.dropdown-menu-end,
-.dropdown .dropdown-menu.dropdown-menu-right {
-  right: 0;
-  left: auto;
+.dropdown-menu:is(ul),
+.dropdown-content:is(ul) {
+  list-style: none;
 }
-.dropdown .dropdown-menu .dropdown-divider {
+.dropdown-menu .dropdown-divider,
+.dropdown-content .dropdown-divider {
   height: 1px;
   margin: 9px 0;
   overflow: hidden;
   background-color: #e5e5e5;
 }
-.dropdown .dropdown-menu .dropdown-menu-item:first-child > a {
-  border-start-start-radius: var(--border-radius);
-  border-start-end-radius: var(--border-radius);
-}
-.dropdown .dropdown-menu .dropdown-menu-item:last-child > a {
-  border-end-start-radius: var(--border-radius);
-  border-end-end-radius: var(--border-radius);
-}
-.dropdown .dropdown-menu .dropdown-menu-item > a,
-.dropdown .dropdown-menu .dropdown-menu-item > span,
-.dropdown .dropdown-menu .dropdown-menu-item > label {
-  display: block;
-  padding: 0.5em var(--gutter-x);
-  clear: both;
-  font-weight: normal;
-  line-height: 1.42857143;
-  color: inherit;
+.dropdown-menu > li > *:not(.btn),
+.dropdown-content > li > *:not(.btn) {
   white-space: nowrap;
-  background-color: var(--dropdown-menu-item-background-color);
-  color: var(--dropdown-menu-item-text-color);
 }
-.dropdown .dropdown-menu .dropdown-menu-item > a {
+.dropdown-menu > li > *:not(.btn)a:hover,
+.dropdown-content > li > *:not(.btn)a:hover,
+.dropdown-menu > li > *:not(.btn)a:focus,
+.dropdown-content > li > *:not(.btn)a:focus {
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+.dropdown-menu > .active > a,
+.dropdown-content > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-content > .active > a:hover,
+.dropdown-menu > .active > a:focus,
+.dropdown-content > .active > a:focus {
+  color: #fff;
   text-decoration: none;
   outline: 0;
+  background-color: #337ab7;
 }
-.dropdown .dropdown-menu .dropdown-menu-item > a:hover,
-.dropdown .dropdown-menu .dropdown-menu-item > a:focus {
-  background-color: var(--dropdown-menu-item-background-color);
-  color: var(--dropdown-menu-item-text-color);
+.dropdown-menu > .disabled > a,
+.dropdown-content > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-content > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus,
+.dropdown-content > .disabled > a:focus {
+  color: #777;
 }
-.dropdown .dropdown-menu .dropdown-menu-item.disabled,
-.dropdown .dropdown-menu .dropdown-menu-item .disabled {
-  opacity: 0.5;
+.dropdown-menu > .disabled > a:hover,
+.dropdown-content > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus,
+.dropdown-content > .disabled > a:focus {
+  text-decoration: none;
+  background-color: transparent;
+  background-image: none;
   cursor: not-allowed;
 }
-@media (min-width: 576px) {
-  .dropdown .dropdown-menu .navbar-form {
-    min-width: 320px;
-    margin: 1em;
-  }
+.dropdown-menu {
+  padding: 0;
+  margin: 2px 0 0;
 }
-.dropdown .dropdown .dropdown-menu {
-  top: 0;
-  left: 100%;
-}
-@media (max-width: calc(576px - 1px)) {
-  .dropdown .dropdown-menu {
-    display: none;
-  }
-  .dropdown.open {
-    z-index: 999;
-  }
-  .dropdown.open > .dropdown-menu {
-    display: block;
-  }
+.dropdown-content {
+  padding: 1em;
+  margin: 0;
 }
 html[dir="rtl"] .dropdown [data-toggle="dropdown"] {
   background-position: left 1em center;
-}
-@media (min-width: 576px) {
-  html[dir="rtl"] .dropdown-menu-end {
-    left: 0;
-    right: auto;
-  }
-}
-.dropdown-backdrop {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  z-index: 990;
-  background: rgba(0, 0, 0, 0.15);
-}
-.navbar-fixed-bottom .dropdown .dropdown-menu {
-  top: auto;
-  bottom: 100%;
-  margin-bottom: 2px;
 }
 /* Effects */
 tr.semi-transparent td {
