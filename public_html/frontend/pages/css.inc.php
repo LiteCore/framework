@@ -60,7 +60,7 @@
 
 		<div class="card-body">
 
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <div class="navbar">
 
@@ -117,7 +117,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <section class="card">
 	<div class="card-header">
@@ -169,7 +169,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <ul class="nav nav-tabs">
 	<li><a href="#tab-1" data-toggle="tab">Tab 1</a></li>
@@ -202,7 +202,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <ul class="nav nav-pills">
 	<li class="active"><a href="#">Home</a></li>
@@ -217,7 +217,7 @@
 
 			<h2>Stacked Pills</h2>
 
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <ul class="nav nav-pills nav-stacked">
 	<li class="active"><a href="#">Home</a></li>
@@ -241,7 +241,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <div class="alerts">
 	<div class="alert alert-danger">
@@ -281,7 +281,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <ul class="breadcrumb">
 	<li><a href="#">Home</a></li>
@@ -304,7 +304,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <nav>
 	<ul class="pagination">
@@ -335,7 +335,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <div id="carousel-code" class="carousel slide" data-ride="carousel">
 
@@ -385,9 +385,9 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
-<div class="row show-grid">
+<div class="grid show-grid">
 	<div class="col-md-1">.col-md-1</div>
 	<div class="col-md-1">.col-md-1</div>
 	<div class="col-md-1">.col-md-1</div>
@@ -402,18 +402,18 @@
 	<div class="col-md-1">.col-md-1</div>
 </div>
 
-<div class="row show-grid">
+<div class="grid show-grid">
 	<div class="col-md-8">.col-md-8</div>
 	<div class="col-md-4">.col-md-4</div>
 </div>
 
-<div class="row show-grid">
+<div class="grid show-grid">
 	<div class="col-md-4">.col-md-4</div>
 	<div class="col-md-4">.col-md-4</div>
 	<div class="col-md-4">.col-md-4</div>
 </div>
 
-<div class="row show-grid">
+<div class="grid show-grid">
 	<div class="col-md-6">.col-md-6</div>
 	<div class="col-md-6">.col-md-6</div>
 </div>
@@ -434,7 +434,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <h1>Heading 1</h1>
 
@@ -462,7 +462,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <ul class="flex flex-rows">
 	<li>Item 1</li>
@@ -477,7 +477,7 @@
 
 			<h3>Inline List</h3>
 
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <ul class="flex flex-columns flex-gap">
 	<li>Item 1</li>
@@ -501,7 +501,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <table class="table table-striped table-hover">
 	<thead>
@@ -551,7 +551,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <div class="form-group">
 	<label>Text</label>
@@ -685,7 +685,7 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <button type="button" class="btn btn-sm btn-default">Default</button>
 <button type="button" class="btn btn-sm btn-primary">Primary</button>
@@ -715,7 +715,7 @@
 
 			<h3>Button Group</h3>
 
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <div class="btn-group">
 	<button type="button" class="btn btn-default">Button 1</button>
@@ -741,7 +741,7 @@
 
 			<h3>Button Dropdown</h3>
 
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <div class="btn-group">
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -774,7 +774,7 @@
 
 		<div class="card-body">
 
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <a href="#" class="thumbnail">
 	<img src="https://via.placeholder.com/300x200.png" loading="lazy">
@@ -797,7 +797,7 @@
 
 		<div class="card-body">
 
-			<div class="row">
+			<div class="grid">
 				<div class="col-md-6 source">
 <div class="bubbles">
 	<div class="bubble remote">

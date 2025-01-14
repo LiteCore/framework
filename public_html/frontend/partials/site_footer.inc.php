@@ -54,10 +54,10 @@
 ?>
 	<footer id="footer" class="hidden-print">
 	<div class="container content">
-		<div class="row" style="margin-bottom: 0;">
+		<div class="grid" style="margin-bottom: 0;">
 
 			<div class="col-md-8">
-				<div class="row" style="margin-bottom: 0;">
+				<div class="grid" style="margin-bottom: 0;">
 
 					<section class="store-info col-sm-4">
 						<h3 class="title"><?php echo language::translate('title_contact', 'Contact'); ?></h3>

@@ -116,10 +116,10 @@
 	<div class="card-body">
 		<?php echo functions::form_begin('administrator_form', 'post', false, false, 'autocomplete="off"'); ?>
 
-			<div class="row" style="max-width: 1200px;">
+			<div class="grid" style="max-width: 1200px;">
 
 				<div class="col-md-8">
-					<div class="row">
+					<div class="grid">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_status', 'Status'); ?></label>
 							<?php echo functions::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
@@ -131,7 +131,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="grid">
 						<div class="form-group col-sm-6">
 							<label><?php echo language::translate('title_email', 'Email'); ?></label>
 							<?php echo functions::form_input_email('email', true, 'autocomplete="off"'); ?>
@@ -143,7 +143,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="grid">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_new_password', 'New Password'); ?></label>
 							<?php echo functions::form_input_password_unmaskable('password', '', 'autocomplete="new-password"'); ?>
@@ -155,7 +155,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="grid">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_valid_from', 'Valid From'); ?></label>
 							<?php echo functions::form_input_datetime('date_valid_from', true); ?>
@@ -168,7 +168,7 @@
 					</div>
 
 					<?php if (!empty($administrator->data['id'])) { ?>
-					<div class="row">
+					<div class="grid">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_last_ip_address', 'Last IP Address'); ?></label>
 							<?php echo functions::form_input_text('last_ip_address', true, 'readonly'); ?>
@@ -180,7 +180,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="grid">
 						<div class="form-group col-md-6">
 							<label><?php echo language::translate('title_last_login', 'Last Login'); ?></label>
 							<?php echo functions::form_input_text('date_login', true, 'readonly'); ?>

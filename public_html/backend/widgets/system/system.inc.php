@@ -71,7 +71,7 @@ meter {
 
 <section id="widget-system" class="card card-default">
 	<div class="card-body">
-		<div class="row">
+		<div class="grid">
 			<div class="col-md-3">
 				<h3><?php echo language::translate('title_cpu_usage', 'CPU Usage'); ?></h3>
 				<meter value=<?php echo $cpu_usage; ?> max=100 min=0 high=30 low=10 optimum=5></meter>

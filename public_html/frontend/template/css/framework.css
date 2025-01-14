@@ -1240,7 +1240,7 @@ input[data-toggle="tags"] + .form-input .input {
   width: 100%;
   padding: var(--gutter-y) var(--gutter-x);
 }
-.row {
+.grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-gap: var(--gutter-y) var(--gutter-x);

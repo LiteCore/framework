@@ -85,7 +85,7 @@
 ?>
 <main id="main" class="container">
 
-	<div class="row layout">
+	<div class="grid">
 
 		<div class="col-md-8">
 			<section id="box-contact-us" class="card">
@@ -96,7 +96,7 @@
 
 					<?php echo functions::form_begin('contact_form', 'post'); ?>
 
-						<div class="row">
+						<div class="grid">
 							<div class="form-group col-md-6">
 								<label><?php echo language::translate('title_firstname', 'First Name'); ?></label>
 								<?php echo functions::form_input_text('firstname', true, 'required'); ?>

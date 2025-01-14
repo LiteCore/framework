@@ -74,7 +74,7 @@
 	<div class="card-body">
 		<?php echo functions::form_begin('pages_form', 'post', false, false, 'style="max-width: 640px;"'); ?>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_status', 'Status'); ?></label>
 					<?php echo functions::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
@@ -85,7 +85,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_parent', 'Parent'); ?></label>
 					<?php echo functions::form_select_page('parent_id', true); ?>

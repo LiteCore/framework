@@ -304,14 +304,14 @@
 			</div>
 			<?php } ?>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_status', 'Status'); ?></label>
 					<?php echo functions::form_toggle('status', $statuses); ?>
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_name', 'Name'); ?></label>
 					<?php echo functions::form_input_text('name', true, 'list="available-languages"'); ?>
@@ -323,7 +323,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_code', 'Code'); ?> (ISO 639-1) <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank"><?php echo functions::draw_fonticon('icon-external-link'); ?></a></label>
 					<?php echo functions::form_input_text('code', true, 'required pattern="[a-z]{2}"'); ?>
@@ -340,7 +340,7 @@
 				<?php echo functions::form_input_text('locale', true, 'placeholder="en_US.utf8, en-US.UTF-8, english"'); ?>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_url_type', 'URL Type'); ?></label>
 					<?php echo functions::form_toggle('url_type', $url_types); ?>
@@ -352,7 +352,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_date_format', 'Date Format'); ?> <a href="https://php.net/manual/en/function.strftime.php" target="_blank"><?php echo functions::draw_fonticon('icon-external-link'); ?></a></label>
 					<?php echo functions::form_select('format_date', $date_format_options, true); ?>
@@ -364,7 +364,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_raw_date_format', 'Raw Date Format'); ?> <a href="https://php.net/manual/en/function.date.php" target="_blank"><?php echo functions::draw_fonticon('icon-external-link'); ?></a></label>
 					<?php echo functions::form_select_optgroup('raw_date', $raw_date_options, true); ?>
@@ -376,7 +376,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_decimal_point', 'Decimal Point'); ?></label>
 					<?php echo functions::form_select('decimal_point', $decimal_point_options, true); ?>
@@ -388,14 +388,14 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo language::translate('title_priority', 'Priority'); ?></label>
 					<?php echo functions::form_input_number('priority', true); ?>
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="grid">
 				<div class="form-group col-md-6">
 					<?php echo functions::form_checkbox('set_default', ['1', language::translate('description_set_as_default_language', 'Set as default language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('default_language_code')) ? '1' : true); ?>
 					<?php echo functions::form_checkbox('set_site', ['1', language::translate('description_set_as_site_language', 'Set as site language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('site_language_code')) ? '1' : true); ?></label>

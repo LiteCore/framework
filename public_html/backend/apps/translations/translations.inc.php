@@ -354,7 +354,7 @@
 <div id="translator-tool" style="display: none;">
 	<h2><?php echo language::translate('title_translator_tool', 'Translator Tool'); ?></h2>
 
-	<div class="row">
+	<div class="grid">
 		<div class="col-md-6">
 			<div class="form-group">
 				<label><?php echo language::translate('title_from_language', 'From Language'); ?></label>

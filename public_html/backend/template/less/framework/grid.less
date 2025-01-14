@@ -5,7 +5,8 @@
 .float-start { float: inline-start; }
 .float-end { float: inline-end; }
 
-.container-fluid, .container {
+.container,
+.container-fluid {
 	padding: 0 var(--gutter-size);
 }
 
@@ -14,25 +15,24 @@
 	margin: 0 auto;
 }
 
-.grid,
-.row {
+.grid {
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
-	grid-gap: ~"calc(var(--gutter-size)/2)";
-	&.column {
+	grid-gap: var(--gutter-y) var(--gutter-x);
+	&.grid-column {
 		flex-direction: column;
 	}
-	&.nowrap {
+	&.grid-nogap {
+		grid-gap: none;
+	}
+	&.grid-nowrap {
 		grid-auto-flow: column;
 	}
-	&.center {
+	&.grid-center {
 		justify-items: center;
 		align-items: center;
 	}
-	@media (min-width: @media-breakpoint-sm) {
-		grid-gap: var(--gutter-size);
-	}
-	[class*="col-"] {
+	> * {
 		grid-column: span 12;
 	}
 }

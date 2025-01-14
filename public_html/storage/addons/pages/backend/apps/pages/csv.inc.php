@@ -168,7 +168,7 @@
 	</div>
 
 	<div class="card-body">
-		<div class="row">
+		<div class="grid">
 
 			<div class="col-sm-6 col-lg-4">
 				<?php echo functions::form_begin('import_form', 'post', '', true); ?>
@@ -181,7 +181,7 @@
 							<?php echo functions::form_input_file('file', 'accept=".csv, .dsv, .tab, .tsv"'); ?>
 						</div>
 
-						<div class="row">
+						<div class="grid">
 							<div class="form-group col-sm-6">
 								<label><?php echo language::translate('title_delimiter', 'Delimiter'); ?></label>
 								<?php echo functions::form_select('delimiter', ['' => language::translate('title_auto', 'Auto') .' ('. language::translate('text_default', 'default') .')', ',' => ',',  ';' => ';', "\t" => 'TAB', '|' => '|'], true); ?>
@@ -226,7 +226,7 @@
 							<?php echo functions::form_select_language('language_code', true); ?>
 						</div>
 
-						<div class="row">
+						<div class="grid">
 							<div class="form-group col-sm-6">
 								<label><?php echo language::translate('title_delimiter', 'Delimiter'); ?></label>
 								<?php echo functions::form_select('delimiter', [',' => ', ('. language::translate('text_default', 'default') .')', ';' => ';', "\t" => 'TAB', '|' => '|'], true); ?>

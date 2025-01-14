@@ -24,26 +24,25 @@
 	padding: var(--gutter-y) var(--gutter-x);
 }
 
-.row {
+.grid {
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
 	grid-gap: var(--gutter-y) var(--gutter-x);
 	margin-bottom: var(--gutter-y);
-	&.layout {
-		grid-gap: var(--gutter-x);
-	}
-	&.column {
+	&.grid-column {
 		flex-direction: column;
 	}
-	&.nowrap {
+	&.grid-nogap {
+		grid-gap: none;
+	}
+	&.grid-nowrap {
 		grid-auto-flow: column;
 	}
-	&.center {
+	&.grid-center {
 		justify-items: center;
 		align-items: center;
 	}
-	[class*="col-"] {
-		display: block;
+	> * {
 		grid-column: span 12;
 	}
 }
