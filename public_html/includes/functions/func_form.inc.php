@@ -1038,43 +1038,6 @@
 		}
 	}
 
-	function form_select_country($name, $input=true, $parameters='') {
-
-		if ($input === true) {
-			$input = form_reinsert_value($name);
-		}
-
-		switch ($input) {
-
-			case 'customer_country_code':
-				$input = customer::$data['country_code'];
-				break;
-
-			case 'default_country_code':
-				$input = settings::get('default_country_code');
-				break;
-
-			case 'site_country_code':
-				$input = settings::get('site_country_code');
-				break;
-		}
-
-		$options = database::query(
-			"select * from ". DB_TABLE_PREFIX ."countries
-			where status
-			order by name asc;"
-		)->fetch_all(function($country){
-			return [$country['iso_code_2'], $country['name'], 'data-tax-id-format="'. $country['tax_id_format'] .'" data-postcode-format="'. $country['postcode_format'] .'" data-phone-code="'. $country['phone_code'] .'"'];
-		});
-
-		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
-		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-			return form_select($name, $options, $input, $parameters);
-		}
-	}
-
 	function form_select_encoding($name, $input=true, $parameters='') {
 
 		$options = [
@@ -1298,47 +1261,4 @@
 			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
-	}
-
-	function form_select_zone($name, $country_code='', $input=true, $parameters='', $preamble='none') {
-
-		switch ($country_code) {
-
-			case 'site_country_code':
-				$country_code = settings::get('site_country_code');
-				break;
-
-			default:
-				settings::get('default_country_code');
-				break;
-		}
-
-		$options = database::query(
-			"select * from ". DB_TABLE_PREFIX ."zones
-			where country_code = '". database::input($country_code) ."'
-			order by name asc;"
-		)->fetch_all(function($zone){
-			return [$zone['code'], $zone['name']];
-		});
-
-		if (!$options) {
-			$parameters .= ' disabled';
-		}
-
-		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
-		}
-
-		switch ($preamble) {
-
-			case 'all':
-				array_unshift($options, ['', '-- '. language::translate('title_all_zones', 'All Zones') . ' --']);
-				break;
-
-			case 'select':
-				array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
-				break;
-		}
-
-		return form_select($name, $options, $input, $parameters);
 	}
