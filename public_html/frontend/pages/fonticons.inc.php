@@ -31,33 +31,87 @@
 	} else {
 		extract($_page->snippets);
 	}
+
 ?>
 <style>
-	.font-icons {
-		columns: 200px auto;
-		gap: 1em;
-		margin-bottom: 2em;
-	}
+.font-icons {
+	columns: 200px auto;
+	gap: 1em;
+	margin-bottom: 2em;
+}
 
-	.icon {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		margin-bottom: 1em;
-	}
+.icon {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 1em;
+}
+.icon [class^="icon-"] {
+	aspect-ratio: 1;
+	border: 1px solid var(--default-border-color);
+	border-radius: var(--border-radius);
+	padding: 1rem;
+	margin-right: 1em;
+	font-size: 1.5em;
+}
 
-	.icon [class^="icon-"] {
-		aspect-ratio: 1;
-		border: 1px solid var(--default-border-color);
-		border-radius: var(--border-radius);
-		padding: 1em;
-		margin-right: 1em;
-	}
+.icon .name {
+	margin-top: 0.5em;
+	font-family: monospace;
+}
 
-	.icon .name {
-		margin-top: 0.5em;
-		font-family: monospace;
-	}
+.special-icons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+}
+
+.special-icons i {
+	font-size: 4em;
+	aspect-ratio: 1;
+	line-height: 1;
+}
+.special-icons .icon-wrench-circle {
+	border: 1px solid var(--default-border-color);
+}
+
+.special-icons .icon-wrench-circle::after {
+	font-family: 'Fonticons';
+	content: "\e057";
+	border: 1px solid red;
+	font-size: 1.5em;
+	font-style: normal;
+}
+.special-icons .icon-wrench-circle::before {
+	font-size: .75em;
+	line-height: 2em;
+	width: 2em;
+	border: 1px solid blue;
+	position: absolute;
+}
+.special-icons .icon-wrench-triangle::after {
+	font-family: 'Fonticons';
+	content: "\e008";
+	border: 1px solid red;
+	font-size: 1.5em;
+	font-style: normal;
+}
+
+.special-icons .icon-wrench-triangle::before {
+	font-size: .75em;
+	line-height: 2em;
+	width: 2em;
+	border: 1px solid blue;
+	position: absolute;
+	color: red;
+}
+.special-icons .icon-wrench-triangle::after {
+	font-family: 'Fonticons';
+	content: "\e008";
+	border: 1px solid red;
+	font-size: 1.5em;
+	font-style: normal;
+}
 </style>
 
 <main class="container">
