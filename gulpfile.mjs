@@ -26,7 +26,20 @@ const banner = [
   '',
 ].join('\n')
 
-// Compile LESS files
+
+gulp.task('less-framework', function() {
+
+  return gulp
+    .src(['public_html/assets/litecore/src/*.less'])
+    .pipe(sourcemaps.init())
+    .pipe(less())
+    .pipe(header(banner, { pkg: packageData }))
+		.pipe(cleancss())
+    .pipe(rename({ extname: '.min.css' }))
+    .pipe(sourcemaps.write('.', { includeContent: false }))
+    .pipe(gulp.dest('public_html/assets/litecore/', { overwrite: true }))
+})
+
 gulp.task('less-backend', function() {
 
   gulp
@@ -117,6 +130,7 @@ gulp.task('phplint', function() {
 // Watch files for changes
 gulp.task('watch', function() {
 	gulp.watch('public_html/assets/trumbowyg/**/*.scss', gulp.series('sass-trumbowyg'))
+  gulp.watch('public_html/assets/litecore/src/**/*.less', gulp.series('less-framework'))
   gulp.watch('public_html/backend/template/less/**/*.less', gulp.series('less-backend'))
   gulp.watch('public_html/backend/template/js/components/*.js', gulp.series('js-backend'))
   gulp.watch('public_html/frontend/template/less/**/*.less', gulp.series('less-frontend'))
