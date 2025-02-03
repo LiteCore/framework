@@ -6,7 +6,7 @@
 <meta name="description" content="{{description}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://frontend/template/css/variables.css'); ?>">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://frontend/template/css/framework.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://frontend/template/css/app.min.css'); ?>">
 {{head_tags}}
 </head>
@@ -33,7 +33,7 @@
 	<footer>
 		<?php include 'app://frontend/partials/site_footer.inc.php'; ?>
 	</footer>
-	
+
 </div>
 
 <?php include 'app://frontend/partials/site_cookie_notice.inc.php'; ?>
