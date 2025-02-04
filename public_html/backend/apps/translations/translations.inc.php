@@ -295,7 +295,7 @@
 		<table class="table table-striped table-hover table-sortable data-table">
 			<thead>
 				<tr>
-					<th style="width: 50px;"><?php echo functions::draw_fonticon('icon-check-square-o', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th style="width: 50px;"><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th data-sort="id"><?php echo language::translate('title_code', 'code'); ?></th>
 					<?php foreach ($_GET['languages'] as $language_code) { ?><th><?php echo language::$languages[$language_code]['name']; ?></th><?php } ?>
 				</tr>
