@@ -5,7 +5,7 @@
 <meta charset="{{charset}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/variables.css'); ?>">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
 {{head_tags}}
 {{style}}

@@ -43,13 +43,14 @@ gulp.task('less-framework', function() {
 gulp.task('less-backend', function() {
 
   gulp
-    .src('public_html/backend/template/less/vari*bles.less') // non-globstar pattern will fail on some windows paths
+    .src('public_html/backend/template/less/variables.less')
 		.pipe(less())
     .pipe(header(banner, { pkg: packageData }))
     .pipe(gulp.dest('public_html/backend/template/css/', { overwrite: true }))
 
   return gulp
-    .src(['public_html/backend/template/less/*.less', '!public_html/backend/template/less/variables*.less'])
+    .src([
+      'public_html/backend/template/less/*.less', '!**/variables.less'])
     .pipe(sourcemaps.init())
     .pipe(less())
     .pipe(header(banner, { pkg: packageData }))
@@ -62,13 +63,13 @@ gulp.task('less-backend', function() {
 gulp.task('less-frontend', function() {
 
   gulp
-    .src('public_html/frontend/template/less/vari*bles.less') // non-globstar pattern will fail on some windows paths
+    .src('public_html/frontend/template/less/variables.less')
     .pipe(less())
     .pipe(header(banner, { pkg: packageData }))
     .pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
 
   return gulp
-    .src(['public_html/frontend/template/less/*.less', '!public_html/frontend/template/less/variables*.less'])
+    .src(['public_html/frontend/template/less/*.less', '!**/variables.less'])
 		.pipe(sourcemaps.init())
 		.pipe(less())
     .pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
@@ -110,7 +111,8 @@ gulp.task('js-frontend', function() {
 gulp.task('sass-trumbowyg', function() {
   return gulp
     .src('public_html/assets/trumbowyg/ui/*.scss')
-		.pipe(sass().on('error', sass.logError))
+		.pipe(sass({ silenceDeprecations: ['legacy-js-api'] })
+    .on('error', sass.logError))
 		//.pipe(gulp.dest('public_html/assets/trumbowyg/ui/'))
     .pipe(sourcemaps.write('.', { includeContent: false }))
 		.pipe(cleancss())
@@ -129,7 +131,7 @@ gulp.task('phplint', function() {
 
 // Watch files for changes
 gulp.task('watch', function() {
-	gulp.watch('public_html/assets/trumbowyg/**/*.scss', gulp.series('sass-trumbowyg'))
+  gulp.watch('public_html/assets/trumbowyg/**/*.scss', gulp.series('sass-trumbowyg'))
   gulp.watch('public_html/assets/litecore/src/**/*.less', gulp.series('less-framework'))
   gulp.watch('public_html/backend/template/less/**/*.less', gulp.series('less-backend'))
   gulp.watch('public_html/backend/template/js/components/*.js', gulp.series('js-backend'))
@@ -138,5 +140,5 @@ gulp.task('watch', function() {
 })
 
 // Task aliases
-gulp.task('build', gulp.series('js-backend', 'js-frontend', 'less-backend', 'less-frontend', 'sass-trumbowyg'))
+gulp.task('build', gulp.series('js-backend', 'js-frontend', 'less-framework',  'less-backend', 'less-frontend', 'sass-trumbowyg'))
 gulp.task('default', gulp.series('build', 'watch'))

@@ -45,26 +45,32 @@
 				$output = $this->snippets[$matches[1]];
 				$modifiers = !empty($matches[2]) ? preg_split('#\|#', $matches[2], -1, PREG_SPLIT_NO_EMPTY) : [];
 
+				// Title Casing
 				if (in_array('title', $modifiers)) {
 					$output = ucwords(strtolower($output));
 				}
 
+				// Uppercasing
 				if (in_array('uppercase', $modifiers)) {
 					$output = strtoupper($output);
 				}
 
+				// Lowercasing
 				if (in_array('lowercase', $modifiers)) {
 					$output = strtolower($output);
 				}
 
+				// Currency Calculation
 				if (in_array('calculate', $modifiers)) {
 					$output = currency::calculate($output);
 				}
 
+				// Money Formatting
 				if (in_array('money', $modifiers)) {
 					$output = currency::format($output);
 				}
 
+				// Escape Special HTML Characters
 				if (in_array('escape', $modifiers)) {
 					$output = functions::escape_html($output);
 				}
@@ -73,7 +79,7 @@
 			});
 
 /*
-			// Parser for Translations {{translate "title_key" "Text"}}
+			// Parser for Translations: {{translate "title_key" "Text"}}
 			$this->register_parser('translate "([^\"]+)"(?:, "([^\"]+)")?', function($matches) {
 				return language::translate($matches[1], isset($matches[2]) ? $matches[2] : '');
 			});
@@ -83,20 +89,20 @@
 				return settings::get($matches[1]);
 			});
 
-			// Parser for Fonticons {{fonticon "key"}}
+			// Parser for Fonticons: {{fonticon "key"}}
 			$this->register_parser('fonticon "([^\"]+)"', function($matches) {
 				return functions::draw_fonticon($matches[1]);
 			});
 
-			// Parser for Includes {{include "path/to/file.tpl"}}
-				//$this->register_parser('#>(.*?)#', function($matches) {
+			// Parser for Includes: {{include "path/to/file.tpl"}}
+			//$this->register_parser('#>(.*?)#', function($matches) {
 			$this->register_parser('include "(.*?)"', function($matches) {
 				if (file_exists($file = FS_DIR_TEMPLATE . $matches[1] .'.tpl')) {
 					return file_get_contents($file);
 				}
 			});
 
-			// Parser for Each {{each $array as $var}} {{/each}}
+			// Parser for Each iteration: {{each $array as $var}} {{/each}}
 			$this->register_parser('each (.*?) as (.*?)'. preg_quote($this->wrapper[1], '#') .'(.*?)'. preg_quote($this->wrapper[0], '#') .'/each', function($matches) {
 
 				if (!empty($this->snippets[$matches[1]]) || !is_array($this->snippets[$matches[1]])) return '';
@@ -109,7 +115,7 @@
 				return $view->stitch();
 			});
 
-			// Register parser: Conditions {if $array} {/if}
+			// Parser for If conditions: {if $var} {/if}
 			$this->register_parser('if (.*?)'. preg_quote($this->wrapper[1], '#') .'(.*?)'. preg_quote($this->wrapper[0], '#') .'/if', function($matches) {
 				if (!empty($this->snippets[$matches[1]]) && (float)$this->snippets[$matches[1]] != 0) return '';
 				return $this->snippets[$matches[1]];

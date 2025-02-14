@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=1600">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/variables.css'); ?>">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/framework.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
 {{head_tags}}
 {{style}}
@@ -112,13 +112,13 @@
 
 			<li>
 				<a href="<?php echo document::href_ilink('f:'); ?>" title="<?php echo language::translate('title_frontend', 'Frontend'); ?>">
-					<?php echo functions::draw_fonticon('icon-desktop'); ?> <?php echo language::translate('title_frontend', 'Frontend'); ?>
+					<?php echo functions::draw_fonticon('icon-display'); ?> <?php echo language::translate('title_frontend', 'Frontend'); ?>
 				</a>
 			</li>
 
 			<li>
 				<a class="help" href="https://wiki.litecart.net/" target="_blank" title="<?php echo functions::escape_html(language::translate('title_help', 'Help')); ?>">
-					<?php echo functions::draw_fonticon('icon-question-circle'); ?> <?php echo language::translate('title_help', 'Help'); ?>
+					<?php echo functions::draw_fonticon('icon-question'); ?> <?php echo language::translate('title_help', 'Help'); ?>
 				</a>
 			</li>
 

@@ -143,7 +143,7 @@
 
 			session::$data['administrator_security_timestamp'] = time();
 			session::regenerate_id();
-			
+
 			unset(session::$data['security_verification']);
 
 			if (!in_array($_SERVER['REMOTE_ADDR'], $administrator['known_ips']) && !empty($administrator['two_factor_auth']) && !empty($administrator['email'])) {

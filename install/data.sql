@@ -35,7 +35,6 @@ INSERT INTO `lc_settings` (`group_key`, `type`, `title`, `description`, `key`, `
 ('listings', 'global', 'Important Notice', 'An important notice to be displayed above your website.', 'important_notice', '', 'boolean', 'regional_text()', 1, 0),
 ('listings', 'local', 'Items Per Page', 'The number of items to be displayed per page.', 'items_per_page', '20', 'number', 'number()', 0, 10),
 ('listings', 'local', 'Data Table Rows', 'The number of data table rows to be displayed per page.', 'data_table_rows_per_page', '25', 'number', 'text()', 0, 11),
-('listings', 'local', 'Auto Decimals', 'Don\'t show decimals for integers. Will turn 99.00 into 99 but leave 99.99.', 'auto_decimals', '1', 'boolean', 'toggle("e/d")', 0, 21),
 ('legal', 'global', 'Cookie Policy', 'Select a page for the cookie policy or leave blank to disable.', 'cookie_policy', '', 'number', 'page()', 0, 10),
 ('legal', 'local', 'Privacy Policy', 'Select a page for the privacy policy consent or leave blank to disable.', 'privacy_policy', '', 'number', 'page()', 0, 11),
 ('images', 'global', 'Clear Thumbnails Cache', 'Remove all cached image thumbnails from disk.', 'cache_clear_thumbnails', '0', 'boolean', 'toggle()', 0, 1),
@@ -61,6 +60,6 @@ INSERT INTO `lc_settings` (`group_key`, `type`, `title`, `description`, `key`, `
 ('social_media', 'global', 'Twitter Link', 'The link to your Twitter page.', 'twitter_link', '#', 'string', 'url()', 0, 50),
 ('social_media', 'global', 'YouTube Link', 'The link to your YouTube channel.', 'youtube_link', '#', 'string', 'url()', 0, 60),
 ('', 'global', 'Template', '', 'template', 'default', 'string', 'template()', 1, 0),
-('', 'global', 'Template Settings', '', 'template_settings', '{"sidebar_parallax_effect":"1","compact_category_tree":"0","cookie_acceptance":"1"}', 'string', 'text()', 0, 0),
-('', 'global', 'Jobs Last Run', 'Time when background jobs were last ran.', 'jobs_last_run', NOW(), 'string', 'text()', 0, 0),
-('', 'global', 'Jobs Last Push', 'Time when background jobs were last pushed for execution.', 'jobs_last_push', NOW(), 'string', 'text()', 0, 0);
+('', 'global', 'Template Settings', '', 'template_settings', '{}', 'string', 'text()', 0, 0),
+('', 'global', 'Jobs Last Run', 'Time when background jobs were last ran.', 'jobs_last_run', CURRENT_TIMESTAMP(), 'string', 'text()', 0, 0),
+('', 'global', 'Jobs Last Push', 'Time when background jobs were last pushed for execution.', 'jobs_last_push', CURRENT_TIMESTAMP(), 'string', 'text()', 0, 0);

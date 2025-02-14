@@ -100,7 +100,7 @@
 
 	function file_is_binary($file) {
 
-		$fh = fopen($file, "r");
+		$fh = fopen($file, 'r');
 		$block = fread($fh, 512);
 		fclose($fh);
 
@@ -280,7 +280,7 @@
 		$files = [];
 
 		// Open directory
-		$dh = opendir($basedir ? $basedir : './');
+		$dh = opendir($basedir ?: './');
 
 		// Step through each file in directory
 		while ($file = readdir($dh)) {

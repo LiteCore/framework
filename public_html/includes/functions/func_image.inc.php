@@ -18,7 +18,7 @@
 			$source = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', 'app://', $source);
 
 			if (!is_file($source)) {
-				$source = 'storage://images/no_image.png';
+				$source = 'storage://images/no_image.svg';
 			}
 
 			$options = [
@@ -180,7 +180,7 @@
 	function image_thumbnail($source, $width=0, $height=0, $clipping='FIT_ONLY_BIGGER', $trim=false, $extension='') {
 
 		if (!is_file($source)) {
-			$source = 'storage://images/no_image.png';
+			$source = 'storage://images/no_image.svg';
 		}
 
 		if (pathinfo($source, PATHINFO_EXTENSION) == 'svg') {

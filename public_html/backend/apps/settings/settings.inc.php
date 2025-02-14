@@ -31,7 +31,7 @@
 				switch ($setting['datatype']) {
 
 					case 'boolean':
-						$value = (bool)$_POST['settings'][$key];
+						$value = (int)$_POST['settings'][$key];
 						break;
 
 					case 'csv':
@@ -41,8 +41,11 @@
 						break;
 
 					case 'array':
-					case 'json':
 						$value = json_encode($_POST['settings'][$key], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+						break;
+
+					case 'json':
+						$value = (string)$_POST['settings'][$key];
 						break;
 
 					case 'number':
@@ -99,67 +102,88 @@
 		"select * from ". DB_TABLE_PREFIX ."settings
 		where `group_key` = '". database::input($settings_group['key']) ."'
 		order by priority, `key` asc;"
-	)->fetch_page(null, null, $_GET['page'], null, $num_rows, $num_pages);
+	)->fetch_page(function($setting){
 
-	foreach ($settings as $i => $setting) {
-		if (isset($_GET['action']) && $_GET['action'] == 'edit' && $_GET['key'] == $setting['key']) {
+		// Set Display Value
+		switch (true) {
 
-			switch ($setting['datatype']) {
+			case (preg_match('#^password#', $setting['function'])):
+				$setting['display_value'] = '****************';
+				break;
 
-				case 'boolean':
-					settype($setting['value'], 'boolean');
-					break;
+				case (preg_match('#^order_status$#', $setting['function'])):
+				$setting['display_value'] = $setting['value'] ? reference::order_status($setting['value'])->name : '';
+				break;
 
-				case 'csv':
-					$value = str_getcsv($setting['value']);
-					break;
+				case (preg_match('#^page$#', $setting['function'])):
+				$setting['display_value'] = $setting['value'] ? reference::page($setting['value'])->title : '';
+				break;
 
-				case 'array':
-				case 'json':
-					$value = json_decode($setting['value'], true);
-					break;
+			case (preg_match('#^regional_#', $setting['function'])):
+				$setting['value'] = !empty($setting['value']) ? json_decode($setting['value'], true) : [];
+				$setting['display_value'] = isset($setting['value'][language::$selected['code']]) ? $setting['value'][language::$selected['code']] : null;
+				break;
 
-				case 'number':
-					settype($setting['value'], 'integer');
-					break;
+				case (preg_match('#^toggle$#', $setting['function'])):
+				if (in_array($setting['value'], ['1', 'active', 'enabled', 'on', 'true', 'yes'])) {
+					$setting['display_value'] = language::translate('title_true', 'True');
+				} else if (in_array(($setting['value']), ['', '0', 'inactive', 'disabled', 'off', 'false', 'no'])) {
+					$setting['display_value'] = language::translate('title_false', 'False');
+				}
+				break;
 
-				case 'decimal':
-					settype($_POST['settings'][$key], 'float');
-					break;
-			}
+			default:
 
-		} else {
+				switch ($setting['datatype']) {
 
-			switch (true) {
-				case (substr($setting['function'], 0, 8) == 'password'):
-					$setting['value'] = '****************';
-					break;
+					case 'array':
+					case 'json':
+						$setting['display_value'] = json_encode($setting['value'], true);
+						break;
 
-				case (substr($setting['function'], 0, 12) == 'order_status'):
-					$setting['value'] = $setting['value'] ? reference::order_status($setting['value'])->name : '';
-					break;
+					default:
+						$setting['display_value'] = $setting['value'];
+						break;
+				}
 
-				case (substr($setting['function'], 0, 4) == 'page'):
-					$setting['value'] = $setting['value'] ? reference::page($setting['value'])->title : '';
-					break;
-
-				case (substr($setting['function'], 0, 14) == 'regional_input'):
-					$setting['value'] = !empty($setting['value']) ? json_decode($setting['value'], true) : null;
-					$setting['value'] = isset($setting['value'][language::$selected['code']]) ? $setting['value'][language::$selected['code']] : null;
-					break;
-
-				case (substr($setting['function'], 0, 6) == 'toggle'):
-					if (in_array($setting['value'], ['1', 'active', 'enabled', 'on', 'true', 'yes'])) {
-					 $setting['value'] = language::translate('title_true', 'True');
-					} else if (in_array(($setting['value']), ['', '0', 'inactive', 'disabled', 'off', 'false', 'no'])) {
-					 $setting['value'] = language::translate('title_false', 'False');
-					}
-					break;
-			}
+				break;
 		}
 
-		$settings[$i] = $setting;
-	}
+		// Set HTTP POST Value
+		switch ($setting['datatype']) {
+
+			case 'boolean':
+				$_POST['settings'][$setting['key']] = !empty($setting['value']) ? '1' : '0';
+				break;
+
+			case 'csv':
+				$_POST['settings'][$setting['key']] = str_getcsv($setting['value']);
+				break;
+
+			case 'array':
+				$_POST['settings'][$setting['key']] = (array)$setting['value'];
+				break;
+
+			case 'json':
+				$_POST['settings'][$setting['key']] = json_decode($setting['value'], true);
+				break;
+
+			case 'number':
+				$_POST['settings'][$setting['key']] = (int)$setting['value'];
+				break;
+
+			case 'decimal':
+				$_POST['settings'][$setting['key']] = (float)$setting['value'];
+				break;
+
+			default:
+				$_POST['settings'][$setting['key']] = (string)$setting['value'];
+				break;
+		}
+
+		return $setting;
+
+	}, null, $_GET['page'], null, $num_rows, $num_pages);
 
 ?>
 <div class="card card-app">
@@ -199,7 +223,7 @@
 					<td class="text-start"><a class="link" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo language::translate('settings_key:title_'.$setting['key'], $setting['title']); ?></a></td>
 					<td style="white-space: normal;">
 						<div style="max-height: 200px; overflow-y: auto;" title="<?php echo functions::escape_html(language::translate('settings_key:description_'.$setting['key'], $setting['description'])); ?>">
-							<?php echo nl2br($setting['value'], false); ?>
+							<?php echo nl2br($setting['display_value'], false); ?>
 						</div>
 					</td>
 					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>

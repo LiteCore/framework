@@ -78,7 +78,7 @@
 
 			<section class="hidden-xs hidden-sm col-md-4" style="align-self: center;">
 				<div class="logotype">
-					<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" class="img-responsive" alt="<?php echo $website_name; ?>" title="<?php echo $website_name; ?>">
+					<img src="<?php echo document::href_rlink('storage://images/logotype.svg'); ?>" class="img-responsive" alt="<?php echo $website_name; ?>" title="<?php echo $website_name; ?>">
 				</div>
 
 				<ul class="social-bookmarks flex flex-inline flex-gap text-center">

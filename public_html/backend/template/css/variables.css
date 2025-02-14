@@ -5,7 +5,6 @@
  * @author T. Almroth
  */
 
-/* Media Breakpoints */
 /* Fonts */
 @font-face {
   font-family: 'Inter';
@@ -35,6 +34,8 @@
 :root {
   --border-radius: 8px;
   --gutter-size: 2rem;
+  --gutter-x: 2rem;
+  --gutter-y: 2rem;
   --link-text-color: #06b;
   --whitespace-color: #fff;
   --top-background-color: var(--card-background-color);
@@ -112,6 +113,7 @@
   --button-success-text-color: #fff;
   --input-background-color: #f1f2f5;
   --input-border-color: #e8ebf1;
+  --input-border-radius: var(--border-radius);
   --input-addon-background-color: #f3f4f7;
   --input-code-background-color: #313b50;
   --input-code-text-color: #fff;

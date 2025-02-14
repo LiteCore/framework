@@ -90,7 +90,7 @@
 		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($image) .'" '. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
-	function draw_image_thumbnail($image, $width=0, $height=0, $clipping='fit', $parameters='') {
+	function draw_thumbnail($image, $width=0, $height=0, $clipping='fit', $parameters='') {
 
 		if (!is_file($image)) {
 			$image = 'storage://images/no_image.png';
@@ -199,7 +199,7 @@
 			}
 		}
 
-		$js[] = '});';
+		$js[] = '})';
 
 		document::$javascript['featherlight-'.$selector] = implode(PHP_EOL, $js);
 	}

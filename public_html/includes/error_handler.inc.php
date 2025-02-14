@@ -17,19 +17,19 @@
 
 			case E_NOTICE:
 			case E_USER_NOTICE:
-				$output[] = "<strong>Notice:</strong> ". htmlspecialchars($errstr) ." in <strong>$errfile</strong> on line <strong>$errline</strong>";
+				$output[] = '<div class="php-feedback notice"><strong>Notice:</strong> <samp style="white-space: pre-wrap;">'. htmlspecialchars($errstr) .'</samp> in <strong>'. $errfile .'</strong> on line <strong>'. (int)$errline .'</strong></div>';
 				break;
 
 			case E_WARNING:
 			case E_USER_WARNING:
 			case E_COMPILE_WARNING:
 			case E_RECOVERABLE_ERROR:
-				$output[] = "<strong>Warning:</strong> ". htmlspecialchars($errstr) ." in <strong>$errfile</strong> on line <strong>$errline</strong>";
+				$output[] = '<div class="php-feedback warning"><strong>Warning:</strong> <samp style="white-space: pre-wrap;">'. htmlspecialchars($errstr) .'</samp> in <strong>'. $errfile .'</strong> on line <strong>'. (int)$errline .'</strong></div>';
 				break;
 
 			case E_DEPRECATED:
 			case E_USER_DEPRECATED:
-				$output[] = "<strong>Deprecated:</strong> ". htmlspecialchars($errstr) ." in <strong>$errfile</strong> on line <strong>$errline</strong>";
+				$output[] = '<div class="php-feedback notice"><strong>Deprecated:</strong> <samp style="white-space: pre-wrap;">'. htmlspecialchars($errstr) .'</samp> in <strong>'. $errfile .'</strong> on line <strong>'. (int)$errline .'</strong></div>';
 				break;
 
 			case E_PARSE:
@@ -37,11 +37,11 @@
 			case E_CORE_ERROR:
 			case E_COMPILE_ERROR:
 			case E_USER_ERROR:
-				$output[] = "<strong>Fatal error:</strong> ". htmlspecialchars($errstr) ." in <strong>$errfile</strong> on line <strong>$errline</strong>";
+				$output[] = '<div class="php-feedback error"><strong>Fatal error:</strong> <samp style="white-space: pre-wrap;">'. htmlspecialchars($errstr) .'</samp> in <strong>'. $errfile .'</strong> on line <strong>'. (int)$errline .'</strong></div>';
 				break;
 
 			default:
-				$output[] = "<strong>Fatal error:</strong> ". htmlspecialchars($errstr) ." in <strong>$errfile</strong> on line <strong>$errline</strong>";
+				$output[] = '<div class="php-feedback error"><strong>Fatal error:</strong> <samp style="white-space: pre-wrap;">'. htmlspecialchars($errstr) .'</samp> in <strong>'. $errfile .'</strong> on line <strong>'. (int)$errline .'</strong></div>';
 				break;
 		}
 
@@ -66,7 +66,7 @@
 					$backtrace['file'] = preg_replace('#^'. preg_quote($search, '#') .'#', $replace, str_replace('\\', '/', $backtrace['file']));
 				}
 
-				$output[] = " → <strong>$backtrace[file]</strong> on line <strong>$backtrace[line]</strong> in <strong>$backtrace[function]()</strong>";
+				$output[] = "<div> → <strong>$backtrace[file]</strong> on line <strong>$backtrace[line]</strong> in <strong>$backtrace[function]()</strong></div>";
 			}
 		}
 
@@ -104,8 +104,14 @@
 		}
 
 		if (in_array($errno, [E_PARSE, E_ERROR, E_COMPILE_ERROR, E_CORE_ERROR, E_USER_ERROR])) {
+
 			http_response_code(500);
-			exit;
+
+			if (filter_var(ini_get('html_errors'), FILTER_VALIDATE_BOOLEAN) && $_SERVER['SERVER_SOFTWARE'] != 'CLI') {
+				include 'app://frontend/pages/error_document.inc.php';
+			}
+
+			//exit;
 		}
 	}
 

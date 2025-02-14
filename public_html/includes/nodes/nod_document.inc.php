@@ -465,7 +465,10 @@
 		public static function link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
 
 			if (!$path) {
-				$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+				if (!$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) {
+					return '';
+				}
 
 				if ($inherit_params === null) {
 					$inherit_params = true;
