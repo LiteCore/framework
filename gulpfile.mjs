@@ -33,6 +33,10 @@ gulp.task('less-framework', function() {
     .src(['public_html/assets/litecore/src/*.less'])
     .pipe(sourcemaps.init())
     .pipe(less())
+    .on('error', function (err) {
+      console.error('LESS Error:', err.message);
+      this.emit('end'); // Prevents Gulp from stopping
+    })
     .pipe(header(banner, { pkg: packageData }))
 		.pipe(cleancss())
     .pipe(rename({ extname: '.min.css' }))
@@ -45,6 +49,10 @@ gulp.task('less-backend', function() {
   gulp
     .src('public_html/backend/template/less/variables.less')
 		.pipe(less())
+    .on('error', function (err) {
+      console.error('LESS Error:', err.message);
+      this.emit('end'); // Prevents Gulp from stopping
+    })
     .pipe(header(banner, { pkg: packageData }))
     .pipe(gulp.dest('public_html/backend/template/css/', { overwrite: true }))
 
@@ -53,6 +61,10 @@ gulp.task('less-backend', function() {
       'public_html/backend/template/less/*.less', '!**/variables.less'])
     .pipe(sourcemaps.init())
     .pipe(less())
+    .on('error', function (err) {
+      console.error('LESS Error:', err.message);
+      this.emit('end'); // Prevents Gulp from stopping
+    })
     .pipe(header(banner, { pkg: packageData }))
 		.pipe(cleancss())
     .pipe(rename({ extname: '.min.css' }))
@@ -65,6 +77,10 @@ gulp.task('less-frontend', function() {
   gulp
     .src('public_html/frontend/template/less/variables.less')
     .pipe(less())
+    .on('error', function (err) {
+      console.error('LESS Error:', err.message);
+      this.emit('end'); // Prevents Gulp from stopping
+    })
     .pipe(header(banner, { pkg: packageData }))
     .pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
 
@@ -72,6 +88,10 @@ gulp.task('less-frontend', function() {
     .src(['public_html/frontend/template/less/*.less', '!**/variables.less'])
 		.pipe(sourcemaps.init())
 		.pipe(less())
+    .on('error', function (err) {
+      console.error('LESS Error:', err.message);
+      this.emit('end'); // Prevents Gulp from stopping
+    })
     .pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
 		.pipe(cleancss())
     .pipe(header(banner, { pkg: packageData }))

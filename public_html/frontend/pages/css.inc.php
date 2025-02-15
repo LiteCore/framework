@@ -571,7 +571,7 @@
 <div class="form-group">
 	<label>Input Group Icon</label>
 	<div class="input-group">
-		<span class="input-group-icon"><i class="fa icon-envelope-o"></i></span>
+		<span class="input-group-icon"><i class="fa icon-envelope"></i></span>
 		<input type="email" class="form-input" placeholder="Email">
 	</div>
 </div>
@@ -823,8 +823,11 @@
 </main>
 
 <script>
-	$('a[href="#"]').click(function(e){ e.preventDefault(); });
-	$('.code').each(function(){
-		$(this).text( $(this).closest('.row').find('.source').html().trim() );
-	});
+$('a[href="#"]').click(function(e){
+	e.preventDefault();
+});
+
+$('.code').each(function(){
+	$(this).text( $(this).closest('.row').find('.source').html() );
+});
 </script>

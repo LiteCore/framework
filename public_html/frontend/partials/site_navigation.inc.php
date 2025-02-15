@@ -28,7 +28,7 @@
 		$_partial->snippets['left'][] = [
 			'id' => 'css-framework',
 			'icon' => '',
-			'name' => 'CSS',
+			'name' => 'CSS Framework',
 			'link' => document::ilink('css'),
 			'badge' => '',
 			'priority' => 1,
@@ -37,26 +37,26 @@
 		$_partial->snippets['left'][] = [
 			'id' => 'fonticons',
 			'icon' => '',
-			'name' => 'Font Icons',
+			'name' => 'Font Icon Kit',
 			'link' => document::ilink('fonticons'),
 			'badge' => '',
 			'priority' => 2,
 		];
 
 		$_partial->snippets['left'][] = [
-			'id' => 'printables',
+			'id' => 'printable',
 			'icon' => '',
-			'name' => 'Printables',
-			'link' => document::ilink('printables'),
+			'name' => 'Printable Template',
+			'link' => document::ilink('printable'),
 			'badge' => '',
 			'priority' => 3,
 		];
 
 		$_partial->snippets['left'][] = [
-			'id' => 'email_example',
+			'id' => 'email',
 			'icon' => '',
-			'name' => 'Email',
-			'link' => document::ilink('email_example'),
+			'name' => 'Email Template',
+			'link' => document::ilink('email'),
 			'badge' => '',
 			'priority' => 4,
 		];
@@ -125,7 +125,7 @@
 
 		<div class="navbar-header">
 			<a class="logotype" href="<?php echo document::href_ilink(''); ?>">
-				<img src="<?php echo document::href_rlink('storage://images/logotype.svg'); ?>" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>">
+				<img src="<?php echo document::href_rlink('storage://images/favicons/favicon-192x192.png'); ?>" alt="<?php echo settings::get('site_name'); ?>" title="<?php echo settings::get('site_name'); ?>"> <?php echo settings::get('site_name'); ?>
 			</a>
 
 			<button type="button" class="btn btn-default navbar-toggler hidden-md hidden-lg hidden-xl hidden-xxl" data-toggle="offcanvas" data-target="#offcanvas">
