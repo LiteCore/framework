@@ -6,8 +6,6 @@
 	 *   ~/frontend/template/pages/fonticons.inc.php
 	 */
 
-	document::$snippets['head_tags']['fonticons'] = '<link rel="stylesheet" href="'. document::href_rlink('app://assets/fonticons/fonticons.css') .'">';
-
 	document::$title[] = language::translate('title_font_icons', 'Font Icons');
 	document::$description = language::translate('meta_description:font_icons', '');
 
@@ -17,7 +15,7 @@
 
 	$font_icons = [];
 
-	foreach (file('app://assets/fonticons/fonticons.css') as $line) {
+	foreach (file('app://assets/litecore/less/framework/fonticons.less') as $line) {
 		if (preg_match('#^\.(icon-[a-z0-9-]+):before\s*{#', $line, $matches)) {
 			$font_icons[] =  $matches[1];
 		}
@@ -117,8 +115,8 @@
 <main class="container">
 	<div class="card">
 		<div class="card-header">
-			<div class="card-title"><?php echo language::translate('title_font_icons', 'Font Icons'); ?></div>
-			<p><?php echo language::translate('description_font_icons', 'Below is a list of all available font icons.'); ?></p>
+			<div class="card-title"><?php echo language::translate('title_font_icon_kit', 'Font Icon Kit'); ?></div>
+			<p><?php echo language::translate('description_font_icon_kit', 'Below is a list of all available font icons.'); ?></p>
 		</div>
 
 		<div class="card-body">

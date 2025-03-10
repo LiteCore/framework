@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=1600">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/variables.css'); ?>">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/framework.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/css/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
 {{head_tags}}
 {{style}}
@@ -46,88 +46,8 @@
 	</div>
 
 	<main id="main">
-		<ul id="top-bar" class="hidden-print">
-			<li>
-				<div>
-					<label class="nav-toggle" for="sidebar-compressed">
-						<?php echo functions::draw_fonticon('icon-bars'); ?>
-					</label>
-				</div>
-			</li>
 
-			<li style="flex-grow: 1;">
-				<div id="search" class="dropdown">
-					<?php echo functions::form_input_search('query', false, 'placeholder="'. functions::escape_attr(language::translate('title_search_entire_platform', 'Search entire platform')) .'&hellip;" autocomplete="off"'); ?>
-					<div class="results dropdown-menu"></div>
-				</div>
-			</li>
-
-			<li>
-				<div class="btn-group" data-toggle="buttons">
-					<button name="font_size" class="btn btn-default btn-sm" type="button" value="decrease"><span style="font-size: .8em;">A</span></button>
-					<button name="font_size" class="btn btn-default btn-sm" type="button" value="increase"><span style="font-size: 1.25em;">A</span></button>
-				</div>
-			</li>
-
-			<li>
-				<?php echo functions::form_toggle('dark_mode', ['0' => functions::draw_fonticon('icon-sun'), '1' => functions::draw_fonticon('icon-moon')]); ?>
-			</li>
-
-			<li class="language dropdown">
-				<a href="#" data-toggle="dropdown"><span style="font-family: monospace" title="<?php echo functions::escape_html(language::$selected['name']); ?>"><?php echo language::$selected['code']; ?><span> <b class="caret"></b></a>
-				<ul class="dropdown-menu">
-					<?php foreach (language::$languages as $language) { ?>
-					<li>
-						<a href="<?php echo document::href_ilink(null, [], [], [], $language['code']); ?>">
-							<?php echo $language['name']; ?>
-						</a>
-					</li>
-					<?php } ?>
-				</ul>
-			</li>
-
-			<?php if ($webmail_link = settings::get('webmail_link')) { ?>
-			<li>
-				<a href="<?php echo ($webmail_link != 'https://') ? functions::escape_html($webmail_link) : document::href_ilink('settings/advanced', ['key' => 'webmail_link', 'action' => 'edit']); ?>" target="_blank" title="<?php echo language::translate('title_webmail', 'Webmail'); ?>">
-					<?php echo functions::draw_fonticon('icon-envelope'); ?>
-				</a>
-			</li>
-			<?php } ?>
-
-			<?php if ($control_panel_link = settings::get('control_panel_link')) { ?>
-			<li>
-				<a href="<?php echo ($control_panel_link != 'https://') ? functions::escape_html($control_panel_link) : document::href_ilink('settings/advanced', ['key' => 'control_panel_link', 'action' => 'edit']); ?>" target="_blank" title="<?php echo language::translate('title_control_panel', 'Control Panel'); ?>">
-					<?php echo functions::draw_fonticon('icon-cogs'); ?>
-				</a>
-			</li>
-			<?php } ?>
-
-			<?php if ($database_admin_link = settings::get('database_admin_link')) { ?>
-			<li>
-				<a href="<?php echo ($database_admin_link != 'https://') ? functions::escape_html($database_admin_link) : document::href_ilink('settings/advanced', ['key' => 'database_admin_link', 'action' => 'edit']); ?>" target="_blank" title="<?php echo language::translate('title_database_manager', 'Database Manager'); ?>">
-					<?php echo functions::draw_fonticon('icon-database'); ?>
-				</a>
-			</li>
-			<?php } ?>
-
-			<li>
-				<a href="<?php echo document::href_ilink('f:'); ?>" title="<?php echo language::translate('title_frontend', 'Frontend'); ?>">
-					<?php echo functions::draw_fonticon('icon-display'); ?> <?php echo language::translate('title_frontend', 'Frontend'); ?>
-				</a>
-			</li>
-
-			<li>
-				<a class="help" href="https://wiki.litecart.net/" target="_blank" title="<?php echo functions::escape_html(language::translate('title_help', 'Help')); ?>">
-					<?php echo functions::draw_fonticon('icon-question'); ?> <?php echo language::translate('title_help', 'Help'); ?>
-				</a>
-			</li>
-
-			<li>
-				<a href="<?php echo document::href_ilink('logout'); ?>" title="<?php echo language::translate('title_sign_out', 'Sign Out'); ?>">
-					<?php echo functions::draw_fonticon('icon-sign-out'); ?> <?php echo language::translate('title_sign_out', 'Sign Out'); ?>
-				</a>
-			</li>
-		</ul>
+		<?php include 'app://backend/partials/site_top_navigation.inc.php'; ?>
 
 		<div id="content">
 

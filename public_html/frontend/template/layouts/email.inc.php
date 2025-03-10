@@ -10,6 +10,7 @@
 
 <body>
 
+
 	<table class="body" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 
@@ -19,8 +20,14 @@
 					<table class="main">
 
 						<tr>
+							<td class="wrapper" align="center">
+
+							</td>
+						</tr>
+
+						<tr>
 							<td class="wrapper">
-							{{content}}
+								{{content}}
 							</td>
 						</tr>
 
@@ -28,13 +35,15 @@
 
 					<div class="footer">
 						<table border="0" cellpadding="0" cellspacing="0">
+
 							<tr>
-								<td class="content-block">
+								<td class="content-block" align="center">
+									<img src="data:image/svg+xml;base64,<?php echo base64_encode(file_get_contents('storage://images/logotype.svg')); ?>" title="<?php echo settings::get('site_name'); ?>" width="250">
 								</td>
 							</tr>
+
 							<tr>
 								<td class="content-block powered-by">
-									<?php echo settings::get('site_name'); ?><br>
 									<a href="<?php echo document::href_ilink('', [], [], [], $language_code); ?>" target="_blank"><?php echo document::ilink('', [], [], [], $language_code); ?></a>
 								</td>
 							</tr>

@@ -1,20 +1,26 @@
 <?php
 
-	// Short command for dumping variables to output and exiting
+	// Short hand command for dumping variables to output and exiting
 	function x(&...$arrays) {
+
 		foreach ($arrays as $array) {
 			var_dump($array);
 		}
+
 		exit(1);
 	}
 
 	function backtrace() {
+
 		$trace = debug_backtrace();
 		$caller = array_shift($trace);
+
 		echo $caller['file'] .' on line '. $caller['line'];
+
 		foreach ($trace as $caller) {
 			echo "\n". $caller['file'] .' on line '. $caller['line'];
 		}
+
 		exit(1);
 	}
 
@@ -28,6 +34,16 @@
 		echo '<script>console.log("'. addcslashes($output, "\"\r\n") .'");</script>';
 	}
 
+	// Include, but in an isolated scope
+	function embed() {
+		foreach (func_get_args() as $file) {
+			(function(){
+				include func_get_arg(0);
+			})($file);
+		}
+	}
+
+	// Redirect to a URL and stop script execution
 	function redirect($url=null, $status_code=302) {
 
 		if (!$url) {
@@ -38,20 +54,25 @@
 		exit;
 	}
 
+	// Stop script execution and reload the current page
 	function reload() {
 		redirect();
 	}
 
 	// Checks if variables are not set, null, (bool)false, (int)0, (float)0.00, (string)"", (string)"0", (string)"0.00", (array)[], or array with nil nodes
 	function nil(&...$args) { // ... as of PHP 5.6
+
 		foreach ($args as $arg) {
+
 			if (is_array($arg)) {
 				foreach ($arg as $node) {
 					if (!nil($node)) return !1;
 				}
 			}
+
 			if (!empty($arg) || (is_numeric($arg) && (float)$arg != 0)) return !1;
 		}
+
 		return !0;
 	}
 

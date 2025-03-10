@@ -1,0 +1,90 @@
+/* Buttons & Button Groups */
+
+.btn(@type) {
+	background: ~"var(--@{type}-button-background)";
+	color: ~"var(--@{type}-button-text-color)";
+	border: ~"var(--@{type}-button-border)";
+	text-decoration: none;
+	&:hover:not(.active):not(.disabled):not([disabled]) {
+		filter: brightness(1.2);
+	}
+	&.active {
+		filter: brightness(0.8);
+	}
+}
+
+.btn {
+	display: inline-block;
+	padding: var(--input-padding-y) var(--input-padding-x);
+	text-decoration:  none;
+	font-weight: 500;
+	border-radius: var(--input-border-radius);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+	touch-action: manipulation;
+	user-select: none;
+
+	&:not(:disabled):not(.active) {
+		cursor: pointer;
+	}
+
+	&.btn-default { .btn("default"); }
+	&.btn-primary { .btn("primary"); }
+	&.btn-success { .btn("success"); }
+	&.btn-danger { .btn("danger"); }
+
+	&.btn-sm {
+		font-size: 0.8em;
+		padding: .5em 1em;
+		line-height: 1;
+	}
+	&.btn-lg {
+		font-size: 1.25em;
+	}
+
+	&.active, &:active { box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.25) !important; }
+	&.disabled, &[disabled] { opacity: 0.5; cursor: not-allowed; }
+	[data-type="toggle"] { display: none; }
+}
+
+.btn-block {
+	width: 100%;
+}
+
+.btn-group {
+	display: inline-flex;
+	border-radius: var(--input-border-radius);
+	.btn {
+		flex: 1 0 auto;
+		border-radius: 0;
+		font-size: inherit;
+		margin-inline-start: -1px;
+		&:first-child {
+			border-start-start-radius: var(--input-border-radius);
+			border-end-start-radius: var(--input-border-radius);
+		}
+		&:last-child {
+			border-start-end-radius: var(--input-border-radius);
+			border-end-end-radius: var(--input-border-radius);
+		}
+	}
+}
+
+.btn-group-vertical {
+	.btn {
+		display: block;
+		border-radius: 0;
+		font-size: inherit;
+		margin-top: -1px;
+		&:first-child {
+			border-start-start-radius: var(--input-border-radius);
+			border-start-end-radius: var(--input-border-radius);
+		}
+		&:last-child {
+			border-end-start-radius: var(--input-border-radius);
+			border-end-end-radius: var(--input-border-radius);
+		}
+	}
+}

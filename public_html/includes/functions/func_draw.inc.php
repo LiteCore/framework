@@ -90,6 +90,28 @@
 		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($image) .'" '. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
+	function draw_script($src) {
+
+		if (preg_match('#^(app|storage)://#', $src)) {
+			$tag = '<script defer integrity="sha256-'. base64_encode(hash_file('sha256', $src, true)) .'" src="'. document::href_rlink($src) .'"></script>';
+		} else {
+			$tag = '<script src="'. document::href_link($src) .'">'. $content .'</script>';
+		}
+
+		return $tag;
+	}
+
+	function draw_style($href) {
+
+		if (preg_match('#^(app|storage)://#', $href)) {
+			$tag = '<link rel="stylesheet" integrity="sha256-'. base64_encode(hash_file('sha256', $href, true)) .'" href="'. document::href_rlink($href) .'">';
+		} else {
+			$tag = '<link rel="stylesheet" href="'. document::href_link($href) .'">';
+		}
+
+		return $tag;
+	}
+
 	function draw_thumbnail($image, $width=0, $height=0, $clipping='fit', $parameters='') {
 
 		if (!is_file($image)) {
@@ -151,23 +173,16 @@
 
 	function draw_lightbox($selector='', $parameters=[]) {
 
-		document::load_style('app://assets/featherlight/featherlight.min.css', 'featherlight');
-		document::load_script('app://assets/featherlight/featherlight.min.js', 'featherlight');
-		document::$javascript['featherlight'] = implode(PHP_EOL, [
-			'$.featherlight.autoBind = \'[data-toggle="lightbox"]\';',
-			'$.featherlight.defaults.loading = \'<div class="loader" style="width: 128px; height: 128px; opacity: 0.5;"></div>\';',
-			'$.featherlight.defaults.closeIcon = \'&#x2716;\';',
-			'$.featherlight.defaults.targetAttr = \'data-target\';',
-		]);
-
-		$selector = str_replace("'", '"', $selector);
-
-		if (empty($selector)) return;
+		if (!$selector && !$parameters) return;
 
 		if (preg_match('#^(https?:)?//#', $selector)) {
-			$js = ['$.featherlight(\''. $selector .'\', {'];
+			$js = ['$.litebox(\''. $selector .'\', {'];
+
+		} else if ($selector) {
+			$js = ['$(\''. $selector .'\').litebox({'];
+
 		} else {
-			$js = ['$(\''. $selector .'\').featherlight({'];
+			$js = ['$.litebox({'];
 		}
 
 		foreach ($parameters as $key => $value) {
@@ -201,7 +216,7 @@
 
 		$js[] = '})';
 
-		document::$javascript['featherlight-'.$selector] = implode(PHP_EOL, $js);
+		document::add_script($js, 'litebox-'. $selector);
 	}
 
 	function draw_pagination($pages) {

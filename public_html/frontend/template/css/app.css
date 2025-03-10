@@ -1,11 +1,16 @@
-html {
-  background: var(--site-background-color);
+body {
+  background: var(--site-background);
+}
+#important-notice {
+  padding: 1em;
+  background: var(--important-notice-background);
+  color: var(--important-notice-text-color);
 }
 #page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--page-background-color);
+  background: var(--page-background);
   box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
 }
 #page > header {
@@ -16,11 +21,6 @@ html {
 }
 #page > footer {
   flex-grow: 0;
-}
-#navigation {
-  margin-top: var(--gutter-y);
-  margin-bottom: var(--gutter-y);
-  padding: calc(var(--gutter-y)/2) var(--gutter-x);
 }
 #navigation .navbar-header {
   display: grid;
@@ -33,11 +33,6 @@ html {
     padding: var(--gutter-size);
   }
 }
-@media (min-width: 992px) {
-  #navigation .navbar-header {
-    grid-template-columns: var(--sidebar-width) auto var(--sidebar-width);
-  }
-}
 #navigation .navbar-header .logotype img {
   max-width: 200px;
 }
@@ -47,13 +42,25 @@ html {
     max-height: 35px;
   }
 }
+#subnav {
+  background: #dddcf5;
+  margin-top: -2em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  padding: 0 2em;
+  margin-bottom: 2em;
+  border-end-end-radius: var(--border-radius);
+  border-end-start-radius: var(--border-radius);
+  border: 1px solid #ccc;
+  color: #fff;
+}
 #cookies-acceptance {
   /*position: sticky;*/
   top: 0;
   z-index: 999;
   margin: 0 calc(var(--gutter-size)/2) 0 calc(var(--gutter-size)/2);
   background: rgba(255, 255, 255, 0.9);
-  border: 1px var(--default-border-color) solid;
+  border: 1px var(--default-border) solid;
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: calc(var(--gutter-size)/2);
@@ -76,7 +83,7 @@ html {
 }
 #footer {
   padding: var(--gutter-size) calc(var(--gutter-size)/2);
-  background-color: var(--footer-background-color);
+  background: var(--footer-background);
   color: var(--footer-text-color);
 }
 @media (min-width: 768px) {
@@ -110,7 +117,7 @@ html {
   padding: 0;
 }
 #copyright {
-  background: var(--copyright-background-color);
+  background: var(--copyright-background);
   color: var(--copyright-text-color);
 }
 #copyright a {
@@ -142,7 +149,7 @@ html {
 .box.border {
   margin: var(--gutter-size);
   padding: var(--gutter-size);
-  border: 1px solid var(--default-border-color);
+  border: 1px solid var(--default-border);
   border-radius: var(--border-radius);
 }
 .box > .title {

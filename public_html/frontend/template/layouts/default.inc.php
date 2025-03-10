@@ -6,7 +6,7 @@
 <meta name="description" content="{{description}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://frontend/template/css/variables.css'); ?>">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/framework.min.css'); ?>">
+<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/css/framework.min.css'); ?>">
 <link rel="stylesheet" href="<?php echo document::href_rlink('app://frontend/template/css/app.min.css'); ?>">
 {{head_tags}}
 </head>
@@ -16,7 +16,7 @@
 
 	<header>
 		<?php if ($important_notice = settings::get('important_notice')) { ?>
-		<div id="important-message">
+		<div id="important-notice">
 			<?php echo $important_notice; ?>
 		</div>
 		<?php } ?>

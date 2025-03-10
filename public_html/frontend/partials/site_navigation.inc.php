@@ -16,14 +16,23 @@
 			'right' => [],
 		];
 
-		//$_partial->snippets['left'][] = [
-		//	'id' => 'home',
-		//	'icon' => '',
-		//	'name' => functions::draw_fonticon('icon-home'),
-		//	'link' => document::ilink(''),
-		//	'badge' => '',
-		//	'priority' => -1,
-		//];
+		$_partial->snippets['left'][] = [
+			'id' => 'home',
+			'icon' => '',
+			'name' => language::translate('title_home', 'Home'),
+			'link' => document::ilink(''),
+			'badge' => '',
+			'priority' => -1,
+		];
+
+		$_partial->snippets['left'][] = [
+			'id' => 'php-framework',
+			'icon' => '',
+			'name' => 'PHP Framework',
+			'link' => document::ilink('php'),
+			'badge' => '',
+			'priority' => 1,
+		];
 
 		$_partial->snippets['left'][] = [
 			'id' => 'css-framework',
@@ -31,7 +40,7 @@
 			'name' => 'CSS Framework',
 			'link' => document::ilink('css'),
 			'badge' => '',
-			'priority' => 1,
+			'priority' => 2,
 		];
 
 		$_partial->snippets['left'][] = [
@@ -40,7 +49,7 @@
 			'name' => 'Font Icon Kit',
 			'link' => document::ilink('fonticons'),
 			'badge' => '',
-			'priority' => 2,
+			'priority' => 3,
 		];
 
 		$_partial->snippets['left'][] = [
@@ -49,7 +58,7 @@
 			'name' => 'Printable Template',
 			'link' => document::ilink('printable'),
 			'badge' => '',
-			'priority' => 3,
+			'priority' => 4,
 		];
 
 		$_partial->snippets['left'][] = [
@@ -58,7 +67,7 @@
 			'name' => 'Email Template',
 			'link' => document::ilink('email'),
 			'badge' => '',
-			'priority' => 4,
+			'priority' => 5,
 		];
 
 		//$_partial->snippets['left'][] = [
@@ -157,5 +166,22 @@
 				<?php } ?>
 			</div>
 		</div>
+	</div>
+
+	<div id="subnav">
+		<ul class="navbar-nav">
+			<li>
+				<a class="nav-link" href="#">Download</a>
+			</li>
+			<li>
+				<a class="nav-link" href="#">Add-Ons</a>
+			</li>
+			<li>
+				<a class="nav-link" href="#">Forum</a>
+			</li>
+			<li>
+				<a class="nav-link" href="#">Wiki</a>
+			</li>
+		</ul>
 	</div>
 </header>

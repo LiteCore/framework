@@ -1,0 +1,60 @@
+/* Cards */
+
+.card {
+	position: relative;
+	margin: 0;
+	margin-bottom: var(--gutter-y);
+	background: var(--card-background);
+	border: var(--card-border);
+	border-radius: var(--border-radius);
+	box-shadow: var(--card-shadow);
+	color: var(--card-text-color);
+
+	.card-header, .card-filter, .card-body, .card-footer {
+		padding: var(--gutter-y) var(--gutter-x);
+	}
+
+	.card-filter, .card-body {
+		padding-top: 1em;
+		padding-bottom: 1em;
+	}
+
+	> *[class*="card-"]:first-child {
+		padding-top: 2em;
+		padding-bottom: 1em;
+	}
+	> *[class*="card-"]:last-child {
+		padding-bottom: 2em;
+	}
+
+	.card-header {
+		border-bottom: 0;
+		border-radius: var(--border-radius) var(--border-radius) 0 0;
+		.card-title {
+			margin: 0;
+			font-weight: bold;
+			font-size: 1.25rem;
+			@media (min-width: (@media-breakpoint-sm)) {
+				font-size: 1.33rem;
+			}
+			@media (min-width: (@media-breakpoint-md)) {
+				font-size: 1.5rem;
+			}
+		}
+	}
+
+	.card-action {
+		position: absolute;
+		display: inline-block;
+		top: var(--gutter-y);
+		right: var(--gutter-x);
+	}
+
+
+	.card-footer {
+		background: var(--card-footer-background);
+		border-end-end-radius: var(--border-radius);
+		border-end-start-radius: var(--border-radius);
+		box-shadow: inset 0px 10px 15px -15px rgba(0, 0, 0, .25);
+	}
+}

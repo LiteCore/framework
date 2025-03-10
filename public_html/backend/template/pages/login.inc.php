@@ -26,7 +26,7 @@ html.dark-mode body {
 #box-login {
 	width: 360px;
 	margin: auto;
-	border-radius: 0px 25px 0px 25px;
+
 	box-shadow: 0px 0px 60px rgba(0,0,0,0.25);
 }
 #box-login .card-header a {
@@ -40,7 +40,7 @@ html.dark-mode body {
 </style>
 
 <div class="loader-wrapper">
-	<div class="loader" style="width: 128px; height: 128px;"></div>
+	<div class="loader" style="width: 256px; height: 256px;"></div>
 </div>
 
 
@@ -75,23 +75,26 @@ html.dark-mode body {
 		</div>
 
 		<div class="card-footer">
-			<div class="grid">
+
+			<div class="grid" style="margin-bottom: 0;">
 				<div class="col-md-6 text-start">
 					<a class="btn btn-hover-outline btn-lg" href="<?php echo document::href_ilink('f:'); ?>">
 						<?php echo functions::draw_fonticon('icon-chevron-left'); ?> <?php echo language::translate('title_go_to_frontend', 'Go To Frontend'); ?>
 					</a>
 				</div>
+
 				<div class="col-md-6 text-end">
 					<?php echo functions::form_button('login', language::translate('title_login', 'Login'), 'submit', 'class="btn btn-default btn-lg"'); ?>
 				</div>
 			</div>
+
 		</div>
 
 	<?php echo functions::form_end(); ?>
 </div>
 
 <script>
-	if ($('input[name="username"]').val() == '') {
+	if (!$('input[name="username"]').val()) {
 		$('input[name="username"]').focus();
 	} else {
 		$('input[name="password"]').focus();

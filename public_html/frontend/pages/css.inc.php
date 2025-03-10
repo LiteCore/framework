@@ -15,7 +15,9 @@
 	$_page = new ent_view('app://frontend/template/pages/css.inc.php');
 
 	// Place your snippets here
-	// ...
+	// $_page->snippets = [
+	//   ...
+	// ];
 
 	if (is_file($_page->view)) {
 		echo $_page->render();
@@ -61,7 +63,7 @@
 		<div class="card-body">
 
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <div class="navbar">
 
 	<div class="navbar-header">
@@ -103,7 +105,7 @@
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 		</div>
 
 	</section>
@@ -118,7 +120,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <section class="card">
 	<div class="card-header">
 		<div class="card-title">
@@ -154,7 +156,7 @@
 </section>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -170,7 +172,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <ul class="nav nav-tabs">
 	<li><a href="#tab-1" data-toggle="tab">Tab 1</a></li>
 	<li><a href="#tab-2" data-toggle="tab">Tab 2</a></li>
@@ -187,7 +189,7 @@
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -203,7 +205,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <ul class="nav nav-pills">
 	<li class="active"><a href="#">Home</a></li>
 	<li><a href="#">Profile</a></li>
@@ -211,14 +213,14 @@
 </ul>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 
 			<h2>Stacked Pills</h2>
 
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <ul class="nav nav-pills nav-stacked">
 	<li class="active"><a href="#">Home</a></li>
 	<li><a href="#">Profile</a></li>
@@ -226,7 +228,7 @@
 </ul>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -242,31 +244,31 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
-<div class="alerts">
-	<div class="alert alert-danger">
-		<i class="fa icon-exclamation-triangle"></i> Lorem ipsum dolor
-		<a href="#" class="close" data-dismiss="alert">&times;</a>
+				<div class="col-6 source">
+<div class="notices">
+	<div class="notice notice-danger">
+		<i class="icon-exclamation-triangle"></i> Lorem ipsum dolor
+		<a href="#" class="close" data-dismiss="notice">&times;</a>
 	</div>
 
-	<div class="alert alert-warning">
-		<i class="fa icon-exclamation-triangle"></i> Lorem ipsum dolor
-		<a href="#" class="close" data-dismiss="alert">&times;</a>
+	<div class="notice notice-warning">
+		<i class="icon-exclamation-triangle"></i> Lorem ipsum dolor
+		<a href="#" class="close" data-dismiss="notice">&times;</a>
 	</div>
 
-	<div class="alert alert-default">
-		<i class="fa icon-info-circle"></i> Lorem ipsum dolor
-		<a href="#" class="close" data-dismiss="alert">&times;</a>
+	<div class="notice notice-default">
+		<i class="icon-info"></i> Lorem ipsum dolor
+		<a href="#" class="close" data-dismiss="notice">&times;</a>
 	</div>
 
-	<div class="alert alert-success">
-		<i class="fa icon-check-circle"></i> Lorem ipsum dolor
-		<a href="#" class="close" data-dismiss="alert">&times;</a>
+	<div class="notice notice-success">
+		<i class="icon-check"></i> Lorem ipsum dolor
+		<a href="#" class="close" data-dismiss="notice">&times;</a>
 	</div>
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -282,14 +284,14 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <ul class="breadcrumb">
 	<li><a href="#">Home</a></li>
 	<li>Page</li>
 </ul>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -305,7 +307,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <nav>
 	<ul class="pagination">
 		<li class="disabled"><span>&laquo;</span></li>
@@ -320,7 +322,7 @@
 </nav>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -336,21 +338,21 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <div id="carousel-code" class="carousel slide" data-ride="carousel">
 
 	<div class="carousel-inner">
 		<div class="item active">
-			<img src="https://via.placeholder.com/1280x480.png?text=First%20slide" loading="lazy">
+			<img src="<?php echo document::href_ilink('placeholder', ['size' => '1280x480', 'text'=> 'First Slide']); ?>" loading="lazy">
 		</div>
 
 		<div class="item">
-			<img src="https://via.placeholder.com/1280x480.png?text=Second%20slide" loading="lazy">
+			<img src="<?php echo document::href_ilink('placeholder', ['size' => '1280x480', 'text'=> 'Second Slide']); ?>" loading="lazy">
 			<div class="carousel-caption">Lorem ipsum</div>
 		</div>
 
 		<div class="item">
-			<img src="https://via.placeholder.com/1280x480.png?text=Third%20slide" loading="lazy">
+			<img src="<?php echo document::href_ilink('placeholder', ['size' => '1280x480', 'text'=> 'Third Slide']); ?>" loading="lazy">
 			<div class="carousel-caption">Dolor sit amet</div>
 		</div>
 	</div>
@@ -362,15 +364,15 @@
 	</ol>
 
 	<a class="carousel-control left" href="#carousel-code" role="button" data-slide="prev">
-		<span class="icon-next"><i class="fa icon-chevron-left"></i></span>
+		<span class="icon-next"><i class="icon-chevron-left"></i></span>
 	</a>
 	<a class="carousel-control right" href="#carousel-code" role="button" data-slide="next">
-		<span class="icon-next"><i class="fa icon-chevron-right"></i></span>
+		<span class="icon-next"><i class="icon-chevron-right"></i></span>
 	</a>
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -380,46 +382,40 @@
 
 		<div class="card-header">
 			<div class="card-title">
-				Grid
+				Grid 12
 			</div>
 		</div>
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <div class="grid show-grid">
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
-	<div class="col-md-1">.col-md-1</div>
+	<div class="col-2">.col-2</div>
+	<div class="col-2">.col-2</div>
+	<div class="col-2">.col-2</div>
+	<div class="col-2">.col-2</div>
+	<div class="col-2">.col-2</div>
+	<div class="col-2">.col-2</div>
 </div>
 
 <div class="grid show-grid">
-	<div class="col-md-8">.col-md-8</div>
-	<div class="col-md-4">.col-md-4</div>
+	<div class="col-8">.col-8</div>
+	<div class="col-4">.col-4</div>
 </div>
 
 <div class="grid show-grid">
-	<div class="col-md-4">.col-md-4</div>
-	<div class="col-md-4">.col-md-4</div>
-	<div class="col-md-4">.col-md-4</div>
+	<div class="col-4">.col-4</div>
+	<div class="col-4">.col-4</div>
+	<div class="col-4">.col-4</div>
 </div>
 
 <div class="grid show-grid">
-	<div class="col-md-6">.col-md-6</div>
-	<div class="col-md-6">.col-md-6</div>
+	<div class="col-6">.col-6</div>
+	<div class="col-6">.col-6</div>
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -435,7 +431,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <h1>Heading 1</h1>
 
 <p><strong>Lorem ipsum dolor sit amet</strong>, <u>consectetur adipiscing elit</u>. <i>Phasellus dignissim sollicitudin orci</i>, sed semper purus sodales et. Aenean a lorem vestibulum ipsum feugiat congue. Nullam nec turpis at augue tincidunt lobortis. Etiam pulvinar neque sed mi accumsan, nec gravida eros dignissim. Nunc ultricies urna ac eros tempor porta. Fusce maximus nec magna nec dictum. Donec at nibh feugiat, porta ante eu, aliquet ligula. Mauris feugiat lectus ut vulputate malesuada. Phasellus aliquet molestie odio, sed eleifend ante lacinia vel. Etiam mattis neque sit amet suscipit dictum. Sed blandit consectetur dolor, et accumsan purus gravida ut. Pellentesque porttitor pharetra nisl, sit amet dignissim arcu mollis non. Sed eu blandit metus, non bibendum nulla. Praesent pharetra orci eget ipsum lacinia pretium. Praesent purus sem, volutpat id lorem quis, placerat malesuada magna. Aliquam et nisl nec eros viverra consequat eget eu urna.</p>
@@ -447,7 +443,7 @@
 <small>Pellentesque egestas felis sed dignissim ullamcorper.</small>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -463,7 +459,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <ul class="flex flex-rows">
 	<li>Item 1</li>
 	<li>Item 2</li>
@@ -471,14 +467,14 @@
 </ul>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 
 			<h3>Inline List</h3>
 
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <ul class="flex flex-columns flex-gap">
 	<li>Item 1</li>
 	<li>Item 2</li>
@@ -486,7 +482,7 @@
 </ul>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -502,7 +498,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
@@ -535,7 +531,7 @@
 </table>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -552,7 +548,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <div class="form-group">
 	<label>Text</label>
 	<input type="text" class="form-input" placeholder="Text">
@@ -571,7 +567,7 @@
 <div class="form-group">
 	<label>Input Group Icon</label>
 	<div class="input-group">
-		<span class="input-group-icon"><i class="fa icon-envelope"></i></span>
+		<span class="input-group-icon"><i class="icon-envelope"></i></span>
 		<input type="email" class="form-input" placeholder="Email">
 	</div>
 </div>
@@ -670,7 +666,7 @@
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -686,7 +682,7 @@
 
 		<div class="card-body">
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <button type="button" class="btn btn-sm btn-default">Default</button>
 <button type="button" class="btn btn-sm btn-primary">Primary</button>
 <button type="button" class="btn btn-sm btn-success">Success</button>
@@ -709,14 +705,14 @@
 <button type="button" class="btn btn-lg btn-danger">Danger</button>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 
 			<h3>Button Group</h3>
 
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <div class="btn-group">
 	<button type="button" class="btn btn-default">Button 1</button>
 	<button type="button" class="btn btn-default">Button 2</button>
@@ -735,14 +731,14 @@
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 
 			<h3>Button Dropdown</h3>
 
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <div class="btn-group">
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 		Action <span class="caret"></span>
@@ -758,7 +754,7 @@
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -775,13 +771,11 @@
 		<div class="card-body">
 
 			<div class="grid">
-				<div class="col-md-6 source">
-<a href="#" class="thumbnail">
-	<img src="https://via.placeholder.com/300x200.png" loading="lazy">
-</a>
+				<div class="col-6 source">
+<img class="thumbnail" src="<?php echo document::ilink('placeholder', ['size' => '64x64']); ?>" loading="lazy">
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>
@@ -798,7 +792,7 @@
 		<div class="card-body">
 
 			<div class="grid">
-				<div class="col-md-6 source">
+				<div class="col-6 source">
 <div class="bubbles">
 	<div class="bubble remote">
 		Knock knock!
@@ -814,7 +808,7 @@
 </div>
 				</div>
 
-				<div class="col-md-6 code">
+				<div class="col-6 code">
 				</div>
 			</div>
 		</div>

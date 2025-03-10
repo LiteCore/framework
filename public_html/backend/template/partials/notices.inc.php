@@ -1,23 +1,42 @@
-<div id="notices" class="alerts">
+<div id="notices" class="notices">
 <?php
 	foreach (array_keys($notices) as $type) {
 		foreach ($notices[$type] as $notice) {
 			switch ($type) {
 
 				case 'errors':
-					echo '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a>' . functions::draw_fonticon('icon-exclamation-triangle') . ' ' . $notice .'</div>' . PHP_EOL;
+					echo implode(PHP_EOL, [
+						'<div class="notice notice-danger">',
+						'  '. functions::draw_fonticon('icon-exclamation-triangle') . ' ' . $notice,
+						'  <a href="#" class="close" data-dismiss="notice">&times;</a>',
+						'</div>',
+					]);
 					break;
 
 				case 'warnings':
-					echo '<div class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a>' . functions::draw_fonticon('icon-exclamation-triangle') . ' ' . $notice .'</div>' . PHP_EOL;
+					echo implode(PHP_EOL, [
+						'<div class="notice notice-warning">'
+						 . '  '. functions::draw_fonticon('icon-exclamation-triangle') . ' ' . $notice
+						 . '<a href="#" class="close" data-dismiss="notice">&times;</a>'
+						 . '</div>',
+					]);
 					break;
 
 				case 'notices':
-					echo '<div class="alert alert-default"><a href="#" class="close" data-dismiss="alert">&times;</a>' . functions::draw_fonticon('icon-info-circle') . ' ' . $notice .'</div>' . PHP_EOL;
+					echo implode(PHP_EOL, [
+						'<div class="notice notice-info">',
+						'  '. functions::draw_fonticon('icon-info') . ' ' . $notice,
+						'  <a href="#" class="close" data-dismiss="notice">&times;</a>',
+						'</div>',
+					]);
 					break;
 
 				case 'success':
-					echo '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a>' .functions::draw_fonticon('icon-check-circle') . ' ' . $notice .'</div>' . PHP_EOL;
+					echo implode(PHP_EOL, ['<div class="notice notice-success">',
+						'  '. functions::draw_fonticon('icon-check') . ' ' . $notice,
+						'  <a href="#" class="close" data-dismiss="notice">&times;</a>',
+						'</div>',
+					]);
 					break;
 			}
 		}

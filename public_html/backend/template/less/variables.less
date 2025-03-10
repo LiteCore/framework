@@ -29,6 +29,19 @@
 
 :root {
 
+	/* App */
+	--sidebar-width: 20rem;
+	--sidebar-background: center / cover no-repeat url(../images/background.svg) #f9fafc;
+
+	--apps-menu-background-hover: #e5e7ef;
+	--apps-menu-background-active: #eaebf1;
+	--apps-menu-border: var(--default-border);
+	--apps-menu-text-color: #333;
+
+	--top-background: #fff;
+	--top-text-color: var(--default-text-color);
+
+	/* Framework */
 	--border-radius: 8px;
 	--gutter-size: 2rem;
 	--gutter-x: 2rem;
@@ -36,207 +49,218 @@
 	--link-text-color: #06b;
 	--whitespace-color: #fff;
 
-	--top-background-color: var(--card-background-color);
-	--top-text-color: var(--card-text-color);
+	--site-background: #f0f4f9;
 
-	--page-background-color: #f0f4f9;
-
-	--sidebar-background-color: #d9dce5;
-	--sidebar-background-color-hover: #e5e7ef;
-	--sidebar-background-color-active: #eaebf1;
-	--sidebar-border-color: var(--default-border-color);
-	--sidebar-text-color: #333;
-	--sidebar-width: 20rem;
-
-	--navigation-background-color: #fff;
-	--navigation-background-color-active: #bdbdbd;
+	--navigation-background: #fff;
+	--navigation-background-active: #bdbdbd;
 	--navigation-text-color: #000;
 
-	--default-background-color: #f2f3f6;
-	--default-background-color-hover: #f2f3f6;
-
-	--default-border-color: #f2f3f7;
+	/* Defaults */
+	--default-background: #f2f3f6;
+	--default-background-hover: #f2f3f6;
+	--default-border: 1px solid #f2f3f7;
 	--default-line-height: 1.25;
 	--default-text-font: Inter, Arial, 'Helvetica Neue', Helvetica, sans-serif;
 	--default-text-color: #444;
 	--default-text-size: 14px;
 
-	--breadcrumbs-background-color: #d7d9df;
+	--breadcrumbs-background: #d7d9df;
 	--breadcrumbs-text-color: #3c3c3c;
-	--breadcrumbs-border-color: transparent;
 
-	--card-background-color: #fff;
+	/* Notices */
+	--default-notice-background: #e5e5e5;
+	--default-notice-text-color: #000;
+	--default-notice-border: 1px solid #e6e8ed;
+
+	--primary-notice-background: #3ba5c6;
+	--primary-notice-text-color: #fff;
+	--primary-notice-border: 1px solid #3ba5c6;
+
+	--success-notice-background: #98cc34;
+	--success-notice-text-color: #fff;
+	--success-notice-border: 1px solid #98cc34;
+
+	--warning-notice-background: #ffcc66;
+	--warning-notice-text-color: #aa0000;
+	--warning-notice-border: 1px solid #ffcc66;
+
+	--danger-notice-background: #d9534f;
+	--danger-notice-text-color: #fff;
+	--danger-notice-border: 1px solid #d9534f;
+
+	/* Breadcrumbs */
+	--breadcrumbs-background: #ededf1;
+	--breadcrumbs-text-color: #555;
+	--breadcrumbs-border: 1px solid transparent;
+
+	/* Cards */
+	--card-background: #fff;
 	--card-text-color: #444;
-	--card-border-color: transparent;
-	--card-header-background-color: transparent;
-	--card-header-text-color: var(--card-text-color);
-	--card-body-background-color: transparent;
-	--card-footer-background-color: #f2f3f6;
+	--card-footer-background: #f2f3f6;
+	--card-border: 1px solid rgba(0, 0, 0, .1);
+	--card-shadow: 0 0 .25rem #0001;
 
-	--pills-background-color: #f3f3f3;
-	--pills-background-color-active: #cfd3e1;
-	--pills-background-color-hover: #f1f3f7;
-	--pills-text-color: var(--default-text-color);
+	/* Panels */
+	--panel-background: linear-gradient(to bottom, #fffc, #fff9);
+	--panel-text-color: #2f244f;
+	--panel-header-background: transparent;
+	--panel-header-text-color: var(--panel-text-color);
+	--panel-body-background: transparent;
+	--panel-footer-background: #0000010;
+	--panel-shadow: 0 0 .25rem #0001;
+	--panel-border: 1px solid #0002;
 
-	--tab-nav-background-color: #f6f7f9;
-	--tab-nav-background-color-hover: transparent;
-	--tab-nav-background-color-active: #fff;
+	/* Buttons */
+	--default-button-background: linear-gradient(to bottom, #a7acaf, #88969d), radial-gradient(ellipse closest-side, #303335, #676D71 90%, transparent 90%);
+	--default-button-border: 0px solid transparent;
+	--default-button-text-color: #fff;
+
+	--primary-button-background: #2e9cd4;
+	--primary-button-border: 1px solid rgba(0, 0, 0, .1);
+	--primary-button-text-color: #fff;
+
+	--success-button-background: #87b92b;
+	--success-button-border: 1px solid rgba(0, 0, 0, .1);
+	--success-button-text-color: #fff;
+
+	--danger-button-background: #d9534f;
+	--danger-button-border: 1px solid rgba(0, 0, 0, .1);
+	--danger-button-text-color: #fff;
+
+	/* Forms */
+	--input-background: #f1f2f5;
+	--input-padding-x: 1em;
+	--input-padding-y: .75em;
+	--input-text-color: #000;
+	--input-border: 1px solid #e5e6e9;
+	--input-border-focus: 1px solid #e7e9f0;
+	--input-border-radius: var(--border-radius);
+	--input-addon-background: #f3f4f7;
+	--input-code-background: #313b50;
+	--input-code-text-color: #fff;
+	--input-checkbox-background-active: #7052c2;
+
+	/* Dropdowns */
+	--dropdown-menu-background: #fff;
+
+	/* Pills */
+	--pill-background: #f3f3f3;
+	--pill-background-active: #cfd3e1;
+	--pill-background-hover: #f1f3f7;
+	--pill-text-color: var(--default-text-color);
+
+	/* Tabs */
+	--tab-nav-background: #f6f7f9;
+	--tab-nav-background-hover: transparent;
+	--tab-nav-background-active: #fff;
 	--tab-nav-text-color: var(--default-text-color);
-	--tab-border-color: transparent;
-	--tab-content-background-color: #fff;
+	--tab-border: 1px solid transparent;
+	--tab-content-background: #fff;
 	--tab-content-text-color: var(--default-text-color);
 
-	--table-header-background-color: #fff;
-	--table-body-background-color: #fff;
-	--table-row-background-color-odd: #f9fafb;
-	--table-row-background-color-even: #fff;
-	--table-row-background-color-hover: #ecedef;
-	--table-link-background-color: #e3ebf3;
-	--table-link-background-color-hover: #cfddeb;
-	--table-footer-background-color: #fbfcfd;
-	--table-border-color: #e6e8f0;
+	/* Tables */
+	--table-header-background: #fff;
+	--table-row-background-odd: #f9fafb;
+	--table-row-background-even: #fff;
+	--table-row-background-hover: #ecedef;
+	--table-footer-background: #fbfcfd;
+	--table-border: 1px solid #e6e8f0;
 
-	--pagination-background-color: #fff;
-	--pagination-background-color-hover: #c8cbd0;
-	--pagination-background-color-active: #e6e8ec;
-	--pagination-border-color: var(--default-border-color);
-	--pagination-border-color-hover: var(--default-border-color);
-	--pagination-border-color-active: var(--default-border-color);
+	--table-link-background: #e3ebf3;
+	--table-link-background-hover: #cfddeb;
+
+	/* Pagination */
+	--pagination-background: #fff;
+	--pagination-background-hover: #c8cbd0;
+	--pagination-background-active: #e6e8ec;
+	--pagination-border: var(--default-border);
+	--pagination-border-hover: var(--default-border);
+	--pagination-border-active: var(--default-border);
 	--pagination-text-color: var(--default-text-color);
 	--pagination-text-color-hover: var(--default-text-color);
 	--pagination-text-color-active: var(--default-text-color);
-
-	--button-default-background-color: #f1f2f5;
-	--button-default-background-color-hover: #e3e4e9;
-	--button-default-background-color-active: #eaebef;
-	--button-default-border-color: transparent;
-	--button-default-text-color: #333;
-
-	--button-danger-background-color: #d9534f;
-	--button-danger-background-color-hover: #d04a46;
-	--button-danger-background-color-active: #db5d59;
-	--button-danger-border-color: rgba(0,0,0,0.1);
-	--button-danger-text-color: #fff;
-
-	--button-success-background-color: #87b92b;
-	--button-success-background-color-hover: #7faf26;
-	--button-success-background-color-active: #87b92b;
-	--button-success-border-color: rgba(0,0,0,0.1);
-	--button-success-text-color: #fff;
-
-	--input-background-color: #f1f2f5;
-	--input-border-color: #e8ebf1;
-	--input-border-radius: var(--border-radius);
-	--input-addon-background-color: #f3f4f7;
-	--input-code-background-color: #313b50;
-	--input-code-text-color: #fff;
-	--input-checkbox-background-color-active: #7052c2;
-	--input-text-color: #000;
-	--input-border-color: #e5e6e9;
-	--input-border-color-focus: #e7e9f0;
-	--input-padding-x: 1em;
-	--input-padding-y: .75em;
-
-	--dropdown-menu-background-color: #fff;
-
-	--notice-default-background-color: #e5e5e5;
-	--notice-default-text-color: #000;
-
-	--notice-primary-background-color: #3ba5c6;
-	--notice-primary-text-color: #fff;
-
-	--notice-success-background-color: #98cc34;
-	--notice-success-text-color: #fff;
-
-	--notice-warning-background-color: #ffcc66;
-	--notice-warning-text-color: #aa0000;
-
-	--notice-danger-background-color: #d9534f;
-	--notice-danger-text-color: #fff;
 
 	--copyright-text-color: #444;
 }
 
 html.dark-mode {
 
-	--top-background-color: #283144;
+	--top-background: #283144;
 	--top-text-color: var(--card-text-color);
 
-	--page-background-color: #1a2133;
+	--site-background: #1a2133;
 
-	--sidebar-background-color: #283144;
-	--sidebar-background-color-hover: #374258;
-	--sidebar-background-color-active: #1a2133;
-	--sidebar-border-color: #1d2431;
-	--sidebar-text-color: #acb6c2;
+	--sidebar-background: #283144;
+	--sidebar-background-hover: #374258;
+	--sidebar-background-active: #1a2133;
+	--apps-menu-border: 1px solid #1d2431;
+	--apps-menu-text-color: #acb6c2;
 
-	--default-background-color: #283042;
-	--default-border-color: #1c243a;
+	--default-background: #283042;
+	--default-border: 1px solid #1c243a;
 	--default-title-color: #acb6c2;
 	--default-text-color: #acb6c2;
 	--default-input-color: #fff;
 
-	--card-background-color: #283144;
-	--card-header-background-color: transparent;
-	--card-header-text-color: #fff;
-	--card-body-background-color: transparent;
-	--card-footer-background-color: #212836;
+	--card-background: #283144;
+	--card-footer-background: #212836;
 	--card-text-color: #acb6c2;
-	--card-border-color: #253046;
+	--card-border: 1px solid #253046;
 
-	--pills-background-color: #333c4e;
+	--pill-background: #333c4e;
 
-	--tab-nav-background-color: #1c243a;
+	--tab-nav-background: #1c243a;
 	--tab-nav-text-color: #acb6c2;
-	--tab-border-color: #434e67;
-	--tab-content-background-color: #283144;
+	--tab-border: 1px solid #434e67;
+	--tab-content-background: #283144;
 
-	--table-header-background-color: #283144;
-	--table-body-background-color: #283144;
-	--table-row-background-color-odd: #2d374c;
-	--table-row-background-color-even: #283246;
-	--table-row-background-color-hover: #3c4861;
-	--table-link-background-color: #1a2133;
-	--table-link-background-color-hover: #333b4e;
-	--table-footer-background-color: #252e42;
-	--table-border-color: #1c243a;
+	/* Tables */
+	--table-header-background: #283144;
+	--table-body-background: #283144;
+	--table-row-background-odd: #2d374c;
+	--table-row-background-even: #283246;
+	--table-row-background-hover: #3c4861;
+	--table-link-background: #1a2133;
+	--table-link-background-hover: #333b4e;
+	--table-footer-background: #252e42;
+	--table-border: 1px solid #1c243a;
 
-	--pagination-background-color: var(--default-background-color);
-	--pagination-background-color-hover: var(--default-background-color);
-	--pagination-background-color-active: #35415a;
-	--pagination-border-color: var(--default-border-color);
-	--pagination-border-color-hover: var(--default-border-color);
-	--pagination-border-color-active: var(--default-border-color);
+	--pagination-background: var(--default-background);
+	--pagination-background-hover: var(--default-background);
+	--pagination-background-active: #35415a;
+	--pagination-border: var(--default-border);
+	--pagination-border-hover: var(--default-border);
+	--pagination-border-active: var(--default-border);
 	--pagination-text-color: var(--default-text-color);
 	--pagination-text-color-active: var(--default-text-color);
 	--pagination-text-color-hover: #fff;
 
-	--button-default-background-color: #354362;
-	--button-default-background-color-hover: #535f7a;
-	--button-default-background-color-active: #1a2133;
-	--button-default-border-color: #434e67;
+	--button-default-background: #354362;
+	--button-default-background-hover: #535f7a;
+	--button-default-background-active: #1a2133;
+	--button-default-border: 1px solid #434e67;
 	--button-default-text-color: #acb6c2;
 
-	--button-danger-background-color: #a93e3a;
-	--button-danger-background-color-hover: #bd3d38;
-	--button-danger-background-color-active: #a93e3a;
-	--button-danger-border-color: rgba(0, 0, 0, .1);
+	--button-danger-background: #a93e3a;
+	--button-danger-background-hover: #bd3d38;
+	--button-danger-background-active: #a93e3a;
+	--button-danger-border: 1px solid rgba(0, 0, 0, .1);
 	--button-danger-text-color: #fff;
 
-	--button-success-background-color: #608516;
-	--button-success-background-color-hover: #709f12;
-	--button-success-background-color-active: #608516;
-	--button-success-border-color: rgba(0, 0, 0, .1);
+	--button-success-background: #608516;
+	--button-success-background-hover: #709f12;
+	--button-success-background-active: #608516;
+	--button-success-border: 1px solid rgba(0, 0, 0, .1);
 	--button-success-text-color: #fff;
 
-	--input-background-color: #1a2133;
-	--input-border-color: #31384a;
-	--input-border-color-focus: #555e74;
-	--input-addon-background-color: #3d485e;
+	--input-background: #1a2133;
+	--input-border: 1px solid #31384a;
+	--input-border-focus: 1px solid #555e74;
+	--input-addon-background: #3d485e;
 	--input-text-color: #acb6c2;
-	--input-checkbox-background-color-active: #495abd;
+	--input-checkbox-background-active: #495abd;
 
-	--breadcrumbs-background-color: #283144;
+	--breadcrumbs-background: #283144;
 	--breadcrumbs-text-color: var(--default-text-color);
 
 	--copyright-text-color: #acb6c2;

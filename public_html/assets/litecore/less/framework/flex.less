@@ -1,0 +1,47 @@
+// Flexbox
+.flex,
+.list-unstyled,
+.list-inline {
+	display: flex;
+	&:is(ul) {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	&.list-inline ul,
+	&.flex-rows ul {
+		padding-inline-start: 1em;
+	}
+	&.flex-columns,
+	&.list-inline {
+		flex-direction: row;
+	}
+	&.flex-rows,
+	&.list-unstyled	{
+		flex-direction: column;
+	}
+	&.list-inline,
+	&:not(.flex-nogap) {
+		gap: ~"calc(var(--gutter-size)/2)" var(--gutter-size);
+	}
+	&.flex-gap {
+		gap: var(--gutter-y) var(--gutter-x);
+	}
+	&.flex-wrap {
+		flex-wrap: wrap;
+	}
+	&.flex-grow > *,
+	.flex-grow {
+		flex-grow: 1;
+	}
+	&.flex-no-shrink > *,
+	.flex-no-shrink {
+		flex-shrink: 0;
+	}
+	&.flex-align-center {
+		align-items: center;
+	}
+	> * {
+		flex: 0 1 auto;
+	}
+}
