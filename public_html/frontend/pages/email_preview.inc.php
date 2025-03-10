@@ -15,6 +15,8 @@
 
 	$_page = new ent_view('app://frontend/template/pages/email_example.inc.php');
 
+	document::$snippets['jumbotron'] = '<img src="'. document::href_ilink('placeholder', ['size' => '550x200', 'text' => 'Lorem Ipsum Dolor']) .'" alt="Placeholder" style="width: 100%; height: auto;">';
+
 	// Place your snippets here
 	// ...
 

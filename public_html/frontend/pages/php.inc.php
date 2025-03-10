@@ -69,7 +69,7 @@
 				</div>
 			</div>
 
-			<h2><?php echo language::translate('title_create_a_new_page_and_use_a_template_view_for_html', 'Create a New Web Page and Use a Template View for HTML'); ?></h2>
+			<h2><?php echo language::translate('title_create_a_new_page', 'Create a New Web Page '); ?> &ndash; <?php echo language::translate('title_use_template_view_for_visuals', 'Use a Template View for Visuals'); ?></h2>
 
 			<div class="card">
 				<div class="card-body">

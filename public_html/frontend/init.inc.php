@@ -1,5 +1,40 @@
 <?php
 
+	// Set Default OpenGraph Content
+	document::$opengraph = [
+		'title' => settings::get('site_name'),
+		'type' => 'website',
+		'url' => document::href_ilink(''),
+		'image' => document::href_rlink('storage://images/logotype.svg'),
+	];
+
+	// Set Default Schema Data
+	document::$schema['website'] = [
+		'@context' => 'https://schema.org/',
+		'@type' => 'Website',
+		'name' => settings::get('site_name'),
+		'url' => document::ilink(''),
+		'countryOfOrigin' => settings::get('site_country_code'),
+	];
+
+	// Set Default Organization Schema Data
+	document::$schema['organization'] = [
+		'@context' => 'https://schema.org/',
+		'@type' => 'Organization',
+		'name' => settings::get('site_name'),
+		'url' => document::ilink(''),
+		'logo' => document::rlink(FS_DIR_STORAGE . 'images/logotype.svg'),
+		'email' => settings::get('site_email'),
+		'availableLanguage' => array_column(language::$languages, 'name'),
+	];
+
+	// Favicons
+	document::$head_tags['favicon'] = implode(PHP_EOL, [
+		'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
+		'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
+		'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
+		'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
+	]);
 	// Maintenance Mode
 	if (settings::get('maintenance_mode')) {
 		

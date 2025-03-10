@@ -45,11 +45,11 @@ code::before {
 			</p>
 
 			<p class="text-lg">
-				LiteCore might do things a little differently from what you are used to in overcomplex frameworks. But everything is done with simplicity in mind. One of the best ways to learn is by doing. And while you go on doing things, we intend to make that as easy as possible for you.
+				LiteCore might do things a little differently from what you are used to in overcomplex frameworks. But everything is done with simplicity in mind. One of the best ways to learn is by doing. And while you go on doing things, we intend to make it as easy for you as possible.
 			</p>
 
 			<p class="text-lg">
-				Reach your goals faster by doing less of all the work. Spend your time wisely on what you really like to be doing.
+				Reach your goals faster by doing less of all the boring work. Spend your time wisely on what you really like to be doing.
 			</p>
 
 			<div class="card">
@@ -97,10 +97,12 @@ code::before {
 					<ul class="list list-unstyled">
 						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Folder Structure</li>
 						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> PHP Framework</li>
+						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Web Frontend</li>
+						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Web Backend</li>
 						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> HTML Template</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> jQuery 4</li>
 						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> LESS & CSS Framework</li>
 						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Font Icon Kit</li>
+						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> jQuery 4</li>
 						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> vMod Ready</li>
 					</ul>
 				</div>

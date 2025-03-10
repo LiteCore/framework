@@ -16,6 +16,7 @@
 {{content}}
 
 {{foot_tags}}
+<script src="<?php echo document::href_rlink('app://assets/litecore/js/framework.min.js'); ?>"></script>
 <script src="<?php echo document::href_rlink('app://frontend/template/js/app.min.js'); ?>"></script>
 
 </body>

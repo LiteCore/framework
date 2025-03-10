@@ -19,34 +19,6 @@
 		public static $title = [];
 
 		public static function init() {
-
-			// Set Default OpenGraph Content
-			self::$opengraph = [
-				'title' => settings::get('site_name'),
-				'type' => 'website',
-				'url' => document::href_ilink(''),
-				'image' => document::href_rlink('storage://images/logotype.svg'),
-			];
-
-			// Set Default Schema Data
-			self::$schema['website'] = [
-				'@context' => 'https://schema.org/',
-				'@type' => 'Website',
-				'name' => settings::get('site_name'),
-				'url' => self::ilink(''),
-				'countryOfOrigin' => settings::get('site_country_code'),
-			];
-
-			self::$schema['organization'] = [
-				'@context' => 'https://schema.org/',
-				'@type' => 'Organization',
-				'name' => settings::get('site_name'),
-				'url' => self::ilink(''),
-				'logo' => self::rlink(FS_DIR_STORAGE . 'images/logotype.svg'),
-				'email' => settings::get('site_email'),
-				'availableLanguage' => array_column(language::$languages, 'name'),
-			];
-
 			event::register('before_capture', [__CLASS__, 'before_capture']);
 			event::register('after_capture', [__CLASS__, 'after_capture']);
 		}
@@ -73,7 +45,7 @@
 			self::$snippets['charset'] = mb_http_output();
 			self::$snippets['home_path'] = WS_DIR_APP;
 
-			switch (route::$selected['endpoint']) {
+			switch (fallback(route::$selected['endpoint'])) {
 
 				case 'backend':
 					self::$snippets['template_path'] = WS_DIR_APP . 'backend/template/';
@@ -84,22 +56,23 @@
 					break;
 			}
 
-			self::$head_tags['favicon'] = implode(PHP_EOL, [
-				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
-				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
-				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
-				'<link rel="icon" href="'. self::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
-			]);
+			// Wait For It (Minified)
+			self::add_head_tags(implode(PHP_EOL, [
+				'<script>waitFor=(i,o)=>{void 0!==window.i?o(window.i):setTimeout((()=>waitFor(i,o)),50)};</script>',
+			]), 'waitFor');
+			// Load jQuery
+			self::load_script('app://assets/jquery/jquery-4.0.0.min.js', 'jquery');
 
-			self::$foot_tags['jquery'] = '<script src="'. self::href_rlink('app://assets/jquery/jquery-4.0.0.min.js') .'"></script>';
-
-			// Hreflang
+			// Set Hreflang
 			if (route::$selected['endpoint'] == 'frontend') {
+
 				$hreflangs = [];
+
 				foreach (language::$languages as $language) {
 					if ($language['url_type'] == 'none') continue;
 					$hreflangs[] = '<link rel="alternate" hreflang="'. $language['code'] .'" href="'. self::href_ilink(route::$selected['resource'], [], true, ['page', 'sort'], $language['code']) .'">';
 				}
+
 				self::$head_tags['hreflang'] = implode(PHP_EOL, $hreflangs);
 			}
 		}
@@ -124,7 +97,7 @@
 				'settings' => self::$settings,
 			];
 
-			switch (route::$selected['endpoint']) {
+			switch (fallback(route::$selected['endpoint'])) {
 
 				case 'backend':
 					self::$jsenv['template']['url'] = WS_DIR_APP . 'backend/template/';
@@ -150,7 +123,7 @@
 		public static function optimize(&$output) {
 
 			// Extract styling
-			$output = preg_replace_callback('#(<html[^>]*>)(.*)(</html>)#is', function($matches) use (&$stylesheets, &$styles, &$javascripts, &$javascript) {
+			$output = preg_replace_callback('#(<html[^>]*>)(.*)(</html>)#is', function($matches) use (&$stylesheets, &$style, &$javascripts, &$javascript) {
 
 				// Extract external stylesheets
 				$stylesheets = [];
@@ -160,10 +133,10 @@
 				}, $matches[2]);
 
 				// Extract internal styling
-				$styles = [];
+				$style = [];
 
-				$matches[2] = preg_replace_callback('#<style[^>]*>(.+?)</style>\R*#is', function($match) use (&$styles) {
-					$styles[] = trim($match[1], "\r\n");
+				$matches[2] = preg_replace_callback('#<style[^>]*>(.+?)</style>\R*#is', function($match) use (&$style) {
+					$style[] = trim($match[1], "\r\n");
 				}, $matches[2]);
 
 				return $matches[1] . $matches[2] . $matches[3];
@@ -176,7 +149,7 @@
 				$javascripts = [];
 
 				$matches[2] = preg_replace_callback('#\R?<script([^>]+src="[^"]+"[^>]*)></script>\R*#is', function($match) use (&$javascripts) {
-					$javascripts[] = trim($match[0]);
+					$javascripts[] = '<script ' . trim($match[1]) .'></script>';
 				}, $matches[2]);
 
 				// Extract internal scripts
@@ -196,27 +169,41 @@
 			}
 
 			// Reinsert internal styles
-			if (!empty($styles)) {
+			if (!empty($style)) {
+
+				// Convert to string
+				$style = implode(PHP_EOL . PHP_EOL, $style);
 
 				// Minify internal CSS
-				$search_replace = [
+				foreach([
 					'#/\*(?:.(?!/)|[^\*](?=/)|(?<!\*)/)*\*/#s' => '', // Remove comments
 					'#([a-zA-Z0-9 \#=",-:()\[\]]+\{\s*\}\s*)#' => '', // Remove empty selectors
 					'#\s+#' => ' ', // Replace multiple whitespace
 					'#^\s+#' => ' ', // Replace leading whitespace
-					'#\s*([:;{}])\s*#' => '$1',
-					'#;}#' => '}',
-				];
+					'#\s*([,:;{}])\s*#' => '$1', // Remove whitespace around delimiters
+					'#;}#' => '}', // Remove trailing semicolons before closing brackets
+				] as $search => $replace) {
+					$style = preg_replace($search, $replace, $style);
+				}
 
-				$styles = implode(PHP_EOL, [
-					'<style>',
-					 //'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing in 2024?
-					 preg_replace(array_keys($search_replace), array_values($search_replace), implode(PHP_EOL . PHP_EOL, $styles)),
+				$style = implode(PHP_EOL, [
+					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing?
+					$style,
 					 //'/*]]>*/-->',
-					 '</style>',
-				]) . PHP_EOL;
+				]);
 
-				$output = preg_replace('#</head>#', addcslashes($styles . '</head>', '\\$'), $output, 1);
+				// Build integrity hash
+				$checksum = hash('sha256', $style, true);
+
+				// Prepare style tag
+				$style = implode(PHP_EOL, [
+					'<style integrity="sha256-'. base64_encode($checksum) .'">',
+					$style,
+					 '</style>',
+				]);
+
+				// Insert style tag before </head>
+				$output = preg_replace('#</head>#', addcslashes($style, '\\$') . PHP_EOL . '</head>', $output . PHP_EOL, 1);
 			}
 
 			// Reinsert external javascripts
@@ -227,14 +214,27 @@
 
 			// Reinsert internal javascript
 			if (!empty($javascript)) {
+
+				// Convert to string
 				$javascript = implode(PHP_EOL, [
-					'<script>',
-					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing in 2024?
+					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing?
+					'+waitFor(\'jQuery\', function($) {',
 					implode(PHP_EOL . PHP_EOL, $javascript),
+					'})',
 					//'/*]]>*/-->',
+				]);
+
+				// Build integrity hash
+				$checksum = hash('sha256', $javascript, true);
+
+				// Prepare script tag
+				$javascript = implode(PHP_EOL, [
+					'<script integrity="sha256-'. base64_encode($checksum) .'">',
+					$javascript,
 					'</script>',
 				]) . PHP_EOL;
 
+				// Insert javascript before </body>
 				$output = preg_replace('#</body>#is', addcslashes($javascript . '</body>', '\\$'), $output, 1);
 			}
 
@@ -261,7 +261,7 @@
 			stats::start_watch('rendering');
 
 			// Set view
-			switch (route::$selected['endpoint']) {
+			switch (fallback(route::$selected['endpoint'])) {
 
 				case 'backend':
 					$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
@@ -376,37 +376,54 @@
 			self::$foot_tags[$key] = $tags;
 		}
 
-		public static function load_style($urls, $key=null) {
+		public static function load_style($resources, $key=null) {
 
-			if (!is_array($urls)) {
-				$urls = [$urls];
+			if (!is_array($resources)) {
+				$resources = [$resources];
 			}
 
-			self::$head_tags[$key] = implode(PHP_EOL, array_map(function($url){
-				if ($url) return '<link rel="stylesheet" href="'. self::href_rlink($url) .'">';
-			}, $urls));
+			$styles = [];
+			foreach ($resources as $resource) {
+				if (preg_match('#^(app|storage)://#', $resource)) {
+					$styles[] = '<link rel="stylesheet" integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" href="'. self::href_rlink($resource) .'">';
+				} else {
+					$styles[] = '<link rel="stylesheet" href="'. self::href_link($resource) .'">';
+				}
+			}
+
+			self::$head_tags[$key] = implode(PHP_EOL, $styles);
+			}
+
+		public static function load_script($resources, $key=null) {
+
+			if (!is_array($resources)) {
+				$resources = [$resources];
 		}
 
-		public static function load_script($urls, $key=null) {
+			$scripts = [];
 
-			if (!is_array($urls)) {
-				$urls = [$urls];
+			foreach ($resources as $resource) {
+				if (preg_match('#^(app|storage)://#', $resource)) {
+					$scripts[] = '<script defer integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" src="'. self::href_rlink($resource) .'"></script>';
+				} else {
+					$scripts[] = '<script src="'. self::href_link($resource) .'"></script>';
+				}
 			}
 
-			self::$foot_tags[$key] = implode(PHP_EOL, array_map(function($url){
-				if ($url) return '<script src="'. self::href_rlink($url) .'"></script>';
-			}, $urls));
+			self::$foot_tags[$key] = implode(PHP_EOL, $scripts);
 		}
 
 		public static function add_script($lines, $key=null) {
 
-			if (!is_array($lines)) {
-				$lines = [$lines];
+			if (is_array($lines)) {
+				$lines = implode(PHP_EOL, $lines);
 			}
 
-			self::$javascript[$key] = implode(PHP_EOL, array_map(function($line){
-				return '	'.$line;
-			}, $lines));
+			if (!preg_match('#^( |\t)#', $lines)) {
+				$lines = preg_replace('#^#m', "\t", $lines);
+			}
+
+			self::$javascript[$key] = $lines;
 		}
 
 		public static function add_preload($url, $type=null) {
@@ -464,10 +481,7 @@
 		public static function link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
 
 			if (!$path) {
-
-				if (!$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) {
-					return '';
-				}
+				$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 				if ($inherit_params === null) {
 					$inherit_params = true;
@@ -491,10 +505,6 @@
 				return '';
 			}
 
-			if (is_file($resource)) {
-				$resource = functions::file_realpath($resource);
-			}
-
 			if (preg_match('#^app://#', $resource)) {
 				$webpath = preg_replace('#^app://#', WS_DIR_APP, $resource);
 
@@ -505,7 +515,11 @@
 				$webpath = preg_replace('#^('. preg_quote(DOCUMENT_ROOT, '#') .')#', '', str_replace('\\', '/', $resource));
 			}
 
-			return self::link($webpath, is_file($resource) ? ['_' => filemtime($resource)] : []);
+			if (is_file($resource)) {
+				return self::link($webpath, ['_' => filemtime($resource)]);
+			}
+
+			return self::link($webpath);
 		}
 
 		public static function href_rlink($resource) {

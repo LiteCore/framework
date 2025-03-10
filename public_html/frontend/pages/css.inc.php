@@ -453,6 +453,40 @@
 
 		<div class="card-header">
 			<div class="card-title">
+				Modals
+			</div>
+		</div>
+
+		<div class="card-body">
+			<div class="grid">
+				<div class="col-6 source">
+<h1>Modals</h1>
+<div>
+	<a class="btn btn-default" href="#modal1" data-toggle="modal">Default</a>
+	<a class="btn btn-default" href="#modal2" data-toggle="modal">Custom Styles</a>
+	<a class="btn btn-default" href="https://placehold.co/600x400/EEE/31343C" data-toggle="modal" data-type="image">Image</a>
+	<a class="btn btn-default" href="https://player.vimeo.com/video/33110953" data-toggle="modal" data-type="iframe" data-width="500" data-height="281">iFrame</a>
+	<a class="btn btn-default" href="index.html .ajaxcontent" data-toggle="modal" data-type="ajax">Ajax</a>
+</div>
+
+<h2>Gallery</h2>
+<div>
+	<a class="btn btn-default" href="https://placehold.co/600x400/EEE/31343C?text=A" data-toggle="modal" data-gallery="MyGallery" data-type="image">Image</a>
+	<a class="btn btn-default" href="https://placehold.co/600x400/EEE/31343C?text=B" data-toggle="modal" data-gallery="MyGallery" data-type="image">Image</a>
+	<a class="btn btn-default" href="https://placehold.co/600x400/EEE/31343C?text=C" data-toggle="modal" data-gallery="MyGallery" data-type="image">Image</a>
+</div>
+				</div>
+
+				<div class="col-6 code">
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="card">
+
+		<div class="card-header">
+			<div class="card-title">
 				Unstyled List
 			</div>
 		</div>
