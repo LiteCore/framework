@@ -33,6 +33,10 @@
 			// Identify/set language
 			self::set();
 
+			if (!empty(self::$selected['database_connection_collation'])) {
+				database::query("set names '". databse::input(strtok(self::$selected['database_connection_collation'], '_')) ."' collate '". databse::input(self::$selected['database_connection_collation']) ."';");
+			}
+
 			self::$_cache_token = cache::token('translations', ['endpoint', 'language']);
 
 			if (!self::$_cache['translations'] = cache::get(self::$_cache_token)) {
@@ -77,7 +81,9 @@
 
 		public static function set($code='') {
 
-			if (empty($code)) $code = self::identify();
+			if (!$code) {
+				$code = self::identify();
+			}
 
 			if (!isset(self::$languages[$code])) {
 				trigger_error('Cannot set unsupported language ('. $code .')', E_USER_WARNING);
@@ -106,8 +112,12 @@
 			}
 
 			// Set system locale
-			if (!setlocale(LC_TIME, preg_split('#\s*,\s*#', self::$selected['locale'], -1, PREG_SPLIT_NO_EMPTY))) {
-				trigger_error('Warning: Failed setting locale '. self::$selected['locale'] .' for '. self::$selected['code'], E_USER_WARNING);
+			if (self::$selected['locale'] && !setlocale(LC_TIME, preg_split('#\s*,\s*#', self::$selected['locale'], -1, PREG_SPLIT_NO_EMPTY))) {
+				trigger_error('Warning: Failed setting locale '. self::$selected['locale'] .' for '. self::$selected['name'], E_USER_WARNING);
+			}
+
+			if (self::$selected['locale_intl'] && !locale_set_default(self::$selected['locale_intl'])) {
+				trigger_error('Warning: Failed setting intl locale '. self::$selected['locale_intl'] .' for '. self::$selected['name'], E_USER_WARNING);
 			}
 		}
 

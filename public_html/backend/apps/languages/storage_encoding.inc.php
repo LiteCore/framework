@@ -81,7 +81,7 @@
 	$num_rows = count($tables);
 
 ?>
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo language::translate('title_storage_encoding', 'Storage Encoding'); ?>
@@ -89,7 +89,7 @@
 	</div>
 
 	<?php echo functions::form_begin('mysql_collation_form', 'post'); ?>
-		<table class="table table-striped table-hover data-table">
+		<table class="table data-table">
 			<thead>
 				<tr>
 					<th><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
@@ -119,19 +119,19 @@
 
 		<div class="card-body">
 			<div style="width: 640px;">
-				<div class="form-group">
-					<label><?php echo language::translate('title_collation', 'Collation'); ?></label>
+				<label class="form-group">
+					<div class="form-label"><?php echo language::translate('title_collation', 'Collation'); ?></div>
 					<?php echo functions::form_select_mysql_collation('collation'); ?>
-				</div>
+				</label>
 
 				<div class="form-group">
 					<?php echo functions::form_checkbox('set_database_default', ['1', language::translate('text_also_set_as_database_default', 'Also set as database default (when new tables are created)')], true); ?>
 				</div>
 
-				<div class="form-group">
-					<label><?php echo language::translate('title_engine', 'Engine'); ?></label>
+				<label class="form-group">
+					<div class="form-label"><?php echo language::translate('title_engine', 'Engine'); ?></div>
 					<?php echo functions::form_select_mysql_engine('engine'); ?>
-				</div>
+				</label>
 			</div>
 
 			<p><?php echo language::translate('description_set_mysql_collation', 'This will recursively convert the charset and collation for all selected database tables and belonging columns.'); ?></p>

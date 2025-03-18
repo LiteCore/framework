@@ -39,7 +39,7 @@
 		$_content->snippets = [
 			'app_icon' => implode(PHP_EOL, [
 				'<span class="app-icon">',
-				'	' . functions::draw_fonticon($app_config['theme']['icon'] .''),
+				'	' . functions::draw_fonticon($app_config['theme']['icon']),
 				'</span>',
 			]),
 		];

@@ -4,10 +4,10 @@
 		public $data;
 		public $previous;
 
-		public function __construct($email_id=null) {
+		public function __construct($id=null) {
 
-			if (!empty($email_id)) {
-				$this->load($email_id);
+			if ($id) {
+				$this->load($id);
 			} else {
 				$this->reset();
 			}
@@ -40,24 +40,24 @@
 			return $this;
 		}
 
-		public function load($email_id) {
+		public function load($id) {
 
-			if (!preg_match('#^[0-9]+$#', $email_id)) {
-				throw new Exception('Invalid email (ID: '. $email_id .')');
+			if (!preg_match('#^[0-9]+$#', $id)) {
+				throw new Exception('Invalid email (ID: '. $id .')');
 			}
 
 			$this->reset();
 
 			$email = database::query(
 				"select * from ". DB_TABLE_PREFIX ."emails
-				where id = ". (int)$email_id ."
+				where id = ". (int)$id ."
 				limit 1;"
 			)->fetch();
 
 			if ($email) {
 				$this->data = array_replace($this->data, array_intersect_key($email, $this->data));
 			} else {
-				throw new Exception('Could not find email (ID: '. (int)$email_id .') in database.');
+				throw new Exception('Could not find email (ID: '. (int)$id .') in database.');
 			}
 
 			$this->data['sender'] = json_decode($email['sender'], true);
@@ -172,7 +172,7 @@
 					'Content-Transfer-Encoding' => '8bit',
 					'Content-Language' => $this->data['language_code'],
 				],
-				'body' => wordwrap((string)$view, 70, "\r\n"),
+				'body' => wordwrap((string)$view, 900, "\r\n"),
 			];
 
 			return $this;
@@ -237,7 +237,7 @@
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
 			if (!functions::validate_email($email)) {
-				trigger_error('Invalid email address ('. $email .')', E_USER_ERROR);
+				throw new Exception('Invalid email address ('. $email .')');
 			}
 
 			$this->data['ccs'][] = [
@@ -258,7 +258,7 @@
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
 			if (!functions::validate_email($email)) {
-				trigger_error('Invalid email address ('. $email .')', E_USER_ERROR);
+				throw new Exception('Invalid email address ('. $email .')');
 			}
 
 			$this->data['bccs'][] = [

@@ -98,6 +98,10 @@
   --panel-shadow: 0 0 0.25rem #0001;
   --panel-border: 1px solid #0002;
   /* Buttons */
+  --button-shadow: 0 4px 11px 0 rgba(37, 44, 97, 0.15), 0 1px 3px 0 rgba(93, 100, 148, 0.2);
+  --button-padding-x: 1.5em;
+  --button-padding-y: 0.5em;
+  --button-border-width: 0;
   --default-button-background: linear-gradient(to bottom, #a7acaf, #88969d), radial-gradient(ellipse closest-side, #303335, #676D71 90%, transparent 90%);
   --default-button-border: 0px solid transparent;
   --default-button-text-color: #fff;

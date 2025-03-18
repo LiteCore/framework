@@ -6,6 +6,7 @@
     options = $.extend(options || {}, {
       rel: 'stylesheet',
       href: url,
+      cache: true,
       onload: callback,
       onerror: fallback
     })

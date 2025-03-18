@@ -85,7 +85,8 @@ CREATE TABLE `lc_languages` (
 	`code2` CHAR(3) NOT NULL DEFAULT '',
 	`name` VARCHAR(32) NOT NULL DEFAULT '',
 	`direction` ENUM('ltr','rtl') NOT NULL DEFAULT 'ltr',
-	`locale` VARCHAR(64) NOT NULL DEFAULT '',
+	`locale` VARCHAR(32) NOT NULL DEFAULT '',
+	`locale_intl` VARCHAR(24) NOT NULL DEFAULT '',
 	`url_type` VARCHAR(16) NOT NULL DEFAULT '',
 	`domain_name` VARCHAR(64) NOT NULL DEFAULT '',
 	`raw_date` VARCHAR(32) NOT NULL DEFAULT '',
@@ -150,6 +151,25 @@ CREATE TABLE `lc_pages_info` (
 	KEY `language_code` (`language_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
+CREATE TABLE `lc_redirects` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+	`immediate` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+	`pattern` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
+	`destination` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
+	`http_response_code` ENUM('301','302') NOT NULL DEFAULT '301' COLLATE 'utf8mb4_swedish_ci',
+	`redirects` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+	`date_redirected` TIMESTAMP NULL DEFAULT NULL,
+	`date_valid_from` TIMESTAMP NULL DEFAULT NULL,
+	`date_valid_to` TIMESTAMP NULL DEFAULT NULL,
+	`date_updated` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`date_created` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `pattern` (`pattern`) USING BTREE,
+	INDEX `status` (`status`) USING BTREE,
+	INDEX `immediate` (`immediate`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
+-- --------------------------------------------------------
 CREATE TABLE `lc_settings` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`group_key` VARCHAR(64) NOT NULL DEFAULT '',
@@ -178,6 +198,22 @@ CREATE TABLE `lc_settings_groups` (
 	`priority` INT(11) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
+-- --------------------------------------------------------
+CREATE TABLE `lc_site_tags` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`status` TINYINT(1) NOT NULL DEFAULT '0',
+	`position` ENUM('head','body') NOT NULL DEFAULT 'head' COLLATE 'utf8mb4_swedish_ci',
+	`name` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
+	`content` TEXT NOT NULL DEFAULT '' COLLATE 'utf8mb4_swedish_ci',
+	`require_consent` VARCHAR(64) NULL DEFAULT NULL COLLATE 'utf8mb4_swedish_ci',
+	`priority` TINYINT(4) NOT NULL DEFAULT '0',
+	`date_updated` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`date_created` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `status` (`status`) USING BTREE,
+	INDEX `position` (`position`) USING BTREE,
+	INDEX `priority` (`priority`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 -- --------------------------------------------------------
 CREATE TABLE `lc_translations` (

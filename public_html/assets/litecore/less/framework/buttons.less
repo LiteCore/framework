@@ -3,7 +3,7 @@
 .btn(@type) {
 	background: ~"var(--@{type}-button-background)";
 	color: ~"var(--@{type}-button-text-color)";
-	border: ~"var(--@{type}-button-border)";
+	border-color: ~"var(--@{type}-button-border-color)";
 	text-decoration: none;
 	&:hover:not(.active):not(.disabled):not([disabled]) {
 		filter: brightness(1.2);
@@ -15,7 +15,7 @@
 
 .btn {
 	display: inline-block;
-	padding: var(--input-padding-y) var(--input-padding-x);
+	padding: var(--button-padding-y) var(--button-padding-x);
 	text-decoration:  none;
 	font-weight: 500;
 	border-radius: var(--input-border-radius);
@@ -26,6 +26,19 @@
 	touch-action: manipulation;
 	user-select: none;
 
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  border: var(--button-border-width) solid transparent;
+  background-color: transparent;
+  text-decoration: inherit;
+  border-radius: 2em;
+  box-shadow: var(--button-shadow);
+  cursor: pointer;
+
+  transition: all .2s ease-out;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
 	&:not(:disabled):not(.active) {
 		cursor: pointer;
 	}

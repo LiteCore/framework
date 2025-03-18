@@ -234,7 +234,6 @@
 		return '<ul class="flex flex-rows">'. PHP_EOL . $output . PHP_EOL . '</ul>';
 	};
 
-	functions::draw_lightbox();
 ?>
 
 <style>
@@ -1488,10 +1487,10 @@ textarea.warning {
 
 	$('.card-action button[name="delete"]').click(function(e){
 		e.preventDefault();
-		$.featherlight('#modal-uninstall');
+		$.litebox('#modal-uninstall');
 	});
 
-	$('body').on('click', '.featherlight button[name="cancel"]', function(e){
-		$.featherlight.close();
+	$('body').on('click', '.litebox button[name="cancel"]', function(e){
+		$.litebox.close();
 	});
 </script>

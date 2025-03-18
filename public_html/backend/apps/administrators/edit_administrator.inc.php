@@ -106,7 +106,7 @@
 }
 </style>
 
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo !empty($administrator->data['username']) ? language::translate('title_edit_administrator', 'Edit Administrator') : language::translate('title_create_new_administrator', 'Create New Administrator'); ?>
@@ -120,75 +120,106 @@
 
 				<div class="col-md-8">
 					<div class="grid">
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_status', 'Status'); ?></label>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_status', 'Status'); ?></div>
 							<?php echo functions::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
+							</label>
 						</div>
-
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_username', 'Username'); ?></label>
-							<?php echo functions::form_input_text('username', true, 'autocomplete="off" required'); ?>
-						</div>
-					</div>
-
-					<div class="grid">
-						<div class="form-group col-sm-6">
-							<label><?php echo language::translate('title_email', 'Email'); ?></label>
-							<?php echo functions::form_input_email('email', true, 'autocomplete="off"'); ?>
-						</div>
-
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_two_factor_authentication', 'Two-Factor Authentication'); ?></label>
-							<?php echo functions::form_toggle('two_factor_auth', 'e/d', true); ?>
+						
+						<div class="col-sm-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_username', 'Username'); ?></div>
+								<?php echo functions::form_input_text('username', true, 'autocomplete="off" required'); ?>
+							</label>
 						</div>
 					</div>
 
 					<div class="grid">
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_new_password', 'New Password'); ?></label>
+						<div class="col-sm-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_email', 'Email'); ?></div>
+								<?php echo functions::form_input_email('email', true, 'autocomplete="off"'); ?>
+							</label>
+						</div>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_two_factor_authentication', 'Two-Factor Authentication'); ?></div>
+								<?php echo functions::form_toggle('two_factor_auth', 'e/d', true); ?>
+							</label>
+						</div>
+					</div>
+
+					<div class="grid">
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_new_password', 'New Password'); ?></div>
 							<?php echo functions::form_input_password_unmaskable('password', '', 'autocomplete="new-password"'); ?>
+							</label>
 						</div>
-
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_confirm_password', 'Confirm Password'); ?></label>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_confirm_password', 'Confirm Password'); ?></div>
 							<?php echo functions::form_input_password_unmaskable('confirmed_password', '', 'autocomplete="new-password"'); ?>
+							</label>
 						</div>
 					</div>
 
 					<div class="grid">
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_valid_from', 'Valid From'); ?></label>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_valid_from', 'Valid From'); ?></div>
 							<?php echo functions::form_input_datetime('date_valid_from', true); ?>
+							</label>
 						</div>
-
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_valid_to', 'Valid To'); ?></label>
+						
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_valid_to', 'Valid To'); ?></div>
 							<?php echo functions::form_input_datetime('date_valid_to', true); ?>
+							</label>
 						</div>
 					</div>
 
 					<?php if (!empty($administrator->data['id'])) { ?>
 					<div class="grid">
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_last_ip_address', 'Last IP Address'); ?></label>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_last_ip_address', 'Last IP Address'); ?></div>
 							<?php echo functions::form_input_text('last_ip_address', true, 'readonly'); ?>
+							</label>
 						</div>
-
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_last_hostname', 'Last Hostname'); ?></label>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_last_hostname', 'Last Hostname'); ?></div>
 							<?php echo functions::form_input_text('last_hostname', true, 'readonly'); ?>
+							</label>
 						</div>
 					</div>
 
 					<div class="grid">
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_last_login', 'Last Login'); ?></label>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_last_login', 'Last Login'); ?></div>
 							<?php echo functions::form_input_text('date_login', true, 'readonly'); ?>
+							</label>
+						</div>
+						<div class="col-md-6">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_last_active', 'Last Active'); ?></div>
+								<?php echo functions::form_input_text('date_active', true, 'readonly'); ?>
+							</label>
+						</div>
 						</div>
 
-						<div class="form-group col-md-6">
-							<label><?php echo language::translate('title_last_active', 'Last Active'); ?></label>
-							<?php echo functions::form_input_text('date_active', true, 'readonly'); ?>
+					<div class="grid">
+						<div class="col-md-12">
+							<label class="form-group">
+								<div class="form-label"><?php echo language::translate('title_known_ip_addresses', 'Known IP Addresses'); ?></div>
+								<div class="form-input" readonly style="height: 80px;">
+									<?php echo str_replace(',', ', ', $administrator->data['known_ips']); ?>
+								</div>
+							</label>
 					</div>
 					</div>
 					<?php } ?>
@@ -247,28 +278,28 @@
 </div>
 
 <script>
-	$('input[name="apps_toggle"]').change(function(){
+	$('input[name="apps_toggle"]').on('change', function() {
 		$('input[name^="apps"][name$="[status]"]').prop('disabled', !$(this).is(':checked'));
 		$('input[name^="apps"][name$="[docs][]"]').prop('disabled', !$(this).is(':checked'));
 	}).trigger('change');
 
-	$('input[name^="apps"][name$="[status]"]').change(function(){
+	$('input[name^="apps"][name$="[status]"]').on('change', function() {
 		if ($(this).prop('checked')) {
 			if (!$(this).closest('[data-app]').find('ul :input:checked').length) {
-				$(this).closest('[data-app]').find('ul :input').prop('checked', true);
+				$(this).closest('[data-app]').find('ul :input').prop('checked', true)
 			}
 		} else {
-			$(this).closest('[data-app]').find('ul :input').prop('checked', false);
+			$(this).closest('[data-app]').find('ul :input').prop('checked', false)
 		}
 	});
 
-	$('input[name^="apps"][name$="[docs][]"]').change(function() {
+	$('input[name^="apps"][name$="[docs][]"]').on('change', function() {
 		if ($(this).is(':checked')) {
-			$(this).closest('ul').closest('[data-app]').children().not('ul').find(':input').prop('checked', true);
+			$(this).closest('ul').closest('[data-app]').children().not('ul').find(':input').prop('checked', true)
 		}
 	});
 
-	$('input[name="widgets_toggle"]').change(function(){
+	$('input[name="widgets_toggle"]').on('change', function() {
 		$('input[name^="widgets["]').prop('disabled', !$(this).is(':checked'));
 	}).trigger('change');
 </script>

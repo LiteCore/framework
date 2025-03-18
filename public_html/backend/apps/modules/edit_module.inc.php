@@ -1,5 +1,8 @@
 <?php
-	if (empty($_GET['module_id'])) die('Unknown module id');
+
+	if (empty($_GET['module_id'])) {
+		die('Unknown module id');
+	}
 
 	$module_id = basename($_GET['module_id']);
 
@@ -11,7 +14,7 @@
 			break;
 
 		default:
-			trigger_error('Unknown module type', E_USER_ERROR);
+			throw new Error('Unknown module type');
 	}
 
 	$module = new ent_module($module_id);
@@ -60,7 +63,7 @@
 		}
 	}
 
-	if (empty($_POST) && !empty($module->data['id'])) {
+	if (!$_POST && !empty($module->data['id'])) {
 		notices::add('notices', language::translate('text_make_changes_necessary_to_install', 'Make any changes necessary to continue installation'));
 	}
 
@@ -72,7 +75,7 @@
 }
 </style>
 
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo !empty($module->data['id']) ? language::translate('title_edit_module', 'Edit Module') : language::translate('title_install_module', 'Install Module'); ?>
@@ -88,7 +91,7 @@
 
 		<?php echo functions::form_begin('module_form', 'post', false, false, 'autocomplete="off" style="max-width: 960px;"'); ?>
 
-			<table class="table table-striped">
+			<table class="table">
 				<tbody>
 					<?php foreach ($object->settings() as $setting) { ?>
 					<tr>

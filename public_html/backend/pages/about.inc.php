@@ -1,7 +1,5 @@
 <?php
 
-	ini_set('memory_limit', -1);
-
 	breadcrumbs::reset();
 	breadcrumbs::add(language::translate('title_dashboard', 'Dashboard'), WS_DIR_ADMIN);
 	breadcrumbs::add(language::translate('title_about', 'About'), document::link());
@@ -19,9 +17,7 @@
 			$content = preg_replace('#(\r\n?|\n)#', PHP_EOL, file_get_contents($log_file));
 
 			foreach ($_POST['errors'] as $error) {
-
 				$content = preg_replace('#\[\d{1,2}-[a-zA-Z]+-\d{4} \d\d\:\d\d\:\d\d [a-zA-Z/]+\] '. preg_quote($error, '#') . addcslashes(PHP_EOL, "\r\n") .'[^\[]*#s', '', $content, -1, $count);
-
 				if (!$count) {
 					throw new Exception('Failed deleting error from log');
 				}
@@ -100,6 +96,9 @@
 			file_put_contents($logfile, '');
 		}
 
+		$iniatial_memory_limit = ini_get('memory_limit');
+		ini_set('memory_limit', -1); // Unlimit memory for reading log file
+
 		$entries = preg_replace('#(\r\n?|\n)#', PHP_EOL, file_get_contents($log_file));
 
 		if (preg_match_all('#\[(\d{1,2}-[a-zA-Z]+-\d{4} \d\d\:\d\d\:\d\d [a-zA-Z/]+)\] (.*?)'. addcslashes(PHP_EOL, "\r\n") .'([^\[]*)#s', $entries, $matches)) {
@@ -136,6 +135,10 @@
 
 			return ($a['last_occurrence'] > $b['last_occurrence']) ? -1 : 1;
 		});
+
+		unset($entries);
+
+		ini_set('memory_limit', $iniatial_memory_limit); // Restore limit
 	}
 
 	// Render view

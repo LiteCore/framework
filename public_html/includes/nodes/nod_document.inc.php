@@ -86,13 +86,6 @@
 				'url' => self::ilink('f:'),
 			];
 
-			if (administrator::check_login()) {
-				self::$jsenv['backend'] = [
-					'path' => WS_DIR_APP . BACKEND_ALIAS .'/',
-					'url' => self::ilink('b:'),
-				];
-			}
-
 			self::$jsenv['template'] = [
 				'settings' => self::$settings,
 			];
@@ -117,7 +110,7 @@
 				'thousands_separator' => &language::$selected['thousands_sep'],
 			];
 
-			self::$head_tags[] = '<script>window._env = '. json_encode(self::$jsenv, JSON_UNESCAPED_SLASHES) .';</script>';
+			self::$head_tags[] = '<script>window._env='. json_encode(self::$jsenv, JSON_UNESCAPED_SLASHES) .'</script>';
 		}
 
 		public static function optimize(&$output) {

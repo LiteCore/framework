@@ -1,5 +1,3 @@
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
--- -----
 INSERT INTO `lc_languages` (`status`, `code`, `code2`, `name`, `locale`, `url_type`, `raw_date`, `raw_time`, `raw_datetime`, `format_date`, `format_time`, `format_datetime`, `decimal_point`, `thousands_sep`, `priority`) VALUES
 (1, 'en', 'eng', 'English', 'en_US.utf8,en_US.UTF-8,english', 'none', 'm/d/y', 'h:i:s A', 'm/d/y h:i:s A', '%b %e %Y', '%I:%M %p', '%b %e %Y %I:%M %p', '.', ',', 0);
 -- -----

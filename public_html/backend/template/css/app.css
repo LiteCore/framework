@@ -268,6 +268,6 @@ html.dark-mode #box-apps-menu .app.selected > a {
 html.dark-mode #content {
   background: none;
 }
-html.dark-mode .featherlight-content {
+html.dark-mode .litebox-content {
   background: #283144;
 }

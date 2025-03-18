@@ -6,7 +6,7 @@
 
 		public function __construct($language_code=null) {
 
-			if (!empty($language_code)) {
+			if ($language_code) {
 				$this->load($language_code);
 			} else {
 				$this->reset();
@@ -91,6 +91,8 @@
 					name = '". database::input($this->data['name']) ."',
 					direction = '". database::input($this->data['direction']) ."',
 					locale = '". database::input($this->data['locale']) ."',
+					locale_intl = '". database::input($this->data['locale_intl']) ."',
+					mysql_collation = '". database::input($this->data['mysql_collation']) ."',
 					url_type = '". database::input($this->data['url_type']) ."',
 					domain_name = '". database::input($this->data['domain_name']) ."',
 					raw_date = '". database::input($this->data['raw_date']) ."',
@@ -135,12 +137,10 @@
 
 			} else {
 
-				$translations_query = database::query(
+				if (!database::query(
 					"show fields from ". DB_TABLE_PREFIX ."translations
 					where `Field` = 'text_". database::input($this->data['code']) ."';"
-				);
-
-				if (!database::num_rows($translations_query)) {
+				)->num_rows) {
 					database::query(
 						"alter table ". DB_TABLE_PREFIX ."translations
 						add `text_". database::input($this->data['code']) ."` text not null after text_en;"

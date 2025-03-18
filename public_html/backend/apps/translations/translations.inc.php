@@ -172,7 +172,6 @@
 		$language_options[] = [$language_code, language::$languages[$language_code]['name']];
 	}
 
-	functions::draw_lightbox();
 ?>
 <style>
 #tokens .token {
@@ -200,7 +199,7 @@
 }
 </style>
 
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo language::translate('title_translations', 'Translations'); ?>
@@ -209,7 +208,27 @@
 
 	<?php echo functions::form_begin('filter_form', 'get'); ?>
 		<div class="card-filter">
-			<div class="expandable"><?php echo functions::form_input_search('query', true, 'placeholder="'. language::translate('text_search_phrase_or_keyword', 'Search phrase or keyword') .'"'); ?></div>
+
+		<div class="dropdown">
+
+			<div class="form-select" data-toggle="dropdown">
+				<?php echo language::translate('title_collections', 'Collections'); ?>
+			</div>
+
+			<ul class="dropdown-menu">
+				<?php foreach ($collections as $collection) { ?>
+				<li class="dropdown-menu-item">
+					<label class="option"><?php echo functions::form_checkbox('collections[]', $collection['id'], true); ?>
+						<span class="title"><?php echo $collection['name']; ?></span>
+					</label>
+				</li>
+				<?php } ?>
+			</ul>
+			</div>
+
+			<div class="expandable">
+				<?php echo functions::form_input_search('query', true, 'placeholder="'. language::translate('text_search_phrase_or_keyword', 'Search phrase or keyword') .'"'); ?>
+			</div>
 
 			<div class="dropdown">
 
@@ -219,7 +238,7 @@
 
 				<ul class="dropdown-menu">
 					<?php foreach (language::$languages as $language) { ?>
-					<li>
+					<li class="dropdown-menu-item">
 						<label class="option"><?php echo functions::form_checkbox('languages[]', $language['code'], true); ?>
 							<span class="title"><?php echo $language['name']; ?></span>
 						</label>
@@ -235,12 +254,12 @@
 				</div>
 
 				<ul class="dropdown-menu">
-					<li>
+					<li class="dropdown-menu-item">
 						<label class="option"><?php echo functions::form_checkbox('endpoint[]', 'frontend', true); ?>
 							<span class="title"><?php echo language::translate('title_frontend', 'Frontend'); ?></span>
 						</label>
 					</li>
-					<li>
+					<li class="dropdown-menu-item">
 						<label class="option"><?php echo functions::form_checkbox('endpoint[]', 'backend', true); ?>
 							<span class="title"><?php echo language::translate('title_backend', 'Backend'); ?></span>
 						</label>
@@ -251,28 +270,11 @@
 			<div class="dropdown">
 
 				<div class="form-select" data-toggle="dropdown">
-					<?php echo language::translate('title_collections', 'Collections'); ?>
-				</div>
-
-				<ul class="dropdown-menu">
-					<?php foreach ($collections as $collection) { ?>
-					<li>
-						<label class="option"><?php echo functions::form_checkbox('collections[]', $collection['id'], true); ?>
-							<span class="title"><?php echo $collection['name']; ?></span>
-						</label>
-					</li>
-					<?php } ?>
-				</ul>
-			</div>
-
-			<div class="dropdown">
-
-				<div class="form-select" data-toggle="dropdown">
 					<?php echo language::translate('title_filters', 'Filters'); ?>
 				</div>
 
 				<ul class="dropdown-menu">
-					<li>
+					<li class="dropdown-menu-item">
 						<label class="option"><?php echo functions::form_checkbox('untranslated', '1', true); ?>
 							<span class="title"><?php echo language::translate('text_untranslated_only', 'Untranslated only'); ?></span>
 						</label>
@@ -292,7 +294,7 @@
 
 	<?php echo functions::form_begin('translations_form', 'post'); ?>
 
-		<table class="table table-striped table-hover table-sortable data-table">
+		<table class="table data-table">
 			<thead>
 				<tr>
 					<th style="width: 50px;"><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
@@ -311,7 +313,7 @@
 					</td>
 					<td>
 						<pre><?php echo functions::escape_html($translation['code']); ?></pre>
-						<small style="color: #999;"><?php echo functions::form_checkbox('translations['.$key.'][html]', '1', true); ?> <?php echo language::translate('text_html_enabled', 'HTML enabled'); ?></small>
+						<small style="color: #999;"><?php echo functions::form_checkbox('translations['.$key.'][html]', ['1', language::translate('text_html_enabled', 'HTML enabled')], true); ?></small>
 					</td>
 					<?php foreach ($_GET['languages'] as $language_code) { ?>
 					<td><?php echo functions::form_textarea('translations['.$key.'][text_'. $language_code .']', true); ?></td>
@@ -356,32 +358,39 @@
 
 	<div class="grid">
 		<div class="col-md-6">
-			<div class="form-group">
-				<label><?php echo language::translate('title_from_language', 'From Language'); ?></label>
+			<label class="form-group">
+				<div class="form-label"><?php echo language::translate('title_from_language', 'From Language'); ?></div>
 				<?php echo functions::form_select('from_language_code', $language_options, $_GET['languages'][0]); ?>
-			</div>
+			</label>
 
-			<div class="form-group">
-				<label><?php echo language::translate('title_to_language', 'To Language'); ?></label>
+			<label class="form-group">
+				<div class="form-label"><?php echo language::translate('title_to_language', 'To Language'); ?></div>
 				<?php echo functions::form_select('to_language_code', $language_options); ?>
-			</div>
+			</label>
 
-			<div class="form-group">
-				<label><?php echo language::translate('text_copy_below_to_translation_service', 'Copy below to translation service'); ?></label>
+			<label class="form-group">
+				<div class="form-label"><?php echo language::translate('text_copy_below_to_translation_service', 'Copy below to translation service'); ?></div>
 				<textarea class="form-input" name="source" style="height: 320px;" readonly></textarea>
-			</div>
+			</label>
 
 			<div class="btn-group btn-block">
-				<a class="btn btn-default" href="https://translate.google.com" target="_blank"><?php echo functions::draw_fonticon('icon-external-link'); ?> Google Translate</a>
-				<a class="btn btn-default" href="https://www.bing.com/translator" target="_blank"><?php echo functions::draw_fonticon('icon-external-link'); ?> Bing Translate</a>
+
+				<a class="btn btn-default" href="https://translate.google.com" target="_blank">
+					<?php echo functions::draw_fonticon('icon-square-out'); ?> Google Translate
+				</a>
+
+				<a class="btn btn-default" href="https://www.bing.com/translator" target="_blank">
+					<?php echo functions::draw_fonticon('icon-square-out'); ?> Bing Translate
+				</a>
+
 			</div>
 		</div>
 
 		<div class="col-md-6">
-			<div class="form-group">
-				<label><?php echo language::translate('text_paste_your_translated_result_below', 'Paste your translated result below'); ?></label>
+			<label class="form-group">
+				<div class="form-label"><?php echo language::translate('text_paste_your_translated_result_below', 'Paste your translated result below'); ?></div>
 				<textarea class="form-input" name="result" style="height: 455px;"></textarea>
-			</div>
+			</label>
 
 			<div>
 				<button type="button" class="btn btn-primary" name="prefill_fields"><?php echo language::translate('title_prefill_fields', 'Prefill Fields'); ?></button>
@@ -443,14 +452,14 @@
 
 	// Translator Tool
 
-	$('.data-table :checkbox').change(function() {
+	$('.data-table :checkbox').on('change', function() {
 		$('#actions').prop('disabled', !$('.data-table :checked').length);
 	}).first().trigger('change');
 
 
-	$('#translator-tool select').change(function(e){
+	$('#translator-tool select').on('change', function(e) {
 
-		var $modal = $(this).closest('.featherlight'),
+		var $modal = $(this).closest('.litebox'),
 			from_language_code = $modal.find('select[name="from_language_code"]').val(),
 			to_language_code = $modal.find('select[name="to_language_code"]').val(),
 			translations = [];
@@ -475,8 +484,8 @@
 		$(this).select();
 	});
 
-	$('#translator-tool button[name="prefill_fields"]').on('click', function(){
-		var $modal = $(this).closest('.featherlight'),
+	$('#translator-tool button[name="prefill_fields"]').on('click', function() {
+		var $modal = $(this).closest('.litebox'),
 			 translated = $modal.find(':input[name="result"]').val().trim();
 
 		translated = translated.split(/\n(?=\[[0-9]+\])/);
@@ -486,7 +495,7 @@
 			return false;
 		}
 
-		$.each(translated, function(i){
+		$.each(translated, function(i) {
 
 			var matches = translated[i].trim().match(/^\[([0-9]+)\] = (.*)$/),
 				index = matches[1],
@@ -495,6 +504,6 @@
 			$(':input[name$="[text_'+ $modal.find('select[name="to_language_code"]').val() +']"]:eq('+ index +')').val(translation).css('border', '1px solid #f00');
 		});
 
-		$.featherlight.close();
+		$.litebox.close();
 	});
 </script>

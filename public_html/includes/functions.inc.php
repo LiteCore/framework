@@ -112,7 +112,7 @@
 	}
 
 	// Check if request was loaded via AJAX
-	function is_ajax_load() {
+	function is_ajax_request() {
 		return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 	}
 

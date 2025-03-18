@@ -261,17 +261,26 @@ ul.breadcrumb li a {
 }
 /* Buttons & Button Groups */
 .btn {
-  display: inline-block;
-  padding: var(--input-padding-y) var(--input-padding-x);
+  padding: var(--button-padding-y) var(--button-padding-x);
   text-decoration: none;
   font-weight: 500;
   border-radius: var(--input-border-radius);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  text-align: center;
   vertical-align: middle;
-  white-space: nowrap;
   touch-action: manipulation;
   user-select: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  border: var(--button-border-width) solid transparent;
+  background-color: transparent;
+  text-decoration: inherit;
+  border-radius: 2em;
+  box-shadow: var(--button-shadow);
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
 }
 .btn:not(:disabled):not(.active) {
   cursor: pointer;
@@ -279,7 +288,7 @@ ul.breadcrumb li a {
 .btn.btn-default {
   background: var(--default-button-background);
   color: var(--default-button-text-color);
-  border: var(--default-button-border);
+  border-color: var(--default-button-border-color);
   text-decoration: none;
 }
 .btn.btn-default:hover:not(.active):not(.disabled):not([disabled]) {
@@ -291,7 +300,7 @@ ul.breadcrumb li a {
 .btn.btn-primary {
   background: var(--primary-button-background);
   color: var(--primary-button-text-color);
-  border: var(--primary-button-border);
+  border-color: var(--primary-button-border-color);
   text-decoration: none;
 }
 .btn.btn-primary:hover:not(.active):not(.disabled):not([disabled]) {
@@ -303,7 +312,7 @@ ul.breadcrumb li a {
 .btn.btn-success {
   background: var(--success-button-background);
   color: var(--success-button-text-color);
-  border: var(--success-button-border);
+  border-color: var(--success-button-border-color);
   text-decoration: none;
 }
 .btn.btn-success:hover:not(.active):not(.disabled):not([disabled]) {
@@ -315,7 +324,7 @@ ul.breadcrumb li a {
 .btn.btn-danger {
   background: var(--danger-button-background);
   color: var(--danger-button-text-color);
-  border: var(--danger-button-border);
+  border-color: var(--danger-button-border-color);
   text-decoration: none;
 }
 .btn.btn-danger:hover:not(.active):not(.disabled):not([disabled]) {
@@ -974,7 +983,7 @@ tr.semi-transparent td {
   font-family: "LiteCore";
   font-style: normal;
   font-weight: 400;
-  src: url("../fonts/fonticons.woff2?1741600218") format("woff2");
+  src: url("../fonts/fonticons.woff2?1742219339") format("woff2");
 }
 [class^="icon-"],
 [class*=" icon-"] {

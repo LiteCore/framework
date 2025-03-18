@@ -24,7 +24,7 @@ html.dark-mode body {
 }
 
 #box-login {
-	width: 360px;
+	width: 400px;
 	margin: auto;
 
 	box-shadow: 0px 0px 60px rgba(0,0,0,0.25);

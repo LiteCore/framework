@@ -563,7 +563,7 @@
 				$this->load();
 			}
 
-			switch($this->_library) {
+			switch ($this->_library) {
 
 				case 'imagick':
 
@@ -843,6 +843,9 @@
 
 			$type = strtolower(pathinfo($destination, PATHINFO_EXTENSION));
 
+			$destination = preg_replace('#^storage://#', FS_DIR_STORAGE, $destination);
+			$destination = preg_replace('#^app://#', FS_DIR_APP, $destination);
+
 			if (!$type) {
 				$type = $this->type;
 			}
@@ -884,7 +887,7 @@
 						$this->_image->setInterlaceScheme(Imagick::INTERLACE_PLANE);
 					}
 
-					return $this->_image->writeImage($type.':'. functions::file_realpath($destination));
+					return $this->_image->writeImage($type.':'.$destination);
 
 					break;
 
