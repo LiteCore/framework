@@ -243,6 +243,9 @@ INSERT INTO `lc_countries` (`id`, `status`, `name`, `domestic_name`, `iso_code_1
 (243, 1, 'Isle of Man', '', '833', 'IM', 'IMN', '', '%company\r\n%firstname %lastname\r\n%address1\r\n%address2\r\n%postcode %city\r\n%zone_name\r\n%country_name', '', 0, 'en', '', '44', NOW(), NOW()),
 (244, 1, 'Åland Islands', '', '248', 'AX', 'ALA', '', '%company\r\n%firstname %lastname\r\n%address1\r\n%address2\r\n%postcode %city\r\n%zone_name\r\n%country_name', '', 0, 'sv', 'EUR', '358', NOW(), NOW());
 -- -----
+INSERT INTO `lc_administrators` (`id`, `status`, `username`, `email`, `password_hash`, `apps`, `widgets`, `last_ip_address`, `last_hostname`, `login_attempts`, `total_logins`, `date_valid_from`, `date_valid_to`, `date_active`, `date_login`, `date_updated`, `date_created`)
+VALUES (1, 1, 'admin', '', '$2y$10$iCjIIJh4rcNiOe2fRxE.Dej65HjwrTzRSe5YYaoibX.vIY/ngkUM.', '[]', '', '127.0.0.1', '', 0, 0, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+-- -----
 INSERT INTO `lc_languages` (`status`, `code`, `code2`, `name`, `locale`, `url_type`, `raw_date`, `raw_time`, `raw_datetime`, `format_date`, `format_time`, `format_datetime`, `decimal_point`, `thousands_sep`, `priority`) VALUES
 (1, 'en', 'eng', 'English', 'en_US.utf8,en_US.UTF-8,english', 'none', 'm/d/y', 'h:i:s A', 'm/d/y h:i:s A', '%b %e %Y', '%I:%M %p', '%b %e %Y %I:%M %p', '.', ',', 0);
 -- -----
