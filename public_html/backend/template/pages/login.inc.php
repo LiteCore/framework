@@ -64,12 +64,10 @@ html.dark-mode body {
 
 				<label class="form-group">
 					<?php echo functions::form_input_username('username', true, 'placeholder="'. language::translate('title_username_or_email_address', 'Username or Email Address') .'"'); ?>
-					<div class="form-label"></div>
 				</label>
 
 				<label class="form-group">
 					<?php echo functions::form_input_password('password', '', 'placeholder="'. language::translate('title_password', 'Password') .'" autocomplete="current-password"'); ?>
-					<div class="form-label"></div>
 				</label>
 
 				<div class="form-group">

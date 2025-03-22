@@ -525,7 +525,7 @@
 
 						if ($aliases) {
 							foreach ($aliases as $key => $value) {
-								$find = str_replace('{alias:'. $key .'}', $value, $insert);
+								$find = str_replace('{alias:'. $key .'}', $value, $find);
 							}
 						}
 
