@@ -108,11 +108,8 @@
 
 			http_response_code(500);
 
-			if (filter_var(ini_get('html_errors'), FILTER_VALIDATE_BOOLEAN) && $_SERVER['SERVER_SOFTWARE'] != 'CLI') {
-				include 'app://frontend/pages/error_document.inc.php';
-			}
 
-			//exit;
+			exit;
 		}
 	}
 
