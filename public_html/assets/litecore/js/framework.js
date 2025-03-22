@@ -972,7 +972,7 @@ window.waitFor = waitFor || ((objectName, callback, attempts=100) => {
 			}
 
 			// If the gallery is enabled, and current index is not last, add navigation
-			if (this.$source && this.currentIndex() < this.this.$source.length - 1) {
+			if (this.$source && this.currentIndex() < this.$source.length - 1) {
 				$(`<div class="litebox-next"><span>${this.nextIcon}</span></div>`).on('click', (e) => {
 					this.$instance.trigger('next');
 					e.preventDefault();
@@ -1049,7 +1049,7 @@ window.waitFor = waitFor || ((objectName, callback, attempts=100) => {
 
 		// Get the current slide index
 		currentIndex() {
-			return this.this.$source.index(this.$currentTarget);
+			return this.$source.index(this.$currentTarget);
 		}
 
 		// Navigate to a specific slide
@@ -1060,7 +1060,7 @@ window.waitFor = waitFor || ((objectName, callback, attempts=100) => {
 				return;
 			}
 
-			const source = this.this.$source;
+			const source = this.$source;
 			const len = source.length;
 			const $inner = this.$instance.find('.litebox-inner');
 			index = ((index % len) + len) % len;
