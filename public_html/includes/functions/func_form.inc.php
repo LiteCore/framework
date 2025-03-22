@@ -1112,7 +1112,6 @@
 			'bigtext()',
 			'checkbox()',
 			'color()',
-			'country()',
 			'csv()',
 			'currency()',
 			'customer()',

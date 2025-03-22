@@ -153,7 +153,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label><?php echo language::translate('title_country_of_juristiction', 'Country of Juristiction'); ?></label>
-            <?php echo functions::form_select_country('country_code', true); ?>
+            <?php echo function_exists('form_select_country') ? functions::form_select_country('country_code', true) : functions::form_input_text('country_code', true, 'pattern="[A-Z]{2}" placeholder="Example: US"'); ?>
           </div>
         </div>
 
