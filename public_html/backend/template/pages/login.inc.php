@@ -48,7 +48,7 @@ html.dark-mode body {
 	<div class="card" style="margin: 0;">
 		<div class="card-header text-center">
 			<a href="<?php echo document::href_ilink(''); ?>">
-				<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('store_name'); ?>">
+				<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>">
 			</a>
 		</div>
 
