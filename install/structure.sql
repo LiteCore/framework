@@ -2,6 +2,8 @@ CREATE TABLE IF NOT EXISTS `lc_administrators` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` TINYINT(1) NOT NULL DEFAULT '0',
 	`username` VARCHAR(32) NOT NULL DEFAULT '',
+	`firstname` VARCHAR(32) NOT NULL DEFAULT '',
+	`lastname` VARCHAR(32) NOT NULL DEFAULT '',
 	`email` VARCHAR(128) NOT NULL DEFAULT '',
 	`password_hash` VARCHAR(255) NOT NULL DEFAULT '',
 	`apps` VARCHAR(4096) NOT NULL DEFAULT '',
@@ -24,10 +26,10 @@ CREATE TABLE IF NOT EXISTS `lc_administrators` (
 	KEY `username` (`username`),
 	KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 INSERT INTO `lc_administrators` (`id`, `status`, `username`, `email`, `password_hash`, `apps`, `widgets`, `last_ip_address`, `last_hostname`, `login_attempts`, `total_logins`, `date_valid_from`, `date_valid_to`, `date_active`, `date_login`, `date_updated`, `date_created`)
 VALUES (1, 1, 'admin', '', '$2y$10$iCjIIJh4rcNiOe2fRxE.Dej65HjwrTzRSe5YYaoibX.vIY/ngkUM.', '[]', '', '127.0.0.1', '', 0, 0, NULL, NULL, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_countries` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` TINYINT(1) NOT NULL DEFAULT '0',
@@ -51,7 +53,7 @@ CREATE TABLE `lc_countries` (
 	UNIQUE KEY `iso_code_3` (`iso_code_3`),
 	KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_emails` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` ENUM('draft','scheduled','sent','error') NOT NULL DEFAULT 'draft',
@@ -77,7 +79,7 @@ CREATE TABLE `lc_emails` (
 	KEY `date_created` (`date_created`),
 	KEY `sender_email` (`sender`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_languages` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` TINYINT(1) NOT NULL DEFAULT '0',
@@ -104,7 +106,7 @@ CREATE TABLE `lc_languages` (
 	PRIMARY KEY `id` (`id`),
 	KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE IF NOT EXISTS `lc_modules` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`module_id` VARCHAR(64) NOT NULL DEFAULT '',
@@ -122,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `lc_modules` (
 	KEY `type` (`type`),
 	KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_pages` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` TINYINT(1) NOT NULL DEFAULT '0',
@@ -136,7 +138,7 @@ CREATE TABLE `lc_pages` (
 	KEY `parent_id` (`parent_id`),
 	KEY `dock` (`dock`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_pages_info` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`page_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -150,7 +152,7 @@ CREATE TABLE `lc_pages_info` (
 	KEY `page_id` (`page_id`),
 	KEY `language_code` (`language_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_redirects` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -169,7 +171,7 @@ CREATE TABLE `lc_redirects` (
 	INDEX `status` (`status`) USING BTREE,
 	INDEX `immediate` (`immediate`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_settings` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`group_key` VARCHAR(64) NOT NULL DEFAULT '',
@@ -189,7 +191,7 @@ CREATE TABLE `lc_settings` (
 	KEY `type` (`type`),
 	KEY `group_key` (`group_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_settings_groups` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`key` VARCHAR(64) NOT NULL DEFAULT '',
@@ -199,7 +201,7 @@ CREATE TABLE `lc_settings_groups` (
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_site_tags` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` TINYINT(1) NOT NULL DEFAULT '0',
@@ -215,7 +217,7 @@ CREATE TABLE `lc_site_tags` (
 	INDEX `position` (`position`) USING BTREE,
 	INDEX `priority` (`priority`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_third_parties` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`status` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -235,9 +237,9 @@ CREATE TABLE `lc_third_parties` (
 	PRIMARY KEY (`id`) USING BTREE,
 	INDEX `status` (`status`) USING BTREE,
 	INDEX `country_code` (`country_code`) USING BTREE,
-	CONSTRAINT `third_party_to_country` FOREIGN KEY (`country_code`) REFERENCES `litecart_major`.`lc_countries` (`iso_code_2`) ON UPDATE CASCADE ON DELETE SET NULL
+	CONSTRAINT `third_party_to_country` FOREIGN KEY (`country_code`) REFERENCES `lc_countries` (`iso_code_2`) ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_third_parties_info` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`third_party_id` INT(10) UNSIGNED NOT NULL,
@@ -248,10 +250,10 @@ CREATE TABLE `lc_third_parties_info` (
 	PRIMARY KEY (`id`) USING BTREE,
 	INDEX `third_party_id` (`third_party_id`) USING BTREE,
 	INDEX `language_code` (`language_code`) USING BTREE,
-	CONSTRAINT `third_party_info_to_language` FOREIGN KEY (`language_code`) REFERENCES `litecart_major`.`lc_languages` (`code`) ON UPDATE CASCADE ON DELETE CASCADE,
-	CONSTRAINT `third_party_info_to_third_party` FOREIGN KEY (`third_party_id`) REFERENCES `litecart_major`.`lc_third_parties` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	CONSTRAINT `third_party_info_to_language` FOREIGN KEY (`language_code`) REFERENCES `lc_languages` (`code`) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `third_party_info_to_third_party` FOREIGN KEY (`third_party_id`) REFERENCES `lc_third_parties` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_translations` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`code` VARCHAR(128) NOT NULL DEFAULT '',
@@ -268,7 +270,7 @@ CREATE TABLE `lc_translations` (
 	KEY `backend` (`backend`),
 	KEY `date_created` (`date_created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
--- --------------------------------------------------------
+-- -----
 CREATE TABLE `lc_zones` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`country_code` VARCHAR(4) NOT NULL DEFAULT '',

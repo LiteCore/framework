@@ -5,44 +5,60 @@
  * @author T. Almroth
  */
 
+window.waitFor = waitFor || ((objectName, callback, attempts=100) => {
+	if (typeof(window[objectName]) !== 'undefined') {
+		//console.debug('waitFor('+ objectName +') arrived')
+		callback(window[objectName]);
+	} else {
+		if (attempts) {
+			setTimeout(() => {
+				waitFor(objectName, callback, --attempts);
+			}, 50);
+		} else {
+			console.warn('waitFor('+ objectName +') timed out')
+		}
+	}
+});
+
 +waitFor('jQuery', ($) => {
 
-  // Stylesheet Loader
-  $.loadStylesheet = function(url, options, callback, fallback) {
+	// Stylesheet Loader
+	$.loadStylesheet = function(url, options, callback, fallback) {
 
-    options = $.extend(options || {}, {
-      rel: 'stylesheet',
-      href: url,
-      cache: true,
-      onload: callback,
-      onerror: fallback
-    })
+		options = $.extend(options || {}, {
+			rel: 'stylesheet',
+			href: url,
+			cache: true,
+			onload: callback,
+			onerror: fallback
+		})
 
-    $('<link>', options).appendTo('head')
-  }
+		$('<link>', options).appendTo('head')
+	}
 
-  // JavaScript Loader
-  $.loadScript = function(url, options, callback, fallback) {
+	// JavaScript Loader
+	$.loadScript = function(url, options, callback, fallback) {
 
-    options = $.extend(options || {}, {
-      method: 'GET',
-      dataType: 'script',
-      cache: true,
-      onload: callback,
-      onerror: fallback
-    });
+		options = $.extend(options || {}, {
+			method: 'GET',
+			dataType: 'script',
+			cache: true,
+			onload: callback,
+			onerror: fallback
+		});
 
-    return jQuery.ajax(url, options);
-  };
+		return jQuery.ajax(url, options);
+	};
 
-  // Keep-alive
-  let keepAlive = setInterval(function() {
-    $.get({
-      url: _env.platform.path + 'ajax/cart.json',
-      cache: false
-    })
-  }, 60e3)
-
+	// Keep-alive
+	if (_env && _env.platform && _env.platform.path) {
+		let keepAlive = setInterval(function() {
+			$.get({
+				url: _env.platform.path + 'ajax/keep_alive.json',
+				cache: false
+			})
+		}, 60e3)
+	}
 });
 
 /*
@@ -289,15 +305,19 @@
 	$.fn.contextMenu = function(config){
 		this.each(function() {
 
-			this.config = config
-			self = this
+			$(this).css({
+				cursor: 'context-menu'
+			});
+
+			this.config = config;
+			self = this;
 
 			$(this).on('contextmenu').on({
-			})
-		})
+			});
+		});
 	}
 
-})
+});
 
 +waitFor('jQuery', ($) => {
   "use strict";
@@ -669,7 +689,7 @@
 	})
 })
 
-waitFor('jQuery', ($) => {
++waitFor('jQuery', ($) => {
 	'use strict';
 
 	// Check if jQuery is available
@@ -880,9 +900,9 @@ waitFor('jQuery', ($) => {
 			this.$modal.show();
 			this.$instance.find('.litebox-modal').html(this.$modal);
 			if (this.closeIcon) {
-				this.$instance.find('.litebox-modal').prepend(`
-					<div class="litebox-close">${this.closeIcon}</div>
-				`);
+				this.$instance.find('.litebox-modal').prepend(
+					`<div class="litebox-close">${this.closeIcon}</div>`
+				);
 			}
 		}
 
@@ -946,15 +966,15 @@ waitFor('jQuery', ($) => {
 			// If the gallery is enabled, and current index is not first, add navigation
 			if (this.$source && this.currentIndex() > 0) {
 				$(`<div class="litebox-previous"><span>${this.previousIcon}</span></div>`).on('click', (e) => {
-					this.$instance.trigger(`previous`);
+					this.$instance.trigger('previous');
 					e.preventDefault();
 				}).appendTo(this.$instance.find('.litebox-modal'));
 			}
 
 			// If the gallery is enabled, and current index is not last, add navigation
-			if (this.$source && this.currentIndex() < this.slides().length - 1) {
+			if (this.$source && this.currentIndex() < this.this.$source.length - 1) {
 				$(`<div class="litebox-next"><span>${this.nextIcon}</span></div>`).on('click', (e) => {
-					this.$instance.trigger(`next`);
+					this.$instance.trigger('next');
 					e.preventDefault();
 				}).appendTo(this.$instance.find('.litebox-modal'));
 			}
@@ -1027,14 +1047,9 @@ waitFor('jQuery', ($) => {
 			this.$instance.off('next previous');
 		}
 
-		// Get all slides
-		slides() {
-			return this.$source;
-		}
-
 		// Get the current slide index
 		currentIndex() {
-			return this.slides().index(this.$currentTarget);
+			return this.this.$source.index(this.$currentTarget);
 		}
 
 		// Navigate to a specific slide
@@ -1045,7 +1060,7 @@ waitFor('jQuery', ($) => {
 				return;
 			}
 
-			const source = this.slides();
+			const source = this.this.$source;
 			const len = source.length;
 			const $inner = this.$instance.find('.litebox-inner');
 			index = ((index % len) + len) % len;
@@ -1336,11 +1351,11 @@ Number.prototype.toText = function(decimals = 0) {
 // Money Formatting
 Number.prototype.toMoney = function() {
 	var n = this,
-		c = _env.currency.decimals,
-		d = _env.language.decimal_point,
-		t = _env.language.thousands_separator,
-		p = _env.currency.prefix,
-		x = _env.currency.suffix,
+		c = _env.currency.decimals || 2,
+		d = _env.language.decimal_point || '.',
+		t = _env.language.thousands_separator || ',',
+		p = _env.currency.prefix || '',
+		x = _env.currency.suffix || '',
 		s = n < 0 ? '-' : '',
 		i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + '',
 		f = n - i,

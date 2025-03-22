@@ -28,7 +28,7 @@
 		</a>
 
 		<div class="filter">
-			<?php echo functions::form_input_search('filter', false, 'placeholder="'. functions::escape_html(language::translate('title_filter', 'Filter')) .'&hellip;" autocomplete="off"'); ?>
+			<?php echo functions::form_input_search('filter', false, 'placeholder="'. functions::escape_attr(language::translate('title_filter', 'Filter')) .'&hellip;" autocomplete="off"'); ?>
 		</div>
 
 		<?php include 'app://backend/partials/box_apps_menu.inc.php'; ?>
@@ -45,20 +45,25 @@
 		</div>
 	</div>
 
-	<main id="main">
+	<div class="flex-grow">
 
-		<?php include 'app://backend/partials/site_top_navigation.inc.php'; ?>
+		<main id="main">
+			<div class="container">
+			
+				<?php include 'app://backend/partials/site_top_navigation.inc.php'; ?>
 
-		<div id="content">
+				<div id="content">
 
-			{{notices}}
+					{{notices}}
 
-			{{breadcrumbs}}
+					{{breadcrumbs}}
 
-			{{content}}
+					{{content}}
 
-		</div>
-	</main>
+				</div>
+			</div>
+		</main>
+	</div>
 </div>
 
 {{foot_tags}}

@@ -11,6 +11,7 @@
 	if (isset($_POST['upload'])) {
 
 		try {
+
 			if (empty($_FILES['image'])) {
 				throw new Exception(language::translate('error_missing_image', 'You must select an image'));
 			}
@@ -31,8 +32,9 @@
 			$image->setBackgroundColor(new ImagickPixel('transparent'));
 			$image->readImage($_FILES['image']['tmp_name']);
 
-			$geo = $image->getImageGeometry();
-			if (256 / $geo['width'] * $geo['height'] > 256) {
+			$geometry = $image->getImageGeometry();
+
+			if (256 / $geometry['width'] * $geometry['height'] > 256) {
 				$image->scaleImage(256, 0);
 			} else {
 				$image->scaleImage(0, 256);
@@ -78,11 +80,11 @@
 .icons {
 	margin-bottom: 2em;
 }
-.icons .icon {
+.icons .favicon {
 	display: inline-block;
 	text-align: center;
 }
-.icons .icon:not(:first-child) {
+.icons .favicon:not(:first-child) {
 	margin-left: .5em;
 }
 .icons .thumbnail {
@@ -93,7 +95,7 @@
 }
 </style>
 
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo language::translate('title_favicon', 'Favicon'); ?>
@@ -107,7 +109,7 @@
 
 				<?php foreach ($thumbnail_sizes as $size) { ?>
 				<?php if (is_file($icon = FS_DIR_STORAGE . 'images/favicons/favicon-'.$size.'x'.$size.'.png')) { ?>
-				<div class="icon">
+				<div class="favicon">
 					<img class="thumbnail" src="<?php echo document::href_rlink($icon); ?>" alt="">
 					<div><?php echo basename($icon); ?></div>
 				</div>
@@ -115,7 +117,7 @@
 				<?php } ?>
 
 				<?php if (is_file($icon = 'storage://images/favicons/favicon.ico')) { ?>
-				<div class="icon">
+				<div class="favicon">
 					<img class="thumbnail" src="data:image/x-icon;base64,<?php echo base64_encode(file_get_contents($icon)); ?>" width="48" height="48" alt="">
 					<div><?php echo basename($icon); ?></div>
 				</div>

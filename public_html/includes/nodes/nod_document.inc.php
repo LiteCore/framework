@@ -56,10 +56,11 @@
 					break;
 			}
 
-			// Wait For It (Minified)
+			// Wait For (Minified)
 			self::add_head_tags(implode(PHP_EOL, [
-				'<script>waitFor=(i,o)=>{void 0!==window.i?o(window.i):setTimeout((()=>waitFor(i,o)),50)};</script>',
+				'<script>window.waitFor=window.waitFor||((i,o)=>{void 0!==window.i?o(window.i):setTimeout((()=>waitFor(i,o)),50)});</script>',
 			]), 'waitFor');
+
 			// Load jQuery
 			self::load_script('app://assets/jquery/jquery-4.0.0.min.js', 'jquery');
 

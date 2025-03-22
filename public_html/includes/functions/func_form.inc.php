@@ -603,7 +603,7 @@
 			'  imageWidthModalEdit: true,',
 			'  removeformatPasted: true,',
 			'  semantic: false',
-			'});'
+			'});',
 		]);
 
 		return '<textarea name="'. functions::escape_attr($name) .'"'. ($parameters ? ' '. $parameters : '') .'>'. functions::escape_html($input) .'</textarea>';

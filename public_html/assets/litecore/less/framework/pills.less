@@ -1,0 +1,64 @@
+.pills {
+	display: flex;
+	flex-direction: column;
+
+	.pill-item {
+		margin: 1px 0;
+		padding: .75em 1em;
+		background: var(--pill-item-background-color);
+		color: var(--pill-item-text-color);
+		border-radius: var(--border-radius);
+		transition: all 125ms linear;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background: var(--pill-item-background-color--hover);
+			color: var(--pill-item-text-color--hover);
+			border-color: var(--pill-item-border-color--hover);
+		}
+
+		&.active {
+			background: var(--pill-item-background-color--active);
+			color: var(--pill-item-text-color--active);
+			border-color: var(--pill-item-border-color--active);
+		}
+	}
+
+	ul {
+		display: flex;
+		flex-direction: column;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+		li {
+			display: flex;
+			flex-direction: column;
+			padding: 0;
+
+			ul {
+				display: flex;
+				flex-direction: column;
+				padding: 0;
+
+				li {
+					padding-inline-start: 3em;
+
+					ul li {
+						padding-inline-start: 4.5em;
+
+						ul li {
+							padding-inline-start: 6em;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+}

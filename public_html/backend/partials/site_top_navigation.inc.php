@@ -48,31 +48,35 @@
 		],
 	];
 
-	$_partial->snippets['draw_menu_item'] = function($item, $indent = 0, $is_dropdown_item=false) use (&$draw_menu_item) {
+	$draw_menu_item = function($item, $indent = 0, $is_dropdown_item=false) use (&$draw_menu_item) {
 
 		if (!empty($item['subitems'])) {
 			return implode(PHP_EOL, [
 				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
-				'  <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">',
+				'	<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">',
 				'		'. $item['title'],
-				!empty($item['badge']) ? '   <div class="badge">'. $item['badge'] .'</div>' : '',
-				'  </a>',
-				'  <ul class="dropdown-menu">',
-				'    '. implode(PHP_EOL, array_map($draw_menu_item, $item['subitems'], [$indent+1], [true])),
-				'  </ul>',
+				!empty($item['badge']) ? '		<div class="badge">'. $item['badge'] .'</div>' : '',
+				'	</a>',
+				'	<ul class="dropdown-menu">',
+				'		'. implode(PHP_EOL, array_map(function($subitem) use ($draw_menu_item, $indent) {
+					return $draw_menu_item($subitem, $indent+1, true);
+				}, $item['subitems'])),
+				'	</ul>',
 				'</li>',
 			]);
 		}
 
 		return implode(PHP_EOL, [
 			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
-			'  <a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
-			'    '. (!empty($item['icon']) ? functions::draw_fonticon($item['icon']) .' ' : '') . $item['title'],
-			!empty($item['badge']) ? '    <div class="badge">'. $item['badge'] .'</div>' : '',
-			'  </a>',
+			'	<a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
+			'		'. (!empty($item['icon']) ? functions::draw_fonticon($item['icon']) .' ' : '') . $item['title'],
+			!empty($item['badge']) ? '		<div class="badge">'. $item['badge'] .'</div>' : '',
+			'	</a>',
 			'</li>',
 		]);
 	};
+
+	$_partial->snippets['draw_menu_item'] = $draw_menu_item;
 
 	//echo $_partial->render();
 	extract($_partial->snippets);
@@ -85,10 +89,10 @@
 }
 </style>
 
-<ul id="top-bar" class="hidden-print">
+<ul id="toolbar" class="hidden-print">
 	<li>
 		<div>
-			<label class="nav-toggle" for="sidebar-compressed">
+			<label class="nav-toggle btn btn-default" for="sidebar-compact">
 				<?php echo functions::draw_fonticon('icon-bars'); ?>
 			</label>
 		</div>

@@ -9,7 +9,9 @@
 	// Get template settings structure
 	$settings = include 'app://frontend/template/config.inc.php';
 
-	if (empty($settings)) $settings = [];
+	if (!$settings) {
+		$settings = [];
+	}
 
 	// Insert template settings
 	$saved_settings = json_decode(settings::get('template_settings'), true);
@@ -42,7 +44,7 @@
 		}
 	}
 
-	if (empty($_POST) && isset($_GET['action']) && $_GET['action'] == 'edit') {
+	if (!$_POST && isset($_GET['action']) && $_GET['action'] == 'edit') {
 		foreach ($settings as $setting) {
 			$_POST['settings'][$setting['key']] = $setting['value'];
 		}
@@ -53,6 +55,7 @@
 		try {
 
 			$new_settings = [];
+
 			foreach ($settings as $setting) {
 				$new_settings[$setting['key']] = $setting['value'];
 			}
@@ -65,8 +68,7 @@
 
 			database::query(
 				"update ". DB_TABLE_PREFIX ."settings
-				set
-					`value` = '". database::input(json_encode($new_settings, JSON_UNESCAPED_SLASHES)) ."',
+				set `value` = '". database::input(json_encode($new_settings, JSON_UNESCAPED_SLASHES)) ."',
 					date_updated = '". date('Y-m-d H:i:s') ."'
 				where `key` = 'template_settings'
 				limit 1;"
@@ -117,7 +119,7 @@
 	}
 ?>
 
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo language::translate('title_template_settings', 'Template Settings'); ?>
@@ -126,7 +128,7 @@
 
 	<?php echo functions::form_begin('template_settings_form', 'post'); ?>
 
-		<table class="table table-striped table-hover data-table">
+		<table class="table data-table">
 			<thead>
 				<tr>
 					<th style="width: 50%;"><?php echo language::translate('title_key', 'Key'); ?></th>

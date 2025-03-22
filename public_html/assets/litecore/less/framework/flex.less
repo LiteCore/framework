@@ -1,47 +1,91 @@
-// Flexbox
-.flex,
-.list-unstyled,
-.list-inline {
+/* Flexbox */
+
+.flex-rows {
 	display: flex;
+	flex-direction: column;
+	gap: var(--gutter-y) var(--gutter-x);
+}
+
+.flex, .flex-columns {
+	display: flex;
+	flex-direction: row;
+	gap: var(--gutter-y) var(--gutter-x);
+}
+
+.flex-inline {
+	display: inline-flex;
+}
+
+.flex-rows,
+.flex-columns,
+.flex-inline {
+
 	&:is(ul) {
 		list-style: none;
 		padding: 0;
 		margin: 0;
 	}
-	&.list-inline ul,
+
 	&.flex-rows ul {
 		padding-inline-start: 1em;
 	}
-	&.flex-columns,
-	&.list-inline {
+
+	&.flex-columns {
 		flex-direction: row;
 	}
-	&.flex-rows,
-	&.list-unstyled	{
+
+	&.flex-rows {
 		flex-direction: column;
 	}
-	&.list-inline,
-	&:not(.flex-nogap) {
-		gap: ~"calc(var(--gutter-size)/2)" var(--gutter-size);
+	&.flex-nogap {
+		gap: none;
 	}
-	&.flex-gap {
-		gap: var(--gutter-y) var(--gutter-x);
-	}
+
 	&.flex-wrap {
 		flex-wrap: wrap;
 	}
+
+	> * {
+		flex: 0 1 auto;
+	}
+
 	&.flex-grow > *,
 	.flex-grow {
 		flex-grow: 1;
 	}
+
 	&.flex-no-shrink > *,
 	.flex-no-shrink {
 		flex-shrink: 0;
 	}
-	&.flex-align-center {
-		align-items: center;
+}
+
+// Deprecated
+.list-unstyled,
+.list-inline {
+	display: flex !important;
+
+	&:is(ul) {
+		list-style: none;
+		padding: 0;
+		margin: 0;
 	}
+
+	&.list-inline ul {
+		padding-inline-start: 1em;
+	}
+
+	&.list-inline {
+		flex-direction: row;
+		gap:  var(--gutter-y) var(--gutter-x);
+	}
+
+	&.list-unstyled	{
+		flex-direction: column;
+	}
+
 	> * {
-		flex: 0 1 auto;
+		//flex: 0 1 auto;
+		flex: 1 1 auto;
 	}
 }

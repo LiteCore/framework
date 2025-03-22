@@ -367,7 +367,7 @@ textarea.warning {
 }
 </style>
 
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo !empty($addon->data['id']) ? language::translate('title_edit_addon', 'Edit Add-on') : language::translate('title_create_new_addon', 'Create New Add-on'); ?>

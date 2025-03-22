@@ -19,7 +19,7 @@
 
 		try {
 
-			if (!file_put_contents($stylesheet, $_POST['content'])) {
+			if (file_put_contents($stylesheet, $_POST['content']) === false) {
 				throw new Exception(language::translate('error_unable_to_write_to_file', 'Unable to write to file'));
 			}
 
@@ -33,7 +33,7 @@
 	}
 
 ?>
-<div class="card card-app">
+<div class="card">
 	<div class="card-header">
 		<div class="card-title">
 			<?php echo $app_icon; ?> <?php echo language::translate('title_edit_styling', 'Edit Styling'); ?>
@@ -50,15 +50,15 @@
 
 		<?php echo functions::form_begin('file_form', 'post'); ?>
 
-			<div class="form-group" style="max-width: 800px;">
-					<label><?php echo language::translate('title_file', 'File'); ?></label>
-					<div class="form-input" readonly><?php echo $stylesheet; ?></div>
-				</div>
+			<label class="form-group" style="max-width: 800px;">
+				<div class="form-label"><?php echo language::translate('title_file', 'File'); ?></div>
+				<div class="form-input" readonly><?php echo preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $stylesheet); ?></div>
+			</label>
 
-			<div class="form-group">
-				<label><?php echo language::translate('title_content', 'Content'); ?></label>
+			<label class="form-group">
+				<div class="form-label"><?php echo language::translate('title_content', 'Content'); ?></div>
 				<?php echo functions::form_input_code('content', true); ?>
-			</div>
+			</label>
 
 			<div class="card-action">
 				<?php echo functions::form_button_predefined('save'); ?>
