@@ -75,6 +75,8 @@
 				'url' => self::ilink('f:'),
 			];
 
+			self::$jsenv['keep_alive_url'] = settings::get('keep_alive');
+
 			self::$jsenv['template'] = [
 				'settings' => self::$settings,
 			];

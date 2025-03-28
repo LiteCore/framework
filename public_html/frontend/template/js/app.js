@@ -8,10 +8,10 @@
 +waitFor('jQuery', ($) => {
 
 	// Keep-alive
-	if (_env && _env.platform && _env.platform.path) {
-		let keepAlive = setInterval(function() {
+	if (_env && _env.keep_alive_url) {
+		setInterval(function() {
 			$.get({
-				url: _env.platform.path + 'ajax/keep_alive.json',
+				url: _env.keep_alive_url,
 				cache: false
 			})
 		}, 60e3)
