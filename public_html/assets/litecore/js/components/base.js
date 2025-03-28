@@ -1,15 +1,12 @@
 window.waitFor = (objectName, callback, attempts=100) => {
-	console.log('[waitFor] Waiting for '+ objectName);
+
 	if (typeof(window[objectName]) !== 'undefined') {
-		console.log('[waitFor] '+ objectName +' has arrived')
 		callback(window[objectName]);
 	} else {
 		if (attempts) {
 			setTimeout(() => {
 				waitFor(objectName, callback, --attempts);
 			}, 50);
-		} else {
-			console.warn('[waitFor] '+ objectName +' timed out');
 		}
 	}
 };
