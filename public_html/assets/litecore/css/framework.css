@@ -70,6 +70,7 @@ code,
 kbd,
 pre,
 samp {
+  tab-size: 2;
   font-family: monospace;
   font-size: 1em;
 }
@@ -215,7 +216,7 @@ template {
 }
 /* Badges */
 .badge {
-  background: var(--badge-background-color);
+  background: var(--badge-background);
   color: var(--badge-text-color);
   border-radius: 1em;
   font-weight: 700;
@@ -252,7 +253,7 @@ template {
   margin-bottom: 2em;
   padding: 1em 2em;
   border-radius: var(--border-radius);
-  background: var(--breadcrumbs-background-color);
+  background: var(--breadcrumbs-background);
 }
 .breadcrumbs:is(ul) {
   list-style: none;
@@ -275,7 +276,7 @@ template {
   gap: 0.5em;
   margin: 0;
   padding: 0.75em 1em;
-  background: var(--breadcrumbs-background-color);
+  background: var(--breadcrumbs-background);
   border-radius: var(--border-radius);
   margin-bottom: 2em;
 }
@@ -294,7 +295,7 @@ template {
 }
 .breadcrumbs-2 .breadcrumb-item {
   display: inline-block;
-  background: var(--breadcrumb-item-background-color);
+  background: var(--breadcrumb-item-background);
   border-radius: var(--border-radius);
   color: var(--breadcrumb-item-text-color);
   transition: all 50ms linear;
@@ -311,7 +312,7 @@ template {
 .btn {
   display: inline-block;
   padding: var(--button-padding-y) var(--button-padding-x);
-  background: var(--button-background-color);
+  background: var(--button-background);
   color: var(--button-text-color);
   border: var(--button-border-width) solid var(--button-border-color);
   border-radius: var(--border-radius);
@@ -328,8 +329,8 @@ template {
 }
 .btn.btn-outline {
   background: none;
-  border: var(--button-border-width) solid var(--button-background-color);
-  color: var(--button-background-color);
+  border: var(--button-border-width) solid var(--button-background);
+  color: var(--button-background);
   text-decoration: none;
   box-shadow: none;
 }
@@ -397,7 +398,7 @@ template {
 /* Cards */
 .card {
   position: relative;
-  background: var(--card-background-color);
+  background: var(--card-background);
   color: var(--card-text-color);
   border: var(--card-border-width) solid var(--card-border-color);
   box-shadow: var(--card-shadow);
@@ -442,7 +443,7 @@ template {
   --input-background: transparent;
 }
 .card .card-footer {
-  background: var(--card-footer-background-color);
+  background: var(--card-footer-background);
   box-shadow: inset 0px 10px 15px -15px rgba(0, 0, 0, 0.25);
 }
 .card .card-header > *:first-child,
@@ -790,7 +791,7 @@ template {
   position: absolute;
   display: flex;
   flex-direction: column;
-  background: var(--dropdown-background-color);
+  background: var(--dropdown-background);
   color: var(--dropdown-text-color);
   border: var(--dropdown-border-width) solid var(--dropdown-border-color);
   border-radius: var(--border-radius);
@@ -910,24 +911,17 @@ template {
   padding: 1em;
   margin: 0;
 }
-.dropdown-menu-item {
-  background: var(--dropdown-menu-item-background-color);
-  color: var(--dropdown-menu-item-text-color);
+.dropdown-item {
+  background: var(--dropdown-item-background);
+  color: var(--dropdown-item-text-color);
   padding: 0.75em 1em;
 }
-.dropdown-menu-item:is(a, label) {
-  background: var(--dropdown-menu-item-background-color--hover);
-  color: var(--dropdown-menu-item-text-color--hover);
+.dropdown-item:is(a, label) {
+  background: var(--dropdown-item-background--hover);
+  color: var(--dropdown-item-text-color--hover);
 }
 html[dir="rtl"] .dropdown label:has([data-toggle="dropdown"]) {
   background-position: left 1em center;
-}
-/* Effects */
-tr.semi-transparent td {
-  opacity: 0.25;
-}
-.shadow {
-  box-shadow: 0 1px 3px var(--shadow-color);
 }
 .empty {
   padding: 4em 2em;
@@ -990,7 +984,7 @@ tr.semi-transparent td {
 .flex-rows.flex-nogap,
 .flex-columns.flex-nogap,
 .flex-inline.flex-nogap {
-  gap: none;
+  gap: 0;
 }
 .flex-rows.flex-wrap,
 .flex-columns.flex-wrap,
@@ -1050,7 +1044,7 @@ tr.semi-transparent td {
   font-family: "LiteCore";
   font-style: normal;
   font-weight: 400;
-  src: url("../fonts/fonticons.woff2?1742494141") format("woff2");
+  src: url("../fonts/fonticons.woff2?1742688160") format("woff2");
 }
 [class^="icon-"],
 [class*=" icon-"] {
@@ -1289,6 +1283,9 @@ tr.semi-transparent td {
 .icon-search:before {
   content: "\e049";
 }
+.icon-medkit:before {
+  content: "\e04a";
+}
 .icon-retweet:before {
   content: "\e04b";
 }
@@ -1390,6 +1387,9 @@ tr.semi-transparent td {
 }
 .icon-file-export:before {
   content: "\e06c";
+}
+.icon-stethoscope:before {
+  content: "\e06d";
 }
 .icon-location-arrow:before {
   content: "\e06f";
@@ -1745,7 +1745,7 @@ label.form-check > input:is(input),
 label.form-check > input:is(label) > input {
   display: inline-block;
   margin-inline-end: 0.25em;
-  background: var(--input-background-color);
+  background: var(--input-background);
   border: var(--input-border-color);
   vertical-align: text-bottom;
   height: 1.33em;
@@ -1789,7 +1789,7 @@ label.form-check > input:is([type="radio"]):checked {
   position: relative;
   width: 100%;
   padding: var(--input-padding-y) var(--input-padding-x);
-  background: var(--input-background-color);
+  background: var(--input-background);
   color: var(--input-text-color);
   border: var(--input-border-width) solid var(--input-border-color);
   border-radius: var(--border-radius);
@@ -1907,7 +1907,7 @@ label.form-check > input:is([type="radio"]):checked {
   background: #efefef;
 }
 .form-select option {
-  background: var(--input-background-color);
+  background: var(--input-background);
 }
 .form-switch {
   display: block;
@@ -1967,11 +1967,11 @@ label.form-check > input:is([type="radio"]):checked {
   border: var(--input-border-width) solid transparent;
 }
 .form-toggle label:has(:checked) {
-  background: var(--input-toggle-background-color);
+  background: var(--input-toggle-background);
   border: var(--input-border-width) solid var(--input-border-color);
 }
 .form-toggle label:hover:not(:checked):not(:disabled) {
-  background: var(--input-toggle-background-color--hover);
+  background: var(--input-toggle-background--hover);
   cursor: pointer;
 }
 .form-toggle label:has(:focus) {
@@ -2037,7 +2037,7 @@ label.form-check > input:is([type="radio"]):checked {
 .input-group .input-group-text {
   flex: 0 1 auto;
   padding: var(--input-padding-y) var(--input-padding-x);
-  background: var(--input-addon-background-color);
+  background: var(--input-addon-background);
   border-inline-start: var(--input-border-width) solid var(--input-border-color);
   border-inline-end: var(--input-border-width) solid var(--input-border-color);
   align-self: stretch;
@@ -2097,7 +2097,7 @@ fieldset[disabled] > :not(legend),
   opacity: 0.5;
 }
 .input-group .trumbowyg-box {
-  --trumbowyg-pane-background: var(--input-addon-background-color);
+  --trumbowyg-pane-background: var(--input-addon-background);
   border-start-start-radius: 0;
   border-end-start-radius: 0;
   border-end-end-radius: 0;
@@ -2653,10 +2653,10 @@ body.litebox-open {
   background: rgba(0, 0, 0, 0.66);
 }
 .litebox .litebox-previous {
-  left: 10px;
+  left: -4em;
 }
 .litebox .litebox-next {
-  right: 10px;
+  right: -4em;
 }
 .litebox .litebox-modal > img {
   max-width: 100%;
@@ -2711,14 +2711,11 @@ body.litebox-open {
     transform: rotate(360deg);
   }
 }
-.loader {
-  display: inline-block;
-  background: url('../../images/loader.svg');
-  background-size: cover;
-  animation-name: spin;
-  animation-duration: 2000ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+.shadow {
+  box-shadow: 0 0 0.5rem var(--shadow-color);
+}
+.semi-transparent {
+  opacity: 0.5;
 }
 /* Strike-through Divider */
 .strikethrough-divider {
@@ -2899,7 +2896,7 @@ html[dir="rtl"] .offcanvas {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  margin: var(--gutter-y) auto;
+  margin: 0 auto;
   background: var(--navigation-background);
   color: var(--navigation-text-color);
   border: var(--navigation-border);
@@ -3042,22 +3039,22 @@ html[dir="rtl"] .offcanvas {
   opacity: 0.4;
 }
 .notices .notice.notice-default {
-  background: var(--notice-default-background-color);
+  background: var(--notice-default-background);
   color: var(--notice-default-text-color);
   border: var(--notice-border-width) solid var(--notice-default-border-color);
 }
 .notices .notice.notice-warning {
-  background: var(--notice-warning-background-color);
+  background: var(--notice-warning-background);
   color: var(--notice-warning-text-color);
   border: var(--notice-border-width) solid var(--notice-warning-border-color);
 }
 .notices .notice.notice-success {
-  background: var(--notice-success-background-color);
+  background: var(--notice-success-background);
   color: var(--notice-success-text-color);
   border: var(--notice-border-width) solid var(--notice-success-border-color);
 }
 .notices .notice.notice-danger {
-  background: var(--notice-danger-background-color);
+  background: var(--notice-danger-background);
   color: var(--notice-danger-text-color);
   border: var(--notice-border-width) solid var(--notice-danger-border-color);
 }
@@ -3073,7 +3070,7 @@ html[dir="rtl"] .offcanvas {
   position: relative;
   display: inline-block;
   padding: 0.5em 1em;
-  background: var(--pagination-item-background-color);
+  background: var(--pagination-item-background);
   color: var(--pagination-item-text-color);
   border: var(--pagination-item-border-width) solid var(--pagination-item-border-color);
   text-decoration: none;
@@ -3180,7 +3177,7 @@ html[dir="rtl"] .offcanvas {
 .pills .pill-item {
   margin: 1px 0;
   padding: 0.75em 1em;
-  background: var(--pill-item-background-color);
+  background: var(--pill-item-background);
   color: var(--pill-item-text-color);
   border-radius: var(--border-radius);
   transition: all 125ms linear;
@@ -3188,12 +3185,12 @@ html[dir="rtl"] .offcanvas {
 .pills .pill-item:hover,
 .pills .pill-item:focus,
 .pills .pill-item:active {
-  background: var(--pill-item-background-color--hover);
+  background: var(--pill-item-background--hover);
   color: var(--pill-item-text-color--hover);
   border-color: var(--pill-item-border-color--hover);
 }
 .pills .pill-item.active {
-  background: var(--pill-item-background-color--active);
+  background: var(--pill-item-background--active);
   color: var(--pill-item-text-color--active);
   border-color: var(--pill-item-border-color--active);
 }
@@ -3434,7 +3431,7 @@ html[dir="rtl"] .offcanvas {
   }
 }
 .table thead {
-  background: var(--table-header-background-color);
+  background: var(--table-header-background);
   color: var(--table-header-text-color);
 }
 .table thead tr {
@@ -3450,7 +3447,7 @@ html[dir="rtl"] .offcanvas {
   vertical-align: middle;
 }
 .table tbody {
-  background: var(--table-body-background-color);
+  background: var(--table-body-background);
   color: var(--table-body-text-color);
 }
 .table td,
@@ -3501,7 +3498,7 @@ html[dir="rtl"] .offcanvas {
   width: 100%;
 }
 .table.data-table thead th[data-sort]:hover {
-  background: var(--table-header-background-color--hover);
+  background: var(--table-header-background--hover);
   cursor: pointer;
 }
 @media only screen {
@@ -3511,7 +3508,7 @@ html[dir="rtl"] .offcanvas {
   }
 }
 .table.data-table tbody > tr:hover {
-  background: var(--table-body-background-color--hover);
+  background: var(--table-body-background--hover);
 }
 .table.data-table.table-input > tbody > tr > td {
   vertical-align: middle;
@@ -3520,13 +3517,13 @@ html[dir="rtl"] .offcanvas {
   color: inherit;
 }
 .table.data-table a.link {
-  background: var(--table-link-background-color);
+  background: var(--table-link-background);
   padding: 0.33em 1em;
   border-radius: var(--border-radius);
 }
 .table.data-table a.link:hover {
   text-decoration: none;
-  background: var(--table-link-background-color--hover);
+  background: var(--table-link-background--hover);
 }
 .table-responsive {
   overflow-x: auto;
@@ -3546,7 +3543,7 @@ html[dir="rtl"] .offcanvas {
   margin-inline-start: 1em;
 }
 .tabs {
-  background: var(--tab-bar-background-color);
+  background: var(--tab-bar-background);
   border-bottom: var(--tab-bar-border-width) solid var(--tab-bar-border-color);
   padding: 1em var(--gutter-x);
   padding-bottom: 0;
@@ -3555,7 +3552,7 @@ html[dir="rtl"] .offcanvas {
 .tabs .tab-item {
   display: inline-block;
   margin-inline-end: 2px;
-  background: var(--tab-item-background-color);
+  background: var(--tab-item-background);
   border: var(--tab-bar-border-width) solid var(--tab-bar-border-color);
   margin-bottom: -1px;
   color: var(--tab-item-text-color);
@@ -3566,11 +3563,11 @@ html[dir="rtl"] .offcanvas {
 .tabs .tab-item:hover,
 .tabs .tab-item:focus,
 .tabs .tab-item:active {
-  background: var(--tab-item-background-color--hover);
+  background: var(--tab-item-background--hover);
   color: var(--tab-item-text-color--hover);
 }
 .tabs .tab-item.active {
-  background: var(--tab-item-background-color--active);
+  background: var(--tab-item-background--active);
   color: var(--tab-item-text-color--active);
 }
 .tabs a {

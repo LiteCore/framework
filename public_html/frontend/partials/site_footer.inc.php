@@ -76,16 +76,18 @@
 				</div>
 			</div>
 
-			<section class="hidden-xs hidden-sm col-md-4" style="align-self: center;">
-				<div class="logotype">
-					<img src="<?php echo document::href_rlink('storage://images/logotype.svg'); ?>" class="img-responsive" alt="<?php echo $website_name; ?>" title="<?php echo $website_name; ?>">
+			<section class="hidden-xs hidden-sm col-md-4 text-center">
+				<div class="logotype" style="margin: 0 auto;">
+					<img src="<?php echo document::href_rlink('storage://images/logotype.svg'); ?>" class="img-responsive" alt="<?php echo $website_name; ?>" title="<?php echo $website_name; ?>" style="max-height: 60px;">
 				</div>
 
-				<ul class="social-bookmarks flex flex-inline flex-gap text-center">
+				<div class="social-bookmarks flex flex-inline flex-gap text-center">
 					<?php foreach ($social as $bookmark) { ?>
-					<li><a href="<?php echo htmlspecialchars($bookmark['link']); ?>" class="thumbnail"><?php echo functions::draw_fonticon($bookmark['icon'] .'', 'title="'. htmlspecialchars($bookmark['title']) .'"'); ?></a></li>
+					<a href="<?php echo htmlspecialchars($bookmark['link']); ?>">
+						<?php echo functions::draw_fonticon($bookmark['icon'] .'', 'title="'. htmlspecialchars($bookmark['title']) .'"'); ?>
+					</a>
 					<?php } ?>
-				</ul>
+				</div>
 			</section>
 
 		</div>

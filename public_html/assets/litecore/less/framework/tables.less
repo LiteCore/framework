@@ -11,7 +11,7 @@
 	}
 
 	thead {
-		background: var(--table-header-background-color);
+		background: var(--table-header-background);
 		color: var(--table-header-text-color);
 
 		tr {
@@ -31,7 +31,7 @@
 	}
 
 	tbody {
-		background: var(--table-body-background-color);
+		background: var(--table-body-background);
 		color: var(--table-body-text-color);
 	}
 
@@ -91,7 +91,7 @@
 
 				&[data-sort] {
 					&:hover {
-						background: var(--table-header-background-color--hover);
+						background: var(--table-header-background--hover);
 						cursor: pointer;
 					}
 				}
@@ -106,7 +106,7 @@
 		tbody {
 			> tr {
 				&:hover {
-					background: var(--table-body-background-color--hover);
+					background: var(--table-body-background--hover);
 				}
 			}
 		}
@@ -128,13 +128,13 @@
 			color: inherit;
 
 			&.link {
-				background: var(--table-link-background-color);
+				background: var(--table-link-background);
 				padding: 0.33em 1em;
 				border-radius: var(--border-radius);
 
 				&:hover {
 					text-decoration: none;
-					background: var(--table-link-background-color--hover);
+					background: var(--table-link-background--hover);
 				}
 			}
 		}

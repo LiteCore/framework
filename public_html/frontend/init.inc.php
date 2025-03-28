@@ -36,6 +36,18 @@
 		'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
 	]);
 
+	// Hreflang
+	(function() {
+		$hreflangs = [];
+
+		foreach (language::$languages as $language) {
+			if ($language['url_type'] == 'none') continue;
+			$hreflangs[] = '<link rel="alternate" hreflang="'. $language['code'] .'" href="'. document::href_ilink(route::$selected['resource'], [], true, ['page', 'sort'], $language['code']) .'">';
+		}
+
+		document::$head_tags['hreflang'] = implode(PHP_EOL, $hreflangs);
+	})();
+
 	// Privacy Consents
 	document::$jsenv['cookie_consents'] = [
 		'classes' => !empty($_COOKIE['cookie_consents']['classes']) ? explode(',', $_COOKIE['cookie_consents']['classes']) : [],
@@ -92,7 +104,7 @@
 
 	// Maintenance Mode
 	if (settings::get('maintenance_mode')) {
-		
+
 		if (!in_array(route::$selected['resource'], [
 			//'f:folder/resource',
 		])) {
@@ -105,7 +117,7 @@
 					'%preview' => language::translate('title_preview', 'Preview'),
 					'%link' => document::href_ilink('maintenance_mode'),
 				]), 'maintenance_mode');
-				
+
 			} else {
 
 				http_response_code(503);

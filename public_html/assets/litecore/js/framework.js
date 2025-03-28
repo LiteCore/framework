@@ -5,9 +5,10 @@
  * @author T. Almroth
  */
 
-window.waitFor = waitFor || ((objectName, callback, attempts=100) => {
+window.waitFor = (objectName, callback, attempts=100) => {
+	console.log('[waitFor] Waiting for '+ objectName);
 	if (typeof(window[objectName]) !== 'undefined') {
-		//console.debug('waitFor('+ objectName +') arrived')
+		console.log('[waitFor] '+ objectName +' has arrived')
 		callback(window[objectName]);
 	} else {
 		if (attempts) {
@@ -15,10 +16,10 @@ window.waitFor = waitFor || ((objectName, callback, attempts=100) => {
 				waitFor(objectName, callback, --attempts);
 			}, 50);
 		} else {
-			console.warn('waitFor('+ objectName +') timed out')
+			console.warn('[waitFor] '+ objectName +' timed out');
 		}
 	}
-});
+};
 
 +waitFor('jQuery', ($) => {
 
@@ -50,15 +51,6 @@ window.waitFor = waitFor || ((objectName, callback, attempts=100) => {
 		return jQuery.ajax(url, options);
 	};
 
-	// Keep-alive
-	if (_env && _env.platform && _env.platform.path) {
-		let keepAlive = setInterval(function() {
-			$.get({
-				url: _env.platform.path + 'ajax/keep_alive.json',
-				cache: false
-			})
-		}, 60e3)
-	}
 });
 
 /*

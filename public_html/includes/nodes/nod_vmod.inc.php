@@ -53,6 +53,7 @@
 			}
 
 			foreach (scandir(FS_DIR_STORAGE .'addons/') as $folder) {
+
 				if (in_array($folder, ['.', '..', '.cache'])) continue;
 				if (!is_dir(FS_DIR_STORAGE .'addons/'.$folder)) continue;
 				if (preg_match('#\.disabled$#', $folder)) continue;

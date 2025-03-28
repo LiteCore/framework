@@ -63,7 +63,7 @@
 						`REFERENCED_COLUMN_NAME`
 					from information_schema.KEY_COLUMN_USAGE
 					where TABLE_SCHEMA = '". DB_DATABASE ."'
-					and TABLE_NAME = '". $table ."'
+					and TABLE_NAME = '". database::input($table) ."'
 					and REFERENCED_TABLE_NAME is not null;"
 				);
 
@@ -71,7 +71,7 @@
 					$foreign_keys[] = $foreign_key;
 
 					database::query(
-						"alter table `". DB_DATABASE ."`.`". $table ."`
+						"alter table `". DB_DATABASE ."`.`". database::input($table) ."`
 						drop foreign key `". $foreign_key['CONSTRAINT_NAME'] ."`;"
 					);
 				}
@@ -99,7 +99,7 @@
 			if (!empty($_POST['engine'])) {
 				foreach ($_POST['tables'] as $table) {
 					database::query(
-						"alter table `". DB_DATABASE ."`.`". $table ."`
+						"alter table `". DB_DATABASE ."`.`". database::input($table) ."`
 						engine=". database::input($_POST['engine']) .";"
 					);
 				}
@@ -108,10 +108,10 @@
 			// Restore foreign keys
 			foreach ($foreign_keys as $foreign_key) {
 				database::query(
-					"alter table `". DB_DATABASE ."`.`". $foreign_key['TABLE_NAME'] ."`
-					add constraint `". $foreign_key['CONSTRAINT_NAME'] ."`
-					foreign key (`". $foreign_key['COLUMN_NAME'] ."`)
-					references `". DB_DATABASE ."`.`". $foreign_key['REFERENCED_TABLE_NAME'] ."` (`". $foreign_key['REFERENCED_COLUMN_NAME'] ."`);"
+					"alter table `". DB_DATABASE ."`.`". database::input($foreign_key['TABLE_NAME']) ."`
+					add constraint `". database::input($foreign_key['CONSTRAINT_NAME']) ."`
+					foreign key (`". database::input($foreign_key['COLUMN_NAME']) ."`)
+					references `". DB_DATABASE ."`.`". database::input($foreign_key['REFERENCED_TABLE_NAME']) ."` (`". database::input($foreign_key['REFERENCED_COLUMN_NAME']) ."`);"
 				);
 			}
 

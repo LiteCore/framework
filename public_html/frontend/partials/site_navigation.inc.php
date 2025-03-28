@@ -25,51 +25,6 @@
 			'priority' => -1,
 		];
 
-		$_partial->snippets['left'][] = [
-			'id' => 'php-framework',
-			'icon' => '',
-			'name' => 'PHP Framework',
-			'link' => document::ilink('php'),
-			'badge' => '',
-			'priority' => 1,
-		];
-
-		$_partial->snippets['left'][] = [
-			'id' => 'css-framework',
-			'icon' => '',
-			'name' => 'CSS Framework',
-			'link' => document::ilink('css'),
-			'badge' => '',
-			'priority' => 2,
-		];
-
-		$_partial->snippets['left'][] = [
-			'id' => 'fonticons',
-			'icon' => '',
-			'name' => 'Font Icon Kit',
-			'link' => document::ilink('fonticons'),
-			'badge' => '',
-			'priority' => 3,
-		];
-
-		$_partial->snippets['left'][] = [
-			'id' => 'printable',
-			'icon' => '',
-			'name' => 'Printable Template',
-			'link' => document::ilink('printable'),
-			'badge' => '',
-			'priority' => 4,
-		];
-
-		$_partial->snippets['left'][] = [
-			'id' => 'email',
-			'icon' => '',
-			'name' => 'Email Template',
-			'link' => document::ilink('email'),
-			'badge' => '',
-			'priority' => 5,
-		];
-
 		//$_partial->snippets['left'][] = [
 		//	'id' => '',
 		//	'name' => 'Dropdown',
@@ -103,24 +58,24 @@
 
 		if (!empty($item['subitems'])) {
 			return implode(PHP_EOL, [
-				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
-				'  <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">',
+				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'navbar-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
+				'	<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">',
 				'		'. $item['name'],
 				!empty($item['badge']) ? '   <div class="badge">'. $item['badge'] .'</div>' : '',
-				'  </a>',
-				'  <ul class="dropdown-menu">',
-				'    '. implode(PHP_EOL, array_map($draw_menu_item, $item['subitems'], [$indent+1], [true])),
-				'  </ul>',
+				'	</a>',
+				'	<ul class="dropdown-menu">',
+				'		'. implode(PHP_EOL, array_map($draw_menu_item, $item['subitems'], [$indent+1], [true])),
+				'	</ul>',
 				'</li>',
 			]);
 		}
 
 		return implode(PHP_EOL, [
-			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'nav-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
-			'  <a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
-			'    '. $item['name'],
-			!empty($item['badge']) ? '    <div class="badge">'. $item['badge'] .'</div>' : '',
-			'  </a>',
+			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'navbar-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
+			'	<a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
+			'		'. $item['name'],
+			!empty($item['badge']) ? '		<div class="badge">'. $item['badge'] .'</div>' : '',
+			'	</a>',
 			'</li>',
 		]);
 	};
@@ -168,20 +123,4 @@
 		</div>
 	</div>
 
-	<div id="subnav">
-		<ul class="navbar-nav">
-			<li>
-				<a class="nav-link" href="#">Download</a>
-			</li>
-			<li>
-				<a class="nav-link" href="#">Add-Ons</a>
-			</li>
-			<li>
-				<a class="nav-link" href="#">Forum</a>
-			</li>
-			<li>
-				<a class="nav-link" href="#">Wiki</a>
-			</li>
-		</ul>
-	</div>
 </header>

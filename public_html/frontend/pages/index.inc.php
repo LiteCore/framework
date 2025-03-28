@@ -52,37 +52,6 @@ code::before {
 				Reach your goals faster by doing less of all the boring work. Spend your time wisely on what you really like to be doing.
 			</p>
 
-			<div class="card">
-				<div class="card-header">
-					<h3 class="card-title">Install Now</h3>
-				</div>
-
-				<div class="card-body">
-					<code>
-						bash -c "$(curl https://litecore.dev/install.sh)"
-					</code>
-
-					<h3>Or, by skipping the wizard:</h3>
-					<pre><code><?php echo implode(PHP_EOL, [
-							'bash -c "$(curl https://litecore.dev/install.sh)" -y \\',
-							'	--dir=/path/to/where \\',
-							'	--db_hostname=localhost \\',
-							'	--db_username=user \\',
-							'	--db_password=secret \\',
-							'	--db_name=database',
-						]); ?></code></pre>
-
-					<h3>More options:</h3>
-					<code>
-						bash -c "$(curl https://litecore.dev/install.sh)" --help
-					</code>
-				</div>
-			</div>
-
-			<a class="btn btn-default btn-lg" href="<?php echo document::href_ilink('about'); ?>">
-				Learn More
-			</a>
-
 		</div>
 
 		<div class="col-6">
@@ -108,15 +77,6 @@ code::before {
 				</div>
 
 			</div>
-
-			<div class="panel">
-				<div class="panel-body">
-					...
-				</div>
-				<div class="panel-footer">
-					...
-				</div>
-			</div>
-
 		</div>
+	</div>
 </main>

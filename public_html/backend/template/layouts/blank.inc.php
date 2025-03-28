@@ -17,5 +17,6 @@
 {{foot_tags}}
 <script src="<?php echo document::href_rlink('app://backend/template/js/app.min.js'); ?>"></script>
 {{javascript}}
+
 </body>
 </html>

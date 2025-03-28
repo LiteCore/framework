@@ -7,6 +7,8 @@ The purpose is to make as much sense as possible with as little effort as possib
 
 ## No Overcomplications
 
+Avoid:
+
 		function anOverComplicatedFrameworkFunctionName() {
 
 			$anOverComplicatedFrameworkFunctionNameResult = [];
@@ -39,7 +41,9 @@ Better:
 
 ## No Cryptic Naming
 
-This will just have anyone looking back at code overwhelmed, confused, or frustrated:
+Cryptic naminf will just have anyone looking back at code overwhelmed, confused, or frustrated.
+
+Avoid:
 
 		function fmt_CustBillAddr(custObj $c) {
 			$result = fmthlp::fmtAddr($c->billAddr->identity['custFName'], $c->billAddr->identity['custLName'], $c->billAddr->identity['custAddr1'], $c->delAddr->identity['custAddr2'], $c->billAddr->identity['zip'], $c->billAddr->identity['country']);
@@ -64,9 +68,11 @@ Better:
 		echo formatAddress($customer->deliveryAddress);
 
 
-## No Duplicate Naming
+## No Repetitive Naming
 
-This will just take longer to type, longer to read, longer to analyze, and leave a bigger footprint:
+Repetitive naming will just wear you out. More typing, longer lines to read, more noise to analyze, and it leaves a larger footprint.
+
+Avoid:
 
 		foreach ($webshopCustomers as $webshopCustomer) {
 			printWebshopCustomerShippingStreetName($webshopCustomer['webshopCustomerShippingAddress']['webshopCustomerShippingAddressStreetName']);
@@ -82,6 +88,8 @@ Better:
 ## No Variable Duplication
 
 Variable duplication is a challenge to backtrace. If we have no use of the raw user input, we can just overwrite it with safer polished and sanitized data.
+
+Avoid:
 
 		$userInput = $_POST['userInput'];
 		$sanitizedUserInput = sanitize($userInput);
@@ -99,9 +107,9 @@ Better:
 
 ## Avoid Single-Use Variables
 
-	Creating variables for one-time use should be avoided unless serving a good purpose.
+Creating variables for one-time use should be avoided unless serving a good purpose.
 
-	Incorrect:
+Avoid:
 
 		$array = ['foo', 'bar'];
 
@@ -109,7 +117,7 @@ Better:
 			echo $item;
 		}
 
-	Correct:
+Better:
 
 		foreach ([
 			'foo',
@@ -150,13 +158,31 @@ Better:
 
 		$_POST['countryCode'] = strtoupper($_POST['countryCode']);
 
-		 doSomethingWith($_POST['countryCode']);
+		doSomethingWith($_POST['countryCode']);
+
+
+# No Yoda Conditions
+
+Unless a galaxy far from, you are. Expressions like Yoda, you should not.
+
+Avoid:
+
+		if ('orange' == $fruit) {
+			...
+		}
+
+Better:
+
+		if ($fruit == 'orange') {
+			...
+		}
 
 
 ## No fat third party libraries for small features
 
-Looking to cut corners with third party libraries will backfire eventually. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can persist of poor management, contain flaws or security problems. They can be a complete pain when you want to step up PHP versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
+Looking to cut corners with third party libraries will backfire eventually? Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can poorly managed, contain flaws or security problems. They can be a complete pain when you want to step up PHP versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
 
-There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea to do it.
+There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea in the long run to do it.
 
 Try to stay away from third party libraries.
+

@@ -308,13 +308,6 @@
 
 	function form_input_decimal($name, $input=true, $decimals=null, $parameters='') {
 
-		if (count($args = func_get_args()) > 4) {
-			trigger_error('Passing min and max as 3rd and 4th parameter in form_input_decimal() is deprecated. Instead define min="0" and max="999" in 3rd parameter $parameters', E_USER_DEPRECATED);
-			if (isset($args[5])) $parameters = $args[5];
-			if (isset($args[3])) $parameters .= ($parameters ? ' ' : '') . 'min="'. (int)$args[3] .'"';
-			if (isset($args[4])) $parameters .= ($parameters ? ' ' : '') . 'min="'. (int)$args[4] .'"';
-		}
-
 		if ($input === true) {
 			$input = form_reinsert_value($name);
 		}

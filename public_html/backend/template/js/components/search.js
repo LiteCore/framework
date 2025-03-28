@@ -46,7 +46,7 @@
 				return
 			}
 
-			clearTimeout(timer_ajax_search)
+			clearTimeout(timer_ajax_search);
 
 			timer_ajax_search = setTimeout(function() {
 				xhr_search = $.ajax({
@@ -92,19 +92,20 @@
 										'    <div class="description"><small>'+ result.description +'</small></div>',
 										'  </a>',
 										'</li>'
-									].join('\n'))
+									].join('\n'));
 
-									$('#search .results ul[data-group="'+ group.name +'"]').append($li)
-								})
+									$('#search .results ul[data-group="'+ group.name +'"]').append($li);
+								});
 							}
-						})
+						});
 
 						if ($('#search .results').html() == '') {
-							$('#search .results').html('<p class="text-center no-results"><em>:(</em></p>')
+							$('#search .results').html('<p class="text-center no-results"><em>:(</em></p>');
 						}
 					},
-				})
-			}, 500)
+				});
+			}, 500);
 		}
-	})
-})
+	});
+
+});

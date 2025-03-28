@@ -12,26 +12,26 @@
 
 		'input': function(){
 
-			let query = $(this).val()
+			let query = $(this).val();
 
 			if ($(this).val() == '') {
-				$('#box-apps-menu .app').css('display', 'block')
-				return
+				$('#box-apps-menu .app').css('display', 'block');
+				return;
 			}
 
 			$('#box-apps-menu .app').each(function() {
-				var regex = new RegExp(''+ query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')  +'', 'ig')
+				var regex = new RegExp(''+ query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')  +'', 'ig');
 
 				if (regex.test($(this).text())) {
-					$(this).show()
+					$(this).show();
 				} else {
-					$(this).hide()
+					$(this).hide();
 				}
-			})
+			});
 		}
-	})
+	});
 
-})
+});
 
 // AJAX Search
 +waitFor('jQuery', ($) => {
@@ -81,7 +81,7 @@
 				return
 			}
 
-			clearTimeout(timer_ajax_search)
+			clearTimeout(timer_ajax_search);
 
 			timer_ajax_search = setTimeout(function() {
 				xhr_search = $.ajax({
@@ -114,7 +114,7 @@
 
 								$('#search .results').append(
 									'<h3>'+ group.name +'</h3>' +
-									'<ul class="flex flex-rows flex-nogap" data-group="'+ group.name +'"></ul>'
+									'<ul class="flex flex-rows" data-group="'+ group.name +'"></ul>'
 								)
 
 								$.each(group.results, function(i, result) {
@@ -127,22 +127,23 @@
 										'    <div class="description"><small>'+ result.description +'</small></div>',
 										'  </a>',
 										'</li>'
-									].join('\n'))
+									].join('\n'));
 
-									$('#search .results ul[data-group="'+ group.name +'"]').append($li)
-								})
+									$('#search .results ul[data-group="'+ group.name +'"]').append($li);
+								});
 							}
-						})
+						});
 
 						if ($('#search .results').html() == '') {
-							$('#search .results').html('<p class="text-center no-results"><em>:(</em></p>')
+							$('#search .results').html('<p class="text-center no-results"><em>:(</em></p>');
 						}
 					},
-				})
-			}, 500)
+				});
+			}, 500);
 		}
-	})
-})
+	});
+
+});
 
 
 waitFor('jQuery', function($){

@@ -131,8 +131,8 @@
   --input-border-radius: var(--border-radius);
   /* Dropdowns */
   --dropdown-menu-background: #fff;
-  --dropdown-menu-item-background: var(--dropdown-menu-background);
-  --dropdown-menu-item-text-color: var(--default-text-color);
+  --dropdown-item-background: var(--dropdown-menu-background);
+  --dropdown-item-text-color: var(--default-text-color);
   /* Pills */
   --pill-background: transparent;
   --pill-background-active: #d7dae3;
@@ -167,11 +167,11 @@
   --pagination-text-color-hover: var(--default-text-color);
   --pagination-border: 1px solid var(--default-border);
   /* Footer */
-  --footer-background: #ededf1;
+  --footer-background: #e2e6f1;
   --footer-title-color: var(--default-text-color);
   --footer-text-color: var(--default-text-color);
   /* Copyright */
-  --copyright-background: #e2e2e7;
+  --copyright-background: #d5dae5;
   --copyright-text-color: var(--default-text-color);
 }
 @media (min-width: 576px) {

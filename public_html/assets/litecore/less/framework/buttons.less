@@ -3,7 +3,7 @@
 .btn {
 	display: inline-block;
 	padding: var(--button-padding-y) var(--button-padding-x);
-	background: var(--button-background-color);
+	background: var(--button-background);
 	color: var(--button-text-color);
 	border: var(--button-border-width) solid var(--button-border-color);
 	border-radius: var(--border-radius);
@@ -20,8 +20,8 @@
 
 	&.btn-outline {
 		background: none;
-		border: var(--button-border-width) solid var(--button-background-color);
-		color: var(--button-background-color);
+		border: var(--button-border-width) solid var(--button-background);
+		color: var(--button-background);
 		text-decoration: none;
 		box-shadow: none;
 		&:hover:not(.active, .disabled, [disabled]),

@@ -67,7 +67,7 @@
 			}
 
 			if (empty($delimiter)) {
-				trigger_error('Unable to determine CSV delimiter', E_USER_ERROR);
+				throw new Error('Unable to determine CSV delimiter');
 			}
 		}
 

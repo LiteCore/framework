@@ -64,18 +64,6 @@
 			// Load jQuery
 			self::load_script('app://assets/jquery/jquery-4.0.0.min.js', 'jquery');
 
-			// Set Hreflang
-			if (route::$selected['endpoint'] == 'frontend') {
-
-				$hreflangs = [];
-
-				foreach (language::$languages as $language) {
-					if ($language['url_type'] == 'none') continue;
-					$hreflangs[] = '<link rel="alternate" hreflang="'. $language['code'] .'" href="'. self::href_ilink(route::$selected['resource'], [], true, ['page', 'sort'], $language['code']) .'">';
-				}
-
-				self::$head_tags['hreflang'] = implode(PHP_EOL, $hreflangs);
-			}
 		}
 
 		public static function after_capture() {
@@ -111,7 +99,7 @@
 				'thousands_separator' => &language::$selected['thousands_sep'],
 			];
 
-			self::$head_tags[] = '<script>window._env='. json_encode(self::$jsenv, JSON_UNESCAPED_SLASHES) .'</script>';
+			self::$head_tags[] = '<script>window._env='. json_encode(self::$jsenv, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .'</script>';
 		}
 
 		public static function optimize(&$output) {
@@ -123,7 +111,7 @@
 				$stylesheets = [];
 
 				$matches[2] = preg_replace_callback('#<link([^>]*rel="stylesheet"[^>]*)>\R*#is', function($match) use (&$stylesheets) {
-					 $stylesheets[] = trim($match[0]);
+					$stylesheets[] = trim($match[0]);
 				}, $matches[2]);
 
 				// Extract internal styling

@@ -24,7 +24,7 @@ const banner = [
 	' * @author <%= pkg.author.name %>',
 	' */',
 	'',
-  '',
+	'',
 ].join('\n')
 
 gulp.task('less-framework', function() {
@@ -154,7 +154,7 @@ gulp.task('sass-trumbowyg', function() {
 gulp.task('phplint', function() {
   return gulp
     .src(paths.php)
-		.pipe(phplint())
+	.pipe(phplint())
     .pipe(phplint.reporter('fail'))
 })
 
@@ -207,8 +207,7 @@ gulp.task('watch', function() {
 
 // Task aliases
 gulp.task('build', gulp.series(
-  'iconly',
-  'js-framework',
+	'js-framework',
 	'js-backend',
 	'js-frontend',
 	'less-framework',
@@ -218,4 +217,7 @@ gulp.task('build', gulp.series(
 	'watch',
 ))
 
-gulp.task('default', gulp.series('build', 'watch'))
+gulp.task('default', gulp.series(
+  'build',
+  'watch',
+))

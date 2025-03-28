@@ -152,12 +152,12 @@
 
 		public function add_body($content, $html=false) {
 
+			$content = trim($content);
+
 			if (!$content) {
 				trigger_error('Cannot add an email body with no content', E_USER_WARNING);
 				return $this;
 			}
-
-			$content = trim($content);
 
 			$view = new ent_view('app://frontend/template/layouts/email.inc.php');
 
