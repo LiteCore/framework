@@ -431,12 +431,12 @@ textarea.warning {
 							<div class="grid">
 								<div class="form-group col-md-6">
 									<label><?php echo language::translate('title_date_created', 'Date Created'); ?></label>
-									<div><?php echo language::strftime('%e %b %Y %H:%M', strtotime($addon->data['date_created'])); ?></div>
+									<div><?php echo functions::datetime_when($addon->data['date_created']); ?></div>
 								</div>
 
 								<div class="form-group col-md-6">
 									<label><?php echo language::translate('title_date_updated', 'Date Updated'); ?></label>
-									<div><?php echo !empty($addon->data['date_updated']) ? language::strftime('%e %b %Y %H:%M', strtotime($addon->data['date_updated'])): '-'; ?></div>
+									<div><?php echo !empty($addon->data['date_updated']) ? functions::datetime_when($addon->data['date_updated']): '-'; ?></div>
 								</div>
 							</div>
 							<?php } ?>

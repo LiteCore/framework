@@ -1251,7 +1251,7 @@
 	function form_select_month($name, $input=true, $parameters='') {
 
 		$options = array_map(function($month){
-			return [$month, language::strftime('%B', date("Y-$month-1"))];
+			return [$month, functions::datetime_format('%B', date("Y-$month-1"))];
 		}, range(1, 12));
 
 		if (preg_match('#\[\]$#', $name)) {
