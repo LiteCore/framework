@@ -3,7 +3,7 @@
 	background: transparent;
 	border-bottom: none;
 }
-.tabs .nav-link:not(.active) {
+.tabs .tab-item:not(.active) {
 	background: #eee;
 }
 .tab-content {

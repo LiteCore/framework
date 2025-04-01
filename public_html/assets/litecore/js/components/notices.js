@@ -1,5 +1,5 @@
 // Alerts
-+waitFor('jQuery', ($) => {
+waitFor('jQuery', ($) => {
 
 	$('body').on('click', '.alert .close', function(e) {
 		e.preventDefault()

@@ -132,7 +132,6 @@ fieldset legend {
   max-width: 100%;
   font-weight: 500;
   padding: 0 1em;
-  letter-spacing: 0.1em;
   white-space: normal;
   color: inherit;
 }
@@ -312,9 +311,6 @@ template {
 .btn {
   display: inline-block;
   padding: var(--button-padding-y) var(--button-padding-x);
-  background: var(--button-background);
-  color: var(--button-text-color);
-  border: var(--button-border-width) solid var(--button-border-color);
   border-radius: var(--border-radius);
   box-shadow: var(--button-shadow);
   text-decoration: none;
@@ -327,25 +323,84 @@ template {
   touch-action: manipulation;
   user-select: none;
 }
+.btn.btn-default {
+  background: var(--button-default-background);
+  color: var(--button-default-text-color);
+  border: var(--button-border-width) solid var(--button-default-border-color);
+}
+.btn.btn-default:hover:not(.active, .disabled, [disabled]),
+.btn.btn-default:focus:not(.active, .disabled, [disabled]),
+.btn.btn-default:active:not(.active, .disabled, [disabled]) {
+  background: var(--button-default-background--hover);
+  border-color: var(--button-default-border-color--hover);
+}
+.btn.btn-default.active {
+  background: var(--button-default-background--active);
+  border-color: var(--button-default-border-color--active);
+}
+.btn.btn-success {
+  background: var(--button-success-background);
+  color: var(--button-success-text-color);
+  border: var(--button-border-width) solid var(--button-success-border-color);
+}
+.btn.btn-success:hover:not(.active, .disabled, [disabled]),
+.btn.btn-success:focus:not(.active, .disabled, [disabled]),
+.btn.btn-success:active:not(.active, .disabled, [disabled]) {
+  background: var(--button-success-background--hover);
+  border-color: var(--button-success-border-color--hover);
+}
+.btn.btn-success.active {
+  background: var(--button-success-background--active);
+  border-color: var(--button-success-border-color--active);
+}
+.btn.btn-danger {
+  background: var(--button-danger-background);
+  color: var(--button-danger-text-color);
+  border: var(--button-border-width) solid var(--button-danger-border-color);
+}
+.btn.btn-danger:hover:not(.active, .disabled, [disabled]),
+.btn.btn-danger:focus:not(.active, .disabled, [disabled]),
+.btn.btn-danger:active:not(.active, .disabled, [disabled]) {
+  background: var(--button-danger-background--hover);
+  border-color: var(--button-danger-border-color--hover);
+}
+.btn.btn-danger.active {
+  background: var(--button-danger-background--active);
+  border-color: var(--button-danger-border-color--active);
+}
 .btn.btn-outline {
-  background: none;
-  border: var(--button-border-width) solid var(--button-background);
-  color: var(--button-background);
-  text-decoration: none;
-  box-shadow: none;
+  background: var(--button-outline-background);
+  color: var(--button-outline-text-color);
+  border: var(--button-border-width) solid var(--button-outline-border-color);
+}
+.btn.btn-outline:hover:not(.active, .disabled, [disabled]),
+.btn.btn-outline:focus:not(.active, .disabled, [disabled]),
+.btn.btn-outline:active:not(.active, .disabled, [disabled]) {
+  background: var(--button-outline-background--hover);
+  border-color: var(--button-outline-border-color--hover);
+}
+.btn.btn-outline.active {
+  background: var(--button-outline-background--active);
+  border-color: var(--button-outline-border-color--active);
+}
+.btn.btn-transparent {
+  background: var(--button-transparent-background);
+  color: var(--button-transparent-text-color);
+  border: var(--button-border-width) solid var(--button-transparent-border-color);
+}
+.btn.btn-transparent:hover:not(.active, .disabled, [disabled]),
+.btn.btn-transparent:focus:not(.active, .disabled, [disabled]),
+.btn.btn-transparent:active:not(.active, .disabled, [disabled]) {
+  background: var(--button-transparent-background--hover);
+  border-color: var(--button-transparent-border-color--hover);
+}
+.btn.btn-transparent.active {
+  background: var(--button-transparent-background--active);
+  border-color: var(--button-transparent-border-color--active);
 }
 .btn .btn-outline-gradient {
   border: solid 2px transparent;
   background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #78e4ff, #ff48fa);
-}
-.btn.btn-hover-outline {
-  background: transparent;
-  color: inherit;
-  text-decoration: none;
-  border: 1px solid transparent;
-}
-.btn.btn-hover-outline:hover {
-  border: var(--button-border-width) solid var(--button-border-color);
 }
 .btn.btn-sm {
   font-size: 0.75em;
@@ -357,7 +412,6 @@ template {
 .btn:active {
   box-shadow: inset 2px 2px 0px 0 rgba(0, 0, 0, 0.05);
 }
-.btn.disabled,
 .btn[disabled] {
   opacity: 0.5;
   cursor: not-allowed;
@@ -680,10 +734,10 @@ template {
 }
 .bubbles .bubble {
   position: relative;
-  margin: 0 10% var(--gutter-y) 10%;
-  padding: calc(var(--gutter-y)/2) var(--gutter-x);
+  margin: 0 1em 2em 1em;
+  padding: 1em;
   background: #e5e5ea;
-  border-radius: 1.5rem;
+  border-radius: var(--border-radius);
   color: #000;
   /* Colors */
 }
@@ -706,7 +760,7 @@ template {
   transform: translate(-30px, -2px);
 }
 .bubbles .bubble.remote {
-  margin: 0 10% var(--gutter-y) 0;
+  margin: 0 1em 2em 0;
 }
 .bubbles .bubble.remote:before {
   left: -7px;
@@ -770,7 +824,7 @@ template {
 .bubbles .bubble .remove {
   position: absolute;
   top: 0.5em;
-  right: 0.5em;
+  inset-inline-end: 1em;
   color: inherit;
 }
 /* Dropdowns */
@@ -916,9 +970,20 @@ template {
   color: var(--dropdown-item-text-color);
   padding: 0.75em 1em;
 }
-.dropdown-item:is(a, label) {
+.dropdown-item:is(a, label):hover,
+.dropdown-item:has(input):hover {
   background: var(--dropdown-item-background--hover);
   color: var(--dropdown-item-text-color--hover);
+  cursor: pointer;
+}
+.dropdown-item:has(input:checked) {
+  background: var(--dropdown-item-background--active);
+  color: var(--dropdown-item-text-color--active);
+  font-weight: bold;
+}
+.dropdown-item input[type="checkbox"],
+.dropdown-item input[type="radio"] {
+  display: none;
 }
 html[dir="rtl"] .dropdown label:has([data-toggle="dropdown"]) {
   background-position: left 1em center;
@@ -2431,7 +2496,7 @@ input[type="radio"].form-check:not([disabled]):hover,
 }
 /* Images */
 .thumbnail {
-  display: block;
+  display: inline-block;
   max-width: 100%;
   height: auto;
   line-height: var(--default-line-height);

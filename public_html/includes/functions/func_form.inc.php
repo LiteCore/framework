@@ -190,7 +190,7 @@
 		}
 
 		$html = [
-			'<table class="table table-striped table-hover data-table" data-toggle="csv">',
+			'<table class="table data-table" data-toggle="csv">',
 			'	<thead>',
 			'		<tr>'
 		];

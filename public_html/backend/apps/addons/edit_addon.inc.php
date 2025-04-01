@@ -307,10 +307,10 @@ html.dark-mode .operation {
 	background: #232a3e;
 }
 
-.nav-tabs .icon-times-circle {
+.tabs .icon-times-circle {
 	color: #c00;
 }
-.nav-tabs .icon-plus {
+.tabs .icon-plus {
 	color: #0c0;
 }
 
@@ -357,7 +357,7 @@ textarea[name*="[insert]"][name$="[content]"] {
 	transition: all 100ms linear;
 }
 
-.nav-tabs a.warning {
+.tabs a.warning {
 	color: red;
 }
 
@@ -376,12 +376,12 @@ textarea.warning {
 
 	<?php echo functions::form_begin('addon_form', 'post', false, true); ?>
 
-		<nav class="nav nav-tabs">
-			<a class="nav-link active" href="#tab-general" data-toggle="tab"><?php echo language::translate('title_general', 'General'); ?></a>
-			<a class="nav-link" href="#tab-modifications" data-toggle="tab"><?php echo language::translate('title_modifications', 'Modifications'); ?></a>
-			<a class="nav-link" href="#tab-aliases" data-toggle="tab"><?php echo language::translate('title_aliases', 'Aliases'); ?></a>
-			<a class="nav-link" href="#tab-settings" data-toggle="tab"><?php echo language::translate('title_settings', 'Settings'); ?></a>
-			<a class="nav-link" href="#tab-install" data-toggle="tab"><?php echo language::translate('title_install_uninstall', 'Install/Uninstall'); ?></a>
+		<nav class="tabs">
+			<a class="tab-item active" href="#tab-general" data-toggle="tab"><?php echo language::translate('title_general', 'General'); ?></a>
+			<a class="tab-item" href="#tab-modifications" data-toggle="tab"><?php echo language::translate('title_modifications', 'Modifications'); ?></a>
+			<a class="tab-item" href="#tab-aliases" data-toggle="tab"><?php echo language::translate('title_aliases', 'Aliases'); ?></a>
+			<a class="tab-item" href="#tab-settings" data-toggle="tab"><?php echo language::translate('title_settings', 'Settings'); ?></a>
+			<a class="tab-item" href="#tab-install" data-toggle="tab"><?php echo language::translate('title_install_uninstall', 'Install/Uninstall'); ?></a>
 		</nav>
 
 		<div class="card-body">
@@ -482,13 +482,13 @@ textarea.warning {
 
 					<h2><?php echo language::translate('title_modifications', 'Modifications'); ?></h2>
 
-					<nav class="nav nav-tabs">
+					<nav class="tabs">
 						<?php foreach (array_keys($addon->data['files']) as $f) { ?>
-						<a class="nav-link" data-toggle="tab" href="#tab-<?php echo $f; ?>">
+						<a class="tab-item" data-toggle="tab" href="#tab-<?php echo $f; ?>">
 							<span class="file"><?php echo functions::escape_html($_POST['files'][$f]['name']); ?></span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span>
 						</a>
 						<?php } ?>
-						<a class="nav-link add" href="#"><?php echo functions::draw_fonticon('icon-plus'); ?></a>
+						<a class="tab-item add" href="#"><?php echo functions::draw_fonticon('icon-plus'); ?></a>
 					</nav>
 
 					<div id="files" class="tab-content">
@@ -856,14 +856,14 @@ textarea.warning {
 	let new_tab_index = 1;
 	while ($('.tab-pane[id="tab-'+new_tab_index+'"]').length) new_tab_index++;
 
-	$('.nav-tabs').on('click', '[data-toggle="tab"]', function(e) {
+	$('.tabs').on('click', '[data-toggle="tab"]', function(e) {
 		$($(this).attr('href')).find(':input[name$="[content]"]').trigger('input');
 	});
 
-	$('.nav-tabs .add').click(function(e){
+	$('.tabs .add').click(function(e){
 		e.preventDefault();
 
-		let tab = '<a class="nav-link" data-toggle="tab" href="#tab-'+ new_tab_index +'"><span class="file">new'+ new_tab_index +'</span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span></a>'
+		let tab = '<a class="tab-item" data-toggle="tab" href="#tab-'+ new_tab_index +'"><span class="file">new'+ new_tab_index +'</span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span></a>'
 			.replace(/new_tab_index/g, new_tab_index);
 
 		let tab_pane = $('#new-tab-pane-template').html()
@@ -877,13 +877,13 @@ textarea.warning {
 		$(this).prev().click();
 	});
 
-	$('.nav-tabs').on('click', '.remove', function(e) {
+	$('.tabs').on('click', '.remove', function(e) {
 		e.preventDefault();
 
 		if (!confirm("<?php echo language::translate('text_are_you_sure', 'Are you sure?'); ?>")) return false;
 
-		let $tab = $(this).closest('.nav-link'),
-			tab_pane = $(this).closest('.nav-link').attr('href');
+		let $tab = $(this).closest('.tab-item'),
+			tab_pane = $(this).closest('.tab-item').attr('href');
 
 		if ($tab.prev('[data-toggle="tab"]').length) {
 			$tab.prev('[data-toggle="tab"]').trigger('click');
@@ -893,7 +893,7 @@ textarea.warning {
 		}
 
 		$(tab_pane).remove();
-		$(this).closest('.nav-link').remove();
+		$(this).closest('.tab-item').remove();
 	});
 
 	// Storage
@@ -1327,9 +1327,9 @@ textarea.warning {
 		}
 
 		if ($tab.find(':input.warning').length) {
-			$('.nav-link[href="#'+ $tab.attr('id') +'"]').addClass('warning');
+			$('.tab-item[href="#'+ $tab.attr('id') +'"]').addClass('warning');
 		} else {
-			$('.nav-link[href="#'+ $tab.attr('id') +'"]').removeClass('warning');
+			$('.tab-item[href="#'+ $tab.attr('id') +'"]').removeClass('warning');
 		}
 	});
 

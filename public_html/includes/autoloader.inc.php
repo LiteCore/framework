@@ -65,7 +65,6 @@
 				if (is_file($file = 'app://frontend/routes/' . $class . '.inc.php')) require $file;
 				break;
 
-		
 			case (preg_match('#^stream_#', $class)):
 
 				require 'app://includes/streams/' . $class . '.inc.php';

@@ -105,11 +105,8 @@
 		}
 
 		if (in_array($errno, [E_PARSE, E_ERROR, E_COMPILE_ERROR, E_CORE_ERROR, E_USER_ERROR])) {
-
 			http_response_code(500);
-
-
-			exit;
+			exit(500);
 		}
 	}
 

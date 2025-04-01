@@ -3,6 +3,11 @@
 	$box_apps_menu = new ent_view('app://backend/template/partials/box_apps_menu.inc.php');
 
 	$groups = [
+		'community' => [
+			'id' => 'website',
+			'name' => language::translate('title_community', 'Community'),
+			'apps' => [],
+		],
 		'website' => [
 			'id' => 'website',
 			'name' => language::translate('title_website', 'Website'),

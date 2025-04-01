@@ -56,7 +56,7 @@
 					break;
 			}
 
-			// Wait For (Minified)
+			// Wait For (Mini version)
 			self::add_head_tags(implode(PHP_EOL, [
 				'<script>window.waitFor=window.waitFor||((i,o)=>{void 0!==window.i?o(window.i):setTimeout((()=>waitFor(i,o)),50)});</script>',
 			]), 'waitFor');
@@ -376,13 +376,13 @@
 			}
 
 			self::$head_tags[$key] = implode(PHP_EOL, $styles);
-			}
+		}
 
 		public static function load_script($resources, $key=null) {
 
 			if (!is_array($resources)) {
 				$resources = [$resources];
-		}
+			}
 
 			$scripts = [];
 

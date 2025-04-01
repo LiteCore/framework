@@ -3,7 +3,7 @@
  * https://github.com/Mario-Duarte/image-zoom-plugin/
  * Simple jQuery plugin that converts an image into a click to zoom image
  */
-+waitFor('jQuery', ($) => {
+waitFor('jQuery', ($) => {
 
   $.fn.imageZoom = function (options) {
 

@@ -1,4 +1,4 @@
-+waitFor('jQuery', ($) => {
+waitFor('jQuery', ($) => {
 
 	// Keep-alive
 	if (_env && _env.keep_alive_url) {

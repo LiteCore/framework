@@ -1,5 +1,5 @@
 // Form required asterix
-+waitFor('jQuery', ($) => {
+waitFor('jQuery', ($) => {
 
 	$(':input[required]').closest('.form-group').addClass('required')
 

@@ -285,16 +285,23 @@
 		}
 
 		public static function strftime($format, $timestamp=null) {
-			trigger_error('Deprecated: Use functions::datetime_format() instead', E_USER_DEPRECATED);
+			trigger_error('Method language::strftime() is deprecated. Instead, use functions::datetime_format()', E_USER_DEPRECATED);
 			return functions::datetime_format($format, $timestamp);
 		}
 
 		public static function convert_characters($variable, $from_charset=null, $to_charset=null) {
 
-			if (empty($from_charset)) $from_charset = mb_internal_encoding();
-			if (empty($to_charset)) $to_charset = mb_internal_encoding();
+			if (empty($from_charset)) {
+				$from_charset = mb_internal_encoding();
+			}
 
-			if ($from_charset == $to_charset) return $variable;
+			if (empty($to_charset)) {
+				$to_charset = mb_internal_encoding();
+			}
+
+			if ($from_charset == $to_charset) {
+				return $variable;
+			}
 
 			if (!mb_convert_variables($to_charset, $from_charset, $variable)) {
 				trigger_error('Could not encode variable from '. $from_charset .' to '. $to_charset, E_USER_WARNING);
