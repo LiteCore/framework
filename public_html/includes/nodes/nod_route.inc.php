@@ -119,7 +119,7 @@
 						// Resolve resource logic
 						if (preg_match('#\*#', $route['resource'])) {
 							$route['resource'] = preg_replace_callback('#^(\w:).*$#', function($matches){
-								return fallback($matches[1], 'f:') . preg_replace('#^'. preg_quote(ltrim(BACKEND_ALIAS . '/', '/'), '#') .'#', '', parse_url(self::$request, PHP_URL_PATH));
+								return fallback($matches[1], 'f:') . preg_replace('#^'. preg_quote(ltrim(BACKEND_ALIAS . '/', '/'), '/?#') .'#', '', parse_url(self::$request, PHP_URL_PATH));
 							}, $route['resource']);
 						}
 
@@ -410,14 +410,15 @@
 			}
 
 			// Strip logic from string
-			$link->path = self::strip_url_logic($link->path);
+			$ilink = self::strip_url_logic($link->path);
 
-			// Set logical resource including endpoint
-			$ipath = (!preg_match('#^\w:#', $link->path) ? 'f:' : '') . $link->path;
+			if (!preg_match('#^\w:#', $ilink)) {
+				$ilink = 'f:'.$ilink;
+			}
 
 			// Rewrite link
-			foreach (self::$_routes as $ilink => $route) {
-				if (preg_match('#^'. strtr(preg_quote($ilink, '#'), ['\\*' => '.+', '\\?' => '.', '\\{' => '(', '\\}' => ')', ',' => '|']) .'$#i', $ipath)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
+			foreach (self::$_routes as $route) {
+				if (preg_match('#^'. strtr(preg_quote($route['resource'], '#'), ['\\*' => '.+', '\\?' => '.', '\\{' => '(', '\\}' => ')', ',' => '|']) .'$#i', $ilink)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
 					if (isset($route['rewrite']) && is_callable($route['rewrite'])) {
 						if ($rewritten_link = call_user_func_array($route['rewrite'], [$link, $language_code])) {
 							$link = $rewritten_link;

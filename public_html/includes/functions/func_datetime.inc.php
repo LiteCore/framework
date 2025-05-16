@@ -44,7 +44,7 @@
 		$months  = round($time_elapsed / 2600640);
 		$years   = round($time_elapsed / 31207680);
 
-	// Seconds
+		// Seconds
 		if ($seconds <= 60) {
 			if ($present_output === null) {
 				$present_output = '<span style="color: #0a0;">'. language::translate('text_just_now', 'Just now') .'</span>';

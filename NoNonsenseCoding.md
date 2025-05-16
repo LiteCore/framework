@@ -180,7 +180,7 @@ Better:
 
 ## No fat third party libraries for small features
 
-Looking to cut corners with third party libraries will backfire eventually? Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can poorly managed, contain flaws or security problems. They can be a complete pain when you want to step up PHP versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
+Looking to cut corners with third party libraries will backfire eventually? Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can be poorly managed, contain flaws or security problems. They can be a complete pain when you want to step up versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
 
 There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea in the long run to do it.
 

@@ -29,7 +29,6 @@
 
 			header('Content-Security-Policy: frame-ancestors \'self\';'); // Clickjacking Protection
 			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data from own domain
-			header('X-Frame-Options: SAMEORIGIN'); // Clickjacking Protection
 			header('X-Powered-By: '. PLATFORM_NAME);
 
 			// Default to AJAX layout on AJAX request
@@ -58,7 +57,7 @@
 
 			// Wait For (Mini version)
 			self::add_head_tags(implode(PHP_EOL, [
-				'<script>window.waitFor=window.waitFor||((i,o)=>{void 0!==window.i?o(window.i):setTimeout((()=>waitFor(i,o)),50)});</script>',
+				'<script>window.waitFor=window.waitFor||((i,o)=>{void 0!==window[i]?o(window[i]):setTimeout((()=>waitFor(i,o)),50)});</script>',
 			]), 'waitFor');
 
 			// Load jQuery

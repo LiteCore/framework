@@ -43,7 +43,8 @@
 				self::$_cache['translations'] = [];
 
 				database::query(
-					"select id, code, if(text_". self::$selected['code'] ." != '', text_". self::$selected['code'] .", text_en) as text from ". DB_TABLE_PREFIX ."translations
+					"select id, code, if(text_". self::$selected['code'] ." != '', text_". self::$selected['code'] .", text_en) as text
+					from ". DB_TABLE_PREFIX ."translations
 					where ". ((isset(route::$request['endpoint']) && route::$request['endpoint'] == 'backend') ? "backend = 1" : "frontend = 1") ."
 					having text != '';"
 				)->each(function($translation){
@@ -291,11 +292,11 @@
 
 		public static function convert_characters($variable, $from_charset=null, $to_charset=null) {
 
-			if (empty($from_charset)) {
+			if (!$from_charset) {
 				$from_charset = mb_internal_encoding();
 			}
 
-			if (empty($to_charset)) {
+			if (!$to_charset) {
 				$to_charset = mb_internal_encoding();
 			}
 
