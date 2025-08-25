@@ -32,6 +32,7 @@
 		}
 
 		public static function add($type, $msg, $key=null) {
+
 			if ($key) {
 				self::$data[$type][$key] = $msg;
 			}	else {

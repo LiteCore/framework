@@ -28,8 +28,8 @@
 				where status
 				and immediate = 1
 				and '". database::input($requested_url) ."' regexp pattern
-				and (date_valid_from is null or date_valid_from < '". date('Y-m-d H:i:s') ."')
-				and (date_valid_to is null or date_valid_to > '". date('Y-m-d H:i:s') ."')
+				and (valid_from is null or valid_from < '". date('Y-m-d H:i:s') ."')
+				and (valid_to is null or valid_to > '". date('Y-m-d H:i:s') ."')
 				limit 1;"
 			)->fetch();
 
@@ -37,15 +37,15 @@
 
 				database::query(
 					"update ". DB_TABLE_PREFIX ."redirects
-					set redirects = redirects + 1,
-						date_redirected = '". database::input(date('Y-m-d H:i:s')) ."'
+					set total_redirects = total_redirects + 1,
+						last_redirected = '". database::input(date('Y-m-d H:i:s')) ."'
 					where id = ". (int)$redirect['id'] ."
 					limit 1;"
 				);
 
 				http_response_code($redirect['http_response_code']);
-				header('X-Redirect-By: '. $redirect['id']);
-				header('Location: '. preg_replace("'$redirect[pattern]'", $redirect['destination'], $requested_url)); // MySQL regex wrapper ''
+				header('X-Redirect-Id: '. $redirect['id']);
+				redirect(preg_replace("'$redirect[pattern]'", $redirect['destination'], $requested_url)); // MySQL regex wrapper ''
 				exit;
 			}
 
@@ -85,6 +85,11 @@
 					$route['endpoint'] = 'backend';
 					break;
 
+
+				case (preg_match('#^f:#', $resource)):
+					$route['endpoint'] = 'frontend';
+					break;
+
 				default:
 					$route['endpoint'] = 'frontend';
 					break;
@@ -118,8 +123,8 @@
 
 						// Resolve resource logic
 						if (preg_match('#\*#', $route['resource'])) {
-							$route['resource'] = preg_replace_callback('#^(\w:).*$#', function($matches){
-								return fallback($matches[1], 'f:') . preg_replace('#^'. preg_quote(ltrim(BACKEND_ALIAS . '/', '/'), '/?#') .'#', '', parse_url(self::$request, PHP_URL_PATH));
+							$route['resource'] = preg_replace_callback('#^([a-z]:).*$#', function($matches){
+								return fallback($matches[1], 'f:') . preg_replace('#^'. trim(preg_quote(BACKEND_ALIAS, '#'), '/') .'/#', '', parse_url(self::$request, PHP_URL_PATH));
 							}, $route['resource']);
 						}
 
@@ -181,11 +186,11 @@
 
 						// Send HTTP 302 if it's the start page
 						if (parse_url(self::$request, PHP_URL_PATH) == WS_DIR_APP) {
-							header('Location: '. $rewritten_url, true, 302);
+							redirect($rewritten_url, true, 302);
 							exit;
 						}
 
-						header('Location: '. $rewritten_url, true, 301);
+						redirect($rewritten_url, true, 301);
 						exit;
 					}
 				}
@@ -264,8 +269,8 @@
 				where status
 				and immediate = 0
 				and '". database::input($requested_url) ."' regexp pattern
-				and (date_valid_from is null or date_valid_from < '". date('Y-m-d H:i:s') ."')
-				and (date_valid_to is null or date_valid_to > '". date('Y-m-d H:i:s') ."')
+				and (valid_from is null or valid_from < '". date('Y-m-d H:i:s') ."')
+				and (valid_to is null or valid_to > '". date('Y-m-d H:i:s') ."')
 				limit 1;"
 			)->fetch();
 
@@ -274,14 +279,14 @@
 				database::query(
 					"update ". DB_TABLE_PREFIX ."redirects
 					set redirects = redirects + 1,
-						date_redirected = '". database::input(date('Y-m-d H:i:s')) ."'
+						last_redirected = '". database::input(date('Y-m-d H:i:s')) ."'
 					where id = ". (int)$redirect['id'] ."
 					limit 1;"
 				);
 
 				http_response_code($redirect['http_response_code']);
-				header('X-Redirect-By: '. $redirect['id']);
-				header('Location: '. preg_replace("'$redirect[pattern]'", $redirect['destination'], $requested_url)); // MySQL regex wrapper ''
+				header('X-Redirect-Id: '. $redirect['id']);
+				redirect(preg_replace("'$redirect[pattern]'", $redirect['destination'], $requested_url)); // MySQL regex wrapper ''
 				exit;
 			}
 
@@ -317,10 +322,17 @@
 
 			$path = functions::file_resolve_path($path);
 
-			// Remove language prefix
-			if ($path = urldecode(parse_url($path, PHP_URL_PATH))) {
-				$path = preg_replace('#^'. WS_DIR_APP . '(index\.php/)?(('. implode('|', array_keys(language::$languages)) .')(/|$))?#', '', $path);
-			}
+			// URL decode any encoded path segments
+			$path = urldecode(parse_url($path, PHP_URL_PATH));
+
+			// Remove path to the application directory
+			$path = preg_replace('#^'. WS_DIR_APP .'#', '', $path);
+
+			// Remove the index.php prefix
+			$path = preg_replace('#^(index\.php/)?#', '', $path);
+
+			// Remove language code from the path
+			$path = preg_replace('#^('. implode('|', array_keys(language::$languages)) .')(/|$)#', '', $path);
 
 			if (!$path) {
 				return '';
@@ -412,13 +424,19 @@
 			// Strip logic from string
 			$ilink = self::strip_url_logic($link->path);
 
-			if (!preg_match('#^\w:#', $ilink)) {
+			if (!preg_match('#^[a-z]:#', $ilink)) {
 				$ilink = 'f:'.$ilink;
 			}
 
 			// Rewrite link
 			foreach (self::$_routes as $route) {
-				if (preg_match('#^'. strtr(preg_quote($route['resource'], '#'), ['\\*' => '.+', '\\?' => '.', '\\{' => '(', '\\}' => ')', ',' => '|']) .'$#i', $ilink)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
+				$operators = [
+					'\\*' => '.+',
+					'\\?' => '.',
+					'\\{' => '(', '\\}' => ')',
+					',' => '|'
+				];
+				if (preg_match('#^'. strtr(preg_quote($route['resource'], '#'), $operators) .'$#i', $ilink)) { // Use preg_match() as fnmatch() does not support GLOB_BRACE
 					if (isset($route['rewrite']) && is_callable($route['rewrite'])) {
 						if ($rewritten_link = call_user_func_array($route['rewrite'], [$link, $language_code])) {
 							$link = $rewritten_link;

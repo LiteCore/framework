@@ -13,5 +13,7 @@
 {{content}}
 
 {{foot_tags}}
+<?php echo functions::draw_script('app://frontend/template/js/app.min.js'); ?>
+
 </body>
 </html>

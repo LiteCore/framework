@@ -8,7 +8,7 @@
 		public $cleanup = false;
 		private $_parsers = [];
 
-		public function __construct($view='') {
+		public function __construct($view='', $snippets=[]) {
 
 			if ($view) {
 
@@ -26,6 +26,9 @@
 					$this->view = 'app://frontend/template/'. $view;
 				}
 			}
+
+			// Set snippets
+			$this->snippets = $snippets;
 
 			// Register default parser for snippets {{var|modifier1|modifier2}}
 			$this->register_parser('([0-9a-zA-Z_\.]+)(|[^'. preg_quote($this->wrapper[1][0], '#') .']+)?', function($matches) {
@@ -78,10 +81,9 @@
 				return $output;
 			});
 
-/*
 			// Parser for Translations: {{translate "title_key" "Text"}}
 			$this->register_parser('translate "([^\"]+)"(?:, "([^\"]+)")?', function($matches) {
-				return language::translate($matches[1], isset($matches[2]) ? $matches[2] : '');
+				return t($matches[1], isset($matches[2]) ? $matches[2] : '');
 			});
 
 			// Parser for Settings {{setting "key"}}
@@ -120,7 +122,6 @@
 				if (!empty($this->snippets[$matches[1]]) && (float)$this->snippets[$matches[1]] != 0) return '';
 				return $this->snippets[$matches[1]];
 			});
-*/
 		}
 
 		public function register_parser($pattern, $callable) {

@@ -6,47 +6,47 @@
 	 *   ~/frontend/template/pages/contact.inc.php
 	 */
 
-	document::$title[] = language::translate('contact:head_title', 'Contact');
-	document::$description = language::translate('contact:meta_description', '');
+	document::$title[] = t('contact:head_title', 'Contact');
+	document::$description = t('contact:meta_description', '');
 
-	breadcrumbs::add(language::translate('title_contact', 'Contact'), document::ilink('contact'));
+	breadcrumbs::add(t('title_contact', 'Contact'), document::ilink('contact'));
 
 	if (!empty($_POST['send'])) {
 
 		try {
 
 			if (empty($_POST['firstname'])) {
-				throw new Exception(language::translate('error_missing_firstname', 'You must provide a firstname'));
+				throw new Exception(t('error_missing_firstname', 'You must provide a firstname'));
 			}
 
 			if (empty($_POST['lastname'])) {
-				throw new Exception(language::translate('error_missing_lastname', 'You must provide a lastname'));
+				throw new Exception(t('error_missing_lastname', 'You must provide a lastname'));
 			}
 
 			if (empty($_POST['subject'])) {
-				throw new Exception(language::translate('error_missing_subject', 'You must provide a subject'));
+				throw new Exception(t('error_missing_subject', 'You must provide a subject'));
 			}
 
 			if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-				throw new Exception(language::translate('error_missing_email', 'You must provide a valid email address'));
+				throw new Exception(t('error_missing_email', 'You must provide a valid email address'));
 			}
 
 			if (empty($_POST['message'])) {
-				throw new Exception(language::translate('error_missing_message', 'You must provide a message'));
+				throw new Exception(t('error_missing_message', 'You must provide a message'));
 			}
 
 			if (settings::get('captcha_enabled') && !functions::captcha_validate('contact_us')) {
-				throw new Exception(language::translate('error_invalid_captcha', 'Invalid CAPTCHA given'));
+				throw new Exception(t('error_invalid_captcha', 'Invalid CAPTCHA given'));
 			}
 
-			$message = strtr(language::translate('email_user_feedback', implode("\r\n", [
-				'** This is an email message from %sender_name <%sender_email> **',
+			$message = strtr(t('email_user_feedback', implode("\r\n", [
+				'** This is an email message from {sender_name} <{sender_email}> **',
 				'',
-				'%message',
+				'{message}',
 			]), [
-				'%sender_name' => $_POST['firstname'] .' '. $_POST['lastname'],
-				'%sender_email' => $_POST['email'],
-				'%message' => $_POST['message'],
+				'{sender_name}' => $_POST['firstname'] .' '. $_POST['lastname'],
+				'{sender_email}' => $_POST['email'],
+				'{message}' => $_POST['message'],
 			]));
 
 			$email = new ent_email();
@@ -58,11 +58,11 @@
 			$result = $email->send();
 
 			if (!$result) {
-				throw new Exception(language::translate('error_sending_email_for_unknown_reason', 'The email could not be sent for an unknown reason'));
+				throw new Exception(t('error_sending_email_for_unknown_reason', 'The email could not be sent for an unknown reason'));
 			}
 
-			notices::add('success', language::translate('success_your_email_was_sent', 'Your email has successfully been sent'));
-			header('Location: '. document::link());
+			notices::add('success', t('success_your_email_was_sent', 'Your email has successfully been sent'));
+			reload();
 			exit;
 
 		} catch (Exception $e) {
@@ -92,45 +92,45 @@
 				<div class="card-body">
 					{{notices}}
 
-					<h1><?php echo language::translate('title_contact', 'Contact'); ?></h1>
+					<h1><?php echo t('title_contact', 'Contact'); ?></h1>
 
 					<?php echo functions::form_begin('contact_form', 'post'); ?>
 
 						<div class="grid">
 							<div class="form-group col-md-6">
-								<label><?php echo language::translate('title_firstname', 'First Name'); ?></label>
+								<label><?php echo t('title_firstname', 'First Name'); ?></label>
 								<?php echo functions::form_input_text('firstname', true, 'required'); ?>
 							</div>
 
 							<div class="form-group col-md-6">
-								<label><?php echo language::translate('title_lastname', 'Last Name'); ?></label>
+								<label><?php echo t('title_lastname', 'Last Name'); ?></label>
 								<?php echo functions::form_input_text('lastname', true, 'required'); ?>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label><?php echo language::translate('title_email_address', 'Email Address'); ?></label>
+							<label><?php echo t('title_email_address', 'Email Address'); ?></label>
 							<?php echo functions::form_input_email('email', true, 'required'); ?>
 						</div>
 
 						<div class="form-group">
-							<label><?php echo language::translate('title_subject', 'Subject'); ?></label>
+							<label><?php echo t('title_subject', 'Subject'); ?></label>
 							<?php echo functions::form_input_text('subject', true, 'required'); ?>
 						</div>
 
 						<div class="form-group">
-							<label><?php echo language::translate('title_message', 'Message'); ?></label>
+							<label><?php echo t('title_message', 'Message'); ?></label>
 							<?php echo functions::form_textarea('message', true, 'required style="height: 250px;"'); ?>
 						</div>
 
 						<?php if (settings::get('captcha_enabled')) { ?>
 						<div class="form-group" style="max-width: 250px;">
-							<label><?php echo language::translate('title_captcha', 'CAPTCHA'); ?></label>
+							<label><?php echo t('title_captcha', 'CAPTCHA'); ?></label>
 							<?php echo functions::form_captcha('contact_us'); ?>
 						</div>
 						<?php } ?>
 
-						<p><?php echo functions::form_button('send', language::translate('title_send', 'Send'), 'submit', 'style="font-weight: bold;"'); ?></p>
+						<p><?php echo functions::form_button('send', t('title_send', 'Send'), 'submit', 'style="font-weight: bold;"'); ?></p>
 
 					<?php echo functions::form_end(); ?>
 				</div>
@@ -141,7 +141,7 @@
 			<article class="card">
 
 				<div class="card-header">
-					<h2 class="card-title"><?php echo language::translate('title_contact_details', 'Contact Details'); ?></h2>
+					<h2 class="card-title"><?php echo t('title_contact_details', 'Contact Details'); ?></h2>
 				</div>
 
 				<div class="card-body">

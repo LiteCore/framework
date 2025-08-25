@@ -54,11 +54,11 @@
 				limit 1;"
 			)->fetch();
 
-			if ($email) {
-				$this->data = array_replace($this->data, array_intersect_key($email, $this->data));
-			} else {
+			if (!$email) {
 				throw new Exception('Could not find email (ID: '. (int)$id .') in database.');
 			}
+
+			$this->data = array_replace($this->data, array_intersect_key($email, $this->data));
 
 			$this->data['sender'] = json_decode($email['sender'], true);
 			$this->data['recipients'] = json_decode($email['recipients'], true);
@@ -76,8 +76,8 @@
 			if (!$this->data['id']) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."emails
-					(status, code, ip_address, hostname, user_agent, date_created) values
-					('". database::input($this->data['status']) ."', '". database::input($this->data['code']) ."', '". database::input($_SERVER['REMOTE_ADDR']) ."', '". database::input(gethostbyaddr($_SERVER['REMOTE_ADDR'])) ."', '". database::input($_SERVER['HTTP_USER_AGENT']) ."', '". ($this->data['date_created'] = date('Y-m-d H:i:s')) ."');"
+					(status, code, ip_address, hostname, user_agent, created_at) values
+					('". database::input($this->data['status']) ."', '". database::input($this->data['code']) ."', '". database::input($_SERVER['REMOTE_ADDR']) ."', '". database::input(gethostbyaddr($_SERVER['REMOTE_ADDR'])) ."', '". database::input($_SERVER['HTTP_USER_AGENT']) ."', '". ($this->data['created_at'] = date('Y-m-d H:i:s')) ."');"
 				);
 
 				$this->data['id'] = database::insert_id();
@@ -95,9 +95,9 @@
 					subject = '". database::input($this->data['subject']) ."',
 					multiparts = '". database::input(json_encode($this->data['multiparts'], JSON_UNESCAPED_SLASHES), true) ."',
 					language_code = '". database::input($this->data['language_code']) ."',
-					date_scheduled = ". (!empty($this->data['date_scheduled']) ? "'". database::input($this->data['date_scheduled']) ."'" : "null") .",
-					date_sent = ". (!empty($this->data['date_sent']) ? "'". database::input($this->data['date_sent']) ."'" : "null") .",
-					date_updated = '". ($this->data['date_updated'] = date('Y-m-d H:i:s')) ."'
+					scheduled_at = ". (!empty($this->data['scheduled_at']) ? "'". database::input($this->data['scheduled_at']) ."'" : "null") .",
+					sent_at = ". (!empty($this->data['sent_at']) ? "'". database::input($this->data['sent_at']) ."'" : "null") .",
+					updated_at = '". ($this->data['updated_at'] = date('Y-m-d H:i:s')) ."'
 				where id = ". (int)$this->data['id'] .";"
 			);
 
@@ -130,23 +130,17 @@
 		}
 
 		public function set_language($language_code) {
-
 			$this->data['language_code'] = $language_code;
-
 			return $this;
 		}
 
 		public function set_subject($subject) {
-
 			$this->data['subject'] = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $subject));
-
 			return $this;
 		}
 
 		public function set_reference($id) {
-
 			$this->data['reference'] = $id;
-
 			return $this;
 		}
 
@@ -159,10 +153,17 @@
 				return $this;
 			}
 
-			$view = new ent_view('app://frontend/template/layouts/email.inc.php');
+			if (!$html) {
+				$content = nl2br($content, false);
+			}
+
+			// Convert all line endings to RFC standard \r\n
+			$content = preg_replace('#\r\n?|\n#', "\r\n", $content);
+
+			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/layouts/email.inc.php');
 
 			$view->snippets = [
-				'content' => $html ? $content : nl2br($content),
+				'content' => $content,
 				'language_code' => $this->data['language_code'],
 			];
 
@@ -283,7 +284,7 @@
 			database::query(
 				"delete from ". DB_TABLE_PREFIX ."emails
 				where status in ('sent', 'error')
-				and date_updated < '". date('Y-m-d H:i:s', strtotime($time_ago)) ."';"
+				and updated_at < '". date('Y-m-d H:i:s', strtotime($time_ago)) ."';"
 			);
 
 			cache::clear_cache('email');
@@ -292,7 +293,7 @@
 		public function queue($scheduled, $code=null) {
 
 			$this->data['status'] = 'scheduled';
-			$this->data['date_scheduled'] = date('Y-m-d H:i:s', strtotime($scheduled));
+			$this->data['scheduled_at'] = date('Y-m-d H:i:s', strtotime($scheduled));
 			$this->data['code'] = $code;
 			$this->save();
 
@@ -353,6 +354,12 @@
 				$headers['Content-Type'] = 'multipart/mixed; boundary="'. $multipart_boundary_string . '"' . "\r\n";
 			}
 
+			if (!empty(language::$languages[$this->data['language_code']]) && language::$languages[$this->data['language_code']]['direction'] == 'rtl') {
+				$direction = 'rtl';
+			} else {
+				$direction = 'ltr';
+			}
+
 			$body = '';
 
 			// Prepare several multiparts
@@ -361,6 +368,7 @@
 					$body .= implode("\r\n", [
 						'--'. $multipart_boundary_string,
 						implode("\r\n", array_map(function($v, $k) { return $k.':'.$v; }, $multipart['headers'], array_keys($multipart['headers']))) . "\r\n",
+						($direction == 'rtl') ? "\xe2\x80\x8f" : '',
 						$multipart['body'],
 					]) . "\r\n\r\n";
 				}
@@ -450,7 +458,7 @@
 
 			if ($result) {
 				$this->data['status'] = 'sent';
-				$this->data['date_sent'] = date('Y-m-d H:i:s');
+				$this->data['sent_at'] = date('Y-m-d H:i:s');
 			} else {
 				$this->data['status'] = 'error';
 			}

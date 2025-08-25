@@ -64,11 +64,11 @@
 		public function save() {
 
 			if (empty($this->data['status']) && $this->data['iso_code_2'] == settings::get('site_country_code')) {
-				throw new Exception(language::translate('error_cannot_disable_site_country', 'You must change the site country before disabling it.'));
+				throw new Exception(t('error_cannot_disable_site_country', 'You must change the site country before disabling it.'));
 			}
 
 			if (empty($this->data['status']) && $this->data['iso_code_2'] == settings::get('default_country_code')) {
-				throw new Exception(language::translate('error_cannot_disable_default_country', 'You must change the default country before disabling it.'));
+				throw new Exception(t('error_cannot_disable_default_country', 'You must change the default country before disabling it.'));
 			}
 
 			if (database::query(
@@ -81,14 +81,14 @@
 				)
 				limit 1;"
 			)->num_rows) {
-				throw new Exception(language::translate('error_language_conflict', 'The country conflicts another country in the database'));
+				throw new Exception(t('error_language_conflict', 'The country conflicts another country in the database'));
 			}
 
 			if (!$this->data['id']) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."countries
-					(date_created)
-					values ('". ($this->data['date_created'] = date('Y-m-d H:i:s')) ."');"
+					(created_at)
+					values ('". ($this->data['created_at'] = date('Y-m-d H:i:s')) ."');"
 				);
 				$this->data['id'] = database::insert_id();
 			}
@@ -107,7 +107,7 @@
 					language_code = '". database::input($this->data['language_code']) ."',
 					currency_code = '". database::input($this->data['currency_code']) ."',
 					phone_code = '". database::input($this->data['phone_code']) ."',
-					date_updated = '". ($this->data['date_updated'] = date('Y-m-d H:i:s')) ."'
+					updated_at = '". ($this->data['updated_at'] = date('Y-m-d H:i:s')) ."'
 				where id = ". (int)$this->data['id'] ."
 				limit 1;"
 			);
@@ -125,7 +125,7 @@
 					if (empty($zone['id'])) {
 						database::query(
 							"insert into ". DB_TABLE_PREFIX ."zones
-							(country_code, date_created)
+							(country_code, created_at)
 							values ('". database::input($this->data['iso_code_2']) ."', '". date('Y-m-d H:i:s') ."');"
 						);
 						$zone['id'] = $this->data['zones'][$key]['id'] = database::insert_id();
@@ -135,7 +135,7 @@
 						"update ". DB_TABLE_PREFIX ."zones
 						set code = '". database::input($zone['code']) ."',
 							name = '". database::input($zone['name']) ."',
-							date_updated = '". ($this->data['zones'][$key]['date_updated'] = date('Y-m-d H:i:s')) ."'
+							updated_at = '". ($this->data['zones'][$key]['updated_at'] = date('Y-m-d H:i:s')) ."'
 						where country_code = '". database::input(strtoupper($this->data['iso_code_2'])) ."'
 						and id = ". (int)$zone['id'] ."
 						limit 1;"
@@ -151,11 +151,11 @@
 		public function delete() {
 
 			if ($this->data['code'] == settings::get('site_country_code')) {
-				throw new Exception(language::translate('error_cannot_delete_site_country', 'You must change the site country before it can be deleted.'));
+				throw new Exception(t('error_cannot_delete_site_country', 'You must change the site country before it can be deleted.'));
 			}
 
 			if ($this->data['iso_code_2'] == settings::get('default_country_code')) {
-				throw new Exception(language::translate('error_cannot_delete_default_country', 'You must change the default country before it can be deleted.'));
+				throw new Exception(t('error_cannot_delete_default_country', 'You must change the default country before it can be deleted.'));
 			}
 
 			database::query(

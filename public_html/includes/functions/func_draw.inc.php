@@ -249,7 +249,7 @@
 
 		$pagination->snippets['items'][] = [
 			'page' => $_GET['page']-1,
-			'title' => language::translate('title_previous', 'Previous'),
+			'title' => t('title_previous', 'Previous'),
 			'link' => document::link($_SERVER['REQUEST_URI'], ['page' => $_GET['page']-1]),
 			'disabled' => ($_GET['page'] <= 1),
 			'active' => false,
@@ -297,7 +297,7 @@
 
 		$pagination->snippets['items'][] = [
 			'page' => $_GET['page']+1,
-			'title' => language::translate('title_next', 'Next'),
+			'title' => t('title_next', 'Next'),
 			'link' => document::link($_SERVER['REQUEST_URI'], ['page' => $_GET['page']+1]),
 			'disabled' => ($_GET['page'] >= $pages) ? true : false,
 			'active' => false,

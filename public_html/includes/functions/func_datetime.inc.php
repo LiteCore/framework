@@ -24,7 +24,7 @@
 			}
 		}
 
-		return language::translate('text_just_now', 'Just now');
+		return t('text_just_now', 'Just now');
 	}
 */
 
@@ -47,28 +47,39 @@
 		// Seconds
 		if ($seconds <= 60) {
 			if ($present_output === null) {
-				$present_output = '<span style="color: #0a0;">'. language::translate('text_just_now', 'Just now') .'</span>';
+				$present_output = '<span style="color: #0a0;">'. t('text_just_now', 'Just now') .'</span>';
 			}
 			return $present_output;
 		}
 
 		// Minutes
 		else if ($minutes <= 60) {
-			return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $minutes, '%unit' => language::translate('time_unit_min', 'min')]);
+			return strtr(t('text_n_time_ago', '{n} {unit} ago'), [
+				'{n}' => $minutes,
+				'{unit}' => t('time_unit_min', 'min')
+			]);
 		}
 
 		// Hours
 		else if ($hours <= 24) {
-			return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $hours, '%unit' => language::translate('time_unit_h', 'h')]);
+			return strtr(t('text_n_time_ago', '{n} {unit} ago'), [
+				'{n}' => $hours,
+				'{unit}' => t('time_unit_h', 'h')
+			]);
 		}
 
 		// Days
 		else if ($days <= 7) {
 			if ($days == 1) {
-				return language::translate('title_yesterday', 'Yesterday');
-				//return strtr(language::translate('title_yesterday', 'Yesterday') . ' %time', ['%time' => language::strftime(language::$selected['format_time'], $timestamp)]);
+				return t('title_yesterday', 'Yesterday');
+				//return strtr(t('title_yesterday', 'Yesterday') . ' {time}', [
+				//	'{time}' => language::strftime(language::$selected['format_time'], $timestamp)
+				//]);
 			} else {
-				return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $days, '%unit' => language::translate('time_unit_days', 'days')]);
+				return strtr(t('text_n_time_ago', '{n} {unit} ago'), [
+					'{n}' => $days,
+					'{unit}' => t('time_unit_days', 'days')
+				]);
 			}
 		}
 
@@ -77,7 +88,10 @@
 			if ($weeks==1) {
 				return 'A week ago';
 			} else {
-				return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $weeks, '%unit' => language::translate('time_unit_weeks', 'weeks')]);
+				return strtr(t('text_n_time_ago', '{n} {unit} ago'), [
+					'{n}' => $weeks,
+					'{unit}' => t('time_unit_weeks', 'weeks')
+				]);
 			}
 		}
 
@@ -86,7 +100,10 @@
 			if ($months == 1) {
 				return 'A month ago';
 			} else {
-				return strtr(language::translate('text_n_time_ago', '%n %unit ago'), ['%n' => $months, '%unit' => language::translate('time_unit_months', 'months')]);
+				return strtr(t('text_n_time_ago', '{n} {unit} ago'), [
+					'{n}' => $months,
+					'{unit}' => t('time_unit_months', 'months')
+				]);
 			}
 		}
 
@@ -97,12 +114,12 @@
 
 		// Ages ago
 		else if ($years > 100) {
-			return language::translate('text_when_dinosaurs_roamed_the_earth', 'When dinosaurs roamed the Earth');
+			return t('text_when_dinosaurs_roamed_the_earth', 'When dinosaurs roamed the Earth');
 		}
 
-		return strtr(language::translate('text_n_time_ago', '%n %unit ago'), [
-			'%n' => $years,
-			'%unit' => language::translate('time_unit_years', 'years')
+		return strtr(t('text_n_time_ago', '{n} {unit} ago'), [
+			'{n}' => $years,
+			'{unit}' => t('time_unit_years', 'years')
 		]);
 	}
 
@@ -314,26 +331,28 @@
 
 			// If tomorrow
 			if ($timestamp > (new \DateTime())->modify('+1 day')->setTime(0, 0)) {
-				return language::translate('text_tomorrow', 'Tomorrow') . ' ' . datetime_format('time', $timestamp);
+				return t('text_tomorrow', 'Tomorrow') . ' ' . datetime_format('time', $timestamp);
 			}
 
 			return datetime_format('datetime', $timestamp);
 		}
 
 		if ($timestamp > (new \DateTime())->modify('-1 minute')) {
-			return language::translate('text_just_now', 'Just now');
+			return t('text_just_now', 'Just now');
 		}
 
 		if ($timestamp > (new \DateTime())->modify('-1 hour')) {
-			return strtr(language::translate('text_n_minutes_ago', '%n minutes_ago'), ['%n' => (new \DateTime())->diff($timestamp)->i]);
+			return strtr(t('text_n_minutes_ago', '{n} minutes ago'), [
+				'{n}' => (new \DateTime())->diff($timestamp)->i
+			]);
 		}
 
 		if ($timestamp > (new \DateTime())->setTime(0, 0)) {
-			return language::translate('text_today', 'Today') . ' ' . datetime_format('time', $timestamp);
+			return t('text_today', 'Today') . ' ' . datetime_format('time', $timestamp);
 		}
 
 		if ($timestamp > (new \DateTime())->modify('-1 day')->setTime(0, 0)) {
-			return language::translate('text_yesterday', 'Yesterday') . ' ' . datetime_format('time', $timestamp);
+			return t('text_yesterday', 'Yesterday') . ' ' . datetime_format('time', $timestamp);
 		}
 
 		return datetime_format('datetime', $timestamp);

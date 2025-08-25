@@ -32,8 +32,8 @@
 				'upgrades' => [],
 				'files' => [],
 				'installed' => false,
-				'date_updated' => null,
-				'date_created' => date('Y-m-d H:i:s'),
+				'updated_at' => null,
+				'created_at' => date('Y-m-d H:i:s'),
 			];
 
 			$this->previous = $this->data;
@@ -72,8 +72,8 @@
 			$this->data['version'] = fallback($dom->getElementsByTagName('version')->item(0)->textContent, date('Y-m-d', filemtime($this->data['location'] .'vmod.xml')));
 			$this->data['description'] = fallback($dom->getElementsByTagName('description')->item(0)->textContent, '');
 			$this->data['author'] = fallback($dom->getElementsByTagName('author')->item(0)->textContent, '');
-			$this->data['date_created'] = date('Y-m-d H:i:s', filectime($this->data['location'] .'vmod.xml'));
-			$this->data['date_updated'] = date('Y-m-d H:i:s', filemtime($this->data['location'] .'vmod.xml'));
+			$this->data['created_at'] = date('Y-m-d H:i:s', filectime($this->data['location'] .'vmod.xml'));
+			$this->data['updated_at'] = date('Y-m-d H:i:s', filemtime($this->data['location'] .'vmod.xml'));
 
 			foreach ($dom->getElementsByTagName('setting') as $setting_node) {
 				$this->data['settings'][] = [

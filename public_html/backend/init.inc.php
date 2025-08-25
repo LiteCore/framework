@@ -9,15 +9,17 @@
 	}
 
 	// Add site manifest
-	document::$head_tags['manifest'] = '<link rel="manifest" href="'. document::href_ilink('manifest.json') .'">';
+	document::$head_tags['manifest'] = '<link rel="manifest" href="'. document::href_ilink('manifest.json') .'" crossorigin="use-credentials">';
 
 	// Assign backend favicons
 	document::$head_tags['favicon'] = implode(PHP_EOL, [
 		'<link rel="icon" href="'. document::href_rlink('app://backend/template/images/favicons/favicon.ico') .'" type="image/x-icon" sizes="32x32 48x48 64x64 96x96">',
-		'<link rel="icon" href="'. document::href_rlink('app://backend/template/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
-		'<link rel="icon" href="'. document::href_rlink('app://backend/template/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
-		'<link rel="icon" href="'. document::href_rlink('app://backend/template/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
+		'<link rel="icon" href="'. document::href_rlink('app://backend/template/images/favicons/favicon-128x128.png') .'" type="image/png" sizes="128x128">',
+		'<link rel="icon" href="'. document::href_rlink('app://backend/template/images/favicons/favicon-192x192.png') .'" type="image/png" sizes="192x192">',
+		'<link rel="icon" href="'. document::href_rlink('app://backend/template/images/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
 	]);
+
+	document::$jsenv['backend']['url'] = document::ilink('b:');
 
 	// Fetch apps
 	$apps = functions::admin_get_apps();

@@ -10,18 +10,18 @@
 		$_POST = $addon->data;
 	}
 
-	breadcrumbs::add(!empty($addon->data['id']) ? language::translate('title_edit_addon', 'Edit Add-on') : language::translate('title_create_new_addon', 'Create New Add-on'));
+	breadcrumbs::add(!empty($addon->data['id']) ? t('title_edit_addon', 'Edit Add-on') : t('title_create_new_addon', 'Create New Add-on'));
 
 	if (isset($_POST['save'])) {
 
 		try {
 
 			if (empty($_POST['id'])) {
-				throw new Exception(language::translate('error_must_enter_id', 'You must enter an ID'));
+				throw new Exception(t('error_must_enter_id', 'You must enter an ID'));
 			}
 
 			if (empty($_POST['name'])) {
-				throw new Exception(language::translate('error_must_enter_name', 'You must enter a name'));
+				throw new Exception(t('error_must_enter_name', 'You must enter a name'));
 			}
 
 			if (empty($_POST['install'])) $_POST['install'] = '';
@@ -52,8 +52,8 @@
 
 			$addon->save();
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/addons'));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/addons'));
 			exit;
 
 		} catch (Exception $e) {
@@ -66,13 +66,13 @@
 		try {
 
 			if (empty($addon->data['id'])) {
-				 throw new Exception(language::translate('error_must_provide_addon', 'You must provide an add-on'));
+				 throw new Exception(t('error_must_provide_addon', 'You must provide an add-on'));
 			}
 
 			$addon->delete();
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/addons'));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/addons'));
 			exit;
 
 		} catch (Exception $e) {
@@ -85,7 +85,7 @@
 		try {
 
 			if (empty($addon->data['id'])) {
-				throw new Exception(language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
+				throw new Exception(t('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
 			}
 
 			if (empty($_FILES['files'])) {
@@ -102,7 +102,7 @@
 				move_uploaded_file($_FILES['files']['tmp_name'][$key], $new_file);
 			}
 
-			header('Location: ' . document::link());
+			reload();
 			exit;
 
 		} catch (Exception $e) {
@@ -116,17 +116,17 @@
 		try {
 
 			if (empty($addon->data['id'])) {
-				throw new Exception(language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
+				throw new Exception(t('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'));
 			}
 
 			if (empty($_POST['file'])) {
-				throw new Exception(language::translate('error_must_specify_a_file', 'You must specify a file'));
+				throw new Exception(t('error_must_specify_a_file', 'You must specify a file'));
 			}
 
 			$file = $addon->data['location'] . functions::file_strip_path($_POST['file']);
 
 			if (!file_exists($file)) {
-				throw new Exception(language::translate('error_file_does_not_exist', 'File does not exist'));
+				throw new Exception(t('error_file_does_not_exist', 'File does not exist'));
 			}
 
 			switch ($_POST['storage_action']) {
@@ -139,7 +139,7 @@
 				case 'rename':
 
 					if (empty($_POST['new_name'])) {
-						throw new Exception(language::translate('error_must_provide_new_name', 'You must provide a new name'));
+						throw new Exception(t('error_must_provide_new_name', 'You must provide a new name'));
 					}
 
 					functions::file_move($file, $addon->data['location'] . functions::file_strip_path($_POST['new_name']));
@@ -147,10 +147,10 @@
 					break;
 
 				default:
-					throw new Exception(language::translate('error_unknown_action', 'Unknown action'));
+					throw new Exception(t('error_unknown_action', 'Unknown action'));
 			}
 
-			header('Location: ' . document::link());
+			reload();
 			exit;
 
 		} catch (Exception $e) {
@@ -161,24 +161,24 @@
 	}
 
 	$on_error_options = [
-		'warning' => language::translate('title_warning', 'Warning'),
-		'ignore' => language::translate('title_ignore', 'Ignore'),
-		'cancel' => language::translate('title_cancel', 'Cancel'),
+		'warning' => t('title_warning', 'Warning'),
+		'ignore' => t('title_ignore', 'Ignore'),
+		'cancel' => t('title_cancel', 'Cancel'),
 	];
 
 	$method_options = [
-		'replace' => language::translate('title_replace', 'Replace'),
-		'before' => language::translate('title_before', 'Before'),
-		'after' => language::translate('title_after', 'After'),
-		'top' => language::translate('title_top', 'Top'),
-		'bottom' => language::translate('title_bottom', 'Bottom'),
-		'all' => language::translate('title_all', 'All'),
+		'replace' => t('title_replace', 'Replace'),
+		'before' => t('title_before', 'Before'),
+		'after' => t('title_after', 'After'),
+		'top' => t('title_top', 'Top'),
+		'bottom' => t('title_bottom', 'Bottom'),
+		'all' => t('title_all', 'All'),
 	];
 
 	$type_options = [
-		'inline' => language::translate('title_inline', 'Inline'),
-		'multiline' => language::translate('title_multiline', 'Multiline'),
-		'regex' => language::translate('title_regex', 'RegEx'),
+		'inline' => t('title_inline', 'Inline'),
+		'multiline' => t('title_multiline', 'Multiline'),
+		'regex' => t('title_regex', 'RegEx'),
 	];
 
 	// List of files
@@ -370,18 +370,18 @@ textarea.warning {
 <div class="card">
 	<div class="card-header">
 		<div class="card-title">
-			<?php echo $app_icon; ?> <?php echo !empty($addon->data['id']) ? language::translate('title_edit_addon', 'Edit Add-on') : language::translate('title_create_new_addon', 'Create New Add-on'); ?>
+			<?php echo $app_icon; ?> <?php echo !empty($addon->data['id']) ? t('title_edit_addon', 'Edit Add-on') : t('title_create_new_addon', 'Create New Add-on'); ?>
 		</div>
 	</div>
 
 	<?php echo functions::form_begin('addon_form', 'post', false, true); ?>
 
 		<nav class="tabs">
-			<a class="tab-item active" href="#tab-general" data-toggle="tab"><?php echo language::translate('title_general', 'General'); ?></a>
-			<a class="tab-item" href="#tab-modifications" data-toggle="tab"><?php echo language::translate('title_modifications', 'Modifications'); ?></a>
-			<a class="tab-item" href="#tab-aliases" data-toggle="tab"><?php echo language::translate('title_aliases', 'Aliases'); ?></a>
-			<a class="tab-item" href="#tab-settings" data-toggle="tab"><?php echo language::translate('title_settings', 'Settings'); ?></a>
-			<a class="tab-item" href="#tab-install" data-toggle="tab"><?php echo language::translate('title_install_uninstall', 'Install/Uninstall'); ?></a>
+			<a class="tab-item active" href="#tab-general" data-toggle="tab"><?php echo t('title_general', 'General'); ?></a>
+			<a class="tab-item" href="#tab-modifications" data-toggle="tab"><?php echo t('title_modifications', 'Modifications'); ?></a>
+			<a class="tab-item" href="#tab-aliases" data-toggle="tab"><?php echo t('title_aliases', 'Aliases'); ?></a>
+			<a class="tab-item" href="#tab-settings" data-toggle="tab"><?php echo t('title_settings', 'Settings'); ?></a>
+			<a class="tab-item" href="#tab-install" data-toggle="tab"><?php echo t('title_install_uninstall', 'Install/Uninstall'); ?></a>
 		</nav>
 
 		<div class="card-body">
@@ -391,52 +391,52 @@ textarea.warning {
 					<div class="grid">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label><?php echo language::translate('title_status', 'Status'); ?></label>
+								<label><?php echo t('title_status', 'Status'); ?></label>
 								<?php echo functions::form_toggle('status', 'e/d', true); ?>
 							</div>
 
 							<div class="form-group">
-								<label><?php echo language::translate('title_id', 'ID'); ?></label>
+								<label><?php echo t('title_id', 'ID'); ?></label>
 								<?php echo functions::form_input_text('id', true, 'required placeholder="my_awesome_addon" pattern="[0-9a-zA-Z_-]+"'); ?>
 							</div>
 
 							<div class="grid">
 								<div class="form-group col-md-8">
-									<label><?php echo language::translate('title_name', 'Name'); ?></label>
+									<label><?php echo t('title_name', 'Name'); ?></label>
 									<?php echo functions::form_input_text('name', true, 'required placeholder="My Awesome Add-on"'); ?>
 								</div>
 
 								<div class="form-group col-md-4">
-									<label><?php echo language::translate('title_version', 'Version'); ?></label>
+									<label><?php echo t('title_version', 'Version'); ?></label>
 									<?php echo functions::form_input_text('version', true, 'placeholder="'. date('Y-m-d') .'"'); ?>
 								</div>
 							</div>
 
 							<div class="form-group">
-								<label><?php echo language::translate('title_description', 'Description'); ?></label>
+								<label><?php echo t('title_description', 'Description'); ?></label>
 								<?php echo functions::form_input_text('description', true); ?>
 							</div>
 
 							<div class="form-group">
-								<label><?php echo language::translate('title_author', 'Author'); ?></label>
+								<label><?php echo t('title_author', 'Author'); ?></label>
 								<?php echo functions::form_input_text('author', true); ?>
 							</div>
 
 							<div class="form-group">
-								<label><?php echo language::translate('title_storage_location', 'Storage Location'); ?></label>
-								<div class="form-input" readyonly><?php echo !empty($addon->data['location']) ? $addon->data['location'] : '<em>'. language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage') .'</em>'; ?></div>
+								<label><?php echo t('title_storage_location', 'Storage Location'); ?></label>
+								<div class="form-input" readyonly><?php echo !empty($addon->data['location']) ? $addon->data['location'] : '<em>'. t('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage') .'</em>'; ?></div>
 							</div>
 
 							<?php if (!empty($addon->data['id'])) { ?>
 							<div class="grid">
 								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_date_created', 'Date Created'); ?></label>
-									<div><?php echo functions::datetime_when($addon->data['date_created']); ?></div>
+									<label><?php echo t('title_created_at', 'Date Created'); ?></label>
+									<div><?php echo functions::datetime_when($addon->data['created_at']); ?></div>
 								</div>
 
 								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_date_updated', 'Date Updated'); ?></label>
-									<div><?php echo !empty($addon->data['date_updated']) ? functions::datetime_when($addon->data['date_updated']): '-'; ?></div>
+									<label><?php echo t('title_updated_at', 'Date Updated'); ?></label>
+									<div><?php echo !empty($addon->data['updated_at']) ? functions::datetime_when($addon->data['updated_at']): '-'; ?></div>
 								</div>
 							</div>
 							<?php } ?>
@@ -444,23 +444,23 @@ textarea.warning {
 
 						<div class="col-md-8">
 							<div class="form-group col-md-6">
-								<label><?php echo language::translate('title_file_storage', 'File Storage'); ?></label>
+								<label><?php echo t('title_file_storage', 'File Storage'); ?></label>
 								<div class="file-browser form-input">
 									<div class="dropzone">
 
 										<?php if (!empty($addon->data['id'])) { ?>
 										<ul class="list flex flex-rows">
-											<li><strong><?php echo functions::draw_fonticon('icon-folder icon-lg', 'style="color: #7ccdff;"'); ?> [<?php echo language::translate('title_root', 'Root'); ?>]</strong>
+											<li><strong><?php echo functions::draw_fonticon('icon-folder icon-lg', 'style="color: #7ccdff;"'); ?> [<?php echo t('title_root', 'Root'); ?>]</strong>
 												<?php echo $draw_folder_contents($addon->data['location']); ?>
 											</li>
 										</ul>
 
 										<div class="drag-notice">
-											<?php echo language::translate('text_drag_and_drop_files_and_folders_here', 'Drag and drop files and folders here'); ?>
+											<?php echo t('text_drag_and_drop_files_and_folders_here', 'Drag and drop files and folders here'); ?>
 										</div>
 										<?php } else { ?>
 										<div>
-											<em><?php echo language::translate('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'); ?></em>
+											<em><?php echo t('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage'); ?></em>
 										</div>
 										<?php } ?>
 									</div>
@@ -468,7 +468,7 @@ textarea.warning {
 									<?php if (!empty($addon->data['id'])) { ?>
 									<div class="upload-bar">
 										<?php echo functions::form_input_file('files[]', 'multiple'); ?>
-										<?php echo functions::form_button('upload', ['true', language::translate('title_upload', 'Upload')]); ?>
+										<?php echo functions::form_button('upload', ['true', t('title_upload', 'Upload')]); ?>
 									</div>
 									<?php } ?>
 								</div>
@@ -480,12 +480,12 @@ textarea.warning {
 
 				<div id="tab-modifications" class="tab-pane">
 
-					<h2><?php echo language::translate('title_modifications', 'Modifications'); ?></h2>
+					<h2><?php echo t('title_modifications', 'Modifications'); ?></h2>
 
 					<nav class="tabs">
 						<?php foreach (array_keys($addon->data['files']) as $f) { ?>
 						<a class="tab-item" data-toggle="tab" href="#tab-<?php echo $f; ?>">
-							<span class="file"><?php echo functions::escape_html($_POST['files'][$f]['name']); ?></span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span>
+							<span class="file"><?php echo functions::escape_html($_POST['files'][$f]['name']); ?></span> <span class="remove" title="<?php t('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span>
 						</a>
 						<?php } ?>
 						<a class="tab-item add" href="#"><?php echo functions::draw_fonticon('icon-plus'); ?></a>
@@ -499,10 +499,10 @@ textarea.warning {
 							<div class="grid">
 								<div class="col-md-6">
 
-									<h3><?php echo language::translate('title_file_to_modify', 'File To Modify'); ?></h3>
+									<h3><?php echo t('title_file_to_modify', 'File To Modify'); ?></h3>
 
 									<div class="form-group">
-										<label><?php echo language::translate('title_file_pattern', 'File Pattern'); ?></label>
+										<label><?php echo t('title_file_pattern', 'File Pattern'); ?></label>
 										<?php echo functions::form_input_text('files['.$f.'][name]', true, 'placeholder="path/to/file.php" list="scripts"'); ?>
 									</div>
 
@@ -511,7 +511,7 @@ textarea.warning {
 
 								<div class="col-md-6">
 
-									<h3><?php echo language::translate('title_operations', 'Operations'); ?></h3>
+									<h3><?php echo t('title_operations', 'Operations'); ?></h3>
 
 									<div class="operations">
 										<?php $i=1; foreach (array_keys($_POST['files'][$f]['operations']) as $o) { ?>
@@ -523,27 +523,27 @@ textarea.warning {
 												<a class="btn btn-default btn-sm remove" href="#"><?php echo functions::draw_fonticon('remove'); ?></a>
 											</div>
 
-											<h3><?php echo language::translate('title_operation', 'Operation'); ?> #<span class="number"><?php echo $i++;?></span></h3>
+											<h3><?php echo t('title_operation', 'Operation'); ?> #<span class="number"><?php echo $i++;?></span></h3>
 
 											<div class="grid">
 												<div class="form-group col-md-3">
-													<label><?php echo language::translate('title_method', 'Method'); ?></label>
+													<label><?php echo t('title_method', 'Method'); ?></label>
 													<?php echo functions::form_select('files['.$f.'][operations]['.$o.'][method]', $method_options, true); ?>
 												</div>
 
 												<div class="form-group col-md-6">
-													<label><?php echo language::translate('title_match_type', 'Match Type'); ?></label>
+													<label><?php echo t('title_match_type', 'Match Type'); ?></label>
 													<?php echo functions::form_toggle('files['.$f.'][operations]['.$o.'][type]', $type_options, (!isset($_POST['files'][$f]['operations'][$o]['type']) || $_POST['files'][$f]['operations'][$o]['type'] == '') ? 'multiline' : true); ?>
 												</div>
 
 												<div class="form-group col-md-3">
-													<label><?php echo language::translate('title_on_error', 'On Error'); ?></label>
+													<label><?php echo t('title_on_error', 'On Error'); ?></label>
 													<?php echo functions::form_select('files['.$f.'][operations]['.$o.'][onerror]', $on_error_options, true); ?>
 												</div>
 											</div>
 
 											<div class="form-group">
-												<h4><?php echo language::translate('title_find', 'Find'); ?></h4>
+												<h4><?php echo t('title_find', 'Find'); ?></h4>
 												<?php if (isset($_POST['files'][$f]['operations'][$o]['type']) && in_array($_POST['files'][$f]['operations'][$o]['type'], ['inline', 'regex'])) { ?>
 												<?php echo functions::form_input_text('files['.$f.'][operations]['.$o.'][find][content]', true, 'class="form-code" required'); ?>
 												<?php } else { ?>
@@ -553,23 +553,23 @@ textarea.warning {
 
 											<div class="grid" style="font-size: .8em;">
 												<div class="form-group col-md-2">
-													<label><?php echo language::translate('title_index', 'Index'); ?></label>
+													<label><?php echo t('title_index', 'Index'); ?></label>
 													<?php echo functions::form_input_text('files['.$f.'][operations]['.$o.'][find][index]', true, 'placeholder="1,3,.."'); ?>
 												</div>
 
 												<div class="form-group col-md-2">
-													<label><?php echo language::translate('title_offset_before', 'Offset Before'); ?></label>
+													<label><?php echo t('title_offset_before', 'Offset Before'); ?></label>
 													<?php echo functions::form_input_text('files['.$f.'][operations]['.$o.'][find][offset-before]', true, 'placeholder="0"'); ?>
 												</div>
 
 												<div class="form-group col-md-2">
-													<label><?php echo language::translate('title_offset_after', 'Offset After'); ?></label>
+													<label><?php echo t('title_offset_after', 'Offset After'); ?></label>
 													<?php echo functions::form_input_text('files['.$f.'][operations]['.$o.'][find][offset-after]', true, 'placeholder="0"'); ?>
 												</div>
 											</div>
 
 											<div class="form-group">
-												<h4><?php echo language::translate('title_insert', 'Insert'); ?></h4>
+												<h4><?php echo t('title_insert', 'Insert'); ?></h4>
 												<?php if (isset($_POST['files'][$f]['operations'][$o]['type']) && in_array($_POST['files'][$f]['operations'][$o]['type'], ['inline', 'regex'])) { ?>
 												<?php echo functions::form_input_text('files['.$f.'][operations]['.$o.'][insert][content]', true, 'class="form-code"'); ?>
 												<?php } else { ?>
@@ -584,7 +584,7 @@ textarea.warning {
 
 									<div class="text-end">
 										<a class="btn btn-default add" href="#">
-											<?php echo functions::draw_fonticon('icon-plus', 'style="color: #0c0;"'); ?> <?php echo language::translate('title_add_operation', 'Add Operation'); ?>
+											<?php echo functions::draw_fonticon('icon-plus', 'style="color: #0c0;"'); ?> <?php echo t('title_add_operation', 'Add Operation'); ?>
 										</a>
 									</div>
 
@@ -599,7 +599,7 @@ textarea.warning {
 
 				<div id="tab-aliases" class="tab-pane">
 
-					<h2><?php echo language::translate('title_aliases', 'Aliases'); ?></h2>
+					<h2><?php echo t('title_aliases', 'Aliases'); ?></h2>
 
 					<div class="aliases">
 
@@ -607,7 +607,7 @@ textarea.warning {
 						<fieldset class="alias">
 							<div class="grid">
 								<div class="form-group col-md-4">
-									<label><?php echo language::translate('title_key', 'Key'); ?></label>
+									<label><?php echo t('title_key', 'Key'); ?></label>
 									<div class="input-group">
 										<span class="input-group-text" style="font-family: monospace;">{alias:</span>
 										<?php echo functions::form_input_text('aliases['.$key.'][key]', true, 'required'); ?>
@@ -616,14 +616,14 @@ textarea.warning {
 								</div>
 
 								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_value', 'Value'); ?></label>
+									<label><?php echo t('title_value', 'Value'); ?></label>
 									<?php echo functions::form_input_text('aliases['.$key.'][value]'); ?>
 								</div>
 
 								<div class="col-md-2" style="align-self: center;">
-									<?php echo functions::form_button('aliases[new_alias_index][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_up', 'Move Up')) .'"'); ?>
-									<?php echo functions::form_button('aliases[new_alias_index][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_down', 'Move Down')) .'"'); ?>
-									<?php echo functions::form_button('aliases[new_alias_index][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_remove', 'Remove')) .'"'); ?>
+									<?php echo functions::form_button('aliases[new_alias_index][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_up', 'Move Up')) .'"'); ?>
+									<?php echo functions::form_button('aliases[new_alias_index][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_down', 'Move Down')) .'"'); ?>
+									<?php echo functions::form_button('aliases[new_alias_index][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_remove', 'Remove')) .'"'); ?>
 								</div>
 							</div>
 						</fieldset>
@@ -632,21 +632,21 @@ textarea.warning {
 					</div>
 
 					<div class="form-group" style="margin-top: 2em;">
-						<?php echo functions::form_button('add_alias', language::translate('title_add_alias', 'Add alias'), 'button', 'class="btn btn-default"', 'add'); ?>
+						<?php echo functions::form_button('add_alias', t('title_add_alias', 'Add alias'), 'button', 'class="btn btn-default"', 'add'); ?>
 					</div>
 
 				</div>
 
 				<div id="tab-settings" class="tab-pane">
 
-					<h2><?php echo language::translate('title_settings', 'Settings'); ?></h2>
+					<h2><?php echo t('title_settings', 'Settings'); ?></h2>
 
 					<div id="settings" style="max-width: 1200px;">
 						<?php if (!empty($_POST['settings'])) foreach (array_keys($_POST['settings']) as $key) { ?>
 						<fieldset class="setting">
 							<div class="grid">
 								<div class="form-group col-md-4">
-									<label><?php echo language::translate('title_key', 'Key'); ?></label>
+									<label><?php echo t('title_key', 'Key'); ?></label>
 									<div class="input-group">
 										<span class="input-group-text" style="font-family: monospace;">{setting:</span>
 										<?php echo functions::form_input_text('settings['.$key.'][key]', true, 'required'); ?>
@@ -655,30 +655,30 @@ textarea.warning {
 								</div>
 
 								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_title', 'Title'); ?></label>
+									<label><?php echo t('title_title', 'Title'); ?></label>
 									<?php echo functions::form_input_text('settings['.$key.'][title]', true, 'required'); ?>
 								</div>
 
 								<div class="col-md-2 text-center" style="align-self: center;">
-									<?php echo functions::form_button('settings['.$key.'][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_up', 'Move Up')) .'"'); ?>
-									<?php echo functions::form_button('settings['.$key.'][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_down', 'Move Down')) .'"'); ?>
-									<?php echo functions::form_button('settings['.$key.'][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_remove', 'Remove')) .'"'); ?>
+									<?php echo functions::form_button('settings['.$key.'][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_up', 'Move Up')) .'"'); ?>
+									<?php echo functions::form_button('settings['.$key.'][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_down', 'Move Down')) .'"'); ?>
+									<?php echo functions::form_button('settings['.$key.'][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_remove', 'Remove')) .'"'); ?>
 								</div>
 							</div>
 
 							<div class="form-group">
-								<label><?php echo language::translate('title_description', 'Description'); ?></label>
+								<label><?php echo t('title_description', 'Description'); ?></label>
 								<?php echo functions::form_input_text('settings['.$key.'][description]', true, 'required'); ?>
 							</div>
 
 							<div class="grid">
 								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_function', 'Function'); ?></label>
+									<label><?php echo t('title_function', 'Function'); ?></label>
 									<?php echo functions::form_input_text('settings['.$key.'][function]', true, 'required placeholder="text()"'); ?>
 								</div>
 
 								<div class="form-group col-md-6">
-									<label><?php echo language::translate('title_default_value', 'Default Value'); ?></label>
+									<label><?php echo t('title_default_value', 'Default Value'); ?></label>
 									<?php echo functions::form_input_text('settings['.$key.'][default_value]'); ?>
 								</div>
 							</div>
@@ -687,7 +687,7 @@ textarea.warning {
 					</div>
 
 					<div class="form-group" style="margin-top: 2em;">
-						<?php echo functions::form_button('add_setting', language::translate('title_add_setting', 'Add Setting'), 'button', 'class="btn btn-default"', 'add'); ?>
+						<?php echo functions::form_button('add_setting', t('title_add_setting', 'Add Setting'), 'button', 'class="btn btn-default"', 'add'); ?>
 					</div>
 
 				</div>
@@ -696,35 +696,35 @@ textarea.warning {
 
 					<div class="grid">
 						<div class="col-md-6">
-							<h2><?php echo language::translate('title_install', 'Install'); ?></h2>
+							<h2><?php echo t('title_install', 'Install'); ?></h2>
 
 							<div class="form-group">
-								<label><?php echo language::translate('title_script', 'Script'); ?></label>
+								<label><?php echo t('title_script', 'Script'); ?></label>
 								<?php echo functions::form_input_code('install', true, 'style="height: 200px;"'); ?>
 							</div>
 						</div>
 
 						<div class="col-md-6">
-							<h2><?php echo language::translate('title_uninstall', 'Uninstall'); ?></h2>
+							<h2><?php echo t('title_uninstall', 'Uninstall'); ?></h2>
 							<div class="form-group">
-								<label><?php echo language::translate('title_script', 'Script'); ?></label>
+								<label><?php echo t('title_script', 'Script'); ?></label>
 								<?php echo functions::form_input_code('uninstall', true, 'style="height: 200px;"'); ?>
 							</div>
 						</div>
 					</div>
 
-					<h2><?php echo language::translate('title_upgrade_patches', 'Upgrade Patches'); ?></h2>
+					<h2><?php echo t('title_upgrade_patches', 'Upgrade Patches'); ?></h2>
 
 					<div class="upgrades">
 						<?php if (!empty($_POST['upgrades'])) foreach (array_keys($_POST['upgrades']) as $key) { ?>
 						<fieldset class="upgrade">
 							<div class="form-group" style="max-width: 250px;">
-								<label><?php echo language::translate('title_version', 'Version'); ?></label>
+								<label><?php echo t('title_version', 'Version'); ?></label>
 								<?php echo functions::form_input_text('upgrades['.$key.'][version]', true); ?>
 							</div>
 
 							<div class="form-group">
-								<label><?php echo language::translate('title_script', 'Script'); ?></label>
+								<label><?php echo t('title_script', 'Script'); ?></label>
 								<?php echo functions::form_input_code('upgrades['.$key.'][script]', true, 'style="height: 200px;"'); ?>
 							</div>
 						</fieldset>
@@ -732,7 +732,7 @@ textarea.warning {
 					</div>
 
 					<div class="form-group" style="margin-top: 2em;">
-						<?php echo functions::form_button('add_patch', language::translate('title_add_patch', 'Add Patch'), 'button', 'class="btn btn-default"', 'add'); ?>
+						<?php echo functions::form_button('add_patch', t('title_add_patch', 'Add Patch'), 'button', 'class="btn btn-default"', 'add'); ?>
 					</div>
 
 				</div>
@@ -740,7 +740,7 @@ textarea.warning {
 
 			<div class="card-action">
 				<?php echo functions::form_button_predefined('save'); ?>
-				<?php if (!empty($addon->data['id'])) echo functions::form_button('delete', language::translate('title_delete', 'Delete'), 'button', 'class="btn btn-danger"', 'delete'); ?>
+				<?php if (!empty($addon->data['id'])) echo functions::form_button('delete', t('title_delete', 'Delete'), 'button', 'class="btn btn-danger"', 'delete'); ?>
 				<?php echo functions::form_button_predefined('cancel'); ?>
 			</div>
 		</div>
@@ -750,13 +750,13 @@ textarea.warning {
 <div id="modal-uninstall" style="display: none;">
 	<?php echo functions::form_begin('uninstall_form', 'post'); ?>
 
-		<h2><?php echo language::translate('title_uninstall_vmod', 'Uninstall vMod'); ?></h2>
+		<h2><?php echo t('title_uninstall_vmod', 'Uninstall vMod'); ?></h2>
 
-		<p><label><?php echo functions::form_checkbox('cleanup', '1', ''); ?> <?php echo language::translate('text_remove_all_traces_of_the_vmod', 'Remove all traces of the vMod such as database tables, settings, etc.'); ?></label></p>
+		<p><label><?php echo functions::form_checkbox('cleanup', '1', ''); ?> <?php echo t('text_remove_all_traces_of_the_vmod', 'Remove all traces of the vMod such as database tables, settings, etc.'); ?></label></p>
 
 		<div>
-			<?php echo functions::form_button('uninstall', language::translate('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger"'); ?>
-			<?php echo functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button'); ?>
+			<?php echo functions::form_button('uninstall', t('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger"'); ?>
+			<?php echo functions::form_button('cancel', t('title_cancel', 'Cancel'), 'button'); ?>
 		</div>
 
 	<?php echo functions::form_end(); ?>
@@ -769,7 +769,7 @@ textarea.warning {
 			<div class="col-md-6">
 
 				<div class="form-group">
-					<label><?php echo language::translate('title_file_pattern', 'File Pattern'); ?></label>
+					<label><?php echo t('title_file_pattern', 'File Pattern'); ?></label>
 					<?php echo functions::form_input_text('files[new_tab_index][name]', true, 'placeholder="path/to/file.php" list="scripts"'); ?>
 			 </div>
 
@@ -778,7 +778,7 @@ textarea.warning {
 
 			<div class="col-md-6">
 				<div class="operations"></div>
-				<div><a class="btn btn-default add" href="#"><?php echo functions::draw_fonticon('icon-plus', 'style="color: #0c0;"'); ?> <?php echo language::translate('title_add_operation', 'Add Operation'); ?></a></div>
+				<div><a class="btn btn-default add" href="#"><?php echo functions::draw_fonticon('icon-plus', 'style="color: #0c0;"'); ?> <?php echo t('title_add_operation', 'Add Operation'); ?></a></div>
 			</div>
 		</div>
 
@@ -794,50 +794,50 @@ textarea.warning {
 			<a class="btn btn-default btn-sm remove" href="#"><?php echo functions::draw_fonticon('remove'); ?></a>
 		</div>
 
-		<h3><?php echo language::translate('title_operation', 'Operation'); ?> #<span class="number"></span></h3>
+		<h3><?php echo t('title_operation', 'Operation'); ?> #<span class="number"></span></h3>
 
 		<div class="grid">
 			<div class="form-group col-md-3">
-				<label><?php echo language::translate('title_method', 'Method'); ?></label>
+				<label><?php echo t('title_method', 'Method'); ?></label>
 				<?php echo functions::form_select('files[current_tab_index][operations][new_operation_index][method]', $method_options, ''); ?>
 			</div>
 
 			<div class="form-group col-md-6">
-				<label><?php echo language::translate('title_match_type', 'Match Type'); ?></label>
+				<label><?php echo t('title_match_type', 'Match Type'); ?></label>
 				<?php echo functions::form_toggle('files[current_tab_index][operations][new_operation_index][type]', $type_options, 'multiline'); ?>
 			</div>
 
 			<div class="form-group col-md-3">
-				<label><?php echo language::translate('title_on_error', 'On Error'); ?></label>
+				<label><?php echo t('title_on_error', 'On Error'); ?></label>
 				<?php echo functions::form_select('files[current_tab_index][operations][new_operation_index][onerror]', $on_error_options, ''); ?>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<h4><?php echo language::translate('title_find', 'Find'); ?></h4>
+			<h4><?php echo t('title_find', 'Find'); ?></h4>
 			<?php echo functions::form_input_code('files[current_tab_index][operations][new_operation_index][find][content]', '', 'class="form-code" required'); ?>
 
 		</div>
 
 		<div class="grid" style="font-size: .8em;">
 			<div class="form-group col-md-2">
-				<label><?php echo language::translate('title_index', 'Index'); ?></label>
+				<label><?php echo t('title_index', 'Index'); ?></label>
 				<?php echo functions::form_input_text('files[current_tab_index][operations][new_operation_index][find][index]', '', 'placeholder="1,3,.."'); ?>
 			</div>
 
 			<div class="form-group col-md-2">
-				<label><?php echo language::translate('title_offset_before', 'Offset Before'); ?></label>
+				<label><?php echo t('title_offset_before', 'Offset Before'); ?></label>
 				<?php echo functions::form_input_text('files[current_tab_index][operations][new_operation_index][find][offset-before]', '', 'placeholder="0"'); ?>
 			</div>
 
 			<div class="form-group col-md-2">
-				<label><?php echo language::translate('title_offset_after', 'Offset After'); ?></label>
+				<label><?php echo t('title_offset_after', 'Offset After'); ?></label>
 				<?php echo functions::form_input_text('files[current_tab_index][operations][new_operation_index][find][offset-after]', '', 'placeholder="0"'); ?>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<h4><?php echo language::translate('title_insert', 'Insert'); ?></h4>
+			<h4><?php echo t('title_insert', 'Insert'); ?></h4>
 			<?php echo functions::form_input_code('files[current_tab_index][operations][new_operation_index][insert][content]', '', 'class="form-code"'); ?>
 		</div>
 
@@ -863,7 +863,7 @@ textarea.warning {
 	$('.tabs .add').click(function(e){
 		e.preventDefault();
 
-		let tab = '<a class="tab-item" data-toggle="tab" href="#tab-'+ new_tab_index +'"><span class="file">new'+ new_tab_index +'</span> <span class="remove" title="<?php language::translate('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span></a>'
+		let tab = '<a class="tab-item" data-toggle="tab" href="#tab-'+ new_tab_index +'"><span class="file">new'+ new_tab_index +'</span> <span class="remove" title="<?php t('title_remove', 'Remove')?>"><?php echo functions::draw_fonticon('icon-times-circle'); ?></span></a>'
 			.replace(/new_tab_index/g, new_tab_index);
 
 		let tab_pane = $('#new-tab-pane-template').html()
@@ -880,7 +880,7 @@ textarea.warning {
 	$('.tabs').on('click', '.remove', function(e) {
 		e.preventDefault();
 
-		if (!confirm("<?php echo language::translate('text_are_you_sure', 'Are you sure?'); ?>")) return false;
+		if (!confirm("<?php echo t('text_are_you_sure', 'Are you sure?'); ?>")) return false;
 
 		let $tab = $(this).closest('.tab-item'),
 			tab_pane = $(this).closest('.tab-item').attr('href');
@@ -1010,8 +1010,8 @@ textarea.warning {
 		let $contextmenu = $([
 			'<nav class="context-menu">',
 			'  <ul class="flex flex-rows">',
-			'    <li class="item rename"><?php echo functions::draw_fonticon('icon-pencil'); ?> <?php echo language::translate('title_rename', 'Rename'); ?></a>',
-			'    <li class="item delete"><?php echo functions::draw_fonticon('icon-trash'); ?> <?php echo language::translate('title_delete', 'Delete'); ?></a>',
+			'    <li class="item rename"><?php echo functions::draw_fonticon('icon-pencil'); ?> <?php echo t('title_rename', 'Rename'); ?></a>',
+			'    <li class="item delete"><?php echo functions::draw_fonticon('icon-trash'); ?> <?php echo t('title_delete', 'Delete'); ?></a>',
 			'  </ul>',
 			'</nav>',
 		].join('\n'));
@@ -1023,7 +1023,7 @@ textarea.warning {
 			form_data.append('storage_action', 'rename');
 			form_data.append('file', $item.data('path'));
 
-			let new_name = prompt('<?php echo language::translate('title_new_name', 'New Name'); ?>', $item.data('path'));
+			let new_name = prompt('<?php echo t('title_new_name', 'New Name'); ?>', $item.data('path'));
 
 			if (!new_name) {
 				$('.context-menu').remove();
@@ -1051,7 +1051,7 @@ textarea.warning {
 
 		$contextmenu.find('.delete').click(function(){
 
-			if (!confirm("<?php echo language::translate('text_are_you_sure', 'Are you sure?'); ?>")) {
+			if (!confirm("<?php echo t('text_are_you_sure', 'Are you sure?'); ?>")) {
 				$('.context-menu').remove();
 				$('body').off('click');
 				return;
@@ -1213,7 +1213,7 @@ textarea.warning {
 
 		let $operations = $(this).closest('.operations');
 
-		if (!confirm("<?php echo language::translate('text_are_you_sure', 'Are you sure?'); ?>")) return;
+		if (!confirm("<?php echo t('text_are_you_sure', 'Are you sure?'); ?>")) return;
 
 		$(this).closest('.operation').remove();
 		reindex_operations($operations);
@@ -1344,7 +1344,7 @@ textarea.warning {
 			'<fieldset class="alias">',
 			'  <div class="grid">',
 			'    <div class="form-group col-md-4">',
-			'      <label><?php echo language::translate('title_key', 'Key'); ?></label>',
+			'      <label><?php echo t('title_key', 'Key'); ?></label>',
 			'      <div class="input-group">',
 			'        <span class="input-group-text" style="font-family: monospace;">{alias:</span>',
 			'        <?php echo functions::form_input_text('aliases[new_alias_index][key]', '', 'required'); ?>',
@@ -1353,14 +1353,14 @@ textarea.warning {
 			'    </div>',
 			'',
 			'    <div class="form-group col-md-6">',
-			'      <label><?php echo functions::escape_js(language::translate('title_value', 'Value')); ?></label>',
+			'      <label><?php echo functions::escape_js(t('title_value', 'Value')); ?></label>',
 			'      <?php echo functions::escape_js(functions::form_input_text('aliases[new_alias_index][value]', '', 'required')); ?>',
 			'    </div>',
 			'',
 			'    <div class="col-md-2" style="align-self: center;">',
-			'     <?php echo functions::form_button('aliases[new_alias_index][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_up', 'Move Up')) .'"'); ?>',
-			'     <?php echo functions::form_button('aliases[new_alias_index][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_down', 'Move Down')) .'"'); ?>',
-			'     <?php echo functions::form_button('aliases[new_alias_index][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_remove', 'Remove')) .'"'); ?>',
+			'     <?php echo functions::form_button('aliases[new_alias_index][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_up', 'Move Up')) .'"'); ?>',
+			'     <?php echo functions::form_button('aliases[new_alias_index][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_down', 'Move Down')) .'"'); ?>',
+			'     <?php echo functions::form_button('aliases[new_alias_index][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_remove', 'Remove')) .'"'); ?>',
 			'    </div>',
 			'  </div>',
 			'</fieldset>'
@@ -1385,7 +1385,7 @@ textarea.warning {
 	$('#aliases').on('click', 'button[name$="[remove]"]', function(e) {
 		e.preventDefault();
 
-		if (!confirm("<?php echo language::translate('text_are_you_sure', 'Are you sure?'); ?>")) return;
+		if (!confirm("<?php echo t('text_are_you_sure', 'Are you sure?'); ?>")) return;
 		$(this).closest('.alias').remove();
 	});
 
@@ -1399,7 +1399,7 @@ textarea.warning {
 			'<fieldset class="setting">',
 			'  <div class="grid">',
 			'    <div class="form-group col-md-4">',
-			'      <label><?php echo language::translate('title_key', 'Key'); ?></label>',
+			'      <label><?php echo t('title_key', 'Key'); ?></label>',
 			'      <div class="input-group">',
 			'        <span class="input-group-text" style="font-family: monospace;">{setting:</span>',
 			'        <?php echo functions::form_input_text('settings[new_setting_index][key]', '', 'required'); ?>',
@@ -1408,30 +1408,30 @@ textarea.warning {
 			'    </div>',
 			'',
 			'    <div class="form-group col-md-6">',
-			'      <label><?php echo functions::escape_js(language::translate('title_title', 'Title')); ?></label>',
+			'      <label><?php echo functions::escape_js(t('title_title', 'Title')); ?></label>',
 			'      <?php echo functions::escape_js(functions::form_input_text('settings[new_setting_index][title]', '', 'required')); ?>',
 			'    </div>',
 			'',
 			'    <div class="col-md-2 text-center" style="align-self: center;">',
-			'     <?php echo functions::form_button('settings[new_setting_index][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_up', 'Move Up')) .'"'); ?>',
-			'     <?php echo functions::form_button('settings[new_setting_index][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_move_down', 'Move Down')) .'"'); ?>',
-			'     <?php echo functions::form_button('settings[new_setting_index][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(language::translate('title_remove', 'Remove')) .'"'); ?>',
+			'     <?php echo functions::form_button('settings[new_setting_index][move_up]', functions::draw_fonticon('move-up'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_up', 'Move Up')) .'"'); ?>',
+			'     <?php echo functions::form_button('settings[new_setting_index][move_down]', functions::draw_fonticon('move-down'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_move_down', 'Move Down')) .'"'); ?>',
+			'     <?php echo functions::form_button('settings[new_setting_index][remove]', functions::draw_fonticon('remove'), 'button', 'class="btn btn-default btn-sm" title="'. functions::escape_attr(t('title_remove', 'Remove')) .'"'); ?>',
 			'    </div>',
 			'  </div>',
 			'',
 			'  <div class="form-group">',
-			'    <label><?php echo functions::escape_js(language::translate('title_description', 'Description')); ?></label>',
+			'    <label><?php echo functions::escape_js(t('title_description', 'Description')); ?></label>',
 			'    <?php echo functions::escape_js(functions::form_input_text('settings[new_setting_index][description]', '', 'required')); ?>',
 			'  </div>',
 			'',
 			'  <div class="grid">',
 			'    <div class="form-group col-md-6">',
-			'      <label><?php echo functions::escape_js(language::translate('title_function', 'Function')); ?></label>',
+			'      <label><?php echo functions::escape_js(t('title_function', 'Function')); ?></label>',
 			'      <?php echo functions::escape_js(functions::form_input_text('settings[new_setting_index][function]', '', 'required')); ?>',
 			'    </div>',
 			'',
 			'    <div class="form-group col-md-6">',
-			'      <label><?php echo functions::escape_js(language::translate('title_default_value', 'Default Value')); ?></label>',
+			'      <label><?php echo functions::escape_js(t('title_default_value', 'Default Value')); ?></label>',
 			'      <?php echo functions::escape_js(functions::form_input_text('settings[new_setting_index][default_value]', '')); ?>',
 			'    </div>',
 			'  </div>',
@@ -1457,7 +1457,7 @@ textarea.warning {
 	$('#settings').on('click', 'button[name$="[remove]"]', function(e) {
 		e.preventDefault();
 
-		if (!confirm("<?php echo language::translate('text_are_you_sure', 'Are you sure?'); ?>")) return;
+		if (!confirm("<?php echo t('text_are_you_sure', 'Are you sure?'); ?>")) return;
 		$(this).closest('.setting').remove();
 	});
 
@@ -1470,12 +1470,12 @@ textarea.warning {
 		let output = [
 			'<fieldset class="upgrade">',
 			'  <div class="form-group" style="max-width: 250px;">',
-			'    <label><?php echo functions::escape_js(language::translate('title_version', 'Version')); ?></label>',
+			'    <label><?php echo functions::escape_js(t('title_version', 'Version')); ?></label>',
 			'    <?php echo functions::escape_js(functions::form_input_text('upgrades[new_upgrade_patch_index][version]', '')); ?>',
 			'  </div>',
 			'',
 			'  <div class="form-group">',
-			'    <label><?php echo functions::escape_js(language::translate('title_script', 'Script')); ?></label>',
+			'    <label><?php echo functions::escape_js(t('title_script', 'Script')); ?></label>',
 			'    <?php echo functions::escape_js(functions::form_input_code('upgrades[new_upgrade_patch_index][script]', '', 'style="height: 200px;"')); ?>',
 			'  </div>',
 			'</fieldset>'

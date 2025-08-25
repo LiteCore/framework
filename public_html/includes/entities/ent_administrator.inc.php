@@ -45,12 +45,11 @@
 				limit 1;"
 			)->fetch();
 
-			if ($administrator) {
-				$this->data = array_replace($this->data, array_intersect_key($administrator, $this->data));
-			} else {
+			if (!$administrator) {
 				throw new Exception('Could not find administrator (ID: '. (int)$id .') in database.');
 			}
 
+			$this->data = array_replace($this->data, array_intersect_key($administrator, $this->data));
 			$this->data['apps'] = !empty($this->data['apps']) ? json_decode($this->data['apps'], true) : [];
 			$this->data['widgets'] = !empty($this->data['widgets']) ? json_decode($this->data['widgets'], true) : [];
 
@@ -68,15 +67,15 @@
 				". (!empty($this->data['id']) ? "and id != ". (int)$this->data['id'] : "") ."
 				limit 1;"
 			)->num_rows) {
-				throw new Exception(language::translate('error_administrator_conflict', 'The administrator conflicts another administrator in the database'));
+				throw new Exception(t('error_administrator_conflict', 'The administrator conflicts another administrator in the database'));
 			}
 
 			if (!$this->data['id']) {
 
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."administrators
-					(date_created)
-					values ('". ($this->data['date_created'] = date('Y-m-d H:i:s')) ."');"
+					(created_at)
+					values ('". ($this->data['created_at'] = date('Y-m-d H:i:s')) ."');"
 				);
 
 				$this->data['id'] = database::insert_id();
@@ -86,13 +85,15 @@
 				"update ". DB_TABLE_PREFIX ."administrators
 				set status = ". (!empty($this->data['status']) ? 1 : 0) .",
 					username = '". database::input(strtolower($this->data['username'])) ."',
+					firstname = '". database::input($this->data['firstname']) ."',
+					lastname = '". database::input($this->data['lastname']) ."',
 					email = '". database::input(strtolower($this->data['email'])) ."',
 					apps = '". database::input(json_encode($this->data['apps'], JSON_UNESCAPED_SLASHES)) ."',
 					widgets = '". database::input(json_encode($this->data['widgets'], JSON_UNESCAPED_SLASHES)) ."',
 					two_factor_auth = ". (!empty($this->data['two_factor_auth']) ? 1 : 0) .",
-					date_valid_from = ". (empty($this->data['date_valid_from']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['date_valid_from'])) ."'") .",
-					date_valid_to = ". (empty($this->data['date_valid_to']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['date_valid_to'])) ."'") .",
-					date_updated = '". ($this->data['date_updated'] = date('Y-m-d H:i:s')) ."'
+					valid_from = ". (empty($this->data['valid_from']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['valid_from'])) ."'") .",
+					valid_to = ". (empty($this->data['valid_to']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['valid_to'])) ."'") .",
+					updated_at = '". ($this->data['updated_at'] = date('Y-m-d H:i:s')) ."'
 				where id = ". (int)$this->data['id'] ."
 				limit 1;"
 			);

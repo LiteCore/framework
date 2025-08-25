@@ -1,10 +1,12 @@
 <?php
 
+	// This class provides a reference wrapper for modules
 	class ref_module extends abs_reference_entity {
 
 		protected $_data = [];
 		protected $_object = null;
 
+		// Constructor initializes the module with it's ID and loads it's settings
 		function __construct($module_id) {
 
 			$this->_data['module_id'] = (int)$module_id;
@@ -34,17 +36,19 @@
 			$object->priority = isset($object->settings['priority']) ? (int)$object->settings['priority'] : 0;
 
 			if ($type == 'jobs') {
-				$object->date_pushed = $module['date_pushed'];
-				$object->date_processed = $module['date_processed'];
+				$object->last_pushed = $module['last_pushed'];
+				$object->last_processed = $module['last_processed'];
 			}
 
 			$this->_object = $object;
 		}
 
+		// Magic method to call methods dynamically on the module object.
 		public function __call($name, $args) {
 			return method_exists($name, $this->_object) ? call_user_func_array([$this->_object, $name], array_slice($args, 1)) : null;
 		}
 
+		// Protected method to load specific fields dynamically.
 		protected function _load($field) {
 
 			switch($field) {

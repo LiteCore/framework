@@ -3,7 +3,7 @@
 	try {
 
 		if (empty($_GET['addon_id'])) {
-			throw new Exception(language::translate('error_must_provide_an_addon', 'You must provide an add-on'));
+			throw new Exception(t('error_must_provide_an_addon', 'You must provide an add-on'));
 		}
 
 		$addon = new ent_addon($_GET['addon_id']);

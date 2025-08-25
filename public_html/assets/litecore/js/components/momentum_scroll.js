@@ -111,7 +111,7 @@ waitFor('jQuery', ($) => {
 					}
 
 				} else {
-					$self.find('button[name="left"], button[name="right"]').remove()
+					$self.find('button[name="left"], button[name="right"]').remove();
 				}
 
 				/*
@@ -124,9 +124,9 @@ waitFor('jQuery', ($) => {
 				}
 				*/
 
-			}).trigger('resize')
+			}).trigger('resize');
 		})
 	}
 
-	$('[data-toggle*="momentumScroll"]').momentumScroll()
-})
+	$('[data-toggle*="momentumScroll"]').momentumScroll();
+});

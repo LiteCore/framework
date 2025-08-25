@@ -43,11 +43,11 @@
 				limit 1;"
 			)->fetch();
 
-			if ($language) {
-				$this->data = array_intersect_key(array_merge($this->data, $language), $this->data);
-			} else {
+			if (!$language) {
 				throw new Exception('Could not find language ('. functions::escape_html($language_code) .') in database.');
 			}
+
+			$this->data = array_intersect_key(array_merge($this->data, $language), $this->data);
 
 			$this->previous = $this->data;
 		}
@@ -55,11 +55,11 @@
 		public function save() {
 
 			if (empty($this->data['status']) && $this->data['code'] == settings::get('default_language_code')) {
-				throw new Exception(language::translate('error_cannot_disable_default_language', 'You must change the default language before disabling it.'));
+				throw new Exception(t('error_cannot_disable_default_language', 'You must change the default language before disabling it.'));
 			}
 
 			if (empty($this->data['status']) && $this->data['code'] == settings::get('site_language_code')) {
-				throw new Exception(language::translate('error_cannot_disable_site_language', 'You must change the site language before disabling it.'));
+				throw new Exception(t('error_cannot_disable_site_language', 'You must change the site language before disabling it.'));
 			}
 
 			if (database::query(
@@ -71,14 +71,14 @@
 				". (!empty($this->data['id']) ? "and id != ". (int)$this->data['id'] : "") ."
 				limit 1;"
 			)->num_rows) {
-				throw new Exception(language::translate('error_language_conflict', 'The language conflicts with another language in the database'));
+				throw new Exception(t('error_language_conflict', 'The language conflicts with another language in the database'));
 			}
 
 			if (!$this->data['id']) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."languages
-					(date_created)
-					values ('". ($this->data['date_created'] = date('Y-m-d H:i:s')) ."');"
+					(created_at)
+					values ('". ($this->data['created_at'] = date('Y-m-d H:i:s')) ."');"
 				);
 				$this->data['id'] = database::insert_id();
 			}
@@ -104,7 +104,7 @@
 					decimal_point = '". database::input($this->data['decimal_point']) ."',
 					thousands_sep = '". database::input($this->data['thousands_sep'], false, false) ."',
 					priority = ". (int)$this->data['priority'] .",
-					date_updated = '". ($this->data['date_updated'] = date('Y-m-d H:i:s')) ."'
+					updated_at = '". ($this->data['updated_at'] = date('Y-m-d H:i:s')) ."'
 				where id = ". (int)$this->data['id'] ."
 				limit 1;"
 			);
@@ -121,16 +121,39 @@
 							change `text_". database::input($this->previous['code']) ."` `text_". database::input($this->data['code']) ."` text not null;"
 						);
 
-						$info_tables = [
-							//DB_TABLE_PREFIX . "table_info",
-						];
+						foreach ([
+							//DB_TABLE_PREFIX . "table",
+						] as $table) {
 
-						foreach ($info_tables as $table) {
-							database::query(
-								"update ". $table ."
-								set language_code = '". database::input($this->data['code']) ."'
-								where language_code = '". database::input($this->previous['code']) ."';"
-							);
+							$columns = database::query(
+								"show fields from $table;"
+							)->each(function($column) use ($table) {
+
+								if (in_array(strtoupper($column['Type']), ['TEXT', 'MEDIUMTEXT'])) {
+
+									database::query(
+										"select id, `{$column['Field']}`
+										from `$table`
+										where `{$column['Field']}` like '%\"". database::input($this->previous['code']) ."\"%';"
+									)->each(function($row) use ($table, $column) {
+
+										$data = json_decode($row[$column['Field']], true);
+
+										if (json_last_error() === JSON_ERROR_NONE && isset($data[$this->previous['code']])) {
+											$data[$this->data['code']] = $data[$this->previous['code']];
+											unset($data[$this->previous['code']]);
+
+											database::query(
+												"update `$table`
+												set `{$column['Field']}` = '". database::input(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ."'
+												where id = ". (int)$row['id'] ."
+												limit 1;"
+											);
+										}
+									});
+								}
+
+							});
 						}
 					}
 				}
@@ -156,15 +179,15 @@
 		public function delete() {
 
 			if ($this->data['code'] == 'en') {
-				throw new Exception(language::translate('error_cannot_delete_framework_language', 'You cannot delete the PHP framework language. But you can disable it.'));
+				throw new Exception(t('error_cannot_delete_framework_language', 'You cannot delete the PHP framework language. But you can disable it.'));
 			}
 
 			if ($this->data['code'] == settings::get('default_language_code')) {
-				throw new Exception(language::translate('error_cannot_delete_default_language', 'You must change the default language before it can be deleted.'));
+				throw new Exception(t('error_cannot_delete_default_language', 'You must change the default language before it can be deleted.'));
 			}
 
 			if ($this->data['code'] == settings::get('site_language_code')) {
-				throw new Exception(language::translate('error_cannot_delete_site_language', 'You must change the site language before it can be deleted.'));
+				throw new Exception(t('error_cannot_delete_site_language', 'You must change the site language before it can be deleted.'));
 			}
 
 			database::query(
@@ -183,15 +206,37 @@
 				);
 			}
 
-			$info_tables = [
-				//DB_TABLE_PREFIX . "table_info",
-			];
+			foreach ([
+				//DB_TABLE_PREFIX . "table",
+			] as $table) {
 
-			foreach ($info_tables as $table) {
-				database::query(
-					"delete from ". $table ."
-					where language_code = '". database::input($this->data['code']) ."';"
-				);
+				$columns = database::query(
+					"show fields from $table;"
+				)->each(function($column) use ($table) {
+
+					if (in_array(strtoupper($column['Type']), ['TEXT', 'MEDIUMTEXT'])) {
+						$rows = database::query(
+							"select id, `{$column['Field']}`
+							from $table
+							where `{$column['Field']}` like '%\"". database::input($this->data['code']) ."\"%';"
+						)->each(function($row) use ($table, $column) {
+
+							// Remove the language code from the JSON data
+							$data = json_decode($row[$column['Field']], true);
+
+							if (json_last_error() === JSON_ERROR_NONE && isset($data[$this->data['code']])) {
+								unset($data[$this->data['code']]);
+
+								database::query(
+									"update $table
+									set `{$column['Field']}` = '". database::input(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ."'
+									where id = ". (int)$row['id'] ."
+									limit 1;"
+								);
+							}
+						});
+					}
+				});
 			}
 
 			$this->reset();

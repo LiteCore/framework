@@ -64,19 +64,19 @@
 		switch ($name) {
 
 			case 'enable':
-				return functions::form_button('enable', language::translate('title_enable', 'Enable'), 'submit', $parameters, 'on');
+				return functions::form_button('enable', t('title_enable', 'Enable'), 'submit', $parameters, 'on');
 
 			case 'disable':
-				return functions::form_button('disable', language::translate('title_disable', 'Disable'), 'submit', $parameters, 'off');
+				return functions::form_button('disable', t('title_disable', 'Disable'), 'submit', $parameters, 'off');
 
 			case 'save':
-				return functions::form_button('save', language::translate('title_save', 'Save'), 'submit', 'class="btn btn-success"' . ($parameters ? ' '. $parameters : ''), 'save');
+				return functions::form_button('save', t('title_save', 'Save'), 'submit', 'class="btn btn-success"' . ($parameters ? ' '. $parameters : ''), 'save');
 
 			case 'delete':
-				return functions::form_button('delete', language::translate('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. language::translate('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"' . ($parameters ? ' '. $parameters : ''), 'delete');
+				return functions::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"' . ($parameters ? ' '. $parameters : ''), 'delete');
 
 			case 'cancel':
-				return functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"' . ($parameters ? ' '. $parameters : ''), 'cancel');
+				return functions::form_button('cancel', t('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"' . ($parameters ? ' '. $parameters : ''), 'cancel');
 		}
 
 		trigger_error('Unknown predefined button ('. functions::escape_html($name) .')', E_USER_WARNING);
@@ -88,7 +88,7 @@
 
 		$html = implode(PHP_EOL, [
 			'<div class="dropdown"'. ($parameters ? ' ' . $parameters : '') .'>',
-			'	<div class="form-select" data-toggle="dropdown">-- '. language::translate('title_select', 'Select') .' --</div>',
+			'	<div class="form-select" data-toggle="dropdown">-- '. t('title_select', 'Select') .' --</div>',
 			'	<ul class="dropdown-menu">',
 		]);
 
@@ -250,7 +250,7 @@
 			"$('table[data-toggle=\"csv\"] .add-column').click(function(e) {",
 			"	e.preventDefault();",
 			"	var table = $(this).closest('table');",
-			"	var title = prompt(\"<?php echo language::translate('title_column_title', 'Column Title'); ?>\");",
+			"	var title = prompt(\"<?php echo t('title_column_title', 'Column Title'); ?>\");",
 			"	if (!title) return;",
 			"	$(table).find('thead tr th:last-child:last-child').before('<th>'+ title +'</th>');",
 			"	$(table).find('tbody tr td:last-child:last-child').before('<td contenteditable></td>');",
@@ -813,44 +813,44 @@
 
 				case 'a/i':
 					$options = [
-						'1' => language::translate('title_active', 'Active'),
-						'0' => language::translate('title_inactive', 'Inactive'),
+						'1' => t('title_active', 'Active'),
+						'0' => t('title_inactive', 'Inactive'),
 					];
 					break;
 
 				case 'e/d':
 					$options = [
-						'1' => language::translate('title_enabled', 'Enabled'),
-						'0' => language::translate('title_disabled', 'Disabled'),
+						'1' => t('title_enabled', 'Enabled'),
+						'0' => t('title_disabled', 'Disabled'),
 					];
 					break;
 
 				case 'y/n':
 					$options = [
-						'1' => language::translate('title_yes', 'Yes'),
-						'0' => language::translate('title_no', 'No'),
+						'1' => t('title_yes', 'Yes'),
+						'0' => t('title_no', 'No'),
 					];
 					break;
 
 				case 'o/o':
 					$options = [
-						'1' => language::translate('title_on', 'On'),
-						'0' => language::translate('title_off', 'Off'),
+						'1' => t('title_on', 'On'),
+						'0' => t('title_off', 'Off'),
 					];
 					break;
 
 				case 't/f':
 					$options = [
-						'1' => language::translate('title_true', 'True'),
-						'0' => language::translate('title_false', 'False'),
+						'1' => t('title_true', 'True'),
+						'0' => t('title_false', 'False'),
 					];
 					break;
 
 				default:
 					trigger_error('Invalid option ("'. $options.'")', E_USER_WARNING);
 					$options = [
-						'1' => language::translate('title_true', 'True'),
-						'0' => language::translate('title_false', 'False'),
+						'1' => t('title_true', 'True'),
+						'0' => t('title_false', 'False'),
 					];
 					break;
 			}
@@ -1042,7 +1042,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1089,7 +1089,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1141,7 +1141,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1159,7 +1159,7 @@
 		return implode(PHP_EOL, [
 			'<div class="form-input"'. ($parameters ? ' ' . $parameters : '') .'>',
 			'	' . form_input_hidden($name, true),
-			'	<span class="value">'. ($input ? functions::escape_html($input) : '('. language::translate('title_none', 'None') .')') .'</span> <a href="'. document::href_ilink('b:files/file_picker') .'" data-toggle="lightbox" class="btn btn-default btn-sm" style="margin-inline-start: 5px;">'. language::translate('title_change', 'Change') .'</a>',
+			'	<span class="value">'. ($input ? functions::escape_html($input) : '('. t('title_none', 'None') .')') .'</span> <a href="'. document::href_ilink('b:files/file_picker') .'" data-toggle="lightbox" class="btn btn-default btn-sm" style="margin-inline-start: 5px;">'. t('title_change', 'Change') .'</a>',
 			'</div>',
 		]);
 
@@ -1184,7 +1184,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1198,7 +1198,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1221,7 +1221,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1243,7 +1243,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1257,7 +1257,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1273,7 +1273,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1291,7 +1291,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -1311,7 +1311,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}

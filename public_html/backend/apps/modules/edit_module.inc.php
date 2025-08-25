@@ -20,10 +20,10 @@
 	$module = new ent_module($module_id);
 	$object = new $module_id();
 
-	document::$title[] = !empty($module->data['id']) ? language::translate('title_edit_module', 'Edit Module') : language::translate('title_install_module', 'Install Module');
+	document::$title[] = !empty($module->data['id']) ? t('title_edit_module', 'Edit Module') : t('title_install_module', 'Install Module');
 
-	breadcrumbs::add(language::translate('title_modules', 'Modules'));
-	breadcrumbs::add(!empty($module->data['id']) ? language::translate('title_edit_module', 'Edit Module') : language::translate('title_install_module', 'Install Module'), document::ilink());
+	breadcrumbs::add(t('title_modules', 'Modules'));
+	breadcrumbs::add(!empty($module->data['id']) ? t('title_edit_module', 'Edit Module') : t('title_install_module', 'Install Module'), document::ilink());
 
 	if (!$_POST) {
 		$_POST['settings'] = $module->data['settings'];
@@ -34,14 +34,14 @@
 		try {
 
 			foreach (array_keys($module->data['settings']) as $key) {
-				if (in_array($key, ['id', 'date_updated', 'date_created'])) continue;
+				if (in_array($key, ['id', 'updated_at', 'created_at'])) continue;
 				$module->data['settings'][$key] = isset($_POST['settings'][$key]) ? $_POST['settings'][$key] : '';
 			}
 
 			$module->save();
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/'.$return_doc));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/'.$return_doc));
 			exit;
 
 		} catch (Exception $e) {
@@ -54,8 +54,8 @@
 		try {
 			$module->delete();
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/'.$return_doc));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/'.$return_doc));
 			exit;
 
 		} catch (Exception $e) {
@@ -64,7 +64,7 @@
 	}
 
 	if (!$_POST && !empty($module->data['id'])) {
-		notices::add('notices', language::translate('text_make_changes_necessary_to_install', 'Make any changes necessary to continue installation'));
+		notices::add('notices', t('text_make_changes_necessary_to_install', 'Make any changes necessary to continue installation'));
 	}
 
 ?>
@@ -78,14 +78,14 @@
 <div class="card">
 	<div class="card-header">
 		<div class="card-title">
-			<?php echo $app_icon; ?> <?php echo !empty($module->data['id']) ? language::translate('title_edit_module', 'Edit Module') : language::translate('title_install_module', 'Install Module'); ?>
+			<?php echo $app_icon; ?> <?php echo !empty($module->data['id']) ? t('title_edit_module', 'Edit Module') : t('title_install_module', 'Install Module'); ?>
 		</div>
 	</div>
 
 	<div class="card-body">
 		<h2><?php echo $object->name; ?></h2>
 
-		<?php echo !empty($object->author) ? '<p><strong>'. language::translate('title_developed_by', 'Developed by') .'</strong> <a href="'. $object->website .'" target="_blank">'. $object->author .'</a></p>' : false; ?>
+		<?php echo !empty($object->author) ? '<p><strong>'. t('title_developed_by', 'Developed by') .'</strong> <a href="'. $object->website .'" target="_blank">'. $object->author .'</a></p>' : false; ?>
 
 		<?php echo !empty($object->description) ? '<p style="max-width: 960px;">'. $object->description .'</p>' : ''; ?>
 
@@ -112,10 +112,10 @@
 					<?php } ?>
 					<tr>
 						<td>
-							<label><?php echo language::translate('title_translations', 'Translations'); ?></label>
+							<label><?php echo t('title_translations', 'Translations'); ?></label>
 						</td>
 						<td>
-							<a href="<?php echo document::href_ilink('translations/search', ['query' => $module_id . ':', 'modules' => 'true']); ?>"><?php echo language::translate('title_edit_translations', 'Edit Translations'); ?></a>
+							<a href="<?php echo document::href_ilink('translations/search', ['query' => $module_id . ':', 'modules' => 'true']); ?>"><?php echo t('title_edit_translations', 'Edit Translations'); ?></a>
 						</td>
 					</tr>
 				</tbody>
@@ -123,7 +123,7 @@
 
 			<div class="card-action">
 				<?php echo functions::form_button_predefined('save'); ?>
-				<?php if (!empty($module->data['id'])) echo functions::form_button('uninstall', language::translate('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger" onclick="if (!confirm(&quot;'. language::translate('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete'); ?>
+				<?php if (!empty($module->data['id'])) echo functions::form_button('uninstall', t('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete'); ?>
 				<?php echo functions::form_button_predefined('cancel'); ?>
 			</div>
 
@@ -131,7 +131,7 @@
 
 		<?php if (!empty($module->data['last_log'])) { ?>
 		<div id="box-last-log">
-			<h2><?php echo language::translate('title_last_log', 'Last Log'); ?></h2>
+			<h2><?php echo t('title_last_log', 'Last Log'); ?></h2>
 			<pre class="form-input"><?php echo $module->data['last_log']; ?></pre>
 		</div>
 		<?php } ?>

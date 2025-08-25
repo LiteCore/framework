@@ -33,7 +33,7 @@ code::before {
 </style>
 
 <main id="content" class="container">
-	<div class="grid">
+	<section class="grid">
 		<div class="col-6">
 
 			<h1>
@@ -78,5 +78,5 @@ code::before {
 
 			</div>
 		</div>
-	</div>
+	</section>
 </main>

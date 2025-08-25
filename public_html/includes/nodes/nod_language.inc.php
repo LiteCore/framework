@@ -65,7 +65,7 @@
 			database::query(
 				"update ". DB_TABLE_PREFIX ."translations
 				set ". ((isset(route::$request['endpoint']) && route::$request['endpoint'] == 'backend') ? "backend = 1" : "frontend = 1") .",
-					date_accessed = '". date('Y-m-d H:i:s') ."'
+					last_accessed = '". date('Y-m-d H:i:s') ."'
 				where code in ('". implode("', '", database::input(self::$_accessed_translations)) ."');"
 			);
 
@@ -113,7 +113,7 @@
 			}
 
 			// Set system locale
-			if (self::$selected['locale'] && !setlocale(LC_TIME, preg_split('#\s*,\s*#', self::$selected['locale'], -1, PREG_SPLIT_NO_EMPTY))) {
+			if (self::$selected['locale'] && !setlocale(LC_TIME, functions::string_split(self::$selected['locale']))) {
 				trigger_error('Warning: Failed setting locale '. self::$selected['locale'] .' for '. self::$selected['name'], E_USER_WARNING);
 			}
 
@@ -214,11 +214,11 @@
 
 			self::$_accessed_translations[] = $code;
 
-			if (empty($language_code)) {
+			if (!$language_code) {
 				$language_code = self::$selected['code'];
 			}
 
-			if (empty($language_code) || empty(self::$languages[$language_code])) {
+			if (!$language_code || empty(self::$languages[$language_code])) {
 				trigger_error('Unknown language code for translation ('. $language_code .')', E_USER_WARNING);
 				return;
 			}
@@ -239,7 +239,7 @@
 			if (!$translation) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."translations
-					(code, text_en, html, date_created, date_updated)
+					(code, text_en, html, created_at, updated_at)
 					values ('". database::input($code) ."', '". database::input($default, true) ."', '". (($default != strip_tags($default)) ? 1 : 0) ."', '". date('Y-m-d H:i:s') ."', '". date('Y-m-d H:i:s') ."');"
 				);
 			}
@@ -265,7 +265,7 @@
 					database::query(
 						"update ". DB_TABLE_PREFIX ."translations
 						set `text_". $language_code ."` = '". database::input($translation['text_'.$language_code], true) ."',
-						date_updated = '". date('Y-m-d H:i:s') ."'
+						updated_at = '". date('Y-m-d H:i:s') ."'
 						where text_en = '". database::input($translation['text_en']) ."'
 						and text_". self::$selected['code'] ." = '';"
 					);

@@ -4,19 +4,18 @@
 <title>{{title}}</title>
 <meta charset="{{charset}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/variables.css'); ?>">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://assets/litecore/css/framework.min.css'); ?>">
-<link rel="stylesheet" href="<?php echo document::href_rlink('app://backend/template/css/app.min.css'); ?>">
+<?php echo functions::draw_style('app://backend/template/css/variables.css'); ?>
+<?php echo functions::draw_style('app://assets/litecore/css/framework.min.css'); ?>
+<?php echo functions::draw_style('app://backend/template/css/app.min.css'); ?>
 {{head_tags}}
-{{style}}
 </head>
 <body>
 
 {{content}}
 
 {{foot_tags}}
-<script src="<?php echo document::href_rlink('app://backend/template/js/app.min.js'); ?>"></script>
-{{javascript}}
+<?php echo functions::draw_script('app://assets/litecore/js/framework.min.js'); ?>
+<?php echo functions::draw_script('app://backend/template/js/app.min.js'); ?>
 
 </body>
 </html>

@@ -19,7 +19,7 @@
 		$_partial->snippets['left'][] = [
 			'id' => 'home',
 			'icon' => '',
-			'name' => language::translate('title_home', 'Home'),
+			'name' => t('title_home', 'Home'),
 			'link' => document::ilink(''),
 			'badge' => '',
 			'priority' => -1,
@@ -35,7 +35,7 @@
 
 		$_partial->snippets['right'][] = [
 			'id' => 'contact',
-			'name' => language::translate('title_contact', 'Contact'),
+			'name' => t('title_contact', 'Contact'),
 			'link' => document::ilink('contact'),
 			'priority' => 99,
 		];

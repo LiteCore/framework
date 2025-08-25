@@ -4,9 +4,9 @@
 		$_GET['page'] = 1;
 	}
 
-	document::$title[] = language::translate('title_settings', 'Settings');
+	document::$title[] = t('title_settings', 'Settings');
 
-	breadcrumbs::add(language::translate('title_settings', 'Settings'), document::ilink());
+	breadcrumbs::add(t('title_settings', 'Settings'), document::ilink());
 
 	if (isset($_POST['save'])) {
 
@@ -21,11 +21,11 @@
 				)->fetch();
 
 				if (!$setting) {
-					throw new Exception(language::translate('error_setting_key_does_not_exist', 'The settings key does not exist'));
+					throw new Exception(t('error_setting_key_does_not_exist', 'The settings key does not exist'));
 				}
 
 				if (!empty($setting['required']) && empty($_POST['settings'][$key])) {
-					throw new Exception(language::translate('error_cannot_set_empty_value_for_setting', 'You cannot set an empty value for this setting'));
+					throw new Exception(t('error_cannot_set_empty_value_for_setting', 'You cannot set an empty value for this setting'));
 				}
 
 				switch ($setting['datatype']) {
@@ -60,7 +60,7 @@
 				database::query(
 					"update ". DB_TABLE_PREFIX ."settings
 					set `value` = '". database::input($value) ."',
-						date_updated = '". date('Y-m-d H:i:s') ."'
+						updated_at = '". date('Y-m-d H:i:s') ."'
 					where `key` = '". database::input($key) ."'
 					limit 1;"
 				);
@@ -76,8 +76,8 @@
 				}
 			}
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(null, [], true, ['action']));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(null, [], true, ['action']));
 			exit;
 
 		} catch (Exception $e) {
@@ -126,9 +126,9 @@
 
 				case (preg_match('#^toggle$#', $setting['function'])):
 				if (in_array($setting['value'], ['1', 'active', 'enabled', 'on', 'true', 'yes'])) {
-					$setting['display_value'] = language::translate('title_true', 'True');
+					$setting['display_value'] = t('title_true', 'True');
 				} else if (in_array(($setting['value']), ['', '0', 'inactive', 'disabled', 'off', 'false', 'no'])) {
-					$setting['display_value'] = language::translate('title_false', 'False');
+					$setting['display_value'] = t('title_false', 'False');
 				}
 				break;
 
@@ -189,7 +189,7 @@
 <div class="card">
 	<div class="card-header">
 		<div class="card-title">
-			<?php echo $app_icon; ?> <?php echo language::translate('title_settings', 'Settings').' &ndash; '.$settings_group['name']; ?>
+			<?php echo $app_icon; ?> <?php echo t('title_settings', 'Settings').' &ndash; '.$settings_group['name']; ?>
 		</div>
 	</div>
 
@@ -198,8 +198,8 @@
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th style="width: 35%;"><?php echo language::translate('title_key', 'Key'); ?></th>
-					<th><?php echo language::translate('title_value', 'Value'); ?></th>
+					<th style="width: 35%;"><?php echo t('title_key', 'Key'); ?></th>
+					<th><?php echo t('title_value', 'Value'); ?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -209,8 +209,8 @@
 				<?php if (isset($_GET['action']) && $_GET['action'] == 'edit' && $_GET['key'] == $setting['key']) { ?>
 				<tr>
 					<td>
-						<strong><?php echo language::translate('settings_key:title_'.$setting['key'], $setting['title']); ?></strong><br>
-						<?php echo language::translate('settings_key:description_'.$setting['key'], $setting['description']); ?>
+						<strong><?php echo t('settings_key:title_'.$setting['key'], $setting['title']); ?></strong><br>
+						<?php echo t('settings_key:description_'.$setting['key'], $setting['description']); ?>
 					</td>
 					<td><?php echo functions::form_function('settings['.$setting['key'].']', $setting['function'], true); ?></td>
 					<td class="text-end">
@@ -220,13 +220,13 @@
 				</tr>
 				<?php } else { ?>
 				<tr>
-					<td class="text-start"><a class="link" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo language::translate('settings_key:title_'.$setting['key'], $setting['title']); ?></a></td>
+					<td class="text-start"><a class="link" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo t('settings_key:title_'.$setting['key'], $setting['title']); ?></a></td>
 					<td style="white-space: normal;">
-						<div style="max-height: 200px; overflow-y: auto;" title="<?php echo functions::escape_html(language::translate('settings_key:description_'.$setting['key'], $setting['description'])); ?>">
+						<div style="max-height: 200px; overflow-y: auto;" title="<?php echo functions::escape_html(t('settings_key:description_'.$setting['key'], $setting['description'])); ?>">
 							<?php echo nl2br($setting['display_value'], false); ?>
 						</div>
 					</td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
 				</tr>
 				<?php } ?>
 				<?php } ?>

@@ -1,6 +1,7 @@
 <?php
 
 	abstract class abs_module {
+
 		public $id = null;
 		public $name = '';
 		public $description = '';
@@ -11,9 +12,10 @@
 
 		public $status = null;
 		public $settings = [];
+		public $userdata = [];
 		public $priority = 0;
-		public $date_pushed = null;
-		public $date_processed = null;
+		public $last_pushed = null;
+		public $last_processed = null;
 
 		public function __construct() {
 
@@ -40,8 +42,8 @@
 				$this->priority = isset($this->settings['priority']) ? (int)$this->settings['priority'] : 0;
 
 				if ($module['type'] == 'jobs') {
-					$this->date_pushed = $module['date_pushed'];
-					$this->date_processed = $module['date_processed'];
+					$this->last_pushed = $module['last_pushed'];
+					$this->last_processed = $module['last_processed'];
 				}
 			}
 		}

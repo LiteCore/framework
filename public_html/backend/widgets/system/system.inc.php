@@ -73,27 +73,27 @@ meter {
 	<div class="card-body">
 		<div class="grid">
 			<div class="col-md-3">
-				<h3><?php echo language::translate('title_cpu_usage', 'CPU Usage'); ?></h3>
+				<h3><?php echo t('title_cpu_usage', 'CPU Usage'); ?></h3>
 				<meter value=<?php echo $cpu_usage; ?> max=100 min=0 high=30 low=10 optimum=5></meter>
 			</div>
 
 			<div class="col-md-3">
-				<h3><?php echo language::translate('title_ram_usage', 'RAM Usage'); ?></h3>
+				<h3><?php echo t('title_ram_usage', 'RAM Usage'); ?></h3>
 				<meter value=<?php echo ($ram_usage && $ram_total) ? round($ram_usage / $ram_total * 100) : 0; ?> max=100 min=0 high=30 low=10 optimum=5></meter>
 			</div>
 
 			<div class="col-md-3">
-				<h3><?php echo language::translate('title_uptime', 'Uptime'); ?></h3>
+				<h3><?php echo t('title_uptime', 'Uptime'); ?></h3>
 				<div class="uptime">
-					<?php if ($uptime['days']) echo '<span>' . $uptime['days'] .' '. language::translate('text_days', 'day(s)') .'</span>'; ?>
-					<?php if ($uptime['hours']) echo '<span>' . $uptime['hours'] .' '. language::translate('text_hours', 'hour(s)') .'</span>'; ?>
-					<?php if ($uptime['minutes']) echo '<span>' . $uptime['minutes'] .' '. language::translate('text_minutes', 'minute(s)') .'</span>'; ?>
-					<?php if ($uptime['seconds']) echo '<span>' . $uptime['seconds'] .' '. language::translate('text_seconds', 'second(s)') .'</span>'; ?>
+					<?php if ($uptime['days']) echo '<span>' . $uptime['days'] .' '. t('text_days', 'day(s)') .'</span>'; ?>
+					<?php if ($uptime['hours']) echo '<span>' . $uptime['hours'] .' '. t('text_hours', 'hour(s)') .'</span>'; ?>
+					<?php if ($uptime['minutes']) echo '<span>' . $uptime['minutes'] .' '. t('text_minutes', 'minute(s)') .'</span>'; ?>
+					<?php if ($uptime['seconds']) echo '<span>' . $uptime['seconds'] .' '. t('text_seconds', 'second(s)') .'</span>'; ?>
 				</div>
 			</div>
 
 			<div class="col-md-3">
-				<h3><?php echo language::translate('title_software', 'Software'); ?></h3>
+				<h3><?php echo t('title_software', 'Software'); ?></h3>
 				<div class="software">
 					<span><?php echo $_SERVER['SERVER_SOFTWARE']; ?></span>
 					<span>MySQL/<?php echo $mysql_version; ?></span>

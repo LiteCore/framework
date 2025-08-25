@@ -5,32 +5,32 @@
 	$groups = [
 		'community' => [
 			'id' => 'website',
-			'name' => language::translate('title_community', 'Community'),
+			'name' => t('title_community', 'Community'),
 			'apps' => [],
 		],
 		'website' => [
 			'id' => 'website',
-			'name' => language::translate('title_website', 'Website'),
+			'name' => t('title_website', 'Website'),
 			'apps' => [],
 		],
 		'regional' => [
 			'id' => 'regional',
-			'name' => language::translate('title_regional', 'Regional'),
+			'name' => t('title_regional', 'Regional'),
 			'apps' => [],
 		],
 		'system' => [
 			'id' => 'system',
-			'name' => language::translate('title_system', 'System'),
+			'name' => t('title_system', 'System'),
 			'apps' => [],
 		],
 		'other' => [
 			'id' => 'other',
-			'name' => language::translate('title_other', 'Other'),
+			'name' => t('title_other', 'Other'),
 			'apps' => [],
 		],
 		'addons' => [
 			'id' => 'addons',
-			'name' => language::translate('title_addons', 'Addons'),
+			'name' => t('title_addons', 'Addons'),
 			'apps' => [],
 		],
 	];

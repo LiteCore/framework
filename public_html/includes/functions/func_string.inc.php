@@ -1,5 +1,10 @@
 <?php
 
+	// Turns "a, b,,c," into ['a', 'b', 'c'], also works with \r\n
+	function string_split($string, $delimiters=',') {
+		return preg_split('#(\s*['. preg_quote($delimiters, '#') .']\s*)+#', (string)$string, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
 	// Replace parts of string with contents from recursive array (like strtr() but recursively)
 	function string_translate($string, $array) {
 

@@ -1,7 +1,7 @@
 <?php
 
 	return [
-		'name' => language::translate('title_countries', 'Countries'),
+		'name' => t('title_countries', 'Countries'),
 		'default' => 'countries',
 		'priority' => 0,
 

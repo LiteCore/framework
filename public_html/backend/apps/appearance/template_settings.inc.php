@@ -1,10 +1,10 @@
 <?php
 
-	document::$title[] = language::translate('title_template_settings', 'Template Settings');
+	document::$title[] = t('title_template_settings', 'Template Settings');
 
-	breadcrumbs::add(language::translate('title_appearance', 'Appearance'));
-	breadcrumbs::add(language::translate('title_template', 'Template'), document::ilink('appearance/template'));
-	breadcrumbs::add(language::translate('title_template_settings', 'Template Settings'));
+	breadcrumbs::add(t('title_appearance', 'Appearance'));
+	breadcrumbs::add(t('title_template', 'Template'), document::ilink('appearance/template'));
+	breadcrumbs::add(t('title_template_settings', 'Template Settings'));
 
 	// Get template settings structure
 	$settings = include 'app://frontend/template/config.inc.php';
@@ -69,14 +69,14 @@
 			database::query(
 				"update ". DB_TABLE_PREFIX ."settings
 				set `value` = '". database::input(json_encode($new_settings, JSON_UNESCAPED_SLASHES)) ."',
-					date_updated = '". date('Y-m-d H:i:s') ."'
+					updated_at = '". date('Y-m-d H:i:s') ."'
 				where `key` = 'template_settings'
 				limit 1;"
 			);
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
 
-			header('Location: '. document::ilink(null, [], true, ['action']));
+			redirect(document::ilink(null, [], true, ['action']));
 			exit;
 
 		} catch (Exception $e) {
@@ -105,9 +105,9 @@
 			case (substr($setting['function'], 0, 6) == 'toggle'):
 
 				if (in_array(strtolower($setting['value']), ['1', 'active', 'enabled', 'on', 'true', 'yes'])) {
-				 $settings[$key]['value'] = language::translate('title_true', 'True');
+				 $settings[$key]['value'] = t('title_true', 'True');
 				} else if (in_array(strtolower($setting['value']), ['', '0', 'inactive', 'disabled', 'off', 'false', 'no'])) {
-				 $settings[$key]['value'] = language::translate('title_false', 'False');
+				 $settings[$key]['value'] = t('title_false', 'False');
 				}
 
 				break;
@@ -122,7 +122,7 @@
 <div class="card">
 	<div class="card-header">
 		<div class="card-title">
-			<?php echo $app_icon; ?> <?php echo language::translate('title_template_settings', 'Template Settings'); ?>
+			<?php echo $app_icon; ?> <?php echo t('title_template_settings', 'Template Settings'); ?>
 		</div>
 	</div>
 
@@ -131,8 +131,8 @@
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th style="width: 50%;"><?php echo language::translate('title_key', 'Key'); ?></th>
-					<th><?php echo language::translate('title_value', 'Value'); ?></th>
+					<th style="width: 50%;"><?php echo t('title_key', 'Key'); ?></th>
+					<th><?php echo t('title_value', 'Value'); ?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -142,8 +142,8 @@
 				<?php if (isset($_GET['action']) && $_GET['action'] == 'edit' && $_GET['key'] == $setting['key']) { ?>
 				<tr>
 					<td style="white-space: normal;">
-						<u><?php echo language::translate(settings::get('template').':title_'.$setting['key'], $setting['title']); ?></u><br>
-						<?php echo language::translate(settings::get('template').':description_'.$setting['key'], $setting['description']); ?>
+						<u><?php echo t(settings::get('template').':title_'.$setting['key'], $setting['title']); ?></u><br>
+						<?php echo t(settings::get('template').':description_'.$setting['key'], $setting['description']); ?>
 					</td>
 					<td><?php echo functions::form_function('settings['.$setting['key'].']', $setting['function'], true); ?></td>
 					<td class="text-end">
@@ -153,20 +153,20 @@
 				</tr>
 				<?php } else { ?>
 				<tr>
-					<td><?php echo language::translate(settings::get('template').':title_'.$setting['key'], $setting['title']); ?></td>
+					<td><?php echo t(settings::get('template').':title_'.$setting['key'], $setting['title']); ?></td>
 					<td>
 						<div style="max-height: 200px; overflow-y: auto;">
 							<?php echo nl2br($setting['value']); ?>
 						</div>
 					</td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink('appearance/template_settings', ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo language::translate('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink('appearance/template_settings', ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
 				</tr>
 				<?php } ?>
 				<?php } ?>
 
 				<?php if (!$settings) { ?>
 				<tr>
-					<td colspan="3"><?php echo language::translate('text_no_frontend_template_settings', 'There are no settings available for the frontend template.'); ?></td>
+					<td colspan="3"><?php echo t('text_no_frontend_template_settings', 'There are no settings available for the frontend template.'); ?></td>
 				</tr>
 				<?php } ?>
 			</tbody>

@@ -58,7 +58,7 @@ waitFor('jQuery', ($) => {
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
-+waitFor('jQuery', ($) => {
+waitFor('jQuery', ($) => {
 	'use strict'
 
 	class Carousel {
@@ -442,7 +442,7 @@ waitFor('jQuery', ($) => {
 		}
 	});
 
-})
+});
 
 /*!
  * jQuery Plugin developed by Mario Duarte
@@ -1201,7 +1201,7 @@ waitFor('jQuery', ($) => {
 					}
 
 				} else {
-					$self.find('button[name="left"], button[name="right"]').remove()
+					$self.find('button[name="left"], button[name="right"]').remove();
 				}
 
 				/*
@@ -1214,12 +1214,12 @@ waitFor('jQuery', ($) => {
 				}
 				*/
 
-			}).trigger('resize')
+			}).trigger('resize');
 		})
 	}
 
-	$('[data-toggle*="momentumScroll"]').momentumScroll()
-})
+	$('[data-toggle*="momentumScroll"]').momentumScroll();
+});
 
 // Alerts
 waitFor('jQuery', ($) => {

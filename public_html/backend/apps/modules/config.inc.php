@@ -1,7 +1,7 @@
 <?php
 
 	return [
-		'name' => language::translate('title_modules', 'Modules'),
+		'name' => t('title_modules', 'Modules'),
 		'default' => 'jobs',
 		'priority' => 0,
 
@@ -12,7 +12,7 @@
 
 		'menu' => [
 			[
-				'title' => language::translate('title_job_modules', 'Job Modules'),
+				'title' => t('title_job_modules', 'Job Modules'),
 				'doc' => 'jobs',
 			],
 		],

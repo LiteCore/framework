@@ -1,3 +1,5 @@
+@import "../../../assets/litecore/less/framework/media.less";
+
 /* Fonts */
 
 @font-face {
@@ -22,8 +24,6 @@
 	src: url('../fonts/mona-sans-v3-latin-700.woff2') format('woff2');
 }
 
-@import "../../../assets/litecore/less/framework/media.less";
-
 /* Variables */
 
 :root {
@@ -42,7 +42,7 @@
 	--cookie-notice-background: rgba(45, 45, 56, .75);
 	--cookie-notice-text-color: #fff;
 
-	/* Framework */
+	/* General */
 	--border-radius: 8px;
 	--gutter-x: .5rem;
 	--gutter-y: 1rem;
@@ -55,11 +55,11 @@
 
 	/* Defaults */
 	--default-background: #edeff3;
-	--default-border: 1px solid #efeff9;
+	--default-border-color: #efeff9;
 	--default-line-height: 1.3333;
 	--default-text-font: 'Mona Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif;
 	--default-text-color: #222;
-	--default-text-size: 15px;
+	--default-text-size: 14px;
 
 	/* Navigation */
 	--navigation-background: #c2c5e9;
@@ -78,51 +78,40 @@
 	/* Notices */
 	--notice-default-background: #e6e8ed;
 	--notice-default-text-color: #000;
-	--notice-default-border: 1px solid #e6e8ed;
+	--notice-default-border-color: #e6e8ed;
+	--notice-default-border-width: 1px;
 
 	--notice-primary-background: #3ba5c6;
 	--notice-primary-text-color: #fff;
-	--notice-primary-border: 1px solid #3ba5c6;
+	--notice-primary-border-color: #3ba5c6;
+	--notice-primary-border-width: 1px;
 
 	--notice-success-background: #98cc34;
 	--notice-success-text-color: #fff;
-	--notice-success-border: 1px solid #98cc34;
+	--notice-success-border-color: #98cc34;
+	--notice-success-border-width: 1px;
 
 	--notice-warning-background: #ffcc66;
 	--notice-warning-text-color: #aa0000;
-	--notice-warning-border: 1px solid #ffcc66;
+	--notice-warning-border-color: #ffcc66;
+	--notice-warning-border-width: 1px;
 
 	--notice-danger-background: #d9534f;
 	--notice-danger-text-color: #fff;
-	--notice-danger-border: 1px solid #d9534f;
+	--notice-danger-border: #d9534f;
+	--notice-danger-border-width: 1px;
 
 	/* Breadcrumbs */
 	--breadcrumbs-background: #ededf1;
 	--breadcrumbs-text-color: #555;
-	--breadcrumbs-border: 1px solid transparent;
-
-	/* Cards */
-	--card-background: #fff;
-	--card-text-color: var(--default-text-color);
-	--card-footer-background: #f2f3f6;
-	--card-border: 1px solid #0003;
-	--card-shadow: 0 0 .25rem #0001;
-
-	/* Panels */
-	--panel-background: linear-gradient(to bottom, #fffc, #fff9);
-	--panel-text-color: #2f244f;
-	--panel-header-background: transparent;
-	--panel-header-text-color: var(--panel-text-color);
-	--panel-body-background: transparent;
-	--panel-footer-background: #0000010;
-	--panel-shadow: 0 0 .25rem #0001;
-	--panel-border: 1px solid #0002;
+	--breadcrumbs-border-color: transparent;
+	--breadcrumbs-border-width: 1px;
 
 	/* Buttons */
-	--button-shadow: 0 4px 11px 0 rgba(37,44,97,.15), 0 1px 3px 0 rgba(93,100,148,.2);
 	--button-padding-x: 1.5em;
 	--button-padding-y: .75em;
 	--button-border-width: 0;
+	--button-shadow: 0 4px 11px 0 rgba(37,44,97,.15), 0 1px 3px 0 rgba(93,100,148,.2);
 
 	--button-default-background: linear-gradient(to bottom, #808385, #6b757b);
 	--button-default-background: linear-gradient(180deg,#fff,#f5f5fa);
@@ -149,6 +138,23 @@
 	--button-danger-border-color: rgba(0, 0, 0, .1);
 	--button-danger-text-color: #fff;
 
+	/* Cards */
+	--card-background: #fff;
+	--card-text-color: var(--default-text-color);
+	--card-footer-background: #f2f3f6;
+	--card-border: 1px solid #0003;
+	--card-shadow: 0 0 .25rem #0001;
+
+	/* Panels */
+	--panel-background: linear-gradient(to bottom, #fffc, #fff9);
+	--panel-text-color: #2f244f;
+	--panel-header-background: transparent;
+	--panel-header-text-color: var(--panel-text-color);
+	--panel-body-background: transparent;
+	--panel-footer-background: #0000010;
+	--panel-shadow: 0 0 .25rem #0001;
+	--panel-border: 1px solid #0002;
+
 	/* Forms */
 	--input-background: #fafafc;
 	--input-padding-x: 1em;
@@ -170,15 +176,23 @@
 	--pill-text-color: var(--default-text-color);
 	--pill-text-color-active: #222;
 
+	/* Progress */
+	--progress-background: #f5f5f5;
+	--progress-bar-color: #378bbe;
+	--progress-bar-text-color: #fff;
+
 	/* Tabs */
 	--tab-pane-background: #eff2f5;
-	--tab-pane-border: 1px solid var(--tabs-pane-background);
+	--tab-pane-border-color: var(--tab-pane-background);
 	--tab-background: #e8e8eb;
 	--tab-background--active: #fff;
 	--tab-text-color: #333;
-	--tab-text-color-active: var(--tabs-text-color);
-	--tab-border: 1px solid var(--tabs-background);
-	--tab-border-active: 1px solid var(--tabs-background--active);
+	--tab-text-color--active: var(--tabs-text-color);
+	--tab-border-color: var(--tab-background);
+	--tab-border-width: 1px;
+	--tab-border-color: var(--tab-background);
+	--tab-border-color--active: var(--tab-background--active);
+	--tab-border-width: 1px;
 	--tab-content-background: #fff;
 
 	/* Tables */
@@ -199,7 +213,8 @@
 	--pagination-text-color: var(--default-text-color);
 	--pagination-text-color-active: var(--default-text-color);
 	--pagination-text-color-hover: var(--default-text-color);
-	--pagination-border: 1px solid var(--default-border);
+	--pagination-border-color: var(--default-border);
+	--pagination-border-width: 1px;
 
 	/* Footer */
 	--footer-background: #e2e6f1;

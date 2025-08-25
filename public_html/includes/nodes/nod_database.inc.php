@@ -37,7 +37,7 @@
 					throw new Error('Could not connect to database: '. mysqli_connect_errno() .' - '. mysqli_connect_error());
 				}
 
-				if (($duration = microtime(true) - $timestamp) > 1) {
+				if (($duration = microtime(true) - $timestamp) > 1 && in_array('storage', stream_get_wrappers())) {
 					error_log('['. date('Y-m-d H:i:s e').'] Warning: A MySQL connection established in '. number_format($duration, 3, '.', ' ') .' s.' . PHP_EOL, 3, 'storage://logs/performance.log');
 				}
 
@@ -277,7 +277,7 @@
 				throw new Error('MySQL Error: ' . mysqli_errno(self::$_links[$link]) .' - '. preg_replace('#\s+#', ' ', mysqli_error(self::$_links[$link])) . PHP_EOL . $sql);
 			}
 
-			if (($duration = microtime(true) - $timestamp) > 5) {
+			if (($duration = microtime(true) - $timestamp) > 5 && in_array('storage', stream_get_wrappers())) {
 				error_log('['. date('Y-m-d H:i:s e').'] Warning: A MySQL query executed in '. number_format($duration, 5, '.', ' ') .' s. Query: '. str_replace("\r\n", "\r\n  ", $sql) . PHP_EOL, 3, 'storage://logs/performance.log');
 			}
 
@@ -377,19 +377,29 @@
 				];
 			}
 
-			if ($field['Default'] == "''") {
-				$field['Default'] = '';
-			}
+			if (!empty($field['Default'])) {
+				switch (true) {
 
-			if ($field['Default']) {
+					case (preg_match('#^null$#i', $field['Default'])):
+						return null;
 
-				$search_replace = [
-					'#^\'\'$#' => '',
-					'#^null$#i' => null,
-					'#^(now|current_timestamp)(\(\))?$#i' => date('Y-m-d H:i:s'),
-				];
+					case (preg_match('#^\'\'$#', $field['Default'])):
+						return '';
 
-				$field['Default'] = preg_replace(array_keys($search_replace), array_values($search_replace), $field['Default']);
+					case (preg_match('#^\{\}$#', $field['Default'])):
+					case (preg_match('#^\[\]$#', $field['Default'])):
+						return [];
+
+					case (preg_match('#^now(\(\))?$#i', $field['Default'])):
+					case (preg_match('#^current_timestamp(\(\))?$#i', $field['Default'])):
+						return date('Y-m-d H:i:s');
+
+					case (preg_match('#^current_date(\(\))?$#i', $field['Default'])):
+						return date('Y-m-d');
+
+					case (preg_match('#^current_time(\(\))?$#i', $field['Default'])):
+						return date('H:i:s');
+				}
 			}
 
 			switch (true) {

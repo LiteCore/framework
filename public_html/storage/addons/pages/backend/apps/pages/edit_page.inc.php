@@ -10,17 +10,17 @@
 		$_POST = $page->data;
 	}
 
-	document::$title[] = !empty($page->data['id']) ? language::translate('title_edit_page', 'Edit Page') : language::translate('title_create_new_page', 'Create New Page');
+	document::$title[] = !empty($page->data['id']) ? t('title_edit_page', 'Edit Page') : t('title_create_new_page', 'Create New Page');
 
-	breadcrumbs::add(language::translate('title_pages', 'Pages'), document::ilink(__APP__.'/pages'));
-	breadcrumbs::add(!empty($page->data['id']) ? language::translate('title_edit_page', 'Edit Page') : language::translate('title_create_new_page', 'Create New Page'));
+	breadcrumbs::add(t('title_pages', 'Pages'), document::ilink(__APP__.'/pages'));
+	breadcrumbs::add(!empty($page->data['id']) ? t('title_edit_page', 'Edit Page') : t('title_create_new_page', 'Create New Page'));
 
 	if (isset($_POST['save'])) {
 
 		try {
 
 			if (empty($_POST['title'])) {
-				throw new Exception(language::translate('error_missing_title', 'You must enter a title.'));
+				throw new Exception(t('error_missing_title', 'You must enter a title.'));
 			}
 
 			if (empty($_POST['status'])) $_POST['status'] = 0;
@@ -39,8 +39,8 @@
 
 			$page->save();
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/pages'));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/pages'));
 			exit;
 
 		} catch (Exception $e) {
@@ -51,12 +51,12 @@
 	if (isset($_POST['delete'])) {
 
 		try {
-			if (empty($page->data['id'])) throw new Exception(language::translate('error_must_provide_page', 'You must provide a page'));
+			if (empty($page->data['id'])) throw new Exception(t('error_must_provide_page', 'You must provide a page'));
 
 			$page->delete();
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/pages'));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/pages'));
 			exit;
 
 		} catch (Exception $e) {
@@ -67,7 +67,7 @@
 <div class="card">
 	<div class="card-header">
 		<div class="card-title">
-			<?php echo $app_icon; ?> <?php echo !empty($page->data['id']) ? language::translate('title_edit_page', 'Edit Page') : language::translate('title_create_new_page', 'Create New Page'); ?>
+			<?php echo $app_icon; ?> <?php echo !empty($page->data['id']) ? t('title_edit_page', 'Edit Page') : t('title_create_new_page', 'Create New Page'); ?>
 		</div>
 	</div>
 
@@ -76,18 +76,18 @@
 
 			<div class="grid">
 				<div class="form-group col-md-6">
-					<label><?php echo language::translate('title_status', 'Status'); ?></label>
+					<label><?php echo t('title_status', 'Status'); ?></label>
 					<?php echo functions::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
 				</div>
 				<div class="form-group col-md-6">
-					<label><?php echo language::translate('title_priority', 'Priority'); ?></label>
+					<label><?php echo t('title_priority', 'Priority'); ?></label>
 					<?php echo functions::form_input_number('priority', true); ?>
 				</div>
 			</div>
 
 			<div class="grid">
 				<div class="form-group col-md-6">
-					<label><?php echo language::translate('title_parent', 'Parent'); ?></label>
+					<label><?php echo t('title_parent', 'Parent'); ?></label>
 					<?php echo functions::form_select_page('parent_id', true); ?>
 				</div>
 			</div>
@@ -104,22 +104,22 @@
 				<?php foreach (array_keys(language::$languages) as $language_code) { ?>
 				<div id="<?php echo $language_code; ?>" class="tab-pane fade in<?php echo ($language_code == language::$selected['code']) ? ' active' : ''; ?>">
 					<div class="form-group">
-						<label><?php echo language::translate('title_title', 'Title'); ?></label>
+						<label><?php echo t('title_title', 'Title'); ?></label>
 						<?php echo functions::form_regional_text('title['. $language_code .']', $language_code, true, ''); ?>
 					</div>
 
 					<div class="form-group">
-						<label><?php echo language::translate('title_content', 'Content'); ?></label>
+						<label><?php echo t('title_content', 'Content'); ?></label>
 						<?php echo functions::form_regional_wysiwyg('content['. $language_code .']', $language_code, true, 'style="height: 400px;"'); ?>
 					</div>
 
 					<div class="form-group">
-						<label><?php echo language::translate('title_head_title', 'Head Title'); ?></label>
+						<label><?php echo t('title_head_title', 'Head Title'); ?></label>
 						<?php echo functions::form_regional_text('head_title['. $language_code .']', $language_code, true); ?>
 					</div>
 
 					<div class="form-group">
-						<label><?php echo language::translate('title_meta_description', 'Meta Description'); ?></label>
+						<label><?php echo t('title_meta_description', 'Meta Description'); ?></label>
 						<?php echo functions::form_regional_text('meta_description['. $language_code .']', $language_code, true); ?>
 					</div>
 				</div>
@@ -127,9 +127,9 @@
 			</div>
 
 			<div class="card-action">
-				<?php echo functions::form_button('save', language::translate('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
-				<?php echo !empty($page->data['id']) ? functions::form_button('delete', language::translate('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. language::translate('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete') : false; ?>
-				<?php echo functions::form_button('cancel', language::translate('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"', 'cancel'); ?>
+				<?php echo functions::form_button('save', t('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
+				<?php echo !empty($page->data['id']) ? functions::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete') : false; ?>
+				<?php echo functions::form_button('cancel', t('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"', 'cancel'); ?>
 			</div>
 
 		<?php echo functions::form_end(); ?>

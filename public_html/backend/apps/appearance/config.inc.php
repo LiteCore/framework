@@ -1,7 +1,7 @@
 <?php
 
 	return [
-		'name' => language::translate('title_appearance', 'Appearance'),
+		'name' => t('title_appearance', 'Appearance'),
 		'default' => 'edit_styling',
 		'priority' => 0,
 
@@ -12,22 +12,22 @@
 
 		'menu' => [
 			[
-				'title' => language::translate('title_edit_styling', 'Edit Styling'),
+				'title' => t('title_edit_styling', 'Edit Styling'),
 				'doc' => 'edit_styling',
 				'params' => [],
 			],
 			[
-				'title' => language::translate('title_favicon', 'Favicon'),
+				'title' => t('title_favicon', 'Favicon'),
 				'doc' => 'favicon',
 				'params' => [],
 			],
 			[
-				'title' => language::translate('title_logotype', 'Logotype'),
+				'title' => t('title_logotype', 'Logotype'),
 				'doc' => 'logotype',
 				'params' => [],
 			],
 			[
-				'title' => language::translate('title_template_settings', 'Template Settings'),
+				'title' => t('title_template_settings', 'Template Settings'),
 				'doc' => 'template_settings',
 				'params' => [],
 			],

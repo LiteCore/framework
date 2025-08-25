@@ -5,6 +5,9 @@
 !public_html/**/index.html
 !public_html/**/.htaccess
 
+migrations/.migrated
+public_html/.well-known/*
+public_html/cgi-bin/*
 public_html/storage/addons/.*
 public_html/storage/addons/.cache/*
 public_html/storage/backups/*
@@ -14,14 +17,14 @@ public_html/storage/logs/*
 public_html/storage/images/*
 public_html/vendor/*
 
-migrations/.migrated
 public_html/storage/config.inc.php
 public_html/vendor/composer.lock
 public_html/.htaccess
 public_html/.user.ini
+public_html/favicon.ico
 public_html/google*.html
-public_html/BingSiteAuth.xml
 public_html/php.ini
+public_html/robots.txt
 package-lock.json
 
 google*.html
@@ -32,8 +35,6 @@ BingSiteAuth.xml
 #####################
 
 node_modules/
-public_html/.well-known/*
-public_html/cgi-bin/*
 
 *.bak
 *.old

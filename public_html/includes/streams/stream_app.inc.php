@@ -6,7 +6,7 @@
 		public $context;
 
 		private static $_cache = [];
-	
+
 		public function dir_opendir($path, $options) {
 
 			$microtime = microtime(true);

@@ -36,6 +36,9 @@
 		'<link rel="icon" href="'. document::href_rlink('storage://images/favicons/favicon-256x256.png') .'" type="image/png" sizes="256x256">',
 	]);
 
+	// Breadcrumbs
+	breadcrumbs::add(functions::draw_fonticon('icon-home', 'title="'. functions::escape_attr(t('title_home', 'Home')) .'"'), WS_DIR_APP);
+
 	// Hreflang
 	(function() {
 		$hreflangs = [];
@@ -108,14 +111,14 @@
 		if (!in_array(route::$selected['resource'], [
 			//'f:folder/resource',
 		])) {
-			
+
 			if (administrator::check_login()) {
 
 				// Show notice
-				notices::add('notices', strtr('%message [<a href="%link">%preview</a>]', [
-					'%message' => language::translate('reminder_site_in_maintenance_mode', 'The site is in maintenance mode.'),
-					'%preview' => language::translate('title_preview', 'Preview'),
-					'%link' => document::href_ilink('maintenance_mode'),
+				notices::add('notices', strtr('{message} [<a href="{link}">{preview}</a>]', [
+					'{message}' => t('reminder_site_in_maintenance_mode', 'The site is in maintenance mode.'),
+					'{preview}' => t('title_preview', 'Preview'),
+					'{link}' => document::href_ilink('maintenance_mode'),
 				]), 'maintenance_mode');
 
 			} else {

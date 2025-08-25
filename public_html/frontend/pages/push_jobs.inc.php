@@ -6,11 +6,9 @@
 	header('X-Robots-Tag: noindex');
 	header('Content-type: text/plain; charset='. mb_http_output());
 
-	if ($last_run = settings::get('jobs_last_run')) {
-		$last_run = strtotime($last_run);
-		if (date('Ymdh', $last_run) == date('Ymdh') && floor(date('i', $last_run)/5) == floor(date('i')/5)) {
-			die('Zzz...');
-		}
+	$last_run = strtotime(settings::get('jobs_last_run'));
+	if (date('Ymdh', $last_run) == date('Ymdh') && floor(date('i', $last_run)/5) == floor(date('i')/5)) {
+		die('Zzz...');
 	}
 
 	session::close();
@@ -18,7 +16,8 @@
 	database::query(
 		"update ". DB_TABLE_PREFIX ."settings
 		set value = '". date('Y-m-d H:i:s') ."'
-		where `key` in ('jobs_last_push', 'jobs_last_run');"
+		where `key` in ('jobs_last_push', 'jobs_last_run')
+		limit 1;"
 	);
 
 	$jobs = new mod_jobs();

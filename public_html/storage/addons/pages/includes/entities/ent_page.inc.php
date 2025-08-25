@@ -71,18 +71,18 @@
 		public function save() {
 
 			if (!empty($this->data['parent_id']) && $this->data['parent_id'] == $this->data['id']) {
-				throw new Exception(language::translate('error_cannot_attach_page_to_itself', 'You cannot attach a page to itself'));
+				throw new Exception(t('error_cannot_attach_page_to_itself', 'You cannot attach a page to itself'));
 			}
 
 			if (!empty($this->data['id']) && !empty($this->data['parent_id']) && in_array($this->data['parent_id'], array_keys(reference::page($this->data['id'])->descendants))) {
-				throw new Exception(language::translate('error_cannot_attach_page_to_descendant', 'You cannot attach a page to a descendant'));
+				throw new Exception(t('error_cannot_attach_page_to_descendant', 'You cannot attach a page to a descendant'));
 			}
 
 			if (!$this->data['id']) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."pages
-					(date_created)
-					values ('". ($this->data['date_created'] = date('Y-m-d H:i:s')) ."');"
+					(created_at)
+					values ('". ($this->data['created_at'] = date('Y-m-d H:i:s')) ."');"
 				);
 
 				$this->data['id'] = database::insert_id();
@@ -93,7 +93,7 @@
 				set status = ". (int)$this->data['status'] .",
 					parent_id = ". (int)$this->data['parent_id'] .",
 					priority = ". (int)$this->data['priority'] .",
-					date_updated = '". ($this->data['date_updated'] = date('Y-m-d H:i:s')) ."'
+					updated_at = '". ($this->data['updated_at'] = date('Y-m-d H:i:s')) ."'
 				where id = ". (int)$this->data['id'] ."
 				limit 1;"
 			);

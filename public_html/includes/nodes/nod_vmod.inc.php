@@ -1,6 +1,7 @@
 <?php
 
 	class vmod {
+
 		public static  $enabled = true;                // Bool whether or not to enable this feature
 		private static $aliases = [];                  // Array of path aliases ['pattern' => 'replace']
 		private static $_checked = [];                 // Array of files that have already passed check() and
@@ -171,7 +172,7 @@
 			$digest = [filemtime($file)];
 
 			foreach (self::$_files_to_modifications[$original_file] as $modification) {
-				$digest[] = strtotime(self::$_modifications[$modification['id']]['date_modified']);
+				$digest[] = strtotime(self::$_modifications[$modification['id']]['modified_at']);
 				$queue[] = $modification;
 			}
 
@@ -393,7 +394,7 @@
 							file_put_contents(FS_DIR_STORAGE . 'addons/.installed', $new_contents . PHP_EOL, LOCK_EX);
 
 							if (isset($_SERVER['REQUEST_URI'])) {
-								header('Location: '. $_SERVER['REQUEST_URI']);
+								reload();
 								exit;
 							}
 						}
@@ -417,7 +418,7 @@
 							include func_get_arg(0);
 						})($tmp_file);
 
-						header('Location: '. $_SERVER['REQUEST_URI']);
+						reload();
 						exit;
 					}
 
@@ -448,7 +449,7 @@
 				'name' => $dom->getElementsByTagName('name')->item(0)->textContent,
 				'version' => $dom->getElementsByTagName('version')->item(0)->textContent,
 				'author' => !empty($dom->getElementsByTagName('author')) ? $dom->getElementsByTagName('author')->item(0)->textContent : '',
-				'date_modified' => date('Y-m-d H:i:s', filemtime($file)),
+				'modified_at' => date('Y-m-d H:i:s', filemtime($file)),
 				'files' => [],
 				'install' => null,
 				'upgrades' => [],

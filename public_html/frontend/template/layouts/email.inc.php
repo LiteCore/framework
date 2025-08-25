@@ -43,6 +43,7 @@
 
 							<tr>
 								<td class="content-block powered-by">
+									<?php echo settings::get('site_name'); ?><br>
 									<a href="<?php echo document::href_ilink('', [], [], [], $language_code); ?>" target="_blank"><?php echo document::ilink('', [], [], [], $language_code); ?></a>
 								</td>
 							</tr>

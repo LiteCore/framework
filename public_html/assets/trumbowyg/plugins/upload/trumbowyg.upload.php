@@ -3,7 +3,7 @@
 
 	try {
 
-		if (empty(administrator::$data['id'])) {
+		if (!administrator::check_login()) {
 			throw new Exception('Not logged in');
 		}
 

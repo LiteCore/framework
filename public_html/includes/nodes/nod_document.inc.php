@@ -3,6 +3,7 @@
 	class document {
 
 		public static $canonical = '';
+		public static $console = [];
 		public static $content = [];
 		public static $description = '';
 		public static $head_tags = [];
@@ -10,6 +11,7 @@
 		public static $javascript = [];
 		public static $jsenv = [];
 		public static $layout = 'default';
+		//public static $nonce = [];
 		public static $opengraph = [];
 		public static $preloads = [];
 		public static $schema = [];
@@ -25,11 +27,30 @@
 
 		public static function before_capture() {
 
-			//self::$snippets['nonce'] = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(32/62))), 0, 32);
-
-			header('Content-Security-Policy: frame-ancestors \'self\';'); // Clickjacking Protection
-			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data from own domain
 			header('X-Powered-By: '. PLATFORM_NAME);
+			header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload'); // HSTS
+			header('Access-Control-Allow-Origin: '. self::ilink('')); // Only allow HTTP POST data from own domain
+			header('Referrer-Policy: strict-origin-when-cross-origin'); // Referrer Policy
+			header('X-Content-Type-Options: nosniff'); // Prevent MIME type sniffing
+
+			header('Content-Security-Policy: '. implode(';', [
+				"frame-ancestors 'self'", // Clickjacking Protection
+					//"script-src 'nonce-". self::$nonce ."' 'strict-dynamic'",
+					//"img-src 'self'",
+					//"style-src 'self'",
+					//"base-uri 'self'",
+					//"form-action 'self'",
+			]));
+
+			header('Permissions-Policy: ', implode(',', [
+					'camera=()',
+					'clipboard-read=()',
+					'clipboard-write=()',
+					'fullscreen=(self)',
+					'payment=()',
+					'geolocation=()',
+					'browsing-topics()',
+			]));
 
 			// Default to AJAX layout on AJAX request
 			if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
@@ -55,14 +76,20 @@
 					break;
 			}
 
+			// Alert errors to administrator
+			if (administrator::check_login()) {
+				self::add_head_tags([
+					'<script>let _alertedErrors=0;window.onerror=(c,r,a,p)=>{_alertedErrors++<5&&alert(c+" in "+r.split("/").pop().split("?")[0]+" on line "+a)};</script>',
+				], 'alert_errors');
+			}
+
 			// Wait For (Mini version)
-			self::add_head_tags(implode(PHP_EOL, [
+			self::add_head_tags([
 				'<script>window.waitFor=window.waitFor||((i,o)=>{void 0!==window[i]?o(window[i]):setTimeout((()=>waitFor(i,o)),50)});</script>',
-			]), 'waitFor');
+			], 'waitFor');
 
 			// Load jQuery
 			self::load_script('app://assets/jquery/jquery-4.0.0.min.js', 'jquery');
-
 		}
 
 		public static function after_capture() {
@@ -139,7 +166,7 @@
 				$javascript = [];
 
 				$matches[2] = preg_replace_callback('#<script[^>]*(?!src="[^"]+")[^>]*>(.+?)</script>\R*#is', function($match) use (&$javascript) {
-					 $javascript[] = trim($match[1], "\r\n");
+					$javascript[] = trim($match[1], "\r\n");
 				}, $matches[2]);
 
 				return $matches[1] . $matches[2] . $matches[3];
@@ -172,7 +199,7 @@
 				$style = implode(PHP_EOL, [
 					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing?
 					$style,
-					 //'/*]]>*/-->',
+					//'/*]]>*/-->',
 				]);
 
 				// Build integrity hash
@@ -180,9 +207,9 @@
 
 				// Prepare style tag
 				$style = implode(PHP_EOL, [
-					'<style integrity="sha256-'. base64_encode($checksum) .'">',
+					'<style integrity="sha256-'. base64_encode($checksum) .'" crossorigin="anonymous">',
 					$style,
-					 '</style>',
+					'</style>',
 				]);
 
 				// Insert style tag before </head>
@@ -201,9 +228,9 @@
 				// Convert to string
 				$javascript = implode(PHP_EOL, [
 					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing?
-					'+waitFor(\'jQuery\', function($) {',
+					'waitFor(\'jQuery\', function($) {',
 					implode(PHP_EOL . PHP_EOL, $javascript),
-					'})',
+					'});',
 					//'/*]]>*/-->',
 				]);
 
@@ -212,7 +239,7 @@
 
 				// Prepare script tag
 				$javascript = implode(PHP_EOL, [
-					'<script integrity="sha256-'. base64_encode($checksum) .'">',
+					'<script integrity="sha256-'. base64_encode($checksum) .'" crossorigin="anonymous">',
 					$javascript,
 					'</script>',
 				]) . PHP_EOL;
@@ -312,6 +339,13 @@
 				]);
 			}
 
+			// Prepare console log
+			if (!empty(self::$console)) {
+				self::$javascript[] = implode(PHP_EOL, array_map(function($log) {
+					return 'console.'. $log['type'] .'("'. functions::escape_attr($log['message']) .'", '. json_encode($log['data'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) .');';
+				}, self::$console));
+			}
+
 			// Prepare internal javascript
 			if (!empty(self::$javascript)) {
 				$_page->snippets['foot_tags'][] = implode(PHP_EOL, [
@@ -367,8 +401,8 @@
 
 			$styles = [];
 			foreach ($resources as $resource) {
-				if (preg_match('#^(app|storage)://#', $resource)) {
-					$styles[] = '<link rel="stylesheet" integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" href="'. self::href_rlink($resource) .'">';
+				if (preg_match('#^(app|storage)://#', $resource) && is_file($resource)) {
+					$styles[] = '<link rel="stylesheet" integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" crossorigin="anonymous" href="'. self::href_rlink($resource) .'">';
 				} else {
 					$styles[] = '<link rel="stylesheet" href="'. self::href_link($resource) .'">';
 				}
@@ -386,8 +420,8 @@
 			$scripts = [];
 
 			foreach ($resources as $resource) {
-				if (preg_match('#^(app|storage)://#', $resource)) {
-					$scripts[] = '<script defer integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" src="'. self::href_rlink($resource) .'"></script>';
+				if (preg_match('#^(app|storage)://#', $resource) && is_file($resource)) {
+					$scripts[] = '<script defer integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" crossorigin="anonymous" src="'. self::href_rlink($resource) .'"></script>';
 				} else {
 					$scripts[] = '<script src="'. self::href_link($resource) .'"></script>';
 				}
@@ -428,6 +462,20 @@
 			self::$preloads[$link] = $type;
 		}
 
+		// Send a message to the console
+		public static function console(string $type, string $message, $data=null) {
+
+			if (!in_array($type, ['debug', 'log', 'info', 'warn', 'error', 'table'])) {
+				$type = 'log';
+			}
+
+			self::$console[] = [
+				'type' => $type,
+				'message' => $message,
+				'data' => $data,
+			];
+		}
+
 		public static function ilink($resource=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
 
 			switch (true) {
@@ -446,10 +494,19 @@
 					break;
 
 				default:
-					if (isset(route::$selected['endpoint']) && route::$selected['endpoint'] == 'backend') {
+
+					switch (fallback(route::$selected['endpoint'])) {
+						case 'backend':
 						$resource = WS_DIR_APP . BACKEND_ALIAS .'/'. $resource;
-					} else {
+							break;
+
+						case 'frontend':
 						$resource = WS_DIR_APP . $resource;
+							break;
+
+						default:
+							$resource = WS_DIR_APP . $resource;
+							break;
 					}
 					break;
 			}
@@ -495,7 +552,7 @@
 				$webpath = preg_replace('#^storage://#', WS_DIR_STORAGE, $resource);
 
 			} else {
-				$webpath = preg_replace('#^('. preg_quote(DOCUMENT_ROOT, '#') .')#', '', str_replace('\\', '/', $resource));
+				$webpath = preg_replace('#^'. preg_quote(DOCUMENT_ROOT, '#') .'#', '', str_replace('\\', '/', $resource));
 			}
 
 			if (is_file($resource)) {

@@ -1,9 +1,9 @@
 <?php
 
-	document::$title[] = language::translate('title_scan_translations', 'Scan Translations');
+	document::$title[] = t('title_scan_translations', 'Scan Translations');
 
-	breadcrumbs::add(language::translate('title_translations', 'Translations'), document::ilink('translations'));
-	breadcrumbs::add(language::translate('title_scan_translations', 'Scan Translations'), document::ilink());
+	breadcrumbs::add(t('title_translations', 'Translations'), document::ilink('translations'));
+	breadcrumbs::add(t('title_scan_translations', 'Scan Translations'), document::ilink());
 
 	if (!empty($_POST['scan'])) {
 
@@ -22,11 +22,13 @@
 		foreach ($iterator as $file) {
 
 			if (!preg_match('#\.php$#', $file)) continue;
+			if (!preg_match('#^app://(vendor|storage)/#', $file)) continue;
 
 			$files++;
 			$contents = file_get_contents($file);
 
 			$regexp = [
+				't\((?:(?!\$)',
 				'language::translate\((?:(?!\$)',
 				'(?:(__CLASS__)?\.)?',
 				'(?:[\'"])([^\'"]+)(?:[\'"])',
@@ -71,7 +73,7 @@
 
 					database::query(
 						"insert into ". DB_TABLE_PREFIX ."translations
-						(code, text_en, html, date_created)
+						(code, text_en, html, created_at)
 						values ('". database::input($code) ."', '". database::input($translation, true) ."', '". (($translation != strip_tags($translation)) ? 1 : 0) ."', '". date('Y-m-d H:i:s') ."');"
 					);
 
@@ -112,9 +114,9 @@
 		database::query(
 			"select * from ". DB_TABLE_PREFIX ."translations
 			where code not in ('". implode("', '", database::input($translation_keys)) ."')
-			order by date_accessed desc;"
+			order by last_accessed desc;"
 		)->each(function($translation) use (&$orphan) {
-			if (empty($translation['date_accessed']) || strtotime($translation['date_accessed']) < strtotime('-12 months')) {
+			if (empty($translation['last_accessed']) || strtotime($translation['last_accessed']) < strtotime('-12 months')) {
 				if (mb_strlen($translation['text_'.language::$selected['code']]) > 100) {
 					$translation['text_'.language::$selected['code']] = mb_substr($translation['text_'.language::$selected['code']], 0, 100) . '...';
 				}
@@ -126,14 +128,14 @@
 
 		cache::clear_cache('translations');
 
-		notices::add('notices', sprintf(language::translate('text_found_d_translations', 'Found %d translations in %d files'), $found, $files));
+		notices::add('notices', strtr(t('text_found_d_translations', 'Found {count} translations in {files} files'), ['{count}' => $found, '{files}' => $files]));
 
 		if ($new_translations) {
-			notices::add('notices', sprintf(language::translate('text_added_d_new_translations', 'Added %d new translations'), $new_translations));
+			notices::add('notices', strtr(t('text_added_d_new_translations', 'Added {count} new translations'), ['{count}' => $new_translations]));
 		}
 
 		if ($updated) {
-			notices::add('notices', sprintf(language::translate('text_updated_d_translations', 'Updated %d translations'), $updated));
+			notices::add('notices', strtr(t('text_updated_d_translations', 'Updated {count} translations'), ['{count}' => $updated]));
 		}
 	}
 
@@ -142,7 +144,7 @@
 		try {
 
 			if (empty($_POST['translations'])) {
-				throw new Exception(language::translate('error_must_select_translations', 'You must select translations'));
+				throw new Exception(t('error_must_select_translations', 'You must select translations'));
 			}
 
 			foreach ($_POST['translations'] as $code) {
@@ -153,7 +155,7 @@
 				);
 			}
 
-			notices::add('success', sprintf(language::translate('text_deleted_d_translations', 'Deleted %d translations'), count($_POST['translations'])));
+			notices::add('success', strtr(t('text_deleted_d_translations', 'Deleted {count} translations'), ['{count}' => count($_POST['translations'])]));
 
 		} catch (Exception $e) {
 			notices::add('errors', $e->getMessage());
@@ -172,7 +174,7 @@ table.data-table td {
 <div class="card">
 	<div class="card-header">
 		<div class="card-title">
-			<?php echo $app_icon; ?> <?php echo language::translate('title_scan_files_for_translations', 'Scan Files For Translations'); ?>
+			<?php echo $app_icon; ?> <?php echo t('title_scan_files_for_translations', 'Scan Files For Translations'); ?>
 		</div>
 	</div>
 
@@ -181,11 +183,11 @@ table.data-table td {
 			<div class="col-md-4">
 				<?php echo functions::form_begin('scan_form', 'post'); ?>
 
-					<p><?php echo language::translate('description_scan_for_translations', 'This will scan your files for translations. New translations will be added to the database.'); ?></p>
+					<p><?php echo t('description_scan_for_translations', 'This will scan your files for translations. New translations will be added to the database.'); ?></p>
 
-					<p><label><?php echo functions::form_checkbox('update', ['1', language::translate('text_update_empty_translations', 'Update empty translations if applicable')]); ?></label></p>
+					<p><label><?php echo functions::form_checkbox('update', ['1', t('text_update_empty_translations', 'Update empty translations if applicable')]); ?></label></p>
 
-					<p><?php echo functions::form_button('scan', language::translate('title_scan', 'Scan'), 'submit'); ?></p>
+					<p><?php echo functions::form_button('scan', t('title_scan', 'Scan'), 'submit'); ?></p>
 
 				<?php echo functions::form_end(); ?>
 
@@ -199,7 +201,7 @@ table.data-table td {
 			<?php if (!empty($_POST['scan']) && !empty($orphan)) { ?>
 			<div class="col-md-8">
 
-				<h2><?php echo language::translate('title_orphan_translations', 'Orphan Translations'); ?></h2>
+				<h2><?php echo t('title_orphan_translations', 'Orphan Translations'); ?></h2>
 
 					<?php echo functions::form_begin('scan_form', 'post'); ?>
 
@@ -207,10 +209,11 @@ table.data-table td {
 						<thead>
 							<tr>
 								<th><?php echo functions::draw_fonticon('icon-square-check checkbox-toggle', 'data-toggle="checkbox-toggle"'); ?></th>
-								<th><?php echo language::translate('title_code', 'Code'); ?></th>
-								<th><?php echo language::translate('title_translation', 'Translation'); ?></th>
+								<th><?php echo t('title_code', 'Code'); ?></th>
+								<th><?php echo t('title_translation', 'Translation'); ?></th>
 							</tr>
 						</thead>
+
 						<tbody>
 							<?php foreach ($orphan as $row) { ?>
 							<tr>

@@ -52,7 +52,7 @@
 	}
 
 ?>
-	<footer id="footer" class="hidden-print">
+<footer id="footer" class="hidden-print">
 	<div class="container content">
 		<div class="grid" style="margin-bottom: 0;">
 
@@ -60,7 +60,7 @@
 				<div class="grid" style="margin-bottom: 0;">
 
 					<section class="store-info col-sm-4">
-						<h3 class="title"><?php echo language::translate('title_contact', 'Contact'); ?></h3>
+						<h3 class="title"><?php echo t('title_contact', 'Contact'); ?></h3>
 
 						<?php if (settings::get('site_phone')) { ?>
 						<p class="phone">

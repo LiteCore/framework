@@ -12,27 +12,27 @@
 		$_POST = $language->data;
 	}
 
-	document::$title[] = !empty($language->data['id']) ? language::translate('title_edit_language', 'Edit Language') : language::translate('title_create_new_language', 'Create New Language');
+	document::$title[] = !empty($language->data['id']) ? t('title_edit_language', 'Edit Language') : t('title_create_new_language', 'Create New Language');
 
-	breadcrumbs::add(language::translate('title_languages', 'Languages'), document::ilink(__APP__.'/languages'));
-	breadcrumbs::add(!empty($language->data['id']) ? language::translate('title_edit_language', 'Edit Language') : language::translate('title_create_new_language', 'Create New Language'));
+	breadcrumbs::add(t('title_languages', 'Languages'), document::ilink(__APP__.'/languages'));
+	breadcrumbs::add(!empty($language->data['id']) ? t('title_edit_language', 'Edit Language') : t('title_create_new_language', 'Create New Language'), document::ilink());
 
 	if (isset($_POST['save'])) {
 
 		try {
 
 			if (empty($_POST['code'])) {
-				throw new Exception(language::translate('error_must_enter_code', 'You must enter a code'));
+				throw new Exception(t('error_must_enter_code', 'You must enter a code'));
 			}
 
 			if (empty($_POST['name'])) {
-				throw new Exception(language::translate('error_must_enter_name', 'You must enter a name'));
+				throw new Exception(t('error_must_enter_name', 'You must enter a name'));
 			}
 
 			if (!empty($_POST['url_type']) && $_POST['url_type'] == 'domain') {
 
 				if (empty($_POST['domain_name'])) {
-					throw new Exception(language::translate('error_must_provide_domain', 'You must provide a domain name'));
+					throw new Exception(t('error_must_provide_domain', 'You must provide a domain name'));
 				}
 
 				if (!empty($language->data['id'])) {
@@ -42,35 +42,37 @@
 						and id != ". (int)$language->data['id'] ."
 						limit 1;"
 					)->num_rows) {
-						throw new Exception(language::translate('error_domain_in_use_by_other_language', 'The domain name is already in use by another domain name.'));
+						throw new Exception(t('error_domain_in_use_by_other_language', 'The domain name is already in use by another domain name.'));
 					}
 				}
 			}
 
 			if (empty($_POST['set_default']) && isset($language->data['code']) && $language->data['code'] == settings::get('default_language_code') && $language->data['code'] != $_POST['code']) {
-				throw new Exception(language::translate('error_cannot_rename_default_language', 'You must change the default language before renaming it.'));
+				throw new Exception(t('error_cannot_rename_default_language', 'You must change the default language before renaming it.'));
 			}
 
 			if (empty($_POST['set_store']) && isset($language->data['code']) && $language->data['code'] == settings::get('site_language_code') && $language->data['code'] != $_POST['code']) {
-				throw new Exception(language::translate('error_cannot_rename_site_language', 'You must change the site language before renaming it.'));
+				throw new Exception(t('error_cannot_rename_site_language', 'You must change the site language before renaming it.'));
 			}
 
 			if (!empty($_POST['set_default']) && empty($_POST['status']) && isset($language->data['code']) && $language->data['code'] == settings::get('default_language_code')) {
-				throw new Exception(language::translate('error_cannot_set_disabled_default_language', 'You cannot set a disabled language as default language.'));
+				throw new Exception(t('error_cannot_set_disabled_default_language', 'You cannot set a disabled language as default language.'));
 			}
 
 			if (!empty($_POST['set_store']) && empty($_POST['status']) && isset($language->data['code']) && $language->data['code'] == settings::get('site_language_code')) {
-				throw new Exception(language::translate('error_cannot_set_disabled_site_language', 'You cannot set a disabled language as site language.'));
+				throw new Exception(t('error_cannot_set_disabled_site_language', 'You cannot set a disabled language as site language.'));
 			}
 
 			if (!setlocale(LC_ALL, preg_split('#\s*,\s*#', $_POST['locale'], -1, PREG_SPLIT_NO_EMPTY))) {
-				throw new Exception(strtr(language::translate('error_not_a_valid_system_locale', '%locale is not a valid system locale on this machine'), ['%locale' => fallback($_POST['locale'], 'NULL')]));
+				throw new Exception(strtr(t('error_not_a_valid_system_locale', '{locale} is not a valid system locale on this machine'), [
+					'{locale}' => fallback($_POST['locale'], 'NULL')
+				]));
 			}
 
 			setlocale(LC_ALL, preg_split('#\s*,\s*#', language::$selected['locale'], -1, PREG_SPLIT_NO_EMPTY)); // Restore
 
 			if (!empty($_POST['locale_intl']) && !in_array($_POST['locale_intl'], ResourceBundle::getLocales(''))) {
-				throw new Exception(language::translate('error_not_a_valid_intl_locale', '%locale is not a valid PHP Intl locale'));
+				throw new Exception(t('error_not_a_valid_intl_locale', '%locale is not a valid PHP Intl locale'));
 			}
 
 			##########
@@ -129,8 +131,8 @@
 				);
 			}
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/languages'));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/languages'));
 			exit;
 
 		} catch (Exception $e) {
@@ -143,13 +145,13 @@
 		try {
 
 			if (empty($language->data['id'])) {
-				throw new Exception(language::translate('error_must_provide_language', 'You must provide a language'));
+				throw new Exception(t('error_must_provide_language', 'You must provide a language'));
 			}
 
 			$language->delete();
 
-			notices::add('success', language::translate('success_changes_saved', 'Changes saved'));
-			header('Location: '. document::ilink(__APP__.'/languages'));
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/languages'));
 			exit;
 
 		} catch (Exception $e) {
@@ -218,33 +220,33 @@
 	];
 
 	$decimal_point_options = [
-		'.' => language::translate('char_dot', 'Dot'),
-		',' => language::translate('char_comma', 'Comma'),
+		'.' => t('char_dot', 'Dot'),
+		',' => t('char_comma', 'Comma'),
 	];
 
 	$thousands_separator_options = [
-		',' => language::translate('char_comma', 'Comma'),
-		'.' => language::translate('char_dot', 'Dot'),
-		' ' => language::translate('char_space', 'Space'),
-		' ' => language::translate('char_nonbreaking_space', 'Non-Breaking Space'),
-		'\'' => language::translate('char_single_quote', 'Single quote'),
+		',' => t('char_comma', 'Comma'),
+		'.' => t('char_dot', 'Dot'),
+		' ' => t('char_space', 'Space'),
+		' ' => t('char_nonbreaking_space', 'Non-Breaking Space'),
+		'\'' => t('char_single_quote', 'Single quote'),
 	];
 
 	$url_types = [
-		'none' => language::translate('title_none', 'None'),
-		'path' => language::translate('title_path_prefix', 'Path Prefix'),
-		'domain' => language::translate('title_domain', 'Domain'),
+		'none' => t('title_none', 'None'),
+		'path' => t('title_path_prefix', 'Path Prefix'),
+		'domain' => t('title_domain', 'Domain'),
 	];
 
 	$text_directions = [
-		'ltr' => language::translate('title_left_to_right', 'Left To Right'),
-		'rtl' => language::translate('title_right_to_left', 'Right To Left'),
+		'ltr' => t('title_left_to_right', 'Left To Right'),
+		'rtl' => t('title_right_to_left', 'Right To Left'),
 	];
 
 	$statuses = [
-		'1' => language::translate('title_enabled', 'Enabled'),
-		'-1' => language::translate('title_hidden', 'Hidden'),
-		'0' => language::translate('title_disabled', 'Disabled'),
+		'1' => t('title_enabled', 'Enabled'),
+		'-1' => t('title_hidden', 'Hidden'),
+		'0' => t('title_disabled', 'Disabled'),
 	];
 
 	// Prefillable Languages
@@ -272,7 +274,7 @@
 
 		if ($available_languages) {
 
-			$prefillable_language_options = [['', '-- '. language::translate('title_select', 'Select') .' --']];
+			$prefillable_language_options = [['', '-- '. t('title_select', 'Select') .' --']];
 
 			// Append to array of options
 			foreach ($available_languages as $available_language) {
@@ -291,7 +293,7 @@
 <div class="card">
 	<div class="card-header">
 		<div class="card-title">
-			<?php echo $app_icon; ?> <?php echo !empty($language->data['id']) ? language::translate('title_edit_language', 'Edit Language') : language::translate('title_create_new_language', 'Create New Language'); ?>
+			<?php echo $app_icon; ?> <?php echo !empty($language->data['id']) ? t('title_edit_language', 'Edit Language') : t('title_create_new_language', 'Create New Language'); ?>
 		</div>
 	</div>
 
@@ -300,7 +302,7 @@
 
 			<?php if (!empty($prefillable_language_options)) { ?>
 			<label class="form-group">
-				<div class="form-label"><?php echo language::translate('text_prefill_from_the_web', 'Prefill from the web'); ?></div>
+				<div class="form-label"><?php echo t('text_prefill_from_the_web', 'Prefill from the web'); ?></div>
 				<?php echo functions::form_select('prefill', $prefillable_language_options, ''); ?>
 			</label>
 			<?php } ?>
@@ -308,14 +310,14 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_status', 'Status'); ?></div>
+						<div class="form-label"><?php echo t('title_status', 'Status'); ?></div>
 						<?php echo functions::form_toggle('status', $statuses); ?>
 					</label>
 				</div>
 
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_name', 'Name'); ?></div>
+						<div class="form-label"><?php echo t('title_name', 'Name'); ?></div>
 						<?php echo functions::form_input_text('name', true, 'list="available-languages"'); ?>
 					</label>
 				</div>
@@ -324,7 +326,7 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_text_direction', 'Text Direction'); ?></div>
+						<div class="form-label"><?php echo t('title_text_direction', 'Text Direction'); ?></div>
 						<?php echo functions::form_toggle('direction', $text_directions); ?>
 					</label>
 				</div>
@@ -333,21 +335,21 @@
 			<div class="grid">
 				<div class="col-md-4">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_code', 'Code'); ?> (ISO 639-1) <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
+						<div class="form-label"><?php echo t('title_code', 'Code'); ?> (ISO 639-1) <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
 						<?php echo functions::form_input_text('code', true, 'required pattern="[a-z]{2}"'); ?>
 					</label>
 				</div>
 
 				<div class="col-md-4">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_code', 'Code'); ?> 2 (ISO 639-2) <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
+						<div class="form-label"><?php echo t('title_code', 'Code'); ?> 2 (ISO 639-2) <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
 						<?php echo functions::form_input_text('code2', true, 'required pattern="[a-z]{3}"'); ?>
 					</label>
 				</div>
 
 				<div class="col-md-4">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_php_int_locale', 'PHP Intl Locale'); ?></div>
+						<div class="form-label"><?php echo t('title_php_int_locale', 'PHP Intl Locale'); ?></div>
 						<?php echo functions::form_select_intl_locale('locale_intl', true); ?>
 					</label>
 				</div>
@@ -357,14 +359,14 @@
 
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_system_locale', 'System Locale'); ?></div>
+						<div class="form-label"><?php echo t('title_system_locale', 'System Locale'); ?></div>
 						<?php echo functions::form_select_system_locale('locale', true); ?>
 					</label>
 				</div>
 
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_database_collation', 'Database Collation'); ?></div>
+						<div class="form-label"><?php echo t('title_database_collation', 'Database Collation'); ?></div>
 						<?php echo functions::form_select_mysql_collation('mysql_collation', true); ?>
 					</label>
 				</div>
@@ -374,14 +376,14 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_url_type', 'URL Type'); ?></div>
+						<div class="form-label"><?php echo t('title_url_type', 'URL Type'); ?></div>
 						<?php echo functions::form_toggle('url_type', $url_types); ?>
 					</label>
 				</div>
 
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_domain_name', 'Domain Name'); ?></div>
+						<div class="form-label"><?php echo t('title_domain_name', 'Domain Name'); ?></div>
 						<?php echo functions::form_input_text('domain_name', true); ?>
 					</label>
 				</div>
@@ -390,14 +392,14 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_date_format', 'Date Format'); ?> <a href="https://php.net/manual/en/function.strftime.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
+						<div class="form-label"><?php echo t('title_date_format', 'Date Format'); ?> <a href="https://php.net/manual/en/function.strftime.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
 						<?php echo functions::form_select('format_date', $date_format_options, true); ?>
 					</label>
 				</div>
 
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_time_format', 'Time Format'); ?> <a href="https://php.net/manual/en/function.strftime.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
+						<div class="form-label"><?php echo t('title_time_format', 'Time Format'); ?> <a href="https://php.net/manual/en/function.strftime.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
 						<?php echo functions::form_select_optgroup('format_time', $time_format_options, true); ?>
 					</label>
 				</div>
@@ -406,14 +408,14 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_raw_date_format', 'Raw Date Format'); ?> <a href="https://php.net/manual/en/function.date.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
+						<div class="form-label"><?php echo t('title_raw_date_format', 'Raw Date Format'); ?> <a href="https://php.net/manual/en/function.date.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
 						<?php echo functions::form_select_optgroup('raw_date', $raw_date_options, true); ?>
 					</label>
 				</div>
 
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_raw_time_format', 'Raw Time Format'); ?> <a href="https://php.net/manual/en/function.date.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
+						<div class="form-label"><?php echo t('title_raw_time_format', 'Raw Time Format'); ?> <a href="https://php.net/manual/en/function.date.php" target="_blank"><?php echo functions::draw_fonticon('icon-square-out'); ?></a></div>
 						<?php echo functions::form_select_optgroup('raw_time', $raw_time_options, true); ?>
 					</label>
 				</div>
@@ -422,14 +424,14 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_decimal_point', 'Decimal Point'); ?></div>
+						<div class="form-label"><?php echo t('title_decimal_point', 'Decimal Point'); ?></div>
 						<?php echo functions::form_select('decimal_point', $decimal_point_options, true); ?>
 					</label>
 				</div>
 
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_thousands_sep', 'Thousands Separator'); ?></div>
+						<div class="form-label"><?php echo t('title_thousands_sep', 'Thousands Separator'); ?></div>
 						<?php echo functions::form_select('thousands_sep', $thousands_separator_options, true); ?>
 					</label>
 				</div>
@@ -438,7 +440,7 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<label class="form-group">
-						<div class="form-label"><?php echo language::translate('title_priority', 'Priority'); ?></div>
+						<div class="form-label"><?php echo t('title_priority', 'Priority'); ?></div>
 						<?php echo functions::form_input_number('priority', true); ?>
 					</label>
 				</div>
@@ -447,8 +449,8 @@
 			<div class="grid">
 				<div class="col-md-6">
 					<div class="form-group">
-						<?php echo functions::form_checkbox('set_default', ['1', language::translate('description_set_as_default_language', 'Set as default language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('default_language_code')) ? '1' : true); ?>
-						<?php echo functions::form_checkbox('set_site', ['1', language::translate('description_set_as_site_language', 'Set as site language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('site_language_code')) ? '1' : true); ?></label>
+						<?php echo functions::form_checkbox('set_default', ['1', t('description_set_as_default_language', 'Set as default language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('default_language_code')) ? '1' : true); ?>
+						<?php echo functions::form_checkbox('set_site', ['1', t('description_set_as_site_language', 'Set as site language')], (isset($language->data['code']) && $language->data['code'] && $language->data['code'] == settings::get('site_language_code')) ? '1' : true); ?></label>
 					</div>
 				</div>
 			</div>

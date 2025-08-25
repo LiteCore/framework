@@ -14,8 +14,8 @@
 			`parent_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
 			`dock` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 			`priority` INT(11) NOT NULL DEFAULT '0',
-			`date_updated` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-			`date_created` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+			`updated_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+			`created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
 			PRIMARY KEY (`id`),INDEX `status` (`status`),
 			INDEX `parent_id` (`parent_id`),
 			INDEX `dock` (`dock`)
@@ -107,7 +107,7 @@
 
       <insert><![CDATA[
 					<section class="information col-xs-6 col-sm-3">
-						<h3 class="title"><?php echo language::translate('title_information', 'Information'); ?></h3>
+						<h3 class="title"><?php echo t('title_information', 'Information'); ?></h3>
 						<ul class="list-unstyled">
 							<?php foreach ($pages as $page) echo '<li><a href="'. htmlspecialchars($page['link']) .'">'. $page['title'] .'</a></li>' . PHP_EOL; ?>
 						</ul>
@@ -143,7 +143,7 @@
 			$options = [];
 
 			if (empty($parent_id)) {
-				$options[] = ['0', '['.language::translate('title_root', 'Root').']'];
+				$options[] = ['0', '['.t('title_root', 'Root').']'];
 			}
 
 			$pages_query = database::query(
@@ -176,7 +176,7 @@
 		if (preg_match('#\[\]$#', $name)) {
 			return form_select_multiple($name, $options, $input, $parameters);
 		} else {
-			array_unshift($options, ['', '-- '. language::translate('title_select', 'Select') . ' --']);
+			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
 			return form_select($name, $options, $input, $parameters);
 		}
 	}
@@ -213,12 +213,12 @@
     <operation method="before" type="multiline" onerror="warning">
       <find><![CDATA[
 					<section class="store-info col-sm-4">
-						<h3 class="title"><?php echo language::translate('title_contact', 'Contact'); ?></h3>
+						<h3 class="title"><?php echo t('title_contact', 'Contact'); ?></h3>
       ]]></find>
 
       <insert><![CDATA[
 					<section class="information col-xs-6 col-sm-3">
-						<h3 class="title"><?php echo language::translate('title_information', 'Information'); ?></h3>
+						<h3 class="title"><?php echo t('title_information', 'Information'); ?></h3>
 						<ul class="list-unstyled">
 							<?php foreach ($pages as $page) echo '<li><a href="'. functions::escape_attr($page['link']) .'">'. $page['title'] .'</a></li>' . PHP_EOL; ?>
 						</ul>

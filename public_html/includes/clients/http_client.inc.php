@@ -136,17 +136,7 @@
 				'bytes' => strlen($response_headers . "\r\n" . $response_body),
 			];
 
-			file_put_contents(functions::file_realpath('storage://logs/http_request_last-'. $parts['host'] .'.log'), implode("\r\n", [
-				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_request['timestamp']) .'] Request ', 70, '#', STR_PAD_RIGHT),
-				'',
-				$this->last_request['headers'],
-				$this->last_request['body'],
-				'',
-				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_response['timestamp']) .'] Response — '. $this->last_response['bytes'] .' bytes transferred in '. $this->last_response['duration'] .' s ', 72, '#', STR_PAD_RIGHT),
-				'',
-				$this->last_response['headers'],
-				$this->last_response['body'],
-			]));
+			file_put_contents(functions::file_realpath('storage://logs/http_request_last-'. $parts['host'] .'.log'), $this->get_log());
 
 			self::$stats['requests']++;
 
@@ -163,6 +153,20 @@
 			}
 
 			return $response_body;
+		}
+
+		public function get_log() {
+			implode("\r\n", [
+				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_request['timestamp']) .'] Request ', 70, '#', STR_PAD_RIGHT),
+				'',
+				$this->last_request['headers'],
+				$this->last_request['body'],
+				'',
+				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_response['timestamp']) .'] Response — '. $this->last_response['bytes'] .' bytes transferred in '. $this->last_response['duration'] .' s ', 72, '#', STR_PAD_RIGHT),
+				'',
+				$this->last_response['headers'],
+				$this->last_response['body'],
+			]);
 		}
 
 		public function http_decode_chunked_data($data) {

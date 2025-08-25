@@ -11,22 +11,22 @@
 
 <div id="modal-country-picker" class="modal fade" style="max-width: 640px; display: none;">
 
-	<button class="set-guest btn btn-default float-end" type="button"><?php echo language::translate('text_set_as_guest', 'Set As Guest'); ?></button>
+	<button class="set-guest btn btn-default float-end" type="button"><?php echo t('text_set_as_guest', 'Set As Guest'); ?></button>
 
-	<h2 style="margin-top: 0;"><?php echo language::translate('title_country', 'Country'); ?></h2>
+	<h2 style="margin-top: 0;"><?php echo t('title_country', 'Country'); ?></h2>
 
 	<div class="modal-body">
 		<label class="form-group">
-			<div class="form-label"><?php echo language::translate('title_search', 'Search'); ?></div>
-			<?php echo functions::form_input_search('query', true, 'placeholder="'. functions::escape_attr(language::translate('title_search', 'Search')) .'"'); ?>
+			<div class="form-label"><?php echo t('title_search', 'Search'); ?></div>
+			<?php echo functions::form_input_search('query', true, 'placeholder="'. functions::escape_attr(t('title_search', 'Search')) .'"'); ?>
 		</label>
 
 		<div class="form-group results table-responsive">
 			<table class="table data-table">
 				<thead>
 					<tr>
-						<th class="main"><?php echo language::translate('title_name', 'Name'); ?></th>
-						<th><?php echo language::translate('title_code', 'Code'); ?></th>
+						<th class="main"><?php echo t('title_name', 'Name'); ?></th>
+						<th><?php echo t('title_code', 'Code'); ?></th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -67,7 +67,7 @@
 					}
 				})
 				if ($('#modal-country-picker .results tbody').html() == '') {
-					$('#modal-country-picker .results tbody').html('<tr><td colspan="4"><em><?php echo functions::escape_js(language::translate('text_no_results', 'No results')); ?></em></td></tr>')
+					$('#modal-country-picker .results tbody').html('<tr><td colspan="4"><em><?php echo functions::escape_js(t('text_no_results', 'No results')); ?></em></td></tr>')
 				}
 			},
 		})
@@ -92,7 +92,7 @@
 
 		$(field).find(':input').val('0').trigger('change')
 		$(field).find('.code').text('')
-		$(field).find('.name').text('(<?php echo functions::escape_js(language::translate('title_guest', 'Guest')); ?>)')
+		$(field).find('.name').text('(<?php echo functions::escape_js(t('title_guest', 'Guest')); ?>)')
 		$.litebox.close()
 	})
 </script>

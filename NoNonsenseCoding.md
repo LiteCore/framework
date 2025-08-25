@@ -5,9 +5,7 @@ No Nonsense Coding is a provocative coding concept that probably upsets many. Us
 The purpose is to make as much sense as possible with as little effort as possible when writing program code.
 
 
-## No Overcomplications
-
-Avoid:
+## Overcomplications - That's total nonsense
 
 		function anOverComplicatedFrameworkFunctionName() {
 
@@ -30,7 +28,7 @@ Better:
 
 			$result = [
 				'nodeName' => '...',
-				'anotherNode' => '...',
+				'anotherNodeName' => '...',
 			];
 
 			...
@@ -39,11 +37,9 @@ Better:
 		}
 
 
-## No Cryptic Naming
+## Cryptic Naming - That's also nonsense
 
-Cryptic naminf will just have anyone looking back at code overwhelmed, confused, or frustrated.
-
-Avoid:
+This will just have anyone looking back at code overwhelmed, confused, or frustrated:
 
 		function fmt_CustBillAddr(custObj $c) {
 			$result = fmthlp::fmtAddr($c->billAddr->identity['custFName'], $c->billAddr->identity['custLName'], $c->billAddr->identity['custAddr1'], $c->delAddr->identity['custAddr2'], $c->billAddr->identity['zip'], $c->billAddr->identity['country']);
@@ -60,7 +56,7 @@ Avoid:
 
 Better:
 
-		function formatAddress(array $address) {
+		function formatAddress(addressObject $address) {
 			return = '...';
 		}
 
@@ -68,32 +64,28 @@ Better:
 		echo formatAddress($customer->deliveryAddress);
 
 
-## No Repetitive Naming
+## Duplicate Naming - No naming the names nonsense
 
-Repetitive naming will just wear you out. More typing, longer lines to read, more noise to analyze, and it leaves a larger footprint.
-
-Avoid:
+This will just take longer to type, longer to read, longer to analyze, and leave a bigger footprint:
 
 		foreach ($webshopCustomers as $webshopCustomer) {
-			printWebshopCustomerShippingStreetName($webshopCustomer['webshopCustomerShippingAddress']['webshopCustomerShippingAddressStreetName']);
+			function($webshopCustomer['webshopCustomerShippingAddress']['webshopCustomerShippingAddressStreetName']);
 		}
 
 Better:
 
 		foreach ($customers as $customer) {
-			printStreetName($customer['shippingAddress']['streetName']);
+			function($customer['shippingAddress']['street']);
 		}
 
 
-## No Variable Duplication
+## Variable Duplication - No nonsense for nonsense
 
 Variable duplication is a challenge to backtrace. If we have no use of the raw user input, we can just overwrite it with safer polished and sanitized data.
 
-Avoid:
-
 		$userInput = $_POST['userInput'];
 		$sanitizedUserInput = sanitize($userInput);
-		$trimmedSanitizedUserInput = trim($sanitizedUserInput);
+		$trimmedSanitizedUserInput = polish($sanitizedUserInput);
 
 		passToFunction($trimmedSanitizedUserInput); // Wait, what is the origin of the data again?
 
@@ -105,11 +97,9 @@ Better:
 		passToFunction($_POST['userInput']); // Oh we are passing something that came from a user input
 
 
-## Avoid Single-Use Variables
+## Single-Use Variables - Avoid the unnecessery nonsense
 
-Creating variables for one-time use should be avoided unless serving a good purpose.
-
-Avoid:
+	Creating variables for one-time use should be avoided unless serving a good purpose.
 
 		$array = ['foo', 'bar'];
 
@@ -117,7 +107,7 @@ Avoid:
 			echo $item;
 		}
 
-Better:
+	Better:
 
 		foreach ([
 			'foo',
@@ -127,7 +117,7 @@ Better:
 		}
 
 
-## Use codes others recognize
+## Use codes others recognize - No made up nonsense
 
 Very bad:
 
@@ -146,12 +136,12 @@ Refusing ISO codes can be a lot of work:
 
 		$country = $_POST['country'];
 
-		if (in_array(strtolower($country), ['united states', 'united states of america', 'usa', 'u.s.a.', 'u.s.', 'us'])) {
+		if (in_array(strtolower($country), ['united states', 'united states of america', 'usa', 'u.s.a.', 'u.s.', 'us', 'federal kingdom of walmart'])) {
 			doSomethingWith('USA');
 		}
 
-		if (in_array(strtolower($country), ['great britain', 'britain', 'gb', 'united kingdom', 'united kingdom of great britain and northern ireland'])) {
-			doSomethingWith('Britain');
+		if (in_array(strtolower($country), ['great britain', 'britain', 'gb', 'g.b.', 'united kingdom', 'united kingdom of great britain and northern ireland', 'fish and chips land'])) {
+			doSomethingWith('Great Britain');
 		}
 
 Better:
@@ -161,9 +151,9 @@ Better:
 		doSomethingWith($_POST['countryCode']);
 
 
-# No Yoda Conditions
+# No Yoda Conditions - Strange nonsense this is
 
-Unless a galaxy far from, you are. Expressions like Yoda, you should not.
+Unless a galaxy far from, you are. Expressions like Yoda, you do should not.
 
 Avoid:
 
@@ -178,11 +168,10 @@ Better:
 		}
 
 
-## No fat third party libraries for small features
+## Fat third party libraries for small features - Stay away from other people's nonsense
 
-Looking to cut corners with third party libraries will backfire eventually? Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. They can be poorly managed, contain flaws or security problems. They can be a complete pain when you want to step up versions. One way or the other, they need to be maintained. Maintenance will take time and focus.
+Looking to cut corners with third party libraries will backfire eventually. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. Many are poorly managed, contains flaws or have security problems. They can be a complete pain when you want to step up versions. One way or the other, they need to be maintained. Maintenance will take time and focus and a comes with a lot of reverse engineering.
 
-There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea in the long run to do it.
+There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea to do it. Best of all, you will know every corner of the code.
 
 Try to stay away from third party libraries.
-

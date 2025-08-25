@@ -24,8 +24,8 @@
 						"select * from ". DB_TABLE_PREFIX ."administrators
 						where lower(username) = lower('". database::input($username) ."')
 						and status
-						and (date_valid_from is null or date_valid_from < '". date('Y-m-d H:i:s') ."')
-						and (date_valid_to is null or date_valid_to > '". date('Y-m-d H:i:s') ."')
+						and (valid_from is null or valid_from < '". date('Y-m-d H:i:s') ."')
+						and (valid_to is null or valid_to > '". date('Y-m-d H:i:s') ."')
 						limit 1;"
 					)->fetch();
 
@@ -48,7 +48,7 @@
 							database::query(
 								"update ". DB_TABLE_PREFIX ."administrators
 								set login_attempts = 0,
-								date_valid_from = '". date('Y-m-d H:i:00', strtotime('+15 minutes')) ."'
+								valid_from = '". date('Y-m-d H:i:00', strtotime('+15 minutes')) ."'
 								where id = ". (int)$administrator['id'] ."
 								limit 1;"
 							);
@@ -64,9 +64,9 @@
 						set last_ip_address = '". database::input($_SERVER['REMOTE_ADDR']) ."',
 							last_hostname = '". database::input(gethostbyaddr($_SERVER['REMOTE_ADDR'])) ."',
 							last_user_agent = '". database::input($_SERVER['HTTP_USER_AGENT']) ."',
+							last_login = '". date('Y-m-d H:i:s') ."',
 							login_attempts = 0,
-							total_logins = total_logins + 1,
-							date_login = '". date('Y-m-d H:i:s') ."'
+							total_logins = total_logins + 1
 						where id = ". (int)$administrator['id'] ."
 						limit 1;"
 					);
@@ -101,16 +101,16 @@
 
 				database::query(
 					"update ". DB_TABLE_PREFIX ."administrators
-					set date_active = '". date('Y-m-d H:i:s') ."'
+					set last_active = '". date('Y-m-d H:i:s') ."'
 					where id = ". (int)self::$data['id'] ."
 					limit 1;"
 				);
 
-				if (!empty($administrator['date_expire_sessions'])) {
-					if (!isset(session::$data['administrator_security_timestamp']) || session::$data['administrator_security_timestamp'] < strtotime($administrator['date_expire_sessions'])) {
+				if (!empty($administrator['sessions_expiry'])) {
+					if (!isset(session::$data['administrator_security_timestamp']) || session::$data['administrator_security_timestamp'] < strtotime($administrator['sessions_expiry'])) {
 						self::reset();
-						notices::add('errors', language::translate('error_session_expired_due_to_account_changes', 'Session expired due to changes in the account'));
-						header('Location: '. document::ilink('b:login'));
+						notices::add('errors', t('error_session_expired_due_to_account_changes', 'Session expired due to changes in the account'));
+						redirect(document::ilink('b:login'));
 						exit;
 					}
 				}
@@ -159,13 +159,13 @@
 
 			if (!self::check_login()) {
 				$redirect_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
-				header('Location: ' . document::ilink('b:login', ['redirect_url' => $redirect_url]));
+				redirect(document::ilink('b:login', ['redirect_url' => $redirect_url]));
 				exit;
 			}
 
 			if (!empty(session::$data['security_verification'])) {
 				if (!in_array(route::$selected['resource'], ['b:login', 'b:logout', 'b:verify'])) {
-					header('Location: ' . document::ilink('b:verify', ['redirect_url' => $_SERVER['REQUEST_URI']]));
+					redirect(document::ilink('b:verify', ['redirect_url' => $_SERVER['REQUEST_URI']]));
 					exit;
 				}
 			}

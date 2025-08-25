@@ -5,17 +5,6 @@
 		private static $_watches;
 		public static $data;
 
-		public static function init() {
-			event::register('after_capture', [__CLASS__, 'after_capture']);
-		}
-
-		public static function after_capture() {
-			if (($page_parse_time = microtime(true) - SCRIPT_TIMESTAMP_START) > 10) {
-				//notices::add('warnings', language::translate('text_long_execution_time', 'We apologize for the inconvenience that the server seems temporary overloaded right now.'));
-				error_log('Warning: Long page execution time '. number_format($page_parse_time, 3, '.', ' ') .' s - '. $_SERVER['REQUEST_URI']);
-			}
-		}
-
 		public static function start_watch($id) {
 			if (!isset(self::$_watches[$id])) {
 				self::$_watches[$id] = microtime(true);
@@ -42,8 +31,6 @@
 
 		public static function render() {
 
-			if (class_exists('administrator', false) && administrator::check_login()) {
-
 				// Page parse time
 				$page_parse_time = microtime(true) - SCRIPT_TIMESTAMP_START;
 
@@ -65,6 +52,21 @@
 					'-->',
 				]);
 
+			if (($page_parse_time = microtime(true) - SCRIPT_TIMESTAMP_START) > 10) {
+				error_log(implode(PHP_EOL, array_filter([
+					'Warning: Long script running time '. (floor($page_parse_time / 10 ) * 10) .'+ s',
+					$output,
+					'Elapsed Time: '. number_format($page_parse_time, 0, '.', ' ') .' s',
+					($_SERVER['SERVER_SOFTWARE'] == 'CLI') ? 'Command: '. implode(' ', $GLOBALS['argv']) : '',
+					!empty($_SERVER['REQUEST_URI']) ? 'Request: '. $_SERVER['REQUEST_METHOD'] .' '. $_SERVER['REQUEST_URI'] .' '. $_SERVER['SERVER_PROTOCOL'] : '',
+					!empty($_SERVER['HTTP_HOST']) ? 'Host: '. $_SERVER['HTTP_HOST'] : '',
+					!empty($_SERVER['REMOTE_ADDR']) ? 'Client: '. $_SERVER['REMOTE_ADDR'] .' ('. gethostbyaddr($_SERVER['REMOTE_ADDR']) .')' : '',
+					!empty($_SERVER['HTTP_USER_AGENT']) ? 'User Agent: '. $_SERVER['HTTP_USER_AGENT'] : '',
+					!empty($_SERVER['HTTP_REFERER']) ? 'Referer: '. $_SERVER['HTTP_REFERER'] : '',
+				])) . PHP_EOL);
+			}
+
+			if (class_exists('administrator', false) && administrator::check_login()) {
 				return $output;
 			}
 		}
