@@ -1,13 +1,25 @@
-window.waitFor = (objectName, callback, attempts=100) => {
+/* Minimal waitFor() implementation
+ * Calls callback when objectName is defined in the global scope
+ * waitTime is the time between retries, in milliseconds (default 50ms)
+ * retries is the number of times to retry before giving up (default 100)
+ */
+window.waitFor = (objectName, callback, waitTime=50, retries=100) => {
+
+	if (typeof(objectName) !== 'string') {
+		throw new TypeError('First argument to waitFor() must be a string');
+	}
 
 	if (typeof(window[objectName]) !== 'undefined') {
 		callback(window[objectName]);
+
+	} else if (retries > 0) {
+
+		setTimeout(() => {
+			waitFor(objectName, callback, waitTime, --retries);
+		}, waitTime);
+
 	} else {
-		if (attempts) {
-			setTimeout(() => {
-				waitFor(objectName, callback, --attempts);
-			}, 50);
-		}
+		console.warn(`waitFor(${objectName}) timed out`);
 	}
 };
 
@@ -22,10 +34,10 @@ waitFor('jQuery', ($) => {
 			cache: true,
 			onload: callback,
 			onerror: fallback
-		})
+		});
 
-		$('<link>', options).appendTo('head')
-	}
+		$('<link>', options).appendTo('head');
+	};
 
 	// JavaScript Loader
 	$.loadScript = function(url, options, callback, fallback) {
