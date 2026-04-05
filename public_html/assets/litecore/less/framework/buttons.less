@@ -16,7 +16,6 @@
 	}
 }
 
-
 .btn {
 	display: inline-block;
 	padding: var(--button-padding-y) var(--button-padding-x);
@@ -35,19 +34,19 @@
 	&.btn-default { .btn('default'); }
 	&.btn-success { .btn('success'); }
 	&.btn-danger { .btn('danger'); }
-	&.btn-outline { .btn('outline'); }
-	&.btn-transparent { .btn('transparent'); }
+	&.btn-outline { .btn('outline'); box-shadow: none; border: var(--button-outline-text-color) solid var(--button-outline-border-width); }
 
 	.btn-outline-gradient {
 		border: solid 2px transparent;
 		background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #78e4ff, #ff48fa);
 	}
 
-	&.btn-sm { font-size: .75em; }
+	&.btn-sm { font-size: .65em; }
 	&.btn-lg { font-size: 1.25em; }
 
-	&.active, &:active {
-		box-shadow: inset 2px 2px 0px 0 rgba(0, 0, 0, .05);
+	&:active, &.active {
+		box-shadow: var(--button-shadow--active);
+		transform: translateY(1px);
 	}
 
 	&[disabled] {
@@ -59,8 +58,12 @@
 		text-decoration: none;
 	}
 
-	+ .btn {
+	+ .btn, + .btn-group {
 		margin-inline-start: .5em;
+	}
+
+	> [class^="icon-"] {
+		margin-inline-end: .5em;
 	}
 }
 
@@ -76,6 +79,9 @@
 	position: relative;
 	display: inline-flex;
 	border-radius: var(--border-radius);
+	+ .btn, + .btn-group {
+		margin-inline-start: .5em;
+	}
 	.btn {
 		flex: 1 0 auto;
 		margin-inline-start: -1px;
