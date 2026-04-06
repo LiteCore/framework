@@ -2,7 +2,7 @@
 
 .form-group {
 	display: block;
-	margin-bottom: 1em;
+	margin-bottom: 1.5em;
 
 	&:has([required]) .form-label::after {
 		content: ' *';
@@ -18,7 +18,7 @@
 label.form-check {
 	display: block;
 	user-select: none;
-	line-height: 2.5;
+	line-height: 2;
 }
 
 .form-check,
@@ -26,7 +26,7 @@ label.form-check > input {
 	&:is(input), &:is(label) > input {
 		display: inline-block;
 		margin-inline-end: .25em;
-		background: var(--input-background);
+		background: var(--input-checkbox-background);
 		border: var(--input-border-color);
 		vertical-align: text-bottom;
 		height: 1.33em;
@@ -115,20 +115,16 @@ label.form-check > input {
 	}
 }
 
-.dropdown .form-select + .dropdown-menu {
-	.option {
-		label:hover {
-			backdrop-filter: brightness(0.95);
-		}
-		input[type="checkbox"],
-		input[type="radio"] {
-			display: none;
-		}
-		&:has(input[type="checkbox"]:checked),
-		&:has(input[type="radio"]:checked) {
-			font-weight: bold;
-			backdrop-filter: brightness(0.90);
-		}
+.form-group {
+	&:has(.form-input-feedback) {
+		position: relative;
+	}
+	.form-input-feedback {
+		position: absolute;
+		inset-inline-end: 1em;
+		top: 3em;
+		transform: translateY(-50%);
+		pointer-events: none;
 	}
 }
 
@@ -143,13 +139,6 @@ label.form-check > input {
 		background-repeat: no-repeat;
 		background-position: right 1em center;
 		background-size: 16px 12px;
-	}
-
-	+ .dropdown-menu {
-		min-width: 100%;
-		> li > label:hover {
-			background: #efefef;
-		}
 	}
 
 	option {
@@ -208,15 +197,15 @@ label.form-check > input {
 .form-toggle {
 	display: flex;
 	flex-direction: row;
-	padding: var(--input-padding-y);
+	padding: .5em var(--input-padding-x);
 	gap: 1em;
+	overflow: hidden;
 
 	label {
 		flex: 0 0 auto;
 		display: inline-block;
 		border-radius: var(--border-radius);
-		padding: .5em 1em;
-		margin: ~"calc(-.5em - var(--input-border-width))" 0;
+		padding: .25em 1em;
 		text-align: center;
 		border: var(--input-border-width) solid transparent;
 
@@ -224,7 +213,7 @@ label.form-check > input {
 			background: var(--input-toggle-background);
 			border: var(--input-border-width) solid var(--input-border-color);
 		}
-		&:hover:not(:checked):not(:disabled) {
+		&:hover:not(:has(:checked)):not(:disabled) {
 			background: var(--input-toggle-background--hover);
 			cursor: pointer;
 		}
@@ -238,7 +227,8 @@ label.form-check > input {
 }
 
 .form-code {
-	filter: invert(.9);
+	background: var(--input-code-background);
+	color: var(--input-code-text-color);
 	min-height: 320px;
 	font-size: .85em;
 	overflow-y: auto;
@@ -308,7 +298,6 @@ label.form-check > input {
 	}
 
 	> *:not(:first-child) {
-		border-left: var(--input-border);
 	}
 
 	//> *:first-child:is(.btn, .form-select, .form-input) {
