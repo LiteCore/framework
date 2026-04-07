@@ -1,124 +1,148 @@
 <?php
 
-	include_once '../../includes/app_header.inc.php';
+  include_once __DIR__.'/../public_html/includes/app_header.inc.php';
 
-	try {
+  try {
 
-		// Start a MySQL transaction so we can rollback the test
-		database::query(
-			"start transaction;"
-		);
+    // Get the current auto increment ID - this will be used to revert the ID after the test
+    $auto_increment_id = database::query(
+      "SHOW TABLE STATUS LIKE '". DB_TABLE_PREFIX ."administrators';"
+    )->fetch('Auto_increment');
 
-		// Prepare some example data
-		$data = [
-			'status' => 1,
-			'username' => 'test',
-			'email' => 'test@example.com',
-			'two_factor_auth' => 1,
-			'valid_from' => '2023-01-01 00:00:00',
-			'valid_to' => '2023-12-31 23:59:59',
-		];
+    // Start a MySQL transaction so we can rollback the test
+    database::query("start transaction;");
 
-		$password = '123456';
+    // Prepare some example data
+    $data = [
+      'status' => 1,
+      'username' => 'test',
+      'email' => 'test@example.com',
+      'two_factor_auth' => 1,
+      'valid_from' => '2023-01-01 00:00:00',
+      'valid_to' => '2023-12-31 23:59:59',
+    ];
 
-		########################################################################
-		## Creating a new administrator
-		########################################################################
+    $password = '123456';
 
-		// Create a new entity
-		$administrator = new ent_administrator();
+    ########################################################################
+    ## Creating a new administrator
+    ########################################################################
 
-		// Set data
-		foreach ($data as $key => $value) {
-			$administrator->data[$key] = $value;
-		}
+    // Create a new entity
+    $administrator = new ent_administrator();
 
-		$administrator->set_password('123456');
+    // Set data
+    $administrator->data = f::array_update($administrator->data, $data);
 
-		// Save changes to database
-		$administrator->save();
+    $administrator->set_password('123456');
 
-		// Check if the entity was created
-		if (!$administrator_id = $administrator->data['id']) {
-			throw new Exception('Failed to create administrator');
-		}
+    // Save changes to database
+    $administrator->save();
 
-		########################################################################
-		## Load and update the administrator
-		########################################################################
+    // Check if the entity was created
+    if (!$administrator_id = $administrator->data['id']) {
+      throw new Exception('Failed to create administrator');
+    }
 
-		// Load the entity
-		$administrator = new ent_administrator($administrator_id);
+    ########################################################################
+    ## Load and update the administrator
+    ########################################################################
 
-		// Check if the administrator was loaded
-		if ($administrator->data['id'] != $administrator_id) {
-			throw new Exception('Failed to load administrator');
-		}
+    // Load the entity
+    $administrator = new ent_administrator($administrator_id);
 
-		// Check if data was set correctly
-		foreach ($data as $key => $value) {
-			if ($administrator->data[$key] != $value) {
-				throw new Exception('The administrator data was not stored correctly ('. $key .')');
-			}
-		}
+    // Check if the administrator was loaded
+    if ($administrator->data['id'] != $administrator_id) {
+      throw new Exception('Failed to load administrator');
+    }
 
-		// Check if the password was stored correctly
-		if (!password_verify($password, $administrator->password_hash)) {
-			throw new Exception('The administrator data was not stored correctly');
-		}
+    // Check if data was set correctly
+    if (!f::array_intersect_compare($data, $administrator->data)) {
+      throw new Exception('The administrator data was not stored correctly');
+    }
 
-		########################################################################
-		## Updating the administrator
-		########################################################################
+    // Check if the password was stored correctly
+    if (!password_verify($password, $administrator->data['password_hash'])) {
+      throw new Exception('The administrator password was not stored correctly');
+    }
 
-		// Prepare some new data
-		$data = [
-			'status' => 0,
-			'username' => 'test2',
-			'email' => 'test2@example.com',
-			'two_factor_auth' => 0,
-			'valid_from' => '2024-01-01 00:00:00',
-			'valid_to' => '2024-12-31 23:59:59',
-		];
+    ########################################################################
+    ## Updating the administrator
+    ########################################################################
 
-		// Update some data
-		foreach ($data as $key => $value) {
-			$administrator->data[$key] = $value;
-		}
+    // Prepare some new data
+    $data = [
+      'status' => 0,
+      'username' => 'test2',
+      'email' => 'test2@example.com',
+      'two_factor_auth' => 0,
+      'valid_from' => '2024-01-01 00:00:00',
+      'valid_to' => '2024-12-31 23:59:59',
+    ];
 
-		// Set a new password
-		$administrator->set_password($password = '654321');
+    // Update some data
+    $administrator->data = f::array_update($administrator->data, $data);
 
-		// Save changes to database
-		$administrator->save();
+    // Set a new password
+    $administrator->set_password($password = '654321');
 
-		// Check if data was set correctly
-		foreach ($data as $key => $value) {
-			if ($administrator->data[$key] != $value) {
-				throw new Exception('The administrator data was not updated correctly ('. $key .')');
-			}
-		}
+    // Save changes to database
+    $administrator->save();
 
-		// Check if the password was stored correctly
-		if (!password_verify($password, $administrator->password_hash)) {
-			throw new Exception('The administrator data was not updated correctly');
-		}
+    // Reload the entity
+    $administrator = new ent_administrator($administrator_id);
 
-		########################################################################
-		## Deleting the administrator
-		########################################################################
+    // Check if data was set correctly
+    if (!f::array_intersect_compare($data, $administrator->data)) {
+      throw new Exception('The administrator data was not updated correctly');
+    }
 
-		// Delete the entity
-		$administrator->delete();
+    // Check if the password was stored correctly
+    if (!password_verify($password, $administrator->data['password_hash'])) {
+      throw new Exception('The administrator password was not updated correctly');
+    }
 
-		database::query(
-			"rollback;"
-		);
+    ########################################################################
+    ## Loading the administrator
+    ########################################################################
 
-		return true;
+    administrator::load($administrator->data['id']);
 
-	} catch (Exception $e) {
-		database::query('rollback;');
-		return false;
-	}
+    if (!f::array_intersect_compare($administrator->data, administrator::$data)) {
+      throw new Exception('administrator::$data does not match $administrator->data');
+    }
 
+    administrator::reset();
+
+    ########################################################################
+    ## Deleting the administrator
+    ########################################################################
+
+    // Delete the entity
+    $administrator->delete();
+
+    if (database::query(
+      "select id from ". DB_TABLE_PREFIX ."administrators
+      where id = ". (int)$administrator_id ."
+      limit 1;"
+    )->num_rows) {
+      throw new Exception('Failed to delete administrator');
+    }
+
+    return true;
+
+  } catch (Exception $e) {
+
+    echo ' [Failed]'. PHP_EOL . 'Error: '. $e->getMessage();
+    return false;
+
+  } finally {
+
+    // Rollback changes to the database
+    database::query('rollback;');
+
+    // Revert the auto increment ID
+    database::query(
+      "ALTER TABLE ". DB_TABLE_PREFIX ."administrators AUTO_INCREMENT = ". (int)$auto_increment_id .";"
+    );
+  }
