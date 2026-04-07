@@ -2,7 +2,7 @@
 
 ## Code Compliance
 
- - PHP code must comply with modern PHP standards no earlier than 5.6+.
+ - PHP code must comply with modern PHP standards (8.0+).
 
  - HTML code must comply with HTML 5.
 
@@ -498,18 +498,18 @@
 
 ## Translating String Content
 
-	When translating variables in strings we use strtr to avoid cryptic coding.
+	When translating variables in strings we use strtr with named placeholders to avoid cryptic coding.
 
 	Incorrect:
 
 		$string = sprintf('Text with %1$s %2$s', $a, $b);
-		$string = str_replace(['%a', %b], [$a, $b], 'Text with %a %b');
+		$string = str_replace(['%a', '%b'], [$a, $b], 'Text with %a %b');
 
 	Correct:
 
-		$string = strtr('Text with %a %b', [
-			'%a' => $a,
-			'%b' => $b,
+		$string = strtr('Text with {a} {b}', [
+			'{a}' => $a,
+			'{b}' => $b,
 		]);
 
 
