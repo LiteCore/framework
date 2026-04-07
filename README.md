@@ -1,42 +1,107 @@
 # LiteCore
 
-LiteCore is a lightweight PHP framework that is the base of the e-commerce platform [LiteCart®](http://www.litecart.net/). Developed in PHP, HTML 5, and CSS 3 by founder and property owner [T. Almroth](https://www.github.com/timint).
+LiteCore is a lightweight PHP framework for building web applications.
+It provides a minimal but complete foundation with a custom template
+engine, database abstraction, session management, and a responsive
+frontend built on jQuery, LESS, and HTML 5.
 
-**[Download Now](https://github.com/litecart/litecore/archive/refs/heads/master.zip)**
+Originally developed as the core of
+[LiteCart](https://www.litecart.net/), LiteCore can also be used as a
+standalone framework for custom projects.
 
+**Created by [T. Almroth](https://www.github.com/timint)**
 
-## How To Install
+**[Download](https://github.com/LiteCore/framework/archive/refs/heads/master.zip)**
+| **[Website](https://litecore.dev/)**
 
-Please note running your own website requires some common sense of web knowledge. If this is not your area of expertise, ask a friend or collegue to assist you.
+## Features
 
-What you need:
+- Lightweight PHP framework (no Composer dependencies)
+- Custom template engine with snippet-based views
+- MySQLi database wrapper with input escaping
+- Session management with CSRF protection
+- Responsive CSS framework (LESS-based) with grid, forms, buttons,
+  cards, navbar, tables, and more
+- JavaScript components: litebox (lightbox), carousel with touch/swipe,
+  drag & drop, dropdowns, tabs, off-canvas, scroll-up, and more
+- Virtual Modification system (vMod) for non-destructive file overrides
+- Event system for extensibility
+- Module system for pluggable functionality
 
-	* A storage location on an Apache2 web server running PHP 5.6 or higher. Latest stable PHP release recommended for best performance.
-	* A MySQL 5.7+ account.
+## Requirements
 
-Here is what you do:
+- PHP 8.0 or higher (8.3+ recommended)
+- MySQL 5.7+ or MariaDB 10.3+
+- Apache 2 with mod_rewrite
 
-1. Connect to your web host via FTP using your favorite FTP software.
+## Installation
 
-2. Transfer the contents of the folder `public_html/` in this archive (yes the contents inside the folder - not the folder itself). Transfer it to your website root directory. Using subdirectories is supported but not recommended.
+1. Upload the contents of `public_html/` to your web root directory.
 
-		Example:
+   Examples:
 
-		/var/www/
+   - /var/www/html/
+   - /home/username/public_html/
+   - C:\xampp\htdocs\
 
-		/home/username/public_html/
+2. Create a MySQL database and import `install/structure.sql`, then
+   `install/data.sql`.
 
-		C:\xampp\htdocs\
+3. Copy `install/public_html/storage/config.inc.php` to your `storage/`
+   folder and insert your database credentials.
 
-Paths are machine specific. Talk to your web host if you are uncertain where this folder is.
+If everything is set up correctly, LiteCore should load without errors.
 
-3. Create a new MySQL database and import `install/structure.sql` and then `install/data.sql` using your favorite MySQL manager, e.g. phpMyAdmin.
+## Build Tools
 
-4. Copy the configuration file `install/public_html/storage/config.inc.php` to your `storage/` folder and insert your MySQL credentials.
+LiteCore uses Gulp 5 (ESM) for compiling LESS and minifying JavaScript.
+Requires Node.js 20+.
 
-If everything went well, LiteCore should load without errors.
+   ```bash
+   cd /path/to/project
+   npm install
+   npx gulp
+   ```
 
+## Frontend Components
 
-## Support
+The CSS framework is built with LESS and provides:
 
-No support is being provided at this point in time. But some [wiki articles](https://www.litecart.net/wiki/) by the LiteCart community can be useful.
+- Grid system with responsive breakpoints
+- Form styling (inputs, checkboxes, selects, toggles)
+- Buttons (default, success, danger, outline, transparent)
+- Cards, badges, breadcrumbs, pagination
+- Navbar, tabs, pills, dropdown menus
+- Tables with sorting support
+- Typography and spacing utilities
+- Animations and transitions
+
+JavaScript components (jQuery-based):
+
+- Litebox (lightbox with gallery, keyboard nav, touch support)
+- Carousel with swipe support
+- Draggable elements
+- Context menus
+- Input tags, password visibility toggle
+- Off-canvas sidebar
+- Scroll-up button
+- Momentum scroll
+
+## Coding Standards
+
+See [STANDARD.md](STANDARD.md) for syntax formatting and code standards.
+
+See [NoNonsenseCoding.md](NoNonsenseCoding.md) for the project's coding
+philosophy.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
+
+## License
+
+Licensed under [CC-BY-ND-4.0](LICENSE.md).
