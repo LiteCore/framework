@@ -45,6 +45,7 @@
 						break;
 
 					case 'json':
+					case 'string':
 						$value = (string)$_POST['settings'][$key];
 						break;
 
