@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+
+  lint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: none
+          coverage: none
+
+      - name: PHP Lint
+        run: |
+          errors=0
+          while IFS= read -r file; do
+            if ! php -l "$file" > /dev/null 2>&1; then
+              php -l "$file"
+              errors=$((errors + 1))
+            fi
+          done < <(find public_html -name '*.php' -type f)
+          if [ $errors -gt 0 ]; then
+            echo "::error::$errors file(s) with PHP syntax errors"
+            exit 1
+          fi
+          echo "All PHP files passed syntax check"
+
+  build:
+    name: Gulp Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build framework assets
+        continue-on-error: true
+        run: |
+          npx gulp js-framework
+          npx gulp less-framework
+
+  platform-tests:
+    name: Platform Tests
+    runs-on: ubuntu-latest
+    needs: [lint]
+
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: litecore_root
+          MARIADB_DATABASE: litecore
+          MARIADB_USER: litecore
+          MARIADB_PASSWORD: litecore
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mysqli, gd, intl, mbstring, zip, xml, curl, apcu
+          ini-values: date.timezone=Europe/London, apc.enable_cli=1
+          tools: none
+          coverage: none
+
+      - name: Create storage directories
+        run: |
+          mkdir -p public_html/storage/{cache,data,logs}
+          mkdir -p public_html/storage/vmods/.cache
+
+      - name: Generate config file
+        run: |
+          sed \
+            -e "s|define('DB_USERNAME', '');|define('DB_USERNAME', 'litecore');|" \
+            -e "s|define('DB_PASSWORD', '');|define('DB_PASSWORD', 'litecore');|" \
+            -e "s|define('DB_DATABASE', '');|define('DB_DATABASE', 'litecore');|" \
+            install/public_html/storage/config.inc.php \
+            > public_html/storage/config.inc.php
+          echo "Config file generated"
+
+      - name: Import database schema and seed data
+        run: php .github/ci/setup_database.php
+
+      - name: Verify installation
+        run: |
+          test -f public_html/storage/config.inc.php && echo "config exists"
+          mysql -h 127.0.0.1 -u litecore -plitecore litecore \
+            -e "SELECT COUNT(*) as tables FROM information_schema.tables WHERE table_schema='litecore' AND table_name LIKE 'lc_%';"
+
+      - name: Run platform tests
+        run: php .git-hooks/pre-commit.d/run_platform_tests.php

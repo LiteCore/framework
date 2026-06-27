@@ -1,139 +1,132 @@
 <?php
 
-	include_once __DIR__.'/../public_html/includes/app_header.inc.php';
+  include_once __DIR__.'/../public_html/includes/app_header.inc.php';
 
-	try {
+  try {
 
-		// Start a MySQL transaction so we can rollback the test
-		database::query("start transaction;");
+    // Start a MySQL transaction so we can rollback the test
+    database::query("start transaction;");
 
-		// Fetch the current auto increment ID
-		$auto_increment_id = database::fetch("SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'languages';")['AUTO_INCREMENT'];
+    // Fetch the current auto increment ID
+    $auto_increment_id = database::query(
+      "SHOW TABLE STATUS LIKE '". DB_TABLE_PREFIX ."languages';"
+    )->fetch('Auto_increment');
 
-		// Prepare some example data
-		$data = [
-			'name' => 'Spanish',
-			'code' => 'es',
-			'direction' => 'ltr',
-			'locale' => 'es_ES',
-			'url_type' => 'none',
-			'domain_name' => 'example.es',
-			'raw_date' => 'Y-m-d',
-			'raw_time' => 'H:i:s',
-			'raw_datetime' => 'Y-m-d H:i:s',
-			'format_date' => 'd M Y',
-			'format_time' => 'H:i',
-			'format_datetime' => 'd M Y H:i',
-			'decimal_point' => ',',
-			'thousands_sep' => '.',
-			'priority' => 1,
-		];
+    // Prepare some example data
+    $data = [
+      'name' => 'Spanish',
+      'code' => 'es',
+      'direction' => 'ltr',
+      'locale' => 'es_ES',
+      'url_type' => 'none',
+      'domain_name' => 'example.es',
+      'raw_date' => 'Y-m-d',
+      'raw_time' => 'H:i:s',
+      'raw_datetime' => 'Y-m-d H:i:s',
+      'format_date' => 'd M Y',
+      'format_time' => 'H:i',
+      'format_datetime' => 'd M Y H:i',
+      'decimal_point' => ',',
+      'thousands_sep' => '.',
+      'priority' => 1,
+    ];
 
-		########################################################################
-		## Creating a new language
-		########################################################################
+    ########################################################################
+    ## Creating a new language
+    ########################################################################
 
-		// Create a new entity
-		$language = new ent_language();
+    // Create a new entity
+    $language = new ent_language();
+    $language->data = f::array_update($language->data, $data);
+    $language->save();
 
-		// Set data
-		foreach ($data as $key => $value) {
-			$language->data[$key] = $value;
-		}
+    // Check if the entity was created
+    if (!$language_id = $language->data['id']) {
+      throw new Exception('Failed to create language');
+    }
 
-		// Save changes to database
-		$language->save();
+    ########################################################################
+    ## Load and check the language
+    ########################################################################
 
-		// Check if the entity was created
-		if (!$language_id = $language->data['id']) {
-			throw new Exception('Failed to create language');
-		}
+    // Load the entity
+    $language = new ent_language($language_id);
 
-		########################################################################
-		## Load and update the language
-		########################################################################
+    // Check if the language was loaded
+    if ($language->data['id'] != $language_id) {
+      throw new Exception('Failed to load language');
+    }
 
-		// Load the entity
-		$language = new ent_language($language_id);
+    // Check if data was set correctly
+    if (!f::array_intersect_compare($data, $language->data)) {
+      throw new Exception('The language data was not stored correctly');
+    }
 
-		// Check if the language was loaded
-		if ($language->data['id'] != $language_id) {
-			throw new Exception('Failed to load language');
-		}
+    ########################################################################
+    ## Updating the language
+    ########################################################################
 
-		// Check if data was set correctly
-		foreach ($data as $key => $value) {
-			if ($language->data[$key] != $value) {
-				throw new Exception('The language data was not stored correctly ('. $key .')');
-			}
-		}
+    // Prepare some new data
+    $data = [
+      'name' => 'French',
+      'code' => 'fr',
+      'direction' => 'rtl',
+      'locale' => 'fr_FR',
+      'url_type' => 'path',
+      'domain_name' => 'example.fr',
+      'raw_date' => 'd/m/Y',
+      'raw_time' => 'H:i',
+      'raw_datetime' => 'd/m/Y H:i',
+      'format_date' => 'd F Y',
+      'format_time' => 'H:i:s',
+      'format_datetime' => 'd F Y H:i:s',
+      'decimal_point' => ',',
+      'thousands_sep' => ' ',
+      'priority' => 2,
+    ];
 
-		########################################################################
-		## Updating the language
-		########################################################################
+    // Update some data
+    $language->data = f::array_update($language->data, $data);
 
-		// Prepare some new data
-		$data = [
-			'name' => 'French',
-			'code' => 'fr',
-			'direction' => 'rtl',
-			'locale' => 'fr_FR',
-			'url_type' => 'path',
-			'domain_name' => 'example.fr',
-			'raw_date' => 'd/m/Y',
-			'raw_time' => 'H:i',
-			'raw_datetime' => 'd/m/Y H:i',
-			'format_date' => 'd F Y',
-			'format_time' => 'H:i:s',
-			'format_datetime' => 'd F Y H:i:s',
-			'decimal_point' => ',',
-			'thousands_sep' => ' ',
-			'priority' => 2,
-		];
+    // Save changes to database
+    $language->save();
 
-		// Update some data
-		foreach ($data as $key => $value) {
-			$language->data[$key] = $value;
-		}
+    // Check if data was set correctly
+    if (!f::array_intersect_compare($data, $language->data)) {
+      throw new Exception('The language data was not updated correctly');
+    }
 
-		// Save changes to database
-		$language->save();
+    ########################################################################
+    ## Deleting the language
+    ########################################################################
 
-		// Check if data was set correctly
-		foreach ($data as $key => $value) {
-			if ($language->data[$key] != $value) {
-				throw new Exception('The language data was not updated correctly ('. $key .')');
-			}
-		}
+    // Delete the entity
+    $language->delete();
 
-		########################################################################
-		## Deleting the language
-		########################################################################
+    // Check if the entity was deleted
+    if (database::query(
+      "select id from ". DB_TABLE_PREFIX ."languages
+      where id = ". (int)$language_id ."
+      limit 1;"
+    )->num_rows) {
+      throw new Exception('Failed to delete language');
+    }
 
-		// Delete the entity
-		$language->delete();
+    return true;
 
-		// Check if the entity was deleted
-		$language = new ent_language($language_id);
-		if ($language->data['id'] == $language_id) {
-			throw new Exception('Failed to delete language');
-		}
+  } catch (Exception $e) {
 
-		echo '  Test passed successfully!' . PHP_EOL;
+    echo ' [Failed]'. PHP_EOL . 'Error: '. $e->getMessage();
+    return false;
 
-		return true;
+  } finally {
 
-	} catch (Exception $e) {
+    // Rollback changes to the database
+    database::query("rollback;");
 
-		echo 'Test failed: '. $e->getMessage();
-		return false;
-
-	} finally {
-
-		// Rollback changes to the database
-		database::query("rollback;");
-
-		// Revert the auto increment ID
-		database::query("ALTER TABLE languages AUTO_INCREMENT = ". (int)$auto_increment_id .";");
-	}
-
+    // Revert the auto increment ID
+    database::query(
+      "ALTER TABLE ". DB_TABLE_PREFIX ."languages
+      AUTO_INCREMENT = ". (int)$auto_increment_id .";"
+    );
+  }

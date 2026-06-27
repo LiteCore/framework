@@ -175,7 +175,7 @@
 	}
 
 	// Group values of matching keys array_group_keys(['a' => '1', 'b' => '1'], ['a' => '2', 'b' => '2']) : ['a' => ['1', '2'], ['b' => ['1', '2']]
-	function array_group_keys(...$arrays) {
+  function array_merge_group(...$arrays) {
 		return array_merge_recursive(...$arrays);
 	}
 

@@ -121,7 +121,7 @@
 
 			case (preg_match('#^regional_#', $setting['function'])):
 				$setting['value'] = !empty($setting['value']) ? json_decode($setting['value'], true) : [];
-				$setting['display_value'] = isset($setting['value'][language::$selected['code']]) ? $setting['value'][language::$selected['code']] : null;
+				$setting['display_value'] = isset($setting['value'][language::$selected['code']]) ? $setting['value'][language::$selected['code']] : '';
 				break;
 
 				case (preg_match('#^toggle$#', $setting['function'])):
