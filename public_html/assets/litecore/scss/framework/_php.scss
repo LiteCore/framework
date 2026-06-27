@@ -1,0 +1,20 @@
+.php-feedback {
+	font-size: 12px;
+	opacity: 0.75;
+	transition: all 150ms linear;
+	width: fit-content;
+	margin: .5em;
+	cursor: default;
+
+	&:hover {
+		opacity: 1;
+	}
+
+	&.warning {
+		color: #a40;
+	}
+
+	&.error {
+		color: #c70700;
+	}
+}

@@ -9,6 +9,8 @@
 
 			foreach (scandir('app://backend/apps/') as $folder_name) {
 
+				if (preg_match('#\.disabled$#', $folder_name)) continue;
+
 				$id = basename($folder_name);
 				$directory = 'app://backend/apps/'. $folder_name .'/';
 
@@ -16,9 +18,13 @@
 				if (!$config = require $directory . 'config.inc.php') continue;
 
 				$config['theme'] = [
-					'icon' => fallback($config['theme']['icon'], 'icon-plus'),
-					'color' => fallback($config['theme']['color'], '#97a3b5'),
+					'icon' => $config['theme']['icon'] ?? 'icon-plus',
+					'color' => $config['theme']['color'] ?? '#97a3b5',
 				];
+
+				if (empty($config['group'])) {
+					$config['group'] = 'other';
+				}
 
 				$apps[$id] = array_merge(['id' => $id, 'directory' => $directory], $config);
 			}
@@ -41,6 +47,25 @@
 		return $apps;
 	}
 
+	function admin_get_grouped_apps() {
+
+		$apps_cache_token = cache::token('backend_apps', ['administrator', 'language']);
+		if (!$apps = cache::get($apps_cache_token)) {
+
+			$groups = [];
+
+			$apps = f::admin_get_apps();
+
+			foreach ($apps as $app) {
+				$groups[$app['group']][$app['id']] = $app;
+			}
+
+			cache::set($apps_cache_token, $groups);
+		}
+
+		return $groups;
+	}
+
 	function admin_get_widgets() {
 
 		$widgets_cache_token = cache::token('backend_widgets', ['administrator', 'language']);
@@ -49,6 +74,8 @@
 			$widgets = [];
 
 			foreach (scandir('app://backend/widgets/') as $folder_name) {
+
+				if (preg_match('#\.disabled$#', $folder_name)) continue;
 
 				$id = basename($folder_name);
 				$directory = 'app://backend/widgets/'. $folder_name .'/';

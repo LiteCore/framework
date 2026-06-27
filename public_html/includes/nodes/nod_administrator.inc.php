@@ -13,16 +13,21 @@
 			// Bind administrator to session
 			self::$data = &session::$data['administrator'];
 
-			// Login remembered administrator automatically
-			if (!self::$data['id'] && !empty($_COOKIE['remember_me']) && !$_POST) {
+			// Login remembered administrator automatically (HMAC-based token)
+			if (!self::$data['id'] && !empty($_COOKIE['remember_me']) && !$_POST && defined('HMAC_KEY_REMEMBER_ME')) {
 
 				try {
 
-					list($username, $key) = explode(':', $_COOKIE['remember_me']);
+					// Decode token to get administrator ID
+					$decoded = base64_decode($_COOKIE['remember_me'], true);
+					$token = $decoded ? json_decode($decoded, true) : null;
+					if (!is_array($token) || empty($token['id'])) {
+						throw new Exception('Invalid or legacy cookie format');
+					}
 
 					$administrator = database::query(
 						"select * from ". DB_TABLE_PREFIX ."administrators
-						where lower(username) = lower('". database::input($username) ."')
+						where id = ". (int)$token['id'] ."
 						and status
 						and (valid_from is null or valid_from < '". date('Y-m-d H:i:s') ."')
 						and (valid_to is null or valid_to > '". date('Y-m-d H:i:s') ."')
@@ -30,12 +35,12 @@
 					)->fetch();
 
 					if (!$administrator) {
-						throw new Exception('Invalid email or the account has been removed');
+						throw new Exception('Invalid administrator or account removed');
 					}
 
-					$checksum = sha1($administrator['username'] . $administrator['password_hash'] . $_SERVER['REMOTE_ADDR'] . ($_SERVER['HTTP_USER_AGENT'] ?: ''));
-
-					if ($checksum != $key) {
+					// Verify HMAC with actual password hash
+					$verified_id = f::token_verify_remember($_COOKIE['remember_me'], $administrator['password_hash']);
+					if ($verified_id === false) {
 
 						if (++$administrator['login_attempts'] < 3) {
 							database::query(
@@ -54,7 +59,7 @@
 							);
 						}
 
-						throw new Exception('Invalid checksum for cookie');
+						throw new Exception('Invalid token signature');
 					}
 
 					self::load($administrator['id']);
@@ -110,14 +115,14 @@
 					if (!isset(session::$data['administrator_security_timestamp']) || session::$data['administrator_security_timestamp'] < strtotime($administrator['sessions_expiry'])) {
 						self::reset();
 						notices::add('errors', t('error_session_expired_due_to_account_changes', 'Session expired due to changes in the account'));
-						redirect(document::ilink('b:login'));
+						redirect(document::ilink('b:login'), 302);
 						exit;
 					}
 				}
 			}
 		}
 
-		######################################################################
+		## Node specific methods
 
 		public static function reset() {
 
@@ -151,6 +156,8 @@
 
 			$administrator['apps'] = $administrator['apps'] ? json_decode($administrator['apps'], true) : [];
 			$administrator['widgets'] = $administrator['widgets'] ? json_decode($administrator['widgets'], true) : [];
+			$administrator['known_ips'] = f::string_split($administrator['known_ips']);
+			$administrator['known_fingerprints'] = f::string_split($administrator['known_fingerprints']);
 
 			session::$data['administrator'] = $administrator;
 		}
@@ -158,14 +165,13 @@
 		public static function require_login() {
 
 			if (!self::check_login()) {
-				$redirect_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
-				redirect(document::ilink('b:login', ['redirect_url' => $redirect_url]));
+				redirect(document::ilink('b:login', ['redirect_url' => $_SERVER['REQUEST_URI']]), 302);
 				exit;
 			}
 
 			if (!empty(session::$data['security_verification'])) {
 				if (!in_array(route::$selected['resource'], ['b:login', 'b:logout', 'b:verify'])) {
-					redirect(document::ilink('b:verify', ['redirect_url' => $_SERVER['REQUEST_URI']]));
+					redirect(document::ilink('b:verify', ['redirect_url' => $_SERVER['REQUEST_URI']]), 302);
 					exit;
 				}
 			}

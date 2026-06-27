@@ -7,14 +7,19 @@
 		}
 	}
 
-	// Shorthand q() for database::query()
-	function q(...$args){
-		return forward_static_call_array(['database', 'query'], $args);
+	// Shorthand sql() for database::prepare() e.g. sql("SELECT * FROM table WHERE id = :id", [$id])->bind(...)->fetch();
+	function sql(...$args) {
+		return forward_static_call_array(['database', 'prepare'], $args);
 	}
 
 	// Shorthand t() for language::translate()
 	function t(...$args) {
 		return forward_static_call_array(['language', 'translate'], $args);
+	}
+
+	// Shorthand multiline() for imploding an array of strings with newlines
+	function multiline(...$lines) {
+		return implode(PHP_EOL, $lines);
 	}
 
 	// Redirect to a URL and stop script execution
@@ -29,17 +34,25 @@
 	}
 
 	// Stop script execution and reload the current page
-	function reload($status_code=302) {
+	function reload($status_code=null) {
+
+		if ($status_code === null) {
+			if (file_get_contents('php://input')) {
+				$status_code = 303; // See Other
+			} else {
+				$status_code = 302; // Found
+			}
+		}
 
 		if (!in_array($status_code, [301, 302, 303, 307, 308])) {
 			trigger_error('Unsupported response status code for redirect ('. (int)$status_code .')');
 		}
-	
+
 		header('Location: '. $_SERVER['REQUEST_URI'], $status_code);
 		exit;
 	}
 
-	// Checks if variables are not set, null, (bool)false, (int)0, (float)0.00, (string)"", (string)"0", (string)"0.00", (array)[], or array with nil nodes
+	// Checks if variables are not set, null, (bool)false, (int)0, (float)0, (string)"", (string)"0", (string)"0.00", (array)[], or array with nil nodes
 	function nil(&...$args) { // ... as of PHP 5.6
 
 		foreach ($args as $arg) {
@@ -54,17 +67,6 @@
 		}
 
 		return !0;
-	}
-
-	// Returns value for variable or falls back to a substituting value on nil(). Similar to !empty($var) ? $var : $fallback1 ?: $fallback2
-	function fallback(&$var, $fallback=null) {
-		if (!nil($var)) return $var;
-		
-		$fallbacks = array_slice(func_get_args(), 1);
-
-		foreach ($fallbacks as $fallback) {
-			if (!nil($fallback)) return $fallback;
-		}
 	}
 
 	// Check if variable indicates a truthy value
@@ -96,4 +98,19 @@
 		}
 
 		return false;
+	}
+
+	// Output any variable to the browser console
+	function console_dump(...$vars) { // ... as of PHP 5.6
+		foreach ($vars as $var) {
+
+			// Determine if output can be shown as a table
+			if (is_array($var) && count($var) > 0 && array_reduce($var, function($carry, $item) { return $carry || (is_array($item) && count($item) > 0); }, false)) {
+				echo '<script>console.table('. json_encode($var, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .');</script>';
+				continue;
+			}
+
+			// Output as regular log
+			echo '<script>console.log('. json_encode($var, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .');</script>';
+		}
 	}

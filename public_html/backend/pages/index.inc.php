@@ -14,8 +14,8 @@
 		}
 
 		$app_config['theme'] = [
-			'icon' => fallback($app_config['theme']['icon'], 'icon-plus'),
-			'color' => fallback($app_config['theme']['color'], '#97a3b5'),
+			'icon' => $app_config['theme']['icon'] ?? 'icon-plus',
+			'color' => $app_config['theme']['color'] ?? '#97a3b5',
 		];
 
 		// Check if administrator is permitted to access document

@@ -4,7 +4,7 @@
 
 	stats::start_watch('after_content');
 
-	// Site the captured output buffer
+	// Store the captured output buffer
 	document::$content = ob_get_contents();
 	ob_clean();
 
@@ -26,27 +26,28 @@
 	event::fire('shutdown');
 
 	// Execute background jobs
-	if (!$last_push = settings::get('jobs_last_push') || strtotime($last_push) < strtotime('-15 minutes')) {
+	if (!($last_push = settings::get('jobs_last_push')) || strtotime($last_push) < strtotime('-15 minutes')) {
 
-		// To avoid using this push method, set up a cron job to call https://www.yoursite.com/index.php/push_jobs
-
-		database::query(
-			"update ". DB_TABLE_PREFIX ."settings
-			set `value` = '". date('Y-m-d H:i:s') ."'
-			where `key` = 'jobs_last_push'
-			limit 1;"
-		);
+		// To avoid using this push method, set up a cron job to call every 5 minutes for the following command:
+		// Example: */5 * * * * php /path/to/your/catalog/index.php push_jobs &>/dev/null
 
 		$url = document::ilink('f:push_jobs');
-		$disabled_functions = preg_split('#\s*,\s*#', ini_get('disable_functions'), -1, PREG_SPLIT_NO_EMPTY);
+		$disabled_functions = f::string_split(ini_get('disable_functions'));
 
 		if (!in_array('exec', $disabled_functions)) {
-			exec('wget -q -O - '. $url .' > /dev/null 2>&1 &');
+
+			exec(implode('', [
+				'(',
+				' command -v wget >/dev/null',
+				' && wget -q -O - "'. escapeshellarg($url) .'"',
+				' || curl -s "'. escapeshellarg($url).'"',
+				') > /dev/null 2>&1 &',
+			]));
 
 		} else if (!in_array('fsockopen', $disabled_functions)) {
 
 			$parts = parse_url($url);
-			$fp = fsockopen($parts['host'], fallback($parts['port'], 80), $errno, $errstr, 30);
+			$fp = fsockopen($parts['host'], $parts['port'] ?? 80, $errno, $errstr, 30);
 
 			fwrite($fp, implode("\r\n", [
 				'GET '. $parts['path'] .' HTTP/1.1',

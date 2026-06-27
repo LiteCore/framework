@@ -29,7 +29,7 @@
 			$object->settings = [];
 			foreach ($object->settings() as $setting) {
 				$setting['key'] = rtrim($setting['key'], '[]');
-				$object->settings[$setting['key']] = fallback($settings[$setting['key']], $setting['default_value']);
+				$object->settings[$setting['key']] = $settings[$setting['key']] ?? $setting['default_value'];
 			}
 
 			$object->status = (isset($object->settings['status']) && in_array(strtolower($object->settings['status']), ['1', 'active', 'enabled', 'on', 'true', 'yes'])) ? 1 : 0;

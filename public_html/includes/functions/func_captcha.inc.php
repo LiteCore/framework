@@ -3,12 +3,12 @@
 	function captcha_draw($id='default', $config=[], $parameters='') {
 
 		$config = [
-			'width' => fallback($config['width'], 100),
-			'height' => fallback($config['height'], 40),
-			'length' => fallback($config['length'], 4),
-			'set' => fallback($config['set'], 'numbers'),
-			'font' => fallback($config['font'], FS_DIR_STORAGE . 'fonts/captcha.ttf'),
-			'font_size' => fallback($config['height'], 40) * 0.7,
+			'width' => $config['width'] ?? 100,
+			'height' => $config['height'] ?? 40,
+			'length' => $config['length'] ?? 4,
+			'set' => $config['set'] ?? 'numbers',
+			'font' => $config['font'] ?? FS_DIR_APP . 'assets/fonts/captcha.ttf',
+			'font_size' => ($config['height'] ?? 40) * 0.7,
 		];
 
 		switch ($config['set']) {
@@ -27,7 +27,7 @@
 
 		$code = '';
 		for ($i=0; $i<$config['length']; $i++) {
-			$code .= substr($possible, mt_rand(0, strlen($possible) -1), 1);
+			$code .= substr($possible, random_int(0, strlen($possible) -1), 1);
 		}
 
 		if (!$image = imagecreate($config['width'], $config['height'])) {
@@ -62,7 +62,9 @@
 		$base64_image = base64_encode(ob_get_clean());
 
 		// Free memory
-		imagedestroy($image);
+		if (PHP_VERSION < '8.0.0') {
+			imagedestroy($image);
+		}
 
 		// Remove expired captchas
 		if (isset(session::$data['lc-captcha']) && is_array(session::$data['lc-captcha'])) {
@@ -80,7 +82,7 @@
 		// Output key and image
 		return implode(PHP_EOL, [
 			'<div class="input-group" style="width: '. ((int)$config['width'] * 2) .'px;">',
-			'  <input type="hidden" name="lc-captcha-id" value="'. functions::escape_attr($id) .'">',
+			'  <input type="hidden" name="lc-captcha-id" value="'. f::escape_attr($id) .'">',
 			'  <img src="data:image/gif;base64,'. $base64_image .'" alt="" style="width: '. $config['width'] .'px; height: '. $config['height'] .'px; border-radius: var(--border-radius) var(--border-radius) 0 0;">',
 			'  ' . form_input_text('lc-captcha-response', '', 'required maxlength="'. (int)$config['length'] .'" autocomplete="off" style="font-size: '. round($config['font_size'])  .'px; padding: 0; text-align: center;"'. ($parameters ? ' '. $parameters : '')),
 			'</div>',

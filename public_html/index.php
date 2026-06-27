@@ -13,7 +13,7 @@
  *
  */
 
-	require_once 'includes/app_header.inc.php';
+	require_once __DIR__ . '/includes/app_header.inc.php';
 
 	// Process a CLI request
 	if ($_SERVER['SERVER_SOFTWARE'] == 'CLI') {
@@ -28,6 +28,7 @@
 				'',
 				'Command:',
 				'  push_jobs          Run the background jobs',
+				'  navigate {uri}     Navigate to a specific URI',
 				'',
 			]);
 			exit;
@@ -36,6 +37,7 @@
 		switch ($argv[1]) {
 
 			case 'push_jobs':
+
 				// Run the background jobs
 				require_once 'app://frontend/pages/push_jobs.inc.php';
 				exit;
@@ -51,11 +53,11 @@
 	route::load('app://frontend/routes/url_*.inc.php');
 	route::load('app://backend/routes/url_*.inc.php');
 
-	// Append a route for last resort
+	// Append a route for last destination
 	route::add('*', [
-		'pattern' => '#^(.+)$#',
+		'pattern' => '#^.+$#',
 		'endpoint' => 'frontend',
-		'controller' => 'app://frontend/pages/$1.inc.php',
+		'controller' => 'app://frontend/pages/$0.inc.php',
 	]);
 
 	// Find destination for the current request
@@ -71,4 +73,5 @@
 	// Process the route
 	route::process();
 
+	// Run operations after processing the route
 	require_once 'app://includes/app_footer.inc.php';

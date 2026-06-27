@@ -2,11 +2,13 @@
 
 	function image_scale_by_width($width, $aspect_ratio) {
 		list($x, $y) = preg_split('#[:/]#', $aspect_ratio, 2);
+		if (!$y) return [$width, $width];
 		return [$width, round($width / $x * $y)];
 	}
 
 	function image_scale_by_height($height, $aspect_ratio) {
 		list($x, $y) = preg_split('#[:/]#', $aspect_ratio, 2);
+		if (!$x) return [$height, $height];
 		return [round($height / $y * $x), $height];
 	}
 
@@ -22,16 +24,15 @@
 			}
 
 			$options = [
-				'destination' => fallback($options['destination'], 'storage://cache/'),
-				'width' => fallback($options['width'], 0),
-				'height' => fallback($options['height'], 0),
-				'clipping' => fallback($options['clipping'], 'FIT_ONLY_BIGGER'),
-				'quality' => fallback($options['quality'], settings::get('image_quality')),
-				'trim' => fallback($options['trim'], false),
+				'destination' => $options['destination'] ?? 'storage://cache/',
+				'width' => $options['width'] ?? 0,
+				'height' => $options['height'] ?? 0,
+				'quality' => $options['quality'] ?? settings::get('image_quality'),
+				'trim' => $options['trim'] ?? false,
 				'interlaced' => !empty($options['interlaced']),
-				'overwrite' => fallback($options['overwrite'], false),
-				'watermark' => fallback($options['watermark'], false),
-				'extension' => fallback($options['extension']),
+				'overwrite' => $options['overwrite'] ?? false,
+				'watermark' => $options['watermark'] ?? false,
+				'extension' => $options['extension'] ?? null,
 			];
 
 			// If destination is a folder
@@ -52,46 +53,10 @@
 						}
 					}
 
-					switch (strtolower($options['clipping'])) {
-
-						case 'crop':
-							$clipping_filename_flag = '_c';
-							break;
-
-						case 'crop_only_bigger':
-							$clipping_filename_flag = '_cob';
-							break;
-
-						case 'stretch':
-							$clipping_filename_flag = '_s';
-							break;
-
-						case 'fit':
-							$clipping_filename_flag = '_f';
-							break;
-
-						case 'fit_use_whitespacing':
-							$clipping_filename_flag = '_fwb';
-							break;
-
-						case 'fit_only_bigger':
-							$clipping_filename_flag = '_fob';
-							break;
-
-						case 'fit_only_bigger_use_whitespacing':
-							$clipping_filename_flag = '_fobws';
-							break;
-
-						default:
-							trigger_error("Unknown image clipping method ($clipping)", E_USER_WARNING);
-							return;
-					}
-
 					$filename = implode([
 						sha1($source),
 						$options['trim'] ? '_t' : '',
 						($options['width'] && $options['height']) ? '_'.(int)$options['width'] .'x'. (int)$options['height'] : '',
-						$clipping_filename_flag,
 						$options['watermark'] ? '_wm' : '',
 						settings::get('image_thumbnail_interlaced') ? '_i' : '',
 						'.'.$options['extension'],
@@ -131,13 +96,13 @@
 			}
 
 			if ($options['width'] > 0 || $options['height'] > 0) {
-				if (!$image->resample($options['width'], $options['height'], $options['clipping'])) return;
+				if (!$image->resample($options['width'], $options['height'])) return;
 			}
 
 			if (!empty($options['watermark'])) {
 
 				if ($options['watermark'] === true) {
-					$options['watermark'] = 'storage://images/logotype.svg';
+					$options['watermark'] = 'storage://images/logotype.png';
 				}
 
 				if (!$image->watermark($options['watermark'], 'RIGHT', 'BOTTOM')) return;
@@ -165,19 +130,18 @@
 		return implode('/', $ratio);
 	}
 
-	function image_resample($source, $destination, $width=0, $height=0, $clipping='FIT_ONLY_BIGGER', $quality=null) {
+	function image_resample($source, $destination, $width=0, $height=0, $quality=null) {
 
 		return image_process($source, [
 			'destination' => $destination,
 			'width' => $width,
 			'height' => $height,
-			'clipping' => $clipping,
 			'trim' => false,
 			'quality' => $quality,
 		]);
 	}
 
-	function image_thumbnail($source, $width=0, $height=0, $clipping='FIT_ONLY_BIGGER', $trim=false, $extension='') {
+	function image_thumbnail($source, $width=0, $height=0, $trim=false) {
 
 		if (!is_file($source)) {
 			$source = 'storage://images/no_image.svg';
@@ -190,7 +154,6 @@
 		return image_process($source, [
 			'width' => $width,
 			'height' => $height,
-			'clipping' => $clipping,
 			'trim' => $trim,
 			'quality' => settings::get('image_thumbnail_quality'),
 			'interlaced' => settings::get('image_thumbnail_interlaced'),
@@ -210,5 +173,5 @@
 
 		$cache_name = sha1(image_relative_file($file));
 
-		functions::file_delete('storage://cache/'. substr($cache_name, 0, 2) .'/' . $cache_name .'*');
+		f::file_delete('storage://cache/'. substr($cache_name, 0, 2) .'/' . $cache_name .'*');
 	}

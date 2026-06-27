@@ -1,0 +1,188 @@
+/* Dropdowns */
+
+.dropdown {
+	// perspective: 400px;
+
+	// Make sure the dropdown is on top of other elements
+	position: relative;
+
+	// z-index: 999;
+
+	[data-toggle="dropdown"] {
+		background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+		background-repeat: no-repeat;
+		background-position: right 1em center;
+		background-size: .8em;
+		padding-inline-end: 2.5em !important;
+		user-select: none;
+		cursor: pointer;
+	}
+
+	.dropdown-content,
+	.dropdown-menu {
+		position:absolute;
+		display: flex;
+		flex-direction: column;
+		background: var(--dropdown-background);
+		color: var(--dropdown-text-color);
+		border: var(--dropdown-border-width) solid var(--dropdown-border-color);
+		border-radius: var(--border-radius);
+		box-shadow: var(--dropdown-shadow);
+		transform-origin: 0 0;
+		transform: rotateX(-25deg);
+		transition: 250ms;
+		overflow: hidden;
+		visibility: hidden;
+		opacity: 0;
+	}
+
+	&.open {
+		z-index: 999;
+
+		> .dropdown-content,
+		> .dropdown-menu {
+			visibility: visible;
+			transform: rotateX(0);
+			opacity: 1;
+		}
+	}
+
+	&.dropdown > .dropdown-content,
+	&.dropdown > .dropdown-menu,
+	&.dropdown-start > .dropdown-content,
+	&.dropdown-start > .dropdown-menu {
+		inset-inline: 0 auto;
+	}
+
+	&.dropdown-end > .dropdown-content,
+	&.dropdown-end > .dropdown-menu,
+	&.dropdown-start > .dropdown-content,
+	&.dropdown-start > .dropdown-menu {
+		inset-inline: auto 0;
+	}
+
+	&.dropdown-block > .dropdown-content,
+	&.dropdown-block > .dropdown-menu {
+		inset-inline: 0;
+		width: 100%;
+	}
+
+	// Multi-level dropdown
+	.dropdown {
+		.dropdown-content,
+		.dropdown-menu {
+			top: 0;
+			inset-inline-start: 100%;
+		}
+	}
+}
+
+.dropdown-menu,
+.dropdown-content {
+	position: fixed;
+	min-width: max-content;
+
+	// width: max-content;
+	text-align: start;
+	border-radius: var(--border-radius);
+	box-shadow: 0 6px 12px rgb(0 0 0 / 17.5%);
+	background-clip: padding-box;
+
+	&:is(ul) {
+		list-style: none;
+	}
+
+	.dropdown-divider {
+		height: 1px;
+		margin: 9px 0;
+		overflow: hidden;
+		background: #e5e5e5;
+	}
+
+	> li > a:not(.btn) {
+		&:hover,
+		&:focus,
+		&:active {
+			text-decoration: none;
+			background: #f5f5f5;
+		}
+	}
+
+	> .active > a,
+	> .active > a:hover,
+	> .active > a:focus,
+	> .active > a:active {
+		color: #fff;
+		text-decoration: none;
+		outline: 0;
+		background: #337ab7;
+	}
+
+	> .disabled > a,
+	> .disabled > a:hover,
+	> .disabled > a:focus,
+	> .disabled > a:active {
+		color: #777;
+	}
+
+	> .disabled > a:hover,
+	> .disabled > a:focus,
+	> .disabled > a:active {
+		text-decoration: none;
+		background: transparent;
+		background-image: none;
+		cursor: not-allowed;
+	}
+}
+
+.dropdown-menu {
+	padding: 1em;
+	margin: 2px 0 0;
+}
+
+.dropdown-content {
+	padding: 1em;
+	margin: 0;
+}
+
+.dropdown-item {
+	background: var(--dropdown-item-background);
+	color: var(--dropdown-item-text-color);
+
+	// padding: .75em 1em;
+
+	a, label {
+		display: block;
+	}
+
+	// &:hover, &:has(input[type="checkbox"], input[type="radio"]):hover {
+	&:hover a, &:hover label {
+		// background: var(--dropdown-item-background--hover);
+		color: var(--dropdown-item-text-color--hover);
+		cursor: pointer;
+	}
+
+	&:has(input:checked) label {
+		// background: var(--dropdown-item-background--active);
+		color: var(--dropdown-item-text-color--active);
+		font-weight: 500;
+	}
+
+/*
+	input[type="checkbox"],
+	input[type="radio"] {
+		display: none;
+	}
+	*/
+}
+
+.form-select + .dropdown-menu,
+.form-select + .dropdown-content {
+	inset-inline: 0 !important;
+}
+
+html[dir="rtl"] {
+	.dropdown label:has([data-toggle="dropdown"]) {
+		background-position: left 1em center;
+	}
+}

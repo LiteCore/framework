@@ -154,11 +154,6 @@
 			$timestamp = new \DateTime($timestamp);
 		}
 
-		if (!extension_loaded('intl')) {
-			trigger_error('You need the PHP Intl extension enabled to format dates', E_USER_WARNING);
-			return date('Y-m-d H:i:s', $timestamp);
-		}
-
 		if (!($timestamp instanceof \DateTimeInterface)) {
 			trigger_error('$timestamp argument is neither a valid UNIX timestamp, a valid date-time string or a DateTime object.', E_USER_WARNING);
 			return 'n/a';
@@ -170,6 +165,20 @@
 			'date' => language::$selected['format_date'],
 			'time' => language::$selected['format_time'],
 		]);
+
+		if (!extension_loaded('intl')) {
+
+			if (version_compare(PHP_VERSION, '8.1.0', '<')) {
+				return strftime($format, $timestamp->getTimestamp(), $timestamp->getTimezone()->getName());
+
+			} else if (version_compare(PHP_VERSION, '9.0.0', '<')) {
+				return @strftime($format, $timestamp->getTimestamp(), $timestamp->getTimezone()->getName());
+
+			} else {
+				trigger_error('You need the PHP Intl extension enabled to format dates', E_USER_WARNING);
+				return date('Y-m-d H:i:s', $timestamp);
+			}
+		}
 
 		$intl_formats = [
 			'%a' => 'EEE',	// An abbreviated textual representation of the day	Sun through Sat
@@ -324,9 +333,9 @@
 		// If ahead of now
 		if ($timestamp > new \DateTime()) {
 
-			// If later today
-			if ($timestamp > (new \DateTime())->setTime(0, 0)) {
-				return datetime_format('time', $timestamp);
+			// If tomorrow
+			if ($timestamp > (new \DateTime())->modify('+2 days')->setTime(0, 0)) {
+				return datetime_format('datetime', $timestamp);
 			}
 
 			// If tomorrow
@@ -334,7 +343,10 @@
 				return t('text_tomorrow', 'Tomorrow') . ' ' . datetime_format('time', $timestamp);
 			}
 
-			return datetime_format('datetime', $timestamp);
+			// If later today
+			if ($timestamp > (new \DateTime())->setTime(0, 0)) {
+				return datetime_format('time', $timestamp);
+			}
 		}
 
 		if ($timestamp > (new \DateTime())->modify('-1 minute')) {
@@ -370,7 +382,7 @@
 
 		$y = date('Y', $timestamp);
 		$m = date('m', $timestamp);
-		$d = date('m', $timestamp);
+		$d = date('d', $timestamp);
 
 		switch (true) {
 

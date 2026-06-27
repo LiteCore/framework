@@ -81,7 +81,7 @@
 
 			// Load installed
 			foreach (file($installed_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $installed) {
-				list($id, $version) = preg_split('#;#', $installed);
+				list($id, $version) = preg_split('#;#', $installed, 2);
 				self::$_installed[$id] = $version;
 			}
 
@@ -101,7 +101,7 @@
 			// Create a list of checked files
 			if (filemtime($checked_file) > $last_modified) {
 				foreach (file($checked_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-					list($original_file, $modified_file, $checksum) = preg_split('#;#', $line);
+					list($original_file, $modified_file, $checksum) = preg_split('#;#', $line, 3);
 					if (is_file(FS_DIR_APP . $original_file) && is_file(FS_DIR_STORAGE . $modified_file) && filemtime(FS_DIR_STORAGE . $modified_file) > filemtime(FS_DIR_APP . $original_file)) {
 						self::$_checked[$original_file] = $modified_file;
 						self::$_checksums[$original_file] = $checksum;
@@ -130,6 +130,8 @@
 
 			self::$time_elapsed += microtime(true) - $timestamp;
 		}
+
+		## Node specific methods
 
 		// Return a modified file
 		public static function check($file) {
@@ -172,7 +174,7 @@
 			$digest = [filemtime($file)];
 
 			foreach (self::$_files_to_modifications[$original_file] as $modification) {
-				$digest[] = strtotime(self::$_modifications[$modification['id']]['modified_at']);
+				$digest[] = strtotime(self::$_modifications[$modification['id']]['updated_at']);
 				$queue[] = $modification;
 			}
 
@@ -298,7 +300,7 @@
 
 				// Get XML file contents
 				if (!$xml = file_get_contents($file)) {
-					throw new \Exception('Could not read file', E_USER_ERROR);
+					throw new Error('Could not read file');
 				}
 
 				// Normalize line endings
@@ -394,7 +396,7 @@
 							file_put_contents(FS_DIR_STORAGE . 'addons/.installed', $new_contents . PHP_EOL, LOCK_EX);
 
 							if (isset($_SERVER['REQUEST_URI'])) {
-								reload();
+								header('Location: '. $_SERVER['REQUEST_URI'], true, 302);
 								exit;
 							}
 						}
@@ -408,6 +410,7 @@
 					// Exceute install script
 					if ($dom->getElementsByTagName('install')->length) {
 
+						require_once vmod::check(FS_DIR_APP . 'includes/shorthand.inc.php');
 						require_once vmod::check(FS_DIR_APP . 'includes/compatibility.inc.php');
 						require_once vmod::check(FS_DIR_APP . 'includes/autoloader.inc.php');
 
@@ -418,7 +421,7 @@
 							include func_get_arg(0);
 						})($tmp_file);
 
-						reload();
+						header('Location: '. $_SERVER['REQUEST_URI'], true, 302);
 						exit;
 					}
 
@@ -449,7 +452,7 @@
 				'name' => $dom->getElementsByTagName('name')->item(0)->textContent,
 				'version' => $dom->getElementsByTagName('version')->item(0)->textContent,
 				'author' => !empty($dom->getElementsByTagName('author')) ? $dom->getElementsByTagName('author')->item(0)->textContent : '',
-				'modified_at' => date('Y-m-d H:i:s', filemtime($file)),
+				'updated_at' => date('Y-m-d H:i:s', filemtime($file)),
 				'files' => [],
 				'install' => null,
 				'upgrades' => [],

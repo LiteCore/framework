@@ -1,5 +1,21 @@
 <?php
 
+
+	function draw_element($name, $parameters=[], $content='') {
+
+		$parameters = implode(' ', array_map(function($key, $value) {
+
+			if ($value == '') {
+				return $key;
+			} else {
+				return $key .'="'. f::escape_attr($value) .'"';
+			}
+
+		}, array_keys($parameters, $parameters)));
+
+		return '<'. $name . ($parameters ? ' ' . $parameters : '') .'>'. $content .'</'. $name .'>';
+	}
+
 	function draw_fonticon($icon, $parameters='') {
 
 		if (!$icon) {
@@ -7,6 +23,10 @@
 		}
 
 		switch(true) {
+
+			// Graphics elements
+			case (preg_match('#\.(avif|gif|jpe?g|png|webp|svg)$#', $icon)):
+				return '<img class="icon" src="'. document::href_rlink($icon) .'"'. ($parameters ? ' ' . $parameters : '') .'>';
 
 			// LiteCore Fonticons
 			case (preg_match('#^icon-#', $icon)):
@@ -19,17 +39,18 @@
 
 			// Fontawesome 4
 			case (preg_match('#^fa-#', $icon)):
-				trigger_error('Fontawesome 4 icon `'. functions::escape_html($icon) .'` is deprecated. Please use Fontawesome 5 instead.', E_USER_DEPRECATED);
+				trigger_error('Fontawesome 4 icon `'. f::escape_html($icon) .'` is deprecated. Please use Fontawesome 5 instead.', E_USER_DEPRECATED);
 				document::$head_tags['fontawesome4'] = '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/v4-shims.css">';
 				document::$head_tags['fontawesome5'] = '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">';
 				return '<i class="fa '. $icon .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
 
-			// Fontawesome 5
-			case (preg_match('#^far fa-#', $icon)):
-			case (preg_match('#^fab fa-#', $icon)):
-			case (preg_match('#^fas fa-#', $icon)):
-				document::$head_tags['fontawesome5'] = '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">';
-				return '<i class="'. $icon .'"'. ($parameters ? ' ' . $parameters : '') .'></i>';
+			// Fontawesome 7
+			case (substr($icon, 0, 6) == 'fa fa-'):
+			case (substr($icon, 0, 7) == 'far fa-'):
+			case (substr($icon, 0, 7) == 'fab fa-'):
+			case (substr($icon, 0, 7) == 'fas fa-'):
+				document::$foot_tags['fontawesome7'] = '<script src="https://use.fontawesome.com/releases/v7.1.0/js/all.js" crossorigin="anonymous"></script>';
+				return '<i class="'. $icon .'"'. (!empty($parameters) ? ' ' . $parameters : null) .'></i>';
 
 			// Foundation
 			case (preg_match('#^fi-#', $icon)):
@@ -48,8 +69,9 @@
 		}
 
 		switch ($icon) {
-			case 'add':         return draw_fonticon('icon-square-pen');
+			case 'add':         return draw_fonticon('icon-plus');
 			case 'cancel':      return draw_fonticon('icon-times');
+			case 'create':      return draw_fonticon('icon-square-pen');
 			case 'company':     return draw_fonticon('icon-building', 'style="color: #888;"');
 			case 'delete':      return draw_fonticon('icon-trash');
 			case 'download':    return draw_fonticon('icon-download');
@@ -85,13 +107,13 @@
 
 		if ($width && $height) {
 			if (preg_match('#style="#', $parameters)) {
-				$parameters = preg_replace('#style="(.*?)"#', 'style="$1 aspect-ratio: '. functions::image_aspect_ratio($width, $height) .';"', $parameters);
+				$parameters = preg_replace('#style="(.*?)"#', 'style="$1 aspect-ratio: '. f::image_aspect_ratio($width, $height) .';"', $parameters);
 			} else {
 				$parameters .= ' style="aspect-ratio: '. functions::image_aspect_ratio($width, $height) .';"';
 			}
 		}
 
-		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($image) .'" '. ($parameters ? ' '. $parameters : '') .'>';
+		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="'. f::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($image) .'" '. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
 	function draw_script($src) {
@@ -130,16 +152,16 @@
 
 		if (!$width) {
 			$aspect_ratio = (new ent_image($image))->aspect_ratio;
-			list($width, $height) = functions::image_scale_by_height($height, $aspect_ratio);
+			list($width, $height) = f::image_scale_by_height($height, $aspect_ratio);
 		}
 
 		if (!$height) {
 			$aspect_ratio = (new ent_image($image))->aspect_ratio;
-			list($width, $height) = functions::image_scale_by_width($width, $aspect_ratio);
+			list($width, $height) = f::image_scale_by_width($width, $aspect_ratio);
 		}
 
 		if (empty($aspect_ratio)) {
-			$aspect_ratio = functions::image_aspect_ratio($width, $height);
+			$aspect_ratio = f::image_aspect_ratio($width, $height);
 		}
 
 		switch (strtolower($clipping)) {
@@ -161,8 +183,8 @@
 				break;
 		}
 
-		$thumbnail = functions::image_thumbnail($image, $width, $height, $clipping);
-		$thumbnail_2x = functions::image_thumbnail($image, $width*2, $height*2, $clipping);
+		$thumbnail = f::image_thumbnail($image, $width, $height, $clipping);
+		$thumbnail_2x = f::image_thumbnail($image, $width*2, $height*2, $clipping);
 
 		if ($width && $height) {
 			if (preg_match('#style="#', $parameters)) {
@@ -251,6 +273,7 @@
 			'page' => $_GET['page']-1,
 			'title' => t('title_previous', 'Previous'),
 			'link' => document::link($_SERVER['REQUEST_URI'], ['page' => $_GET['page']-1]),
+			'rel'	=> 'prev',
 			'disabled' => ($_GET['page'] <= 1),
 			'active' => false,
 		];
@@ -299,9 +322,16 @@
 			'page' => $_GET['page']+1,
 			'title' => t('title_next', 'Next'),
 			'link' => document::link($_SERVER['REQUEST_URI'], ['page' => $_GET['page']+1]),
+			'rel'	=> 'next',
 			'disabled' => ($_GET['page'] >= $pages) ? true : false,
 			'active' => false,
 		];
 
 		return (string)$pagination;
+	}
+
+	// ??????????????? 25%
+	function draw_progress_bar($progress, $width=15) {
+		$percentage = floor($progress);
+		return str_pad(str_repeat("\u{25AE}", floor(($width / 100) * $percentage)), $width, "\u{25AF}", STR_PAD_RIGHT) . ' '. $percentage .'%';
 	}

@@ -1,13 +1,13 @@
 <?php
 
 	class stream_app {
+
+		private static $_cache = [];
 		private $_directory = [];
 		private $_stream;
 		public $context;
 
-		private static $_cache = [];
-
-		public function dir_opendir($path, $options) {
+		public function dir_opendir(string $path, int $options): bool {
 
 			$microtime = microtime(true);
 
@@ -18,22 +18,8 @@
 
 			if (!isset(self::$_cache[$path])) {
 
-/*
-				if ($handle = opendir($path)) {
-					while (($file = readdir($handle)) !== false) {
-						if ($file == '.' || $file == '..') continue;
-
-						if (is_dir($path.$file)) {
-							$file .= '/';
-						}
-
-						$this->_directory[$file] = $path.$file;
-					}
-				}
-*/
-
-				// glob() seems faster than opendir() for this operation
-				foreach (glob($path.'*', GLOB_NOSORT) as $file) {
+				// File System				
+				foreach (glob($path.'*', GLOB_NOSORT) as $file) { // glob() seems faster than opendir() for this operation
 
 					$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
 					$basename = basename($file) . (is_dir($file) ? '/' : '');
@@ -41,6 +27,7 @@
 					$this->_directory[$basename] = $file;
 				}
 
+				// Virtual File System
 				foreach (glob(FS_DIR_STORAGE .'addons/*/'.$relative_path.'*', GLOB_NOSORT) as $file) {
 
 					$file = str_replace('\\', '/', $file) . (is_dir($file) ? '/' : '');
@@ -74,7 +61,7 @@
 			return true;
 		}
 
-		public function dir_readdir() {
+		public function dir_readdir(): string|false {
 
 			$result = key($this->_directory);
 
@@ -87,29 +74,50 @@
 			return $result;
 		}
 
-		public function dir_closedir() {
+		public function dir_closedir(): bool {
+			if (is_resource($this->_directory)) {
+				closedir($this->_directory);
+			}
 			$this->_directory = null;
 			return true;
 		}
 
-		public function dir_rewinddir() {
+		public function dir_rewinddir(): bool {
 			reset($this->_directory);
 			return true;
 		}
 
 		public function mkdir(string $path, int $mode, int $options): bool {
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Creating an app:// directory is prohibited', E_USER_WARNING);
+				return false;
+			}
+
 			return mkdir($this->_resolve_path($path), $mode);
 		}
 
 		public function rename(string $path_from, string $path_to): bool {
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Renaming an app:// resource is prohibited', E_USER_WARNING);
+				return false;
+			}
+
 			return rename($this->_resolve_path($path_from), $this->_resolve_path($path_to));
 		}
 
 		public function rmdir(string $path, int $options): bool {
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Removing an app:// directory is prohibited', E_USER_WARNING);
+				return false;
+			}
+
 			return rmdir($this->_resolve_path($path));
 		}
 
-		public function stream_cast(int $cast_as) {
+		public function stream_cast(int $cast_as): object {
 			return $this->_stream;
 		}
 
@@ -122,10 +130,22 @@
 		}
 
 		public function stream_flush(): bool {
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Flushing data to an app:// resource is prohibited', E_USER_WARNING);
+				return false;
+			}
+
 			return fflush($this->_stream);
 		}
 
 		public function stream_lock(int $operation): bool {
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Adding a file lock for an app:// resource is prohibited', E_USER_WARNING);
+				return false;
+			}
+
 			return flock($this->_stream, $operation);
 		}
 
@@ -134,6 +154,7 @@
 			$path = $this->_resolve_file($path);
 
 			switch ($option) {
+
 				case STREAM_META_TOUCH:
 					$currentTime = \time();
 					return touch($path, (is_array($value) && array_key_exists(0, $value)) ? $value[0] : $currentTime, (is_array($value) && array_key_exists(1, $value)) ? $value[1] : $currentTime);
@@ -161,6 +182,7 @@
 		public function stream_open(string $path, string $mode, int $options, ?string &$opened_path): bool {
 
 			$path = $this->_resolve_file($path);
+			$mode = 'r'; // Force read-only
 
 			$this->_stream = fopen($path, $mode, $options, $opened_path);
 
@@ -188,10 +210,22 @@
 		}
 
 		public function stream_truncate(int $new_size): bool {
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Truncating an app:// resource is prohibited', E_USER_WARNING);
+				return false;
+			}
+
 			return ftruncate($this->_stream, $new_size);
 		}
 
-		public function stream_write(string $data): int {
+		public function stream_write(string $data): int|bool {
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Writing to an app:// resource is prohibited', E_USER_WARNING);
+				return 0;
+			}
+
 			return fwrite($this->_stream, $data);
 		}
 
@@ -211,7 +245,7 @@
 			return stat($path);
 		}
 
-		####################################################################
+		## Non-Standard StreamWrapper Methods
 
 		private function _resolve_path($path) {
 			return preg_replace('#^app://#', FS_DIR_APP, str_replace('\\', '/', $path));
@@ -234,7 +268,9 @@
 				$path = $file;
 			}
 
-			$path = vmod::check($path);
+			if (!defined('VMOD_DISABLED') || VMOD_DISABLED !== 'true') {
+				$path = vmod::check($path);
+			}
 
 			return $path;
 		}

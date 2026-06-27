@@ -1,7 +1,7 @@
 <?php
 
 	class ent_redirect {
-		
+
 		public $data;
 		public $previous;
 

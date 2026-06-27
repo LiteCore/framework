@@ -18,6 +18,8 @@
 			self::$data = &session::$data['notices'];
 		}
 
+		## Node specific methods
+
 		public static function reset($type=null) {
 
 			if ($type) {
@@ -68,7 +70,7 @@
 
 			if (empty(self::$data)) return '';
 
-			switch (fallback(route::$selected['endpoint'])) {
+			switch (route::$selected['endpoint'] ?? null) {
 
 				case 'backend':
 					$view = new ent_view('app://backend/template/partials/notices.inc.php');

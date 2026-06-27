@@ -39,29 +39,47 @@ waitFor('jQuery', ($) => {
 			this.$instance = $([
 				'<div class="litebox litebox-loading">',
 				`	<div class="litebox-modal${this.seamless ? ' litebox-seamless' : ''}">`,
-				`		<div class="litebox-inner">${this.loading}</div>`,
+				`		${this.loading}`,
 				'	</div>',
 				'</div>'
 			].join('\n'));
 
+			// Track mousedown and mouseup to ensure both happen outside modal before closing
+			let mousedownOutsideModal = false;
+
+			const isOutsideModal = (e) => {
+				const $modal = this.$instance.find('.litebox-modal');
+				if (!$modal.length) return true;
+				const rect = $modal[0].getBoundingClientRect();
+				return e.clientX < rect.left || e.clientX > rect.right ||
+					e.clientY < rect.top || e.clientY > rect.bottom;
+			};
+
+			this.$instance.on('mousedown.litebox', (e) => {
+				mousedownOutsideModal = isOutsideModal(e);
+			});
+
+			this.$instance.on('mouseup.litebox', (e) => {
+				if (mousedownOutsideModal && isOutsideModal(e) && this.closeOnClick === 'backdrop') {
+					if ($(e.target).closest('.litebox-previous, .litebox-next').length) return;
+					this.close(e);
+					e.preventDefault();
+				}
+			});
+
 			this.$instance.on('click.litebox', (e) => {
-				if (e.isDefaultPrevented() || !(
-						(this.closeOnClick === 'backdrop' && $(e.target).is('.litebox')) ||
-						this.closeOnClick === 'anywhere' ||
-						$(e.target).is('.litebox-close')
-					)
-				) return;
-				this.close(e);
-				e.preventDefault();
+				if (e.isDefaultPrevented()) return;
+				if (this.closeOnClick === 'anywhere' || $(e.target).is('.litebox-close')) {
+					this.close(e);
+					e.preventDefault();
+				}
 			});
 		}
 
 		// Attach Litebox to elements
 		static attach($source, $modal, options = {}) {
 
-			const tempOptions = { ...this.defaults, ...$source.data(), ...options };
 			const handler = (e) => {
-				const $target = $(e.currentTarget);
 				const gallery = $(e.currentTarget).data('gallery');
 				const $gallerySource = gallery ? $(`[data-gallery="${gallery}"]`) : $source;
 				const elementOptions = {
@@ -106,7 +124,6 @@ waitFor('jQuery', ($) => {
 			Litebox.opened.push(this);
 
 			this.$instance.show();
-			this.beforeContent(e);
 
 			return $.when($modal)
 				.always(($m) => {
@@ -140,13 +157,98 @@ waitFor('jQuery', ($) => {
 						const deferred = $.Deferred();
 						const $img = $('<img>', { src: url, alt: '' });
 						$img.on('load', () => deferred.resolve($img));
-						$img.on('error', () => deferred.reject());
+						$img.on('error', () => deferred.resolve($('<div>Failed to load image</div>')));
 						return deferred.promise();
 					}
 				},
 				html: {
 					regex: /^\s*<[\w!][^<]*>/,
 					process: (html) => $(html)
+				},
+				iframe: {
+					process: function (url) {
+						const deferred = $.Deferred();
+						const $iframe = $('<iframe/>', { src: url });
+						$iframe.on('load', () => {
+							$iframe.show().appendTo(this.$instance.find('.litebox-modal'));
+							deferred.resolve($iframe);
+						});
+						return deferred.promise();
+					}
+				},
+				video: {
+					regex: /\.(mp4|webm)(\?\S*)?(\?|$)/i,
+					process: function (url) {
+						const deferred = $.Deferred();
+						const ext = url.match(/\.(mp4|webm)(\?|$)/i)?.[1] || 'mp4';
+						const $video = $('<video controls>');
+						$video.append($('<source>', { src: url, type: `video/${ext}` }));
+						$video.on('loadeddata', () => deferred.resolve($video));
+						$video.on('error', () => deferred.resolve($('<div>Failed to load video</div>')));
+						return deferred.promise();
+					}
+				},
+				youtube: {
+					regex: /^(https?:\/\/)?(www\.)?(youtube\.com|youtube-nocookie\.com|youtu\.?be)\//,
+					process: function (url) {
+						// Improved videoId extraction for various YouTube URL formats
+						let videoId = null;
+						// youtu.be/VIDEOID
+						let match = url.match(/youtu\.be\/([\w-]{11})/);
+						if (match) videoId = match[1];
+						// youtube.com/watch?v=VIDEOID
+						if (!videoId) {
+							match = url.match(/[?&]v=([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						// youtube.com/embed/VIDEOID
+						if (!videoId) {
+							match = url.match(/embed\/([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						// youtube.com/v/VIDEOID
+						if (!videoId) {
+							match = url.match(/\/v\/([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						// fallback: try to extract last 11-char id
+						if (!videoId) {
+							match = url.match(/([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						const deferred = $.Deferred();
+						let $iframe;
+						if (videoId) {
+							$iframe = $('<iframe/>', {
+								src: `https://www.youtube-nocookie.com/embed/${videoId}`,
+								allowfullscreen: true,
+								style: 'display: none; height: 50vh; aspect-ratio: 16/9;'
+							});
+						} else {
+							$iframe = $('<div>Failed to extract YouTube video ID</div>');
+						}
+						// Always append to modal before resolving
+						this.$instance.find('.litebox-modal').append($iframe);
+						if ($iframe.is('iframe')) {
+							$iframe.on('load', () => {
+								$iframe.show();
+								deferred.resolve($iframe);
+							});
+						} else {
+							$iframe.show();
+							deferred.resolve($iframe);
+						}
+						return deferred.promise();
+					}
+				},
+				raw: {
+					regex: /\.(log|md|txt)(\?\S*)?(\?|$)/i,
+					process: function(url) {
+						const deferred = $.Deferred();
+						const $content = $('<div>').css({ "white-space": 'pre-wrap', "max-width": '90vw' });
+						$.get(url, raw => $content.text(raw)).done(() => deferred.resolve($content)).fail(() => deferred.resolve($('<div>Failed to load file</div>')));
+						return deferred.promise();
+					}
 				},
 				ajax: {
 					regex: /./,
@@ -157,23 +259,6 @@ waitFor('jQuery', ($) => {
 							if (status === 'error') deferred.reject();
 							else deferred.resolve($container.contents());
 						});
-						return deferred.promise();
-					}
-				},
-				iframe: {
-					process: function (url) {
-						const deferred = $.Deferred();
-						const $iframe = $('<iframe/>', { src: url });
-						$iframe.on('load', () => { $iframe.show().appendTo(this.$instance.find('.litebox-modal')); deferred.resolve($iframe); });
-						return deferred.promise();
-					}
-				},
-				raw: {
-					regex: /\.(log|md|txt)(\?\S*)?$/i,
-					process: function(url) {
-						const deferred = $.Deferred();
-						const $content = $('<div>').css({ "white-space": 'pre-wrap', "max-width": '90vw' });
-						$.get(url, raw => $content.text(raw)).done(() => deferred.resolve($content));
 						return deferred.promise();
 					}
 				},
@@ -217,7 +302,6 @@ waitFor('jQuery', ($) => {
 
 		// Before opening the Litebox
 		beforeOpen(e) {
-
 			this._previouslyActive = document.activeElement;
 			this._$previouslyTabbable = $('a, input, select, textarea, iframe, button, [contentEditable=true]')
 				.not('[tabindex]').not(this.$instance.find('button'));
@@ -262,11 +346,6 @@ waitFor('jQuery', ($) => {
 			return true;
 		}
 
-		// Before setting content
-		beforeContent(e) {
-			return true;
-		}
-
 		// After setting content
 		afterContent(e) {
 
@@ -287,8 +366,6 @@ waitFor('jQuery', ($) => {
 					e.preventDefault();
 				}).appendTo(this.$instance.find('.litebox-modal'));
 			}
-
-			this.onResize(e);
 
 			return true;
 		}
@@ -336,16 +413,12 @@ waitFor('jQuery', ($) => {
 			}
 		}
 
-		onResize(e) {
-			return true;
-		}
-
 		beforeClose(e) {
 			return true;
 		}
 
 		afterClose(e) {
-			if (e.isDefaultPrevented()) return;
+			if (e?.isDefaultPrevented()) return;
 			this._$previouslyTabbable.removeAttr('tabindex');
 			this._$previouslyWithTabIndex.each((i, el) => $(el).attr('tabindex', this._previousWithTabIndices[i]));
 			if (this._previouslyActive instanceof $) {
@@ -371,25 +444,41 @@ waitFor('jQuery', ($) => {
 
 			const source = this.$source;
 			const len = source.length;
-			const $inner = this.$instance.find('.litebox-inner');
 			index = ((index % len) + len) % len;
 
 			this.$instance.addClass('litebox-loading');
 			this.$currentTarget = source.eq(index);
-			this.beforeContent();
+
 			return $.when(
 				this.getContent(),
-				$inner.fadeTo(this.galleryFadeOut, 0.2)
 			).always(($newContent) => {
 				this.setContent($newContent);
 				this.afterContent();
-				$newContent.fadeTo(this.galleryFadeIn, 1);
 			});
 		}
 	}
 
 	// jQuery plugin integration
-	$.litebox = Litebox;
+	$.litebox = function (url, options = {}) {
+		if (typeof url === 'string') {
+			const instance = new Litebox(url, options);
+			instance.open();
+			return instance;
+		}
+		console.error('Invalid argument passed to $.litebox. Expected a URL string.');
+	};
+
+	// Expose the Litebox.current method
+	$.litebox.current = Litebox.current.bind(Litebox);
+
+	// Expose the Litebox.attach method
+	$.litebox.opened = Litebox.opened;
+
+	// Expose the Litebox.close method
+	$.litebox.close = function(){
+		this.current()?.close();
+	}
+
 	$.fn.litebox = function ($modal, options) {
 		Litebox.attach(this, $modal, options);
 		return this;

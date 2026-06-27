@@ -5,13 +5,14 @@
 		public static $canonical = '';
 		public static $console = [];
 		public static $content = [];
+		public static $csp = [];
 		public static $description = '';
 		public static $head_tags = [];
 		public static $foot_tags = [];
 		public static $javascript = [];
 		public static $jsenv = [];
 		public static $layout = 'default';
-		//public static $nonce = [];
+		public static $nonce = '';
 		public static $opengraph = [];
 		public static $preloads = [];
 		public static $schema = [];
@@ -20,12 +21,21 @@
 		public static $style = [];
 		public static $title = [];
 
-		public static function init() {
+		public static function init(): void {
+
+			// Default to AJAX layout on AJAX request
+			if (is_ajax_request()) {
+				self::$layout = 'ajax';
+			}
+
+			// Generate a cryptographic nonce for Content Security Policy
+			self::$nonce = bin2hex(random_bytes(16));
+
 			event::register('before_capture', [__CLASS__, 'before_capture']);
 			event::register('after_capture', [__CLASS__, 'after_capture']);
 		}
 
-		public static function before_capture() {
+		public static function before_capture(): void {
 
 			header('X-Powered-By: '. PLATFORM_NAME);
 			header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload'); // HSTS
@@ -33,29 +43,22 @@
 			header('Referrer-Policy: strict-origin-when-cross-origin'); // Referrer Policy
 			header('X-Content-Type-Options: nosniff'); // Prevent MIME type sniffing
 
-			header('Content-Security-Policy: '. implode(';', [
-				"frame-ancestors 'self'", // Clickjacking Protection
-					//"script-src 'nonce-". self::$nonce ."' 'strict-dynamic'",
-					//"img-src 'self'",
-					//"style-src 'self'",
-					//"base-uri 'self'",
-					//"form-action 'self'",
-			]));
+			// Content-Security-Policy headers are generated after capture to allow dynamic additions
+			self::add_csp('default-src', ["'self'", "'unsafe-eval'", "data:"]);
+			self::add_csp('script-src', ["'self'", "'unsafe-inline'", "'nonce-". self::$nonce ."'"]);
+			self::add_csp('style-src', ["'self'", "'unsafe-inline'", "data:"]);
+			self::add_csp('frame-ancestors', ["'self'"]); // Clickjacking Protection
+			self::add_csp('report-uri', [self::ilink('f:csp_report')]); // CSP Violation Reporting
 
-			header('Permissions-Policy: ', implode(',', [
+			header('Permissions-Policy: ' . implode(',', [
 					'camera=()',
 					'clipboard-read=()',
 					'clipboard-write=()',
 					'fullscreen=(self)',
 					'payment=()',
 					'geolocation=()',
-					'browsing-topics()',
+					'browsing-topics=()',
 			]));
-
-			// Default to AJAX layout on AJAX request
-			if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-				self::$layout = 'ajax';
-			}
 
 			self::$title = [settings::get('site_name')];
 
@@ -64,35 +67,76 @@
 			self::$snippets['text_direction'] = language::$selected['direction'];
 			self::$snippets['charset'] = mb_http_output();
 			self::$snippets['home_path'] = WS_DIR_APP;
+			self::$snippets['nonce'] = self::$nonce;
 
-			switch (fallback(route::$selected['endpoint'])) {
+			self::$snippets['template_path'] = match(route::$selected['endpoint'] ?? null) {
+				'backend' => WS_DIR_APP . 'backend/template/',
+				'frontend' => WS_DIR_APP . 'frontend/template/',
+				default => WS_DIR_APP . 'frontend/template/',
+			};
 
-				case 'backend':
-					self::$snippets['template_path'] = WS_DIR_APP . 'backend/template/';
-					break;
-
-				default:
-					self::$snippets['template_path'] = WS_DIR_APP . 'frontend/template/';
-					break;
-			}
-
-			// Alert errors to administrator
+			// Alert errors if administrator
 			if (administrator::check_login()) {
-				self::add_head_tags([
-					'<script>let _alertedErrors=0;window.onerror=(c,r,a,p)=>{_alertedErrors++<5&&alert(c+" in "+r.split("/").pop().split("?")[0]+" on line "+a)};</script>',
-				], 'alert_errors');
+				self::add_head_tags(implode(PHP_EOL, [
+					'<script nonce="'. self::$nonce .'">let _alertedErrors=0;window.onerror=(c,r,a,p)=>{_alertedErrors++<5&&alert(c+" in "+r.split("/").pop().split("?")[0]+" on line "+a)};</script>',
+				]), 'alert_errors');
+
+				// Client-side error reporter
+				self::$javascript['error-reporter'] = implode(PHP_EOL, [
+					'  window.onerror = function(message, file, line) {',
+					'    fetch("' . document::ilink('f:ajax/report_error') . '", {',
+					'      method: "POST",',
+					'      headers: { "Content-Type": "application/json; charset=utf-8" },',
+					'      body: JSON.stringify({',
+					'        url: location.href,',
+					'        message: message,',
+					'        file: file,',
+					'        line: line',
+					'      })',
+					'    });',
+					'  };',
+				]);
 			}
 
 			// Wait For (Mini version)
-			self::add_head_tags([
-				'<script>window.waitFor=window.waitFor||((i,o)=>{void 0!==window[i]?o(window[i]):setTimeout((()=>waitFor(i,o)),50)});</script>',
-			], 'waitFor');
+			self::add_head_tags(implode(PHP_EOL, [
+				'<script nonce="'. self::$nonce .'">window.waitFor=window.waitFor||((i,o)=>{void 0!==window[i]?o(window[i]):setTimeout((()=>waitFor(i,o)),50)});</script>',
+			]), 'waitFor');
 
 			// Load jQuery
 			self::load_script('app://assets/jquery/jquery-4.0.0.min.js', 'jquery');
+
+			// Get template settings
+			$template_config_file = match(route::$selected['endpoint'] ?? null) {
+				'backend' => 'app://backend/template/config.inc.php',
+				'frontend' => 'app://frontend/template/config.inc.php',
+				default => 'app://frontend/template/config.inc.php',
+			};
+
+			if (is_file($template_config_file)) {
+				if (!$template_config = include $template_config_file) {
+					$template_config = [];
+				}
+			}
+
+			self::$settings = settings::get('template_settings') ? json_decode(settings::get('template_settings'), true) : [];
+
+			foreach ($template_config as $setting) {
+				if (!isset(self::$settings[$setting['key']])) {
+					self::$settings[$setting['key']] = $setting['default_value'];
+				}
+			}
 		}
 
-		public static function after_capture() {
+		public static function after_capture(): void {
+
+			// Content Security Policy
+			if (self::$csp) {
+				//header('Content-Security-Policy-Report-Only: '. implode('; ', [
+				header('Content-Security-Policy: '. implode(';', array_map(function($type, $values) {
+					return $type . ' ' . implode(' ', $values);
+				}, array_keys(self::$csp), self::$csp)));
+			}
 
 			// JavaScript Environment
 
@@ -107,7 +151,7 @@
 				'settings' => self::$settings,
 			];
 
-			switch (fallback(route::$selected['endpoint'])) {
+			switch (route::$selected['endpoint'] ?? null) {
 
 				case 'backend':
 					self::$jsenv['template']['url'] = WS_DIR_APP . 'backend/template/';
@@ -118,8 +162,6 @@
 					break;
 			}
 
-			self::$jsenv['session']['id'] = session::get_id();
-
 			document::$jsenv['language'] = [
 				'code' => &language::$selected['code'],
 				'name' => &language::$selected['name'],
@@ -127,10 +169,15 @@
 				'thousands_separator' => &language::$selected['thousands_sep'],
 			];
 
-			self::$head_tags[] = '<script>window._env='. json_encode(self::$jsenv, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .'</script>';
+			self::$head_tags[] = '<script nonce="'. self::$nonce .'">window._env='. f::format_json(self::$jsenv, false) .'</script>';
 		}
 
-		public static function optimize(&$output) {
+		## Node specific methods
+
+		public static function optimize(string &$output): void {
+
+			// Strip HTML comments
+			$output = preg_replace('#<!--[\s\S]*?-->#', '', $output);
 
 			// Extract styling
 			$output = preg_replace_callback('#(<html[^>]*>)(.*)(</html>)#is', function($matches) use (&$stylesheets, &$style, &$javascripts, &$javascript) {
@@ -146,7 +193,7 @@
 				$style = [];
 
 				$matches[2] = preg_replace_callback('#<style[^>]*>(.+?)</style>\R*#is', function($match) use (&$style) {
-					$style[] = trim($match[1], "\r\n");
+					$style[] = trim(preg_replace('#/\*[\s\S]*?\*/#', '', $match[1]), "\r\n"); // Trim comments
 				}, $matches[2]);
 
 				return $matches[1] . $matches[2] . $matches[3];
@@ -166,6 +213,13 @@
 				$javascript = [];
 
 				$matches[2] = preg_replace_callback('#<script[^>]*(?!src="[^"]+")[^>]*>(.+?)</script>\R*#is', function($match) use (&$javascript) {
+
+					// Strip comments
+					$match[1] = preg_replace([
+						'#^\s*//.*$#m', // Single-line comments
+						'#/\*[^*]*\*+(?:[^/*][^*]*\*+)*/#s', // Multi-line comments (non-greedy, C-style)
+					], '', $match[1]);
+
 					$javascript[] = trim($match[1], "\r\n");
 				}, $matches[2]);
 
@@ -173,41 +227,34 @@
 			}, $output);
 
 			// Reinsert external stylesheets
-			if (!empty($stylesheets)) {
+			if ($stylesheets) {
 				$stylesheets = implode(PHP_EOL, $stylesheets) . PHP_EOL;
 				$output = preg_replace('#</head>#', addcslashes($stylesheets . '</head>', '\\$'), $output, 1);
 			}
 
 			// Reinsert internal styles
-			if (!empty($style)) {
+			if ($style) {
 
 				// Convert to string
-				$style = implode(PHP_EOL . PHP_EOL, $style);
+				$style = implode(PHP_EOL, $style);
 
-				// Minify internal CSS
+				// Minify internal styles
 				foreach([
 					'#/\*(?:.(?!/)|[^\*](?=/)|(?<!\*)/)*\*/#s' => '', // Remove comments
 					'#([a-zA-Z0-9 \#=",-:()\[\]]+\{\s*\}\s*)#' => '', // Remove empty selectors
 					'#\s+#' => ' ', // Replace multiple whitespace
-					'#^\s+#' => ' ', // Replace leading whitespace
 					'#\s*([,:;{}])\s*#' => '$1', // Remove whitespace around delimiters
 					'#;}#' => '}', // Remove trailing semicolons before closing brackets
 				] as $search => $replace) {
 					$style = preg_replace($search, $replace, $style);
 				}
 
-				$style = implode(PHP_EOL, [
-					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing?
-					$style,
-					//'/*]]>*/-->',
-				]);
-
 				// Build integrity hash
 				$checksum = hash('sha256', $style, true);
 
 				// Prepare style tag
 				$style = implode(PHP_EOL, [
-					'<style integrity="sha256-'. base64_encode($checksum) .'" crossorigin="anonymous">',
+					'<style nonce="'. self::$nonce .'" integrity="sha256-'. base64_encode($checksum) .'" crossorigin="anonymous">',
 					$style,
 					'</style>',
 				]);
@@ -217,21 +264,19 @@
 			}
 
 			// Reinsert external javascripts
-			if (!empty($javascripts)) {
+			if ($javascripts) {
 				$javascripts = implode(PHP_EOL, $javascripts) . PHP_EOL;
 				$output = preg_replace('#</body>#is', addcslashes($javascripts .'</body>', '\\$'), $output, 1);
 			}
 
 			// Reinsert internal javascript
-			if (!empty($javascript)) {
+			if ($javascript) {
 
 				// Convert to string
 				$javascript = implode(PHP_EOL, [
-					//'<!--/*--><![CDATA[/*><!--*/', // Do we still benefit from parser bypassing?
 					'waitFor(\'jQuery\', function($) {',
 					implode(PHP_EOL . PHP_EOL, $javascript),
 					'});',
-					//'/*]]>*/-->',
 				]);
 
 				// Build integrity hash
@@ -239,7 +284,7 @@
 
 				// Prepare script tag
 				$javascript = implode(PHP_EOL, [
-					'<script integrity="sha256-'. base64_encode($checksum) .'" crossorigin="anonymous">',
+					'<script nonce="'. self::$nonce .'" integrity="sha256-'. base64_encode($checksum) .'" crossorigin="anonymous">',
 					$javascript,
 					'</script>',
 				]) . PHP_EOL;
@@ -247,11 +292,6 @@
 				// Insert javascript before </body>
 				$output = preg_replace('#</body>#is', addcslashes($javascript . '</body>', '\\$'), $output, 1);
 			}
-
-			// Remove HTML comments
-			$output = preg_replace_callback('#(<html[^>]*>)(.*)(</html>)#is', function($matches) {
-				return preg_replace('#<!--.*?-->#ms', '', $matches[0]);
-			}, $output);
 
 			// Static domain
 			if ($static_domain = settings::get('static_domain')) {
@@ -271,18 +311,13 @@
 			stats::start_watch('rendering');
 
 			// Set view
-			switch (fallback(route::$selected['endpoint'])) {
+			$_layout = new ent_view(match(route::$selected['endpoint'] ?? null) {
+				'backend' => 'app://backend/template/layouts/'.self::$layout.'.inc.php',
+				'frontend' => 'app://frontend/template/layouts/'.self::$layout.'.inc.php',
+				default => 'app://frontend/template/layouts/'.self::$layout.'.inc.php',
+			});
 
-				case 'backend':
-					$_page = new ent_view('app://backend/template/layouts/'.self::$layout.'.inc.php');
-					break;
-
-				default:
-					$_page = new ent_view('app://frontend/template/layouts/'.self::$layout.'.inc.php');
-					break;
-			}
-
-			$_page->snippets = array_merge(self::$snippets, [
+			$_layout->snippets = array_merge(self::$snippets, [
 				'head_tags' => self::$head_tags,
 				'style' => self::$style,
 				'breadcrumbs' => breadcrumbs::render(),
@@ -291,6 +326,7 @@
 				'foot_tags' => self::$foot_tags,
 				'javascript' => self::$javascript,
 				'important_notice' => settings::get('important_notice'),
+				'theme' => !empty($_COOKIE['theme']) && in_array($_COOKIE['theme'], ['light', 'dark']) ? $_COOKIE['theme'] : 'auto',
 			]);
 
 			// Prepare title
@@ -301,38 +337,38 @@
 				}
 
 				self::$title = array_filter(self::$title);
-				$_page->snippets['title'] = implode(' | ', array_reverse(self::$title));
+				$_layout->snippets['title'] = implode(' � ', array_reverse(self::$title));
 			}
 
 			// Add meta description
 			if (!empty(self::$description)) {
-				$_page->snippets['head_tags'][] = '<meta name="description" content="'. functions::escape_attr(self::$description) .'">';
+				$_layout->snippets['head_tags'][] = '<meta name="description" content="'. f::escape_attr(self::$description) .'">';
 			}
 
 			// Add canonical URL
 			if (!empty(self::$canonical)) {
-				$_page->snippets['head_tags'][] = '<link rel="canonical" href="'. functions::escape_attr(self::$canonical) .'">';
+				$_layout->snippets['head_tags'][] = '<link rel="canonical" href="'. f::escape_attr(self::$canonical) .'">';
 			}
 
 			// Prepare JSON Schema
 			if (!empty(self::$schema)) {
-				$_page->snippets['head_tags']['schema_json'] = implode(PHP_EOL, [
-					'<script type="application/ld+json">',
-					json_encode(array_values(self::$schema), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+				$_layout->snippets['head_tags']['schema_json'] = implode('', [
+					'<script type="application/ld+json" nonce="'. self::$nonce .'">',
+					f::format_json(self::$schema, false),
 					'</script>',
 				]);
 			}
 
 			// Prepare OpenGraph Tags
 			if (!empty(self::$opengraph)) {
-				$_page->snippets['head_tags']['opengraph'] = implode(PHP_EOL, array_map(function($property, $content) {
-					return '<meta property="og:'. functions::escape_attr($property) .'" content="'. functions::escape_attr($content) .'">';
+				$_layout->snippets['head_tags']['opengraph'] = implode(PHP_EOL, array_map(function($property, $content) {
+					return '<meta property="og:'. f::escape_attr($property) .'" content="'. f::escape_attr($content) .'">';
 				}, array_keys(self::$opengraph), self::$opengraph));
 			}
 
 			// Prepare internal styles
 			if (!empty(self::$style)) {
-				$_page->snippets['head_tags'][] = implode(PHP_EOL, [
+				$_layout->snippets['head_tags'][] = implode(PHP_EOL, [
 					'<style>',
 					implode(PHP_EOL . PHP_EOL, self::$style),
 					'</style>',
@@ -341,30 +377,30 @@
 
 			// Prepare console log
 			if (!empty(self::$console)) {
-				self::$javascript[] = implode(PHP_EOL, array_map(function($log) {
-					return 'console.'. $log['type'] .'("'. functions::escape_attr($log['message']) .'", '. json_encode($log['data'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) .');';
-				}, self::$console));
+				self::$javascript[] = implode(PHP_EOL, f::array_each(self::$console, fn($log) =>
+					'console.'. $log['type'] .'("'. f::escape_attr($log['message']) .'", '. f::format_json($log['data']) .');'
+				));
 			}
 
 			// Prepare internal javascript
 			if (!empty(self::$javascript)) {
-				$_page->snippets['foot_tags'][] = implode(PHP_EOL, [
-					'<script>',
+				$_layout->snippets['foot_tags'][] = implode(PHP_EOL, [
+					'<script nonce="'. self::$nonce .'">',
 					implode(PHP_EOL . PHP_EOL, self::$javascript),
 					'</script>',
 				]);
 			}
 
 			// Prepare snippets
-			foreach ($_page->snippets as $key => $snippet) {
+			foreach ($_layout->snippets as $key => $snippet) {
 				if (is_array($snippet)) {
-					$_page->snippets[$key] = implode(PHP_EOL, $snippet);
+					$_layout->snippets[$key] = implode(PHP_EOL, $snippet);
 				}
 			}
 
-			$_page->cleanup = true;
+			$_layout->cleanup = true;
 
-			$output = $_page->render();
+			$output = $_layout->render();
 
 			self::optimize($output);
 
@@ -375,7 +411,24 @@
 			return $output;
 		}
 
-		public static function add_head_tags($tags, $key=null) {
+		public static function add_csp(string $type, string|array $values): void {
+
+			if (!isset(self::$csp[$type])) {
+				self::$csp[$type] = [];
+			}
+
+			if (is_string($values)) {
+				$values = f::string_split($values, ' ');
+			}
+
+			foreach ($values as $value) {
+				if (!in_array($value, self::$csp[$type])) {
+					self::$csp[$type][] = $value;
+				}
+			}
+		}
+
+		public static function add_head_tags(string|array $tags, ?string $key=''): void {
 
 			if (is_array($tags)) {
 				$tags = implode(PHP_EOL, $tags);
@@ -384,7 +437,7 @@
 			self::$head_tags[$key] = $tags;
 		}
 
-		public static function add_foot_tags($tags, $key=null) {
+		public static function add_foot_tags(string|array $tags, ?string $key=''): void {
 
 			if (is_array($tags)) {
 				$tags = implode(PHP_EOL, $tags);
@@ -393,15 +446,16 @@
 			self::$foot_tags[$key] = $tags;
 		}
 
-		public static function load_style($resources, $key=null) {
+		public static function load_style(string|array $resources, ?string $key=null): void {
 
 			if (!is_array($resources)) {
 				$resources = [$resources];
 			}
 
 			$styles = [];
+
 			foreach ($resources as $resource) {
-				if (preg_match('#^(app|storage)://#', $resource) && is_file($resource)) {
+				if (preg_match('#^(app://|storage://|'. preg_quote(DOCUMENT_ROOT, '#') .')#', $resource) && is_file($resource)) {
 					$styles[] = '<link rel="stylesheet" integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" crossorigin="anonymous" href="'. self::href_rlink($resource) .'">';
 				} else {
 					$styles[] = '<link rel="stylesheet" href="'. self::href_link($resource) .'">';
@@ -411,7 +465,7 @@
 			self::$head_tags[$key] = implode(PHP_EOL, $styles);
 		}
 
-		public static function load_script($resources, $key=null) {
+		public static function load_script(string|array $resources, ?string $key=null): void {
 
 			if (!is_array($resources)) {
 				$resources = [$resources];
@@ -420,17 +474,17 @@
 			$scripts = [];
 
 			foreach ($resources as $resource) {
-				if (preg_match('#^(app|storage)://#', $resource) && is_file($resource)) {
-					$scripts[] = '<script defer integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" crossorigin="anonymous" src="'. self::href_rlink($resource) .'"></script>';
+				if (preg_match('#^(app://|storage://|'. preg_quote(DOCUMENT_ROOT, '#') .')#', $resource) && is_file($resource)) {
+					$scripts[] = '<script defer nonce="'. self::$nonce .'" integrity="sha256-'. base64_encode(hash_file('sha256', $resource, true)) .'" crossorigin="anonymous" src="'. self::href_rlink($resource) .'"></script>';
 				} else {
-					$scripts[] = '<script src="'. self::href_link($resource) .'"></script>';
+					$scripts[] = '<script nonce="'. self::$nonce .'" src="'. self::href_link($resource) .'"></script>';
 				}
 			}
 
 			self::$foot_tags[$key] = implode(PHP_EOL, $scripts);
 		}
 
-		public static function add_script($lines, $key=null) {
+		public static function add_script(string|array $lines, string $key=''): void {
 
 			if (is_array($lines)) {
 				$lines = implode(PHP_EOL, $lines);
@@ -443,27 +497,37 @@
 			self::$javascript[$key] = $lines;
 		}
 
-		public static function add_preload($url, $type=null) {
+		public static function add_style(string|array $lines, string $key=''): void {
+
+			if (is_array($lines)) {
+				$lines = implode(PHP_EOL, $lines);
+			}
+
+			if (!preg_match('#^( |\t)#', $lines)) {
+				$lines = preg_replace('#^#m', "\t", $lines);
+			}
+
+			self::$style[$key] = $lines;
+		}
+
+		public static function add_preload(string $url, string $type=''): void {
 
 			if (!$type) {
 				$path = parse_url($url, PHP_URL_PATH);
 
-				switch (true) {
-					case (preg_match('#\.css$#', $path)):
-						$type = 'style';
-						break;
-
-					case (preg_match('#\.js$#', $path)):
-						$type = 'script';
-						break;
-				}
+				$type = match (true) {
+					(preg_match('#\.(ttf|otf|woff2?)$#', $path)) => 'font',
+					(preg_match('#\.(a?png|avif|gif|jpe?g|tiff?|webp)$#', $path)) => 'image',
+					(preg_match('#\.css$#', $path)) => 'style',
+					(preg_match('#\.js$#', $path)) => 'script',
+				};
 			}
 
-			self::$preloads[$link] = $type;
+			self::$preloads[$url] = $type;
 		}
 
 		// Send a message to the console
-		public static function console(string $type, string $message, $data=null) {
+		public static function console(string $type, string $message, mixed $data=null): void {
 
 			if (!in_array($type, ['debug', 'log', 'info', 'warn', 'error', 'table'])) {
 				$type = 'log';
@@ -476,13 +540,13 @@
 			];
 		}
 
-		public static function ilink($resource=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
+		public static function ilink(?string $resource=null, array|null $new_params=[], bool|array|null $inherit_params=null, array|null $skip_params=[], ?string $language_code=null): string {
 
 			switch (true) {
 
 				case ($resource === null):
 					if ($inherit_params === null) $inherit_params = true;
-					$resource = route::$request;
+					$resource = WS_DIR_APP . route::$request;
 					break;
 
 				case (preg_match('#^b:(.*)$#', $resource, $matches)):
@@ -494,34 +558,25 @@
 					break;
 
 				default:
-
-					switch (fallback(route::$selected['endpoint'])) {
-						case 'backend':
-						$resource = WS_DIR_APP . BACKEND_ALIAS .'/'. $resource;
-							break;
-
-						case 'frontend':
-						$resource = WS_DIR_APP . $resource;
-							break;
-
-						default:
-							$resource = WS_DIR_APP . $resource;
-							break;
-					}
+					$resource = match(route::$selected['endpoint'] ?? null) {
+						'backend' => WS_DIR_APP . BACKEND_ALIAS .'/'. $resource,
+						'frontend' => WS_DIR_APP . $resource,
+						default => WS_DIR_APP . $resource,
+					};
 					break;
 			}
 
 			return (string)route::create_link($resource, $new_params, $inherit_params, $skip_params, $language_code, true);
 		}
 
-		public static function href_ilink($resource=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
-			return functions::escape_html(self::ilink($resource, $new_params, $inherit_params, $skip_params, $language_code));
+		public static function href_ilink(?string $resource=null, array $new_params=[], bool|array|null $inherit_params=null, array|null $skip_params=[], ?string $language_code=null): string {
+			return f::escape_attr(self::ilink($resource, $new_params, $inherit_params, $skip_params, $language_code));
 		}
 
-		public static function link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
+		public static function link(?string $path=null, array|null $new_params=[], bool|array|null $inherit_params=null, array|null $skip_params=[], ?string $language_code=null): string {
 
 			if (!$path) {
-				$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+				$path = strtok($_SERVER['REQUEST_URI'], '?'); // Don't rely on parse_url(..., PHP_URL_PATH) as it can be spoofed by the client.
 
 				if ($inherit_params === null) {
 					$inherit_params = true;
@@ -529,17 +584,17 @@
 			}
 
 			if (preg_match('#^(app://|storage://|'. preg_quote(DOCUMENT_ROOT, '#') .')#', $path)) {
-				$path = functions::file_webpath($path);
+				$path = f::file_webpath($path);
 			}
 
 			return (string)route::create_link($path, $new_params, $inherit_params, $skip_params, $language_code, false);
 		}
 
-		public static function href_link($path=null, $new_params=[], $inherit_params=null, $skip_params=[], $language_code=null) {
-			return functions::escape_html(self::link($path, $new_params, $inherit_params, $skip_params, $language_code));
+		public static function href_link(?string $path=null, array|null $new_params=[], bool|array|null $inherit_params=null, array|null $skip_params=[], ?string $language_code=null): string {
+			return f::escape_attr(self::link($path, $new_params, $inherit_params, $skip_params, $language_code));
 		}
 
-		public static function rlink($resource) {
+		public static function rlink(?string $resource, array|null $new_params=[], bool|array|null $inherit_params=null, array|null $skip_params=[]): string {
 
 			if (!$resource) {
 				return '';
@@ -556,13 +611,13 @@
 			}
 
 			if (is_file($resource)) {
-				return self::link($webpath, ['_' => filemtime($resource)]);
+				$new_params = array_merge(['_' => filemtime($resource)], $new_params);
 			}
 
-			return self::link($webpath);
+			return self::link($webpath, $new_params, $inherit_params, $skip_params);
 		}
 
-		public static function href_rlink($resource) {
-			return functions::escape_html(self::rlink($resource));
+		public static function href_rlink(?string $resource, array|null $new_params=[], bool|array|null $inherit_params=null, array|null $skip_params=[]): string {
+			return f::escape_attr(self::rlink($resource, $new_params, $inherit_params, $skip_params));
 		}
 	}

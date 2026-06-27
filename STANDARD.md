@@ -135,6 +135,16 @@
 				Level 3
 					Level 4
 
+	Code is immediately indented after opening a PHP or script tag:
+
+		<?php
+			...
+		?>
+
+		<script>
+			...
+		<script/>
+
 ## Code Commenting
 
 	Comments should have the same indentation as the code:

@@ -3,7 +3,6 @@ import cleancss from '@sequencemedia/gulp-clean-css';
 import concat from 'gulp-concat';
 import download from 'gulp-fetch';
 import header from 'gulp-header';
-import less from 'gulp-less';
 import phplint from 'gulp-phplint';
 import rename from 'gulp-rename';
 import replace from 'gulp-replace';
@@ -15,6 +14,7 @@ import uglify from 'gulp-uglify';
 import packageData from './package.json' with { type: 'json' };
 
 const sass = gulpSass(dartSass);
+const sassOptions = { charset: false, silenceDeprecations: ['legacy-js-api'] };
 
 const banner = [
 	'/*!',
@@ -27,15 +27,18 @@ const banner = [
 	'',
 ].join('\n');
 
-gulp.task('less-framework', function() {
+gulp.task('scss-framework', function() {
 
-	return gulp.src(['public_html/assets/litecore/less/*.less'])
+	return gulp.src('public_html/assets/litecore/scss/{framework/main,email,printable}.scss', { allowEmpty: true })
 		.pipe(sourcemaps.init())
-		.pipe(less())
-		.on('error', function (err) {
-			console.error('LESS Error:', err.message);
-			this.emit('end'); // Prevents Gulp from stopping
-		})
+		.pipe(sass(sassOptions).on('error', sass.logError))
+		.pipe(rename(function(path) {
+			if (path.dirname == 'framework' && path.basename == 'main') {
+				path.dirname = '';
+				path.basename = 'framework';
+			}
+		}))
+		.pipe(header(banner, { pkg: packageData }))
 		.pipe(gulp.dest('public_html/assets/litecore/css/', { overwrite: true }))
 		.pipe(cleancss())
 		.pipe(header(banner, { pkg: packageData }))
@@ -58,25 +61,17 @@ gulp.task('js-framework', function() {
 		.pipe(gulp.dest('public_html/assets/litecore/js/', { overwrite: true }));
 });
 
-// Compile LESS files
-gulp.task('less-backend', function() {
+// Compile SCSS files
+gulp.task('scss-backend', function() {
 
-	gulp.src('public_html/backend/template/less/vari*bles.less') // non-globstar pattern will fail on some windows paths
-	.pipe(less())
-		.on('error', function (err) {
-			console.error('LESS Error:', err.message);
-			this.emit('end'); // Prevents Gulp from stopping
-		})
+	gulp.src('public_html/backend/template/scss/vari*bles.scss')
+		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(gulp.dest('public_html/backend/template/css/', { overwrite: true }));
 
-	return gulp.src(['public_html/backend/template/less/*.less', '!public_html/backend/template/less/vari*bles.less'])
+	return gulp.src(['public_html/backend/template/scss/*.scss', '!**/variables.scss'])
 		.pipe(sourcemaps.init())
-		.pipe(less())
-		.on('error', function (err) {
-			console.error('LESS Error:', err.message);
-			this.emit('end'); // Prevents Gulp from stopping
-		})
+		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
@@ -98,52 +93,53 @@ gulp.task('js-backend', function() {
 		.pipe(gulp.dest('public_html/backend/template/js/', { overwrite: true }));
 });
 
-gulp.task('less-frontend', function() {
+// Build and uglify JS files
+gulp.task('js-trumbowyg', function() {
+	return gulp
+		.src('public_html/assets/trumbowyg/trumb*wyg.js')
+		.pipe(sourcemaps.init())
+		.pipe(uglify())
+		.pipe(rename({ extname: '.min.js' }))
+		//.pipe(sourcemaps.write('.', { includeContent: false }))
+		.pipe(gulp.dest('public_html/assets/trumbowyg/', { overwrite: true }));
+});
 
-	gulp.src('public_html/frontend/template/less/vari*bles.less') // non-globstar pattern will fail on some windows paths
-		.pipe(less())
-		.on('error', function (err) {
-			console.error('LESS Error:', err.message);
-			this.emit('end'); // Prevents Gulp from stopping
-		})
+gulp.task('scss-frontend', function() {
+
+	gulp.src('public_html/frontend/template/scss/variables*.scss', { allowEmpty: true })
+		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
-		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
-
-	return gulp.src(['public_html/frontend/template/less/*.less', '!**/variables.less'])
-	.pipe(sourcemaps.init())
-	.pipe(less())
-		.on('error', function (err) {
-			console.error('LESS Error:', err.message);
-			this.emit('end'); // Prevents Gulp from stopping
-		})
 		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }));
-	.pipe(cleancss())
+
+	return gulp.src(['public_html/frontend/template/scss/*.scss', '!**/variables.scss'], { allowEmpty: true })
+		.pipe(sourcemaps.init())
+		.pipe(sass(sassOptions).on('error', sass.logError))
+		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
+		.pipe(cleancss())
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(rename({ extname: '.min.css' }))
-		.pipe(sourcemaps.write('.', { includeContent: false })
+		.pipe(sourcemaps.write('.', { includeContent: false }))
 		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }));
-})
+});
 
 gulp.task('js-frontend', function() {
-	return gulp.src('public_html/frontend/template/js/components/*.js');
-	.pipe(sourcemaps.init())
+	return gulp.src('public_html/frontend/template/js/components/*.js', { allowEmpty: true })
+		.pipe(sourcemaps.init())
 		.pipe(concat('app.js', {'newLine': '\r\n\r\n'}))
 		.pipe(header(banner, { pkg: packageData }))
-		.pipe(gulp.dest('public_html/frontend/template/js/', { overwrite: true }));
-	.pipe(uglify())
+		.pipe(gulp.dest('public_html/frontend/template/js/', { overwrite: true }))
+		.pipe(uglify())
 		.pipe(rename({ extname: '.min.js' }))
-		.pipe(sourcemaps.write(('.', { includeContent: false }), { includeContent: false }))
+		.pipe(sourcemaps.write('.', { includeContent: false }))
 		.pipe(gulp.dest('public_html/frontend/template/js/', { overwrite: true }));
-})
+});
 
 // Task to compile and minify Trumbowyg SCSS
-gulp.task('sass-trumbowyg', function() {
+gulp.task('scss-trumbowyg', function() {
 	return gulp
 		.src('public_html/assets/trumbowyg/ui/*.scss')
-		.pipe(sass({ silenceDeprecations: ['legacy-js-api'] })
-		.on('error', sass.logError))
-		//.pipe(gulp.dest('public_html/assets/trumbowyg/ui/'))
-		//.pipe(sourcemaps.write('.', { includeContent: false }))
+		.pipe(sass(sassOptions))
+		.on('error', sass.logError)
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(gulp.dest('public_html/assets/trumbowyg/ui/'))
@@ -153,7 +149,7 @@ gulp.task('sass-trumbowyg', function() {
 // Lint PHP files
 gulp.task('phplint', function() {
 	return gulp
-		.src(paths.php)
+		.src('public_html/**/*.php')
 		.pipe(phplint())
 		.pipe(phplint.reporter('fail'));
 });
@@ -163,7 +159,7 @@ gulp.task('iconly', function() {
 	download({ url: 'https://dev.iconly.io/public/OoTc8FJRmnEY/iconly.woff2', filename: 'fonticons.woff2' })
 		.pipe(gulp.dest('public_html/assets/litecore/fonts/'));
 
-	return download({ url: 'https://dev.iconly.io/public/OoTc8FJRmnEY/iconly.css', filename: 'fonticons.less' })
+	return download({ url: 'https://dev.iconly.io/public/OoTc8FJRmnEY/iconly.css', filename: '_fonticons.scss' })
 		.pipe(replace(/^\/\*\!.*?(?=\n.icon-)/gs, [
 			'',
 			'@font-face {',
@@ -172,7 +168,7 @@ gulp.task('iconly', function() {
 			'	font-style: normal;',
 			'	font-weight: 400;',
 			`	src: url("../fonts/fonticons.woff2?${Math.floor(Date.now() / 1000)}") format("woff2");`,
-     		'}',
+		 		'}',
 			'',
 			'[class^="icon-"], [class*=" icon-"] {',
 			'	display: inline-block;',
@@ -188,21 +184,22 @@ gulp.task('iconly', function() {
 			'	height: 1em;',
 			'	-moz-osx-font-smoothing: grayscale;',
 			'	-webkit-font-smoothing: antialiased;',
-      '}',
+			'}',
 			'',
 		].join('\n')))
 		.pipe(replace(/(\.icon-[^:]+:before)\s*\{\s*([^}]+?)\s*\}\s*/g, '$1 { $2 }\n'))
-		.pipe(gulp.dest('public_html/assets/litecore/less/framework/'));
+		.pipe(gulp.dest('public_html/assets/litecore/scss/framework/'));
 });
 
 // Watch files for changes
 gulp.task('watch', function() {
-	gulp.watch('public_html/assets/litecore/less/**/*.less', gulp.series('less-framework'))
+	gulp.watch('public_html/assets/litecore/scss/**/*.scss', gulp.series('scss-framework'))
 	gulp.watch('public_html/assets/litecore/js/components/*.js', gulp.series('js-framework'))
-	gulp.watch('public_html/assets/trumbowyg/**/*.scss', gulp.series('sass-trumbowyg'))
-	gulp.watch('public_html/backend/template/less/**/*.less', gulp.series('less-backend'))
+	gulp.watch('public_html/assets/trumbowyg/trumbowyg.js', gulp.series('js-trumbowyg'))
+	gulp.watch('public_html/assets/trumbowyg/**/*.scss', gulp.series('scss-trumbowyg'))
+	gulp.watch('public_html/backend/template/scss/**/*.scss', gulp.series('scss-backend'))
 	gulp.watch('public_html/backend/template/js/components/*.js', gulp.series('js-backend'))
-	gulp.watch('public_html/frontend/template/less/**/*.less', gulp.series('less-frontend'))
+	gulp.watch('public_html/frontend/template/scss/**/*.scss', gulp.series('scss-frontend'))
 	gulp.watch('public_html/frontend/template/js/components/*.js', gulp.series('js-frontend'))
 });
 
@@ -211,14 +208,15 @@ gulp.task('build', gulp.series(
 	'js-framework',
 	'js-backend',
 	'js-frontend',
-	'less-framework',
-	'less-backend',
-	'less-frontend',
-	'sass-trumbowyg',
+	'js-trumbowyg',
+	'scss-framework',
+	'scss-backend',
+	'scss-frontend',
+	'scss-trumbowyg',
 	'watch',
 ));
 
 gulp.task('default', gulp.series(
-  'build',
-  'watch',
+	'build',
+	'watch'
 ));

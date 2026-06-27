@@ -1,6 +1,6 @@
 <?php
 
-	function error_handler($errno, $errstr, $errfile, $errline) {
+	function error_handler($errno, $errstr, $errfile, $errline, $backtraces=[]) {
 
 		if (!(error_reporting() & $errno)) return;
 
@@ -49,30 +49,27 @@
 				break;
 		}
 
-		if ($backtraces = debug_backtrace()) {
+		if ($backtraces) {
 
 			$output[] = 'Backtrace:';
-
-			// Remove self from backtrace
-			array_shift($backtraces);
 
 			// Extract trace from exception_handler
 			if (!empty($backtraces[0]['function']) && $backtraces[0]['function'] == 'exception_handler') {
 				$backtraces = array_slice($backtraces[0]['args'][0]->getTrace(), 1);
 			}
 
-			foreach ($backtraces as $backtrace) {
+			foreach ($backtraces as $trace) {
 
-				if (empty($backtrace['file'])) continue;
+				if (empty($trace['file'])) continue;
 
 				foreach ([
 					FS_DIR_STORAGE => 'storage://',
 					FS_DIR_APP => 'app://',
 				] as $search => $replace) {
-					$backtrace['file'] = preg_replace('#^'. preg_quote($search, '#') .'#', $replace, str_replace('\\', '/', $backtrace['file']));
+					$trace['file'] = preg_replace('#^'. preg_quote($search, '#') .'#', $replace, str_replace('\\', '/', $trace['file']));
 				}
 
-				$output[] = "<div> ↪ <strong>$backtrace[file]</strong> on line <strong>$backtrace[line]</strong> in <strong>$backtrace[function]()</strong></div>";
+				$output[] = "<div> ↪ <strong>$trace[file]</strong> on line <strong>$trace[line]</strong> in <strong>$trace[function]()</strong></div>";
 			}
 		}
 
@@ -89,20 +86,33 @@
 
 		if (filter_var(ini_get('log_errors'), FILTER_VALIDATE_BOOLEAN)) {
 
+			// Redaction helpers (PROJ-21): sensitive parameter values in
+			// argv / REQUEST_URI / HTTP_REFERER are replaced before the
+			// line hits error_log. The file is loaded defensively —
+			// error_handler may run before the autoloader in some paths.
+			if (!function_exists('redact_query_string')) {
+				$redact_file = __DIR__ . '/functions/func_redact.inc.php';
+				if (is_file($redact_file)) require_once $redact_file;
+			}
+			$_redact_q = function_exists('redact_query_string') ? 'redact_query_string' : function($s) { return $s; };
+			$_redact_a = function_exists('redact_argv_line') ? 'redact_argv_line' : function($a) { return implode(' ', $a); };
+
 			$output = array_merge($output, array_filter([
-				($_SERVER['SERVER_SOFTWARE'] == 'CLI') ? 'Command: '. implode(' ', $GLOBALS['argv']) : '',
-				!empty($_SERVER['REQUEST_URI']) ? 'Request: '. $_SERVER['REQUEST_METHOD'] .' '. $_SERVER['REQUEST_URI'] .' '. $_SERVER['SERVER_PROTOCOL'] : '',
+				($_SERVER['SERVER_SOFTWARE'] == 'CLI') ? 'Command: '. $_redact_a($GLOBALS['argv']) : '',
+				!empty($_SERVER['REQUEST_URI']) ? 'Request: '. $_SERVER['REQUEST_METHOD'] .' '. $_redact_q($_SERVER['REQUEST_URI']) .' '. $_SERVER['SERVER_PROTOCOL'] : '',
 				!empty($_SERVER['HTTP_HOST']) ? 'Host: '. $_SERVER['HTTP_HOST'] : '',
 				!empty($_SERVER['REMOTE_ADDR']) ? 'Client: '. $_SERVER['REMOTE_ADDR'] .' ('. gethostbyaddr($_SERVER['REMOTE_ADDR']) .')' : '',
 				!empty($_SERVER['HTTP_USER_AGENT']) ? 'User Agent: '. $_SERVER['HTTP_USER_AGENT'] : '',
-				!empty($_SERVER['HTTP_REFERER']) ? 'Referer: '. $_SERVER['HTTP_REFERER'] : '',
+				!empty($_SERVER['HTTP_REFERER']) ? 'Referer: '. $_redact_q($_SERVER['HTTP_REFERER']) : '',
 			]));
 
 			if (defined('SCRIPT_TIMESTAMP_START')) {
 				$output[] = 'Elapsed Time: '. number_format((microtime(true) - SCRIPT_TIMESTAMP_START) * 1000, 0, '.', ' ') .' ms';
 			}
 
-			$output[] = 'Platform: '. PLATFORM_NAME .'/'. PLATFORM_VERSION;
+			if (defined('PLATFORM_NAME') && defined('PLATFORM_VERSION')) {
+				$output[] = 'Platform: '. PLATFORM_NAME .'/'. PLATFORM_VERSION;
+			}
 
 			error_log(html_entity_decode(strip_tags(
 				implode(PHP_EOL, $output))) . PHP_EOL
@@ -115,11 +125,12 @@
 		}
 	}
 
-	set_error_handler('error_handler');
+	set_error_handler(function($errno, $errstr, $errfile, $errline) {
+		$backtrace = array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 1);
+		error_handler($errno, $errstr, $errfile, $errline, $backtrace);
+	}, E_ALL);
 
-	// Pass fatal errors to error handler
-	function exception_handler($e) {
-		error_handler(E_ERROR, $e->getMessage(), $e->getFile(), $e->getLine());
-	}
-
-	set_exception_handler('exception_handler');
+	set_exception_handler(function($e) {
+		$backtrace = array_slice($e->getTrace(), 1);
+		error_handler(E_ERROR, $e->getMessage(), $e->getFile(), $e->getLine(), $backtrace);
+	});

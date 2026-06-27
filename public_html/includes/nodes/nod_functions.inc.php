@@ -2,6 +2,8 @@
 
 	class functions {
 
+		## Node specific methods
+
 		public static function __callstatic($function, $arguments) {
 
 			if (!function_exists($function)) {

@@ -31,7 +31,7 @@
 
 		public function load($id) {
 
-			if (!preg_match('#(^[0-9]+$|^[0-9a-zA-Z_]$|@)#', $id)){
+			if (!preg_match('#(^\d+$|^[0-9a-zA-Z_]$|@)#', $id)){
 				throw new Exception('Invalid administrator (ID: '. $id .')');
 			}
 
@@ -39,9 +39,9 @@
 
 			$administrator = database::query(
 				"select * from ". DB_TABLE_PREFIX ."administrators
-				". (preg_match('#^[0-9]+$#', $id) ? "where id = ". (int)$id : "") ."
-				". (!preg_match('#^[0-9]+$#', $id) ? "where lower(username) = '". database::input(strtolower($id)) ."'" : "") ."
-				". (preg_match('#@#', $id) ? "where lower(email) = '". database::input(strtolower($id)) ."'" : "") ."
+				". (preg_match('#^\d+$#', $id) ? "where id = ". (int)$id : "") ."
+				". (!preg_match('#^\d+$#', $id) ? "where username = '". database::input(strtolower($id)) ."'" : "") ."
+				". (preg_match('#@#', $id) ? "where email = '". database::input(strtolower($id)) ."'" : "") ."
 				limit 1;"
 			)->fetch();
 
@@ -50,6 +50,7 @@
 			}
 
 			$this->data = array_replace($this->data, array_intersect_key($administrator, $this->data));
+
 			$this->data['apps'] = !empty($this->data['apps']) ? json_decode($this->data['apps'], true) : [];
 			$this->data['widgets'] = !empty($this->data['widgets']) ? json_decode($this->data['widgets'], true) : [];
 
@@ -61,8 +62,8 @@
 			if (database::query(
 				"select id from ". DB_TABLE_PREFIX ."administrators
 				where (
-					lower(username) = '". database::input(strtolower($this->data['username'])) ."'
-					". (!empty($this->data['email']) ? "or lower(email) = '". database::input(strtolower($this->data['email'])) ."'" : "") ."
+					username = '". database::input(strtolower($this->data['username'])) ."'
+					". (!empty($this->data['email']) ? "or email = '". database::input(strtolower($this->data['email'])) ."'" : "") ."
 				)
 				". (!empty($this->data['id']) ? "and id != ". (int)$this->data['id'] : "") ."
 				limit 1;"
@@ -88,8 +89,8 @@
 					firstname = '". database::input($this->data['firstname']) ."',
 					lastname = '". database::input($this->data['lastname']) ."',
 					email = '". database::input(strtolower($this->data['email'])) ."',
-					apps = '". database::input(json_encode($this->data['apps'], JSON_UNESCAPED_SLASHES)) ."',
-					widgets = '". database::input(json_encode($this->data['widgets'], JSON_UNESCAPED_SLASHES)) ."',
+					apps = '". database::input(f::format_json($this->data['apps'])) ."',
+					widgets = '". database::input(f::format_json($this->data['widgets'])) ."',
 					two_factor_auth = ". (!empty($this->data['two_factor_auth']) ? 1 : 0) .",
 					valid_from = ". (empty($this->data['valid_from']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['valid_from'])) ."'") .",
 					valid_to = ". (empty($this->data['valid_to']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['valid_to'])) ."'") .",

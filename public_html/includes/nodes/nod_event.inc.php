@@ -6,6 +6,8 @@
 		private static $_fired_events = [];
 		private static $_ongoing = null;
 
+		## Node specific methods
+
 		public static function register($event, $callback) {
 
 			if (in_array($event, self::$_fired_events) || self::$_ongoing === $event) {

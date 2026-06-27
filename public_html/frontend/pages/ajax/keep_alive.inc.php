@@ -9,7 +9,7 @@
 		'Oh it\'s you again!',
 		'I see you are still here.',
 		'Do you come here a lot?',
-		'Nice to see you are still awake.',
+		'Nice to see you are still around.',
 		'It\'s great to have you here.',
 	];
 

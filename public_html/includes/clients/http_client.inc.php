@@ -1,6 +1,7 @@
 <?php
 
 	class http_client {
+
 		public $follow_redirects = false;
 		public $timeout = 20;
 		public $last_request;
@@ -40,14 +41,8 @@
 				$parts['path'] = '/';
 			}
 
-			if ($data) {
-				$data = is_array($data) ? http_build_query($data) : $data;
-			} else {
-				$data = '';
-			}
-
 			if (!empty($parts['user']) && empty($headers['Authorization'])) {
-				$headers['Authorization'] = 'Basic ' . base64_encode($parts['user'] .':'. fallback($parts['pass']));
+				$headers['Authorization'] = 'Basic ' . base64_encode($parts['user'] . ':' . ($parts['pass'] ?? ''));
 			}
 
 			if (empty($headers['User-Agent'])) {
@@ -58,8 +53,54 @@
 				$headers['Content-Type'] = 'application/x-www-form-urlencoded';
 			}
 
-			if (empty($headers['Content-Length'])) {
-				$headers['Content-Length'] = ($data != '') ? strlen($data) : 0;
+			if (!empty($data)) {
+
+				// Process data for GET/HEAD requests
+				if (in_array($method, ['GET', 'HEAD'])) {
+
+					switch (true) {
+
+						case is_array($data):
+						case is_object($data):
+							$parts['query'] = (isset($parts['query']) ? $parts['query'] . '&' : '') . http_build_query($data);
+							break;
+
+						case is_string($data):
+							$parts['query'] = (isset($parts['query']) ? $parts['query'] . '&' : '') . $data;
+							break;
+
+						default:
+							trigger_error('Unknown data type for GET/HEAD request', E_USER_WARNING);
+							break;
+					}
+
+					$data = '';
+
+				} else {
+
+					// Encode data for other request methods
+					if (is_array($data)) {
+						switch (true) {
+
+							case (preg_match('#(application|text)/json#i', $headers['Content-Type'])):
+								$data = f::format_json($data, "\t");
+								break;
+
+							case (preg_match('#application/x-www-form-urlencoded#i', $headers['Content-Type'])):
+								$data = http_build_query($data);
+								break;
+
+							default:
+								trigger_error('Unknown Content-Type for data encoding: '. $headers['Content-Type'], E_USER_WARNING);
+								$data = http_build_query($data);
+								break;
+						}
+					}
+
+					if (empty($headers['Content-Length'])) {
+						$headers['Content-Length'] = strlen($data);
+					}
+				}
 			}
 
 			if (empty($headers['Connection'])) {
@@ -125,7 +166,7 @@
 			}
 
 			preg_match('#HTTP/\d(\.\d)?\s(\d{3})#', $response_headers, $matches);
-			$status_code = isset($matches[2]) ? $matches[2] : null;
+			$status_code = $matches[2] ?? null;
 
 			$this->last_response = [
 				'timestamp' => time(),
@@ -136,20 +177,42 @@
 				'bytes' => strlen($response_headers . "\r\n" . $response_body),
 			];
 
-			file_put_contents(functions::file_realpath('storage://logs/http_request_last-'. $parts['host'] .'.log'), $this->get_log());
+			// Redact sensitive headers before logging
+			$redacted_request_headers = preg_replace('#^(Authorization:\s*).*$#mi', '$1[REDACTED]', $this->last_request['headers']);
+
+			file_put_contents('storage://logs/http_request_last-'. $parts['host'] .'.log', implode("\r\n", [
+				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_request['timestamp']) .'] Request ', 70, '#', STR_PAD_RIGHT),
+				'',
+				$redacted_request_headers,
+				$this->last_request['body'],
+				'',
+				'##'. str_pad(' ['. date('Y-m-d H:i:s', $this->last_response['timestamp']) .'] Response — '. $this->last_response['bytes'] .' bytes transferred in '. $this->last_response['duration'] .' s ', 72, '#', STR_PAD_RIGHT),
+				'',
+				$this->last_response['headers'],
+				$this->last_response['body'],
+			]));
 
 			self::$stats['requests']++;
 
 			// Redirect
-			if ($status_code == 301) {
+			if (in_array($status_code, [301, 302, 303, 307, 308])) {
+
 				if (!$this->follow_redirects) {
 					trigger_error('Destination is redirecting to another destination but follow_redirects is disabled', E_USER_WARNING);
-				} else if (preg_match('#^Location:\s?(.*)?$#im', $response_headers, $matches)) {
-					$redirect_url = !empty($matches[1]) ? trim($matches[1]) : $url;
-					return $this->call($method, $redirect_url, $data, $headers);
-				} else {
+					return false;
+				}
+
+				$redirect_url = preg_replace('#^Location:\s*(.*)$#mi', '$1', $response_headers, 1, $count);
+
+				if (!$redirect_url) {
 					trigger_error('Destination is redirecting to a null destination', E_USER_WARNING);
 				}
+
+				if (in_array($status_code, [307, 308]) && $method != 'HEAD') {
+					return $this->call($method, $redirect_url, $data, $headers);
+				}
+
+				return $this->call($method, $redirect_url, '', $headers);
 			}
 
 			return $response_body;
@@ -172,10 +235,10 @@
 		public function http_decode_chunked_data($data) {
 
 			for ($result = ''; $data; $data = trim($data)) {
-				$position = mb_strpos($data, "\r\n");
-				$length = (int)hexdec(mb_substr($data, 0, $position));
-				$result .= mb_substr($data, $position + 2, $length);
-				$data = mb_substr($data, $position + 2 + $length);
+				$position = strpos($data, "\r\n");
+				$length = (int)hexdec(substr($data, 0, $position));
+				$result .= substr($data, $position + 2, $length);
+				$data = substr($data, $position + 2 + $length);
 			}
 
 			return $result;

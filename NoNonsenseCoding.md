@@ -1,8 +1,7 @@
 
 # No Nonsense Coding
 
-No Nonsense Coding is a provocative coding concept that probably upsets many. Used and promoted by T. Almroth - author of LiteCart and the LiteCore framework.
-The purpose is to make as much sense as possible with as little effort as possible when writing program code.
+No Nonsense Coding is a provocative coding concept that probably upsets many. Used and promoted by T. Almroth - author of LiteCart and the LiteCore framework. The purpose is to make as much sense as possible with as little effort as possible when writing code.
 
 
 ## Overcomplications - That's total nonsense
@@ -85,7 +84,7 @@ Variable duplication is a challenge to backtrace. If we have no use of the raw u
 
 		$userInput = $_POST['userInput'];
 		$sanitizedUserInput = sanitize($userInput);
-		$trimmedSanitizedUserInput = polish($sanitizedUserInput);
+		$polishSanitizedUserInput = polish($sanitizedUserInput);
 
 		passToFunction($trimmedSanitizedUserInput); // Wait, what is the origin of the data again?
 
@@ -114,6 +113,29 @@ Better:
 			'bar',
 		] as $item) {
 			echo $item;
+		}
+
+
+## Repetitive Use - Avoid the repetitive nonsense
+
+	Repeating things can be annoying:
+
+		$long_descriptive_object['key1'] = $_POST['key1'] ?? '';
+		$long_descriptive_object['key2'] = $_POST['key2'] ?? '';
+		$long_descriptive_object['key3'] = $_POST['key3'] ?? '';
+		$long_descriptive_object['key4'] = $_POST['key4'] ?? '';
+		$long_descriptive_object['key5'] = $_POST['key5'] ?? '';
+
+	Better:
+
+		foreach ([
+			'key1',
+			'key2',
+			'key3',
+			'key4',
+			'key5',
+		] as $key) {
+			$long_descriptive_object[$key] = $_POST[$key] ?? '';
 		}
 
 
@@ -153,7 +175,7 @@ Better:
 
 # No Yoda Conditions - Strange nonsense this is
 
-Unless a galaxy far from, you are. Expressions like Yoda, you do should not.
+Unless a galaxy far from, you are. Expressions like Yoda, do you should not.
 
 Avoid:
 
@@ -168,10 +190,36 @@ Better:
 		}
 
 
+## No Conditional Conditions Inside Iterators - That's if nonsense
+
+	Avoid conditional conditions during iteration.
+
+	Avoid:
+
+		foreach ($array => $node) {
+			if ($node['first'] == 'a') {
+				if ($node['second'] == 'b') {
+					if ($node['third'] == 'c') {
+						// Do some stuff
+					}
+				}
+			}
+		}
+
+	Better:
+
+		foreach ($array => $node) {
+			if ($node['first'] != 'a') continue;
+			if ($node['second'] != 'b') continue;
+			if ($node['third'] != 'c') continue;
+			// Do some stuff
+		}
+
+
 ## Fat third party libraries for small features - Stay away from other people's nonsense
 
-Looking to cut corners with third party libraries will backfire eventually. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. Many are poorly managed, contains flaws or have security problems. They can be a complete pain when you want to step up versions. One way or the other, they need to be maintained. Maintenance will take time and focus and a comes with a lot of reverse engineering.
+Looking to cut corners with third party libraries will backfire eventually. Libraries can be performance draining. They have dependencies and can unknowingly become outdated or discontinued. Many are poorly managed, contains flaws or have security problems. They can be a complete pain when you want to step up versions. One way or the other, they need to be maintained. Maintenance will take time and focus and can require a lot of reverse engineering.
 
-There is no good reason to embed a third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea to do it. Best of all, you will know every corner of the code.
+There is no good reason to embed an entire third party library if you will just utilize a small portion of it. If it's reasonable to code this part yourself it's likely a good idea to do it. Best of all, you will know every corner of the code, and will probably learn new things on the way.
 
 Try to stay away from third party libraries.

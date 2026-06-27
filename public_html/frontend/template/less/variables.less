@@ -51,6 +51,7 @@
 	--whitespace-color: #fff;
 
 	--site-background: center / cover no-repeat url(../images/background.svg) #f9fafc;
+	--site-background: #ebedf1;
 	--page-background: transparent;
 
 	/* Defaults */
@@ -62,14 +63,15 @@
 	--default-text-size: 14px;
 
 	/* Navigation */
-	--navigation-background: #c2c5e9;
+	--navigation-background: transparent;
 	--navigation-background--hover: rgba(0, 0, 0, .05);
 	--navigation-background--active: rgba(0, 0, 0, .15);
-	--navigation-text-color: #2d1b5d;
+	--navigation-text-color: #161870;
 	--navigation-text-color-hover: var(--navigation-text-color);
 	--navigation-text-color-active: var(--navigation-text-color);
 	--navigation-border: 1px solid #0001;
-	--navigation-shadow: 0 0 .5em rgba(0, 0, 0, 0.1), inset 0 0 0 .05em rgba(255, 255, 255, .2);
+	//--navigation-shadow: 0 0 .5em rgba(0, 0, 0, 0.1), inset 0 0 0 .05em rgba(255, 255, 255, .2);
+	--navigation-shadow: none;
 
 	/* Offcanvas */
 	--offcanvas-background: var(--navigation-background);
@@ -145,16 +147,6 @@
 	--card-border: 1px solid #0003;
 	--card-shadow: 0 0 .25rem #0001;
 
-	/* Panels */
-	--panel-background: linear-gradient(to bottom, #fffc, #fff9);
-	--panel-text-color: #2f244f;
-	--panel-header-background: transparent;
-	--panel-header-text-color: var(--panel-text-color);
-	--panel-body-background: transparent;
-	--panel-footer-background: #0000010;
-	--panel-shadow: 0 0 .25rem #0001;
-	--panel-border: 1px solid #0002;
-
 	/* Forms */
 	--input-background: #fafafc;
 	--input-padding-x: 1em;
@@ -217,12 +209,14 @@
 	--pagination-border-width: 1px;
 
 	/* Footer */
-	--footer-background: #e2e6f1;
+	--footer-background: transparent;
 	--footer-title-color: var(--default-text-color);
 	--footer-text-color: var(--default-text-color);
+	--footer-border-size: 1px;
+	--footer-border-color: #0001;
 
 	/* Copyright */
-	--copyright-background: #d5dae5;
+	--copyright-background: transparent;
 	--copyright-text-color: var(--default-text-color);
 
 	@media (min-width: (@media-breakpoint-sm)) {

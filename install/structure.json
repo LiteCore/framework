@@ -1,0 +1,465 @@
+{
+	"tables": {
+		"administrators": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"status": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"username": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"firstname": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"lastname": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"email": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"apps": { "type": "VARCHAR", "length": 4096, "default": "''" },
+				"widgets": { "type": "VARCHAR", "length": 512, "default": "''" },
+				"password_hash": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"two_factor_auth": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"totp_secret": { "type": "VARCHAR", "length": 64, "nullable": true },
+				"login_attempts": { "type": "INT", "length": 10, "unsigned": true, "default": 0 },
+				"total_logins": { "type": "INT", "length": 10, "unsigned": true, "default": 0 },
+				"known_ips": { "type": "VARCHAR", "length": 1024, "default": "''" },
+				"known_fingerprints": { "type": "VARCHAR", "length": 1024, "default": "''" },
+				"last_ip_address": { "type": "VARCHAR", "length": 39, "default": "''" },
+				"last_hostname": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"last_user_agent": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"last_active": { "type": "TIMESTAMP", "nullable": true },
+				"last_login": { "type": "TIMESTAMP", "nullable": true },
+				"sessions_expiry": { "type": "TIMESTAMP", "nullable": true },
+				"blocked_until": { "type": "TIMESTAMP", "nullable": true },
+				"valid_from": { "type": "TIMESTAMP", "nullable": true },
+				"valid_to": { "type": "TIMESTAMP", "nullable": true },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"status": ["status"],
+				"username": ["username"],
+				"email": ["email"]
+			}
+		},
+		"emails": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"status": { "type": "ENUM('draft','scheduled','sent','error')", "default": "'draft'" },
+				"code": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"reference": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"language_code": { "type": "CHAR", "length": 2, "default": "''" },
+				"sender": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"recipients": { "type": "TEXT", "default": "''" },
+				"ccs": { "type": "TEXT", "default": "''" },
+				"bccs": { "type": "TEXT", "default": "''" },
+				"subject": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"multiparts": { "type": "MEDIUMTEXT", "default": "''" },
+				"ip_address": { "type": "VARCHAR", "length": 39, "default": "''" },
+				"hostname": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"user_agent": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"scheduled_at": { "type": "TIMESTAMP", "nullable": true },
+				"sent_at": { "type": "TIMESTAMP", "nullable": true },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"scheduled_at": ["scheduled_at"],
+				"code": ["code"],
+				"created_at": ["created_at"],
+				"sender_email": ["sender"]
+			}
+		},
+
+		"event_logs": {
+			"columns": {
+				"id": { "type": "BIGINT", "length": 20, "unsigned": true, "auto_increment": true },
+				"session_id": { "type": "VARCHAR", "length": 64, "nullable": true },
+				"customer_id": { "type": "INT", "length": 10, "unsigned": true, "nullable": true },
+				"customer_email": { "type": "VARCHAR", "length": 64, "nullable": true },
+				"customer_phone": { "type": "VARCHAR", "length": 16, "nullable": true },
+				"type": { "type": "VARCHAR", "length": 64, "nullable": true },
+				"description": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"data": { "type": "VARCHAR", "length": 1024, "default": "'{}'", "comment": "TYPE:JSON" },
+				"conversions": { "type": "VARCHAR", "length": 1024, "default": "'{}'", "comment": "TYPE:JSON" },
+				"url": { "type": "VARCHAR", "length": 248, "nullable": true },
+				"ip_address": { "type": "VARCHAR", "length": 47, "nullable": true },
+				"hostname": { "type": "VARCHAR", "length": 128, "nullable": true },
+				"user_agent": { "type": "VARCHAR", "length": 248, "nullable": true },
+				"fingerprint": { "type": "VARCHAR", "length": 32, "nullable": true },
+				"expires_at": { "type": "TIMESTAMP", "nullable": true },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"session_id": ["session_id"],
+				"customer_id": ["customer_id"],
+				"customer_email": ["customer_email"],
+				"customer_phone": ["customer_phone"],
+				"type": ["type"],
+				"ip_address": ["ip_address"],
+				"hostname": ["hostname"],
+				"user_agent": ["user_agent"],
+				"fingerprint": ["fingerprint"],
+				"expires_at": ["expires_at"]
+			},
+			"foreign_keys": {
+				"event_log_to_customer": {
+					"columns": ["customer_id"],
+					"references": {
+						"table": "customers",
+						"columns": ["id"],
+						"on_update": "CASCADE",
+						"on_delete": "CASCADE"
+					}
+				}
+			},
+			"check_constraints": {
+				"chk_data": "JSON_VALID(data)",
+				"chk_conversions": "JSON_VALID(conversions)"
+			}
+		},
+		"languages": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"status": { "type": "TINYINT", "length": 1, "default": 0 },
+				"code": { "type": "CHAR", "length": 2 },
+				"code2": { "type": "CHAR", "length": 3 },
+				"name": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"direction": { "type": "ENUM('ltr','rtl')", "default": "'ltr'" },
+				"locale": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"locale_intl": { "type": "VARCHAR", "length": 16, "default": "''" },
+				"mysql_collation": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"url_type": { "type": "ENUM('','none','root','path','domain')", "default": "''" },
+				"domain_name": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"raw_date": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"raw_time": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"raw_datetime": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"format_date": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"format_time": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"format_datetime": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"decimal_point": { "type": "VARCHAR", "length": 1, "default": "''" },
+				"thousands_sep": { "type": "VARCHAR", "length": 1, "default": "''" },
+				"auto_translate": { "type": "TINYINT", "length": 1, "default": 0 },
+				"priority": { "type": "INT", "length": 11, "default": 0 },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"status": ["status"]
+			},
+			"unique_keys": {
+				"code": ["code"],
+				"code2": ["code2"]
+			}
+		},
+		"modules": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"module_id": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"type": { "type": "VARCHAR", "length": 16, "default": "''" },
+				"status": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"priority": { "type": "INT", "length": 11, "default": 0 },
+				"settings": { "type": "TEXT", "default": "'{}'" },
+				"last_log": { "type": "TEXT", "default": "''" },
+				"last_pushed": { "type": "TIMESTAMP", "nullable": true },
+				"last_processed": { "type": "TIMESTAMP", "nullable": true },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"unique_keys": {
+				"module_id": ["module_id"]
+			},
+			"keys": {
+				"type": ["type"],
+				"status": ["status"]
+			}
+		},
+		"not_found": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"url": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"hits": { "type": "INT", "length": 10, "unsigned": true, "default": 0 },
+				"last_requested": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"last_referrer": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"last_ip_address": { "type": "VARCHAR", "length": 39, "default": "''" },
+				"last_hostname": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"last_user_agent": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"unique_keys": {
+				"url": ["url"]
+			},
+			"keys": {
+				"hits": ["hits"],
+				"last_requested": ["last_requested"],
+				"created_at": ["created_at"]
+			}
+		},
+		"pages": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"parent_id": { "type": "INT", "length": 10, "unsigned": true, "nullable": true },
+				"dock": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"status": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"title": { "type": "TEXT", "default": "'{}'" },
+				"content": { "type": "MEDIUMTEXT", "default": "'{}'" },
+				"head_title": { "type": "TEXT", "default": "'{}'" },
+				"meta_description": { "type": "TEXT", "default": "'{}'" },
+				"priority": { "type": "INT", "length": 11, "default": 0 },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"parent_id": ["parent_id"],
+				"dock": ["dock"],
+				"status": ["status"]
+			},
+			"check_constraints": {
+				"pages_chk_title": "JSON_VALID(title)",
+				"pages_chk_content": "JSON_VALID(content)",
+				"pages_chk_head_title": "JSON_VALID(head_title)",
+				"pages_chk_meta_description": "JSON_VALID(meta_description)"
+			}
+		},
+		"redirects": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"status": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"immediate": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"pattern": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"destination": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"http_response_code": { "type": "ENUM('301','302')", "default": "'301'" },
+				"redirects": { "type": "INT", "length": 10, "unsigned": true, "default": 0 },
+				"last_redirected": { "type": "TIMESTAMP", "nullable": true },
+				"valid_from": { "type": "TIMESTAMP", "nullable": true },
+				"valid_to": { "type": "TIMESTAMP", "nullable": true },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"unique_keys": {
+				"pattern": ["pattern"]
+			},
+			"keys": {
+				"status": ["status"],
+				"immediate": ["immediate"]
+			}
+		},
+		"sessions": {
+			"columns": {
+				"id": { "type": "VARCHAR", "length": 128 },
+				"data": { "type": "TEXT", "default": "'{}'", "comment": "TYPE:JSON" },
+				"language_code": { "type": "CHAR", "length": 2, "default": "''" },
+				"country_code": { "type": "CHAR", "length": 2, "default": "''" },
+				"currency_code": { "type": "CHAR", "length": 3, "default": "''" },
+				"ip_address": { "type": "VARCHAR", "length": 45 },
+				"ip_country": { "type": "CHAR", "length": 2, "default": "''" },
+				"fingerprint": { "type": "VARCHAR", "length": 128 },
+				"hostname": { "type": "VARCHAR", "length": 128 },
+				"user_agent": { "type": "VARCHAR", "length": 256, "default": "''" },
+				"referrer": { "type": "VARCHAR", "length": 256, "default": "''" },
+				"page_views": { "type": "INT", "length": 11, "default": 0 },
+				"last_url": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"last_request": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"last_active": { "type": "TIMESTAMP", "nullable": true },
+				"expires_at": { "type": "TIMESTAMP", "nullable": true },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"customer_id": ["customer_id"],
+				"language_code": ["language_code"],
+				"country_code": ["country_code"],
+				"currency_code": ["currency_code"],
+				"ip_country": ["ip_country"],
+				"fingerprint": ["fingerprint"]
+			},
+			"foreign_keys": {
+				"session_to_customer": {
+					"columns": ["customer_id"],
+					"references": {
+						"table": "customers",
+						"columns": ["id"],
+						"on_update": "CASCADE",
+						"on_delete": "SET NULL"
+					}
+				},
+				"session_to_language": {
+					"columns": ["language_code"],
+					"references": {
+						"table": "languages",
+						"columns": ["code"],
+						"on_update": "CASCADE",
+						"on_delete": "SET NULL"
+					}
+				},
+				"session_to_currency": {
+					"columns": ["currency_code"],
+					"references": {
+						"table": "currencies",
+						"columns": ["code"],
+						"on_update": "CASCADE",
+						"on_delete": "SET NULL"
+					}
+				}
+			}
+		},
+		"settings": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"group_key": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"key": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"value": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"datatype": { "type": "VARCHAR", "length": 16, "default": "''" },
+				"title": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"description": { "type": "VARCHAR", "length": 512, "default": "''" },
+				"required": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"function": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"priority": { "type": "INT", "length": 11, "default": 0 },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"unique_keys": {
+				"key": ["key"]
+			},
+			"keys": {
+				"group_key": ["group_key"]
+			}
+		},
+		"settings_groups": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"key": { "type": "VARCHAR", "length": 32 },
+				"name": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"description": { "type": "VARCHAR", "length": 255, "default": "''" },
+				"priority": { "type": "INT", "length": 11, "default": 0 }
+			},
+			"primary_key": ["id"],
+			"unique_keys": {
+				"key": ["key"]
+			}
+		},
+		"site_tags": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"status": { "type": "TINYINT", "length": 1, "default": 0 },
+				"position": { "type": "ENUM('head','body')", "default": "'head'" },
+				"name": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"content": { "type": "TEXT", "default": "''" },
+				"require_consent": { "type": "VARCHAR", "length": 64, "nullable": true },
+				"priority": { "type": "TINYINT", "length": 4, "default": 0 },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"status": ["status"],
+				"position": ["position"],
+				"priority": ["priority"]
+			}
+		},
+		"statistics": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"type": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"entity_id": { "type": "INT", "length": 10, "unsigned": true, "nullable": true },
+				"entity_type": { "type": "VARCHAR", "length": 32, "nullable": true },
+				"measure_group_type": { "type": "VARCHAR", "length": 32, "default": "''" },
+				"measure_group_value": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"count": { "type": "INT", "length": 10, "unsigned": true, "default": 0 },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"unique_keys": {
+				"measure": ["type", "entity_id", "entity_type", "measure_group_type", "measure_group_value"]
+			},
+			"keys": {
+				"entity_id": ["entity_id"],
+				"entity_type": ["entity_type"],
+				"measure_group_type": ["measure_group_type"],
+				"measure_group_value": ["measure_group_value"]
+			}
+		},
+		"third_parties": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"status": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"privacy_classes": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"category": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"name": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"description": { "type": "MEDIUMTEXT", "default": "'{}'" },
+				"collected_data": { "type": "TEXT", "default": "'{}'" },
+				"purposes": { "type": "TEXT", "default": "'{}'" },
+				"homepage": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"cookie_policy_url": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"privacy_policy_url": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"opt_out_url": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"do_not_sell_url": { "type": "VARCHAR", "length": 248, "default": "''" },
+				"country_code": { "type": "CHAR", "length": 2, "nullable": true },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"status": ["status"],
+				"country_code": ["country_code"]
+			},
+			"check_constraints": {
+				"chk_description": "JSON_VALID(description)",
+				"chk_collected_data": "JSON_VALID(collected_data)",
+				"chk_purposes": "JSON_VALID(purposes)"
+			}
+		},
+		"translations": {
+			"columns": {
+				"id": { "type": "INT", "length": 10, "unsigned": true, "auto_increment": true },
+				"code": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"text_en": { "type": "TEXT", "default": "''" },
+				"html": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"frontend": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"backend": { "type": "TINYINT", "length": 1, "unsigned": true, "default": 0 },
+				"last_accessed": { "type": "TIMESTAMP", "nullable": true },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"unique_keys": {
+				"code": ["code"]
+			},
+			"keys": {
+				"frontend": ["frontend"],
+				"backend": ["backend"],
+				"created_at": ["created_at"],
+				"updated_at": ["updated_at"]
+			}
+		},
+		"visitors": {
+			"columns": {
+				"id": { "type": "BIGINT", "length": 20, "unsigned": true, "auto_increment": true },
+				"session_id": { "type": "VARCHAR", "length": 13, "default": "''" },
+				"cart_uid": { "type": "VARCHAR", "length": 13, "default": "''" },
+				"referrer": { "type": "VARCHAR", "length": 256, "default": "''" },
+				"ip_address": { "type": "VARCHAR", "length": 39, "default": "''" },
+				"hostname": { "type": "VARCHAR", "length": 64, "default": "''" },
+				"user_agent": { "type": "VARCHAR", "length": 256, "default": "''" },
+				"language": { "type": "VARCHAR", "length": 2, "default": "''" },
+				"country_code": { "type": "VARCHAR", "length": 2, "default": "''" },
+				"pageviews": { "type": "INT", "length": 10, "unsigned": true, "default": 0 },
+				"last_page": { "type": "VARCHAR", "length": 128, "default": "''" },
+				"updated_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP", "on_update": "CURRENT_TIMESTAMP" },
+				"created_at": { "type": "TIMESTAMP", "default": "CURRENT_TIMESTAMP" }
+			},
+			"primary_key": ["id"],
+			"keys": {
+				"session_id": ["session_id"],
+				"country_code": ["country_code"],
+				"language": ["language"],
+				"updated_at": ["updated_at"],
+				"created_at": ["created_at"]
+			}
+		}
+	}
+}

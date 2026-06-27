@@ -5,13 +5,13 @@
 		private $_stream;
 		public $context;
 
-		public function dir_opendir($path) {
+		public function dir_opendir(string $path): bool {
 			$path = $this->_resolve_path($path);
-			$this->_directory = opendir($path);
+			$this->_directory = opendir($path, $this->context ?: null);
 			return true;
 		}
 
-		public function dir_readdir() {
+		public function dir_readdir(): string|false {
 
 			$file = readdir($this->_directory);
 
@@ -23,15 +23,18 @@
 			return $file;
 		}
 
-		public function dir_closedir() {
+		public function dir_closedir(): bool {
+
 			if (is_resource($this->_directory)) {
 				closedir($this->_directory);
 			}
+
 			$this->_directory = null;
+
 			return true;
 		}
 
-		public function dir_rewinddir() {
+		public function dir_rewinddir(): bool|null {
 			return rewinddir($this->_directory);
 		}
 
@@ -71,29 +74,15 @@
 
 			$path = $this->_resolve_path($path);
 
-			switch ($option) {
-				case STREAM_META_TOUCH:
-					$currentTime = \time();
-					return touch($path, (is_array($value) && array_key_exists(0, $value)) ? $value[0] : $currentTime, (is_array($value) && array_key_exists(1, $value)) ? $value[1] : $currentTime);
-
-				case STREAM_META_OWNER_NAME:
-					return chown($path, (string)$value);
-
-				case STREAM_META_OWNER:
-					return chown($path, (int)$value);
-
-				case STREAM_META_GROUP_NAME:
-					return chgrp($path, (string)$value);
-
-				case STREAM_META_GROUP:
-					return chgrp($path, (int)$value);
-
-				case STREAM_META_ACCESS:
-					return chmod($path, $value);
-
-				default:
-					return false;
-			}
+			return match($option) {
+				STREAM_META_TOUCH => touch($path, (is_array($value) && array_key_exists(0, $value)) ? $value[0] : time(), (is_array($value) && array_key_exists(1, $value)) ? $value[1] : time()),
+				STREAM_META_OWNER_NAME => chown($path, (string)$value),
+				STREAM_META_OWNER => chown($path, (int)$value),
+				STREAM_META_GROUP_NAME => chgrp($path, (string)$value),
+				STREAM_META_GROUP => chgrp($path, (int)$value),
+				STREAM_META_ACCESS => chmod($path, $value),
+				default => false,
+			};
 		}
 
 		public function stream_open(string $path, string $mode, int $options, ?string &$opened_path): bool {
@@ -140,9 +129,9 @@
 			return file_exists($path) ? stat($path) : false;
 		}
 
-		####################################################################
+		## Non-Standard StreamWrapper Methods
 
-		private function _resolve_path($path) {
+		private function _resolve_path(string $path): string {
 			return preg_replace('#^storage://#', FS_DIR_STORAGE, str_replace('\\', '/', $path));
 		}
 	}

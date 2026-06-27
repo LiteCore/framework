@@ -34,7 +34,7 @@
 			self::set();
 
 			if (!empty(self::$selected['database_connection_collation'])) {
-				database::query("set names '". databse::input(strtok(self::$selected['database_connection_collation'], '_')) ."' collate '". databse::input(self::$selected['database_connection_collation']) ."';");
+				database::query("set names '". database::input(strtok(self::$selected['database_connection_collation'], '_')) ."' collate '". database::input(self::$selected['database_connection_collation']) ."';");
 			}
 
 			self::$_cache_token = cache::token('translations', ['endpoint', 'language']);
@@ -42,8 +42,20 @@
 			if (!self::$_cache['translations'] = cache::get(self::$_cache_token)) {
 				self::$_cache['translations'] = [];
 
+				// Guard: the selected code is embedded as a backtick-less
+				// column reference below. If it isn't a safe identifier
+				// (legacy data from before PROJ-22 hardening), fall back
+				// to text_en so the storefront still renders instead of
+				// crashing — and leave a trace in errors.log.
+				try {
+					$selected_column = 'text_' . database::identifier(self::$selected['code']);
+				} catch (InvalidArgumentException $e) {
+					error_log('nod_language: skipping invalid language code ' . var_export(self::$selected['code'], true) . ', falling back to text_en');
+					$selected_column = 'text_en';
+				}
+
 				database::query(
-					"select id, code, if(text_". self::$selected['code'] ." != '', text_". self::$selected['code'] .", text_en) as text
+					"select id, code, if($selected_column != '', $selected_column, text_en) as text
 					from ". DB_TABLE_PREFIX ."translations
 					where ". ((isset(route::$request['endpoint']) && route::$request['endpoint'] == 'backend') ? "backend = 1" : "frontend = 1") ."
 					having text != '';"
@@ -71,6 +83,8 @@
 
 			cache::set(self::$_cache_token, self::$_cache['translations']);
 		}
+
+		## Node specific methods
 
 		public static function load() {
 			self::$languages = database::query(
@@ -113,7 +127,7 @@
 			}
 
 			// Set system locale
-			if (self::$selected['locale'] && !setlocale(LC_TIME, functions::string_split(self::$selected['locale']))) {
+			if (self::$selected['locale'] && !setlocale(LC_TIME, f::string_split(self::$selected['locale']))) {
 				trigger_error('Warning: Failed setting locale '. self::$selected['locale'] .' for '. self::$selected['name'], E_USER_WARNING);
 			}
 
@@ -152,6 +166,15 @@
 			// Return language from URI path
 			$code = current(explode('/', substr($_SERVER['REQUEST_URI'], strlen(WS_DIR_APP))));
 			if (in_array($code, $all_languages)) return $code;
+
+			// Return language by root
+			foreach ($enabled_languages as $language_code) {
+				if (self::$languages[$language_code]['url_type'] == 'root') {
+					if (preg_match('#^'. preg_quote(WS_DIR_APP, '#') .'(?![a-z]{2})(?:/|$)#', $_SERVER['REQUEST_URI'], $matches)) {
+						return $language_code;
+					}
+				}
+			}
 
 			// Return language from session
 			if (isset(self::$selected['code']) && in_array(self::$selected['code'], $all_languages)){
@@ -239,7 +262,7 @@
 			if (!$translation) {
 				database::query(
 					"insert into ". DB_TABLE_PREFIX ."translations
-					(code, text_en, html, created_at, updated_at)
+					(code, text_en, html, updated_at, created_at)
 					values ('". database::input($code) ."', '". database::input($default, true) ."', '". (($default != strip_tags($default)) ? 1 : 0) ."', '". date('Y-m-d H:i:s') ."', '". date('Y-m-d H:i:s') ."');"
 				);
 			}
@@ -286,8 +309,8 @@
 		}
 
 		public static function strftime($format, $timestamp=null) {
-			trigger_error('Method language::strftime() is deprecated. Instead, use functions::datetime_format()', E_USER_DEPRECATED);
-			return functions::datetime_format($format, $timestamp);
+			trigger_error('Method language::strftime() is deprecated. Instead, use f::datetime_format()', E_USER_DEPRECATED);
+			return f::datetime_format($format, $timestamp);
 		}
 
 		public static function convert_characters($variable, $from_charset=null, $to_charset=null) {

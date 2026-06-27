@@ -17,8 +17,8 @@ module.exports = function(grunt) {
 			},
 		},
 
-		'dart-sass': {
-			trumbowyg_minified: {
+		'scss': {
+			trumbowyg: {
 				options: {
 					sourceMap: false,
 					outputStyle: 'compressed',
@@ -28,9 +28,32 @@ module.exports = function(grunt) {
 					'public_html/assets/trumbowyg/ui/trumbowyg.min.css': 'public_html/assets/trumbowyg/ui/trumbowyg.scss'
 				}
 			},
-		},
+			
+			framework: {
+				options: {
+					sourceMap: false,
+					compass: false
+				},
+				files: {
+					'public_html/assets/litecore/css/framework.css': 'public_html/assets/litecore/scss/framework/main.scss',
+					'public_html/assets/litecore/css/email.css': 'public_html/assets/litecore/scss/email.scss',
+					'public_html/assets/litecore/css/printable.css': 'public_html/assets/litecore/scss/printable.scss'
+				}
+			},
+			
+			framework_minified: {
+				options: {
+					sourceMap: false,
+					outputStyle: 'compressed',
+					compass: false
+				},
+				files: {
+					'public_html/assets/litecore/css/framework.min.css': 'public_html/assets/litecore/scss/framework/main.scss',
+					'public_html/assets/litecore/css/email.min.css': 'public_html/assets/litecore/scss/email.scss',
+					'public_html/assets/litecore/css/printable.min.css': 'public_html/assets/litecore/scss/printable.scss'
+				}
+			},
 
-		less: {
 			variables: {
 				options: {
 					compress: false,
@@ -38,8 +61,8 @@ module.exports = function(grunt) {
 					relativeUrls: true
 				},
 				files: {
-					'public_html/backend/template/css/variables.css': 'public_html/backend/template/less/variables.less',
-					'public_html/frontend/template/css/variables.css': 'public_html/frontend/template/less/variables.less',
+					'public_html/backend/template/css/variables.css': 'public_html/backend/template/scss/variables.scss',
+					'public_html/frontend/template/css/variables.css': 'public_html/frontend/template/scss/variables.scss',
 				}
 			},
 
@@ -47,40 +70,26 @@ module.exports = function(grunt) {
 				options: {
 					compress: true,
 					sourceMap: true,
-					sourceMapRootpath: '../less/',
+					sourceMapRootpath: '../scss/',
 					sourceMapURL: function(path) { return path.replace(/.*\//, '') + '.map'; },
 					relativeUrls: true
 				},
 				files: {
-					'public_html/backend/template/css/app.min.css': 'public_html/backend/template/less/app.less',
-					'public_html/backend/template/css/framework.min.css': 'public_html/backend/template/less/framework.less',
-					'public_html/backend/template/css/printable.min.css': 'public_html/backend/template/less/printable.less',
+					'public_html/backend/template/css/app.min.css': 'public_html/backend/template/scss/app.scss',
+					'public_html/backend/template/css/framework.min.css': 'public_html/backend/template/scss/framework.scss',
+					'public_html/backend/template/css/printable.min.css': 'public_html/backend/template/scss/printable.scss',
 
-					'public_html/frontend/template/css/app.min.css': 'public_html/frontend/template/less/app.less',
-					'public_html/frontend/template/css/email.min.css': 'public_html/frontend/template/less/email.less',
-					'public_html/frontend/template/css/framework.min.css': 'public_html/frontend/template/less/framework.less',
-					'public_html/frontend/template/css/printable.min.css': 'public_html/frontend/template/less/printable.less'
-				}
-			},
-
-			featherlight: {
-				options: {
-					compress: true,
-					sourceMap: false,
-					//sourceMapBasepath: 'public_html/assets/featherlight/',
-					//sourceMapRootpath: './',
-					//sourceMapURL: function(path) { return path.replace(/.*\//, '') + '.map'; },
-					relativeUrls: true
-				},
-				files: {
-					'public_html/assets/featherlight/featherlight.min.css': 'public_html/assets/featherlight/featherlight.less',
+					'public_html/frontend/template/css/app.min.css': 'public_html/frontend/template/scss/app.scss',
+					'public_html/frontend/template/css/email.min.css': 'public_html/frontend/template/scss/email.scss',
+					'public_html/frontend/template/css/framework.min.css': 'public_html/frontend/template/scss/framework.scss',
+					'public_html/frontend/template/css/printable.min.css': 'public_html/frontend/template/scss/printable.scss'
 				}
 			},
 		},
 
 		phplint: {
 			options: {
-				//phpCmd: 'C:/xampp/php83/php.exe', // Defaults to php
+				//phpCmd: 'C:/Program Files/PHP/php.exe', // Defaults to php
 				limit: 10,
 				stdout: false
 			},
@@ -125,14 +134,6 @@ module.exports = function(grunt) {
 					'public_html/frontend/template/js/app.min.js': ['public_html/frontend/template/js/app.js'],
 				}
 			},
-			featherlight: {
-				options: {
-					sourceMap: false,
-				},
-				files: {
-					'public_html/assets/featherlight/featherlight.min.js': ['public_html/assets/featherlight/featherlight.js'],
-				}
-			},
 		},
 
 		watch: {
@@ -143,30 +144,22 @@ module.exports = function(grunt) {
 				tasks: ['replace']
 			},
 
-			less: {
+			scss: {
 				files: [
-					'public_html/assets/featherlight/featherlight.less',
-					'public_html/backend/template/less/*.less',
-					'public_html/frontend/template/less/*.less',
+					'public_html/assets/trumbowyg/ui/trumbowyg.scss',
+					'public_html/backend/template/**/scss/*.scss',
+					'public_html/frontend/template/**/scss/*.scss',
 				],
-				tasks: ['less']
+				tasks: ['scss']
 			},
 
 			javascripts: {
 				files: [
-					'public_html/assets/featherlight/featherlight.js',
 					'public_html/backend/template/**/js/components/*.js',
 					'public_html/frontend/template/**/js/components/*.js',
 					'!**/*.min.js',
 				],
 				tasks: ['concat', 'uglify']
-			},
-
-			sass: {
-				files: [
-					'public_html/assets/trumbowyg/ui/trumbowyg.scss',
-				],
-				tasks: ['dart-sass']
 			},
 		}
 
@@ -180,7 +173,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-text-replace');
 
 	grunt.registerTask('default', ['build']);
-	grunt.registerTask('build', ['replace', 'less', 'dart-sass', 'concat', 'uglify', 'watch']);
+	grunt.registerTask('build', ['replace', 'scss', 'concat', 'uglify', 'watch']);
 
 	require('phplint').gruntPlugin(grunt);
 	grunt.registerTask('test', ['phplint']);

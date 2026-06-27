@@ -1,12 +1,20 @@
 <?php
 
 	class smtp_client {
+
 		private $_socket;
 		private $_host;
 		private $_username;
 		private $_password;
 		private $_log_handle;
 		private $_last_response;
+
+		// When an AUTH command is written, this counter is set to the
+		// number of subsequent write()s whose payload is a base64 credential
+		// token. Each following write() decrements the counter and writes
+		// "[REDACTED]" to the transcript instead of the raw bytes. Socket
+		// writes are unaffected.
+		private $_pending_credential_writes = 0;
 
 		function __construct($host, $port=25, $username='', $password='') {
 
@@ -23,7 +31,9 @@
 		}
 
 		function __destruct() {
-			if (is_resource($this->_socket)) $this->disconnect();
+			if (is_resource($this->_socket)) {
+				$this->disconnect();
+			}
 		}
 
 		public function connect() {
@@ -114,7 +124,9 @@
 
 			$response = $buffer = '';
 			while (substr($buffer, 3, 1) != ' ') {
-				if (!$buffer = fgets($this->_socket, 256)) throw new Exception('No response from socket');
+				if (!$buffer = fgets($this->_socket, 256)) {
+					throw new Exception('No response from socket');
+				}
 				fwrite($this->_log_handle, "< $buffer");
 				$response .= $buffer;
 			}
@@ -131,7 +143,27 @@
 
 		public function write($data, $expected_response=null) {
 
+			if ($this->_pending_credential_writes > 0) {
+				// Payload is a credential token — never let it hit the log.
+				fwrite($this->_log_handle, "> [REDACTED]\r\n");
+				$this->_pending_credential_writes--;
+			} else {
 			fwrite($this->_log_handle, "> $data");
+
+				// If this is an AUTH command, arm the redaction counter
+				// for the following write() call(s). Counter values are
+				// chosen from the three auth flows in send():
+				//   AUTH LOGIN   ? 2 follow-up writes (username-b64, password-b64)
+				//   AUTH PLAIN   ? 1 follow-up write  (\0user\0pass-b64)
+				//   AUTH CRAM-MD5 ? 1 follow-up write (HMAC response)
+				$trimmed = ltrim($data);
+				if (stripos($trimmed, 'AUTH LOGIN') === 0) {
+					$this->_pending_credential_writes = 2;
+				} else if (stripos($trimmed, 'AUTH PLAIN') === 0 || stripos($trimmed, 'AUTH CRAM-MD5') === 0) {
+					$this->_pending_credential_writes = 1;
+				}
+			}
+
 			$result = fwrite($this->_socket, $data);
 
 			if ($expected_response !== null) {

@@ -29,7 +29,7 @@
 		}
 
 		private function _encode_settings($data) {
-			return json_encode($data, JSON_UNESCAPED_SLASHES);
+			return f::format_json($data);
 		}
 
 		private function _decode_settings($data) {

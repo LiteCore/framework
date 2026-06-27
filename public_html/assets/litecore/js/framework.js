@@ -5,19 +5,6 @@
  * @author T. Almroth
  */
 
-window.waitFor = (objectName, callback, attempts=100) => {
-
-	if (typeof(window[objectName]) !== 'undefined') {
-		callback(window[objectName]);
-	} else {
-		if (attempts) {
-			setTimeout(() => {
-				waitFor(objectName, callback, --attempts);
-			}, 50);
-		}
-	}
-};
-
 waitFor('jQuery', ($) => {
 
 	// Stylesheet Loader
@@ -29,10 +16,10 @@ waitFor('jQuery', ($) => {
 			cache: true,
 			onload: callback,
 			onerror: fallback
-		})
+		});
 
-		$('<link>', options).appendTo('head')
-	}
+		$('<link>', options).appendTo('head');
+	};
 
 	// JavaScript Loader
 	$.loadScript = function(url, options, callback, fallback) {
@@ -47,168 +34,156 @@ waitFor('jQuery', ($) => {
 
 		return jQuery.ajax(url, options);
 	};
-
 });
 
-/*
- * Bootstrap: carousel.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#carousel
- *
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
-
 waitFor('jQuery', ($) => {
-	'use strict'
+	'use strict';
 
+	/* Lightweight carousel with swipe support */
 	class Carousel {
 		constructor(element, options) {
 			this.$element = $(element);
 			this.$indicators = this.$element.find('.carousel-indicators');
-			this.options = options;
-			this.paused = null;
-			this.sliding = null;
-			this.interval = null;
-			this.$active = null;
-			this.$items = null;
+			this.options = $.extend({}, Carousel.DEFAULTS, options);
 
+			this.paused = false;
+			this.sliding = false;
+			this.interval = null;
+			this.touchStartX = 0;
+
+			this.init();
+		}
+
+		init() {
+			this.$items = this.$element.find('.item');
+			this.$active = this.$element.find('.item.active');
+
+			// Event listeners
+			this.setupEvents();
+
+			// Start autoplay
+			if (this.options.interval) {
+				this.cycle();
+			}
+		}
+
+		setupEvents() {
+			// Keyboard navigation
 			if (this.options.keyboard) {
-				this.$element.on('keydown.carousel', (e) => this.keydown(e));
+				this.$element.on('keydown.carousel', (e) => {
+					if (/input|textarea/i.test(e.target.tagName)) return;
+					if (e.which === 37) { this.prev(); e.preventDefault(); }
+					if (e.which === 39) { this.next(); e.preventDefault(); }
+				});
 			}
 
-			if (this.options.pause === 'hover' && !('ontouchstart' in document.documentElement)) {
+			// Mouse hover
+			if (this.options.pause === 'hover') {
 				this.$element
 					.on('mouseenter.carousel', () => this.pause())
 					.on('mouseleave.carousel', () => this.cycle());
 			}
-		}
 
-		static get DEFAULTS() {
-			return {
-				interval: 5000,
-				pause: 'hover',
-				wrap: true,
-				keyboard: true
-			};
-		}
+			// Touch/swipe
+			if (this.options.touch) {
+				this.$element[0].addEventListener('touchstart', (e) => {
+					if (e.touches.length === 1) {
+						this.touchStartX = e.touches[0].clientX;
+					}
+				}, { passive: true });
 
-		keydown(e) {
-			if (/input|textarea/i.test(e.target.tagName)) return;
-			switch (e.which) {
-				case 37: this.prev(); break;
-				case 39: this.next(); break;
-				default: return;
+				this.$element[0].addEventListener('touchend', (e) => {
+					if (e.changedTouches.length === 1) {
+						const deltaX = e.changedTouches[0].clientX - this.touchStartX;
+						if (Math.abs(deltaX) > 50) {
+							deltaX > 0 ? this.prev() : this.next();
+						}
+					}
+				}, { passive: true });
 			}
-			e.preventDefault();
 		}
 
-		cycle(e) {
-			if (!e) this.paused = false;
-
+		cycle() {
+			this.paused = false;
 			if (this.interval) clearInterval(this.interval);
-
-			if (this.options.interval && !this.paused) {
+			if (this.options.interval) {
 				this.interval = setInterval(() => this.next(), this.options.interval);
 			}
-
 			return this;
 		}
 
-		getItemIndex(item) {
-			this.$items = item.parent().children('.item');
-			return this.$items.index(item || this.$active);
-		}
-
-		getItemForDirection(direction, active) {
-			const activeIndex = this.getItemIndex(active);
-			const willWrap = (direction === 'prev' && activeIndex === 0) ||
-							 (direction === 'next' && activeIndex === (this.$items.length - 1));
-			if (willWrap && !this.options.wrap) return active;
-
-			const delta = direction === 'prev' ? -1 : 1;
-			const itemIndex = (activeIndex + delta) % this.$items.length;
-			return this.$items.eq(itemIndex);
-		}
-
-		to(pos) {
-			const activeIndex = this.getItemIndex(this.$active = this.$element.find('.item.active'));
-
-			if (pos > (this.$items.length - 1) || pos < 0) return;
-
-			if (this.sliding) {
-				return this.$element.one('slid.carousel', () => this.to(pos));
+		pause() {
+			this.paused = true;
+			if (this.interval) {
+				clearInterval(this.interval);
+				this.interval = null;
 			}
-			if (activeIndex === pos) return this.pause().cycle();
-
-			return this.slide(pos > activeIndex ? 'next' : 'prev', this.$items.eq(pos));
-		}
-
-		pause(e) {
-			if (!e) this.paused = true;
-
-			if (this.$element.find('.next, .prev').length && $.support.transition) {
-				this.$element.trigger($.support.transition.end);
-				this.cycle(true);
-			}
-
-			clearInterval(this.interval);
-			this.interval = null;
-
 			return this;
 		}
 
 		next() {
-			if (this.sliding) return;
+			if (this.sliding) return this;
 			return this.slide('next');
 		}
 
 		prev() {
-			if (this.sliding) return;
+			if (this.sliding) return this;
 			return this.slide('prev');
+		}
+
+		to(index) {
+			const activeIndex = this.$items.index(this.$active);
+			if (index < 0 || index >= this.$items.length || index === activeIndex) return this;
+			if (this.sliding) return this.$element.one('slid.carousel', () => this.to(index));
+
+			const direction = index > activeIndex ? 'next' : 'prev';
+			return this.slide(direction, this.$items.eq(index));
 		}
 
 		slide(type, next) {
 			const $active = this.$element.find('.item.active');
-			const $next = next || this.getItemForDirection(type, $active);
-			const isCycling = this.interval;
+			const $next = next || this.getNext(type, $active);
 			const direction = type === 'next' ? 'left' : 'right';
 
-			if ($next.hasClass('active')) return (this.sliding = false);
+			if ($next.hasClass('active') || this.sliding) return this;
 
-			const relatedTarget = $next[0];
+			// Trigger slide event
 			const slideEvent = $.Event('slide.carousel', {
-				relatedTarget,
-				direction
+				relatedTarget: $next[0],
+				direction: direction
 			});
 			this.$element.trigger(slideEvent);
-			if (slideEvent.isDefaultPrevented()) return;
+			if (slideEvent.isDefaultPrevented()) return this;
 
 			this.sliding = true;
+			const wasCycling = this.interval;
+			wasCycling && this.pause();
 
-			if (isCycling) this.pause();
-
+			// Update indicators
 			if (this.$indicators.length) {
 				this.$indicators.find('.active').removeClass('active');
-				const $nextIndicator = $(this.$indicators.children()[this.getItemIndex($next)]);
-				if ($nextIndicator) $nextIndicator.addClass('active');
+				const nextIndex = this.$items.index($next);
+				$(this.$indicators.children()[nextIndex]).addClass('active');
 			}
 
-			const slidEvent = $.Event('slid.carousel', { relatedTarget, direction });
+			// Perform slide
+			const slidEvent = $.Event('slid.carousel', {
+				relatedTarget: $next[0],
+				direction: direction
+			});
+
 			if ($.support.transition && this.$element.hasClass('slide')) {
 				$next.addClass(type);
-				if (typeof $next === 'object' && $next.length) {
-					$next[0].offsetWidth; // force reflow
-				}
+				$next[0].offsetWidth; // Force reflow
 				$active.addClass(direction);
 				$next.addClass(direction);
-				$active
-					.one('bsTransitionEnd', () => {
-						$next.removeClass(`${type} ${direction}`).addClass('active');
-						$active.removeClass(`active ${direction}`);
-						this.sliding = false;
-						setTimeout(() => this.$element.trigger(slidEvent), 0);
-					})
-					.emulateTransitionEnd(600);
+
+				$active.one('bsTransitionEnd', () => {
+					$next.removeClass([type, direction].join(' ')).addClass('active');
+					$active.removeClass(['active', direction].join(' '));
+					this.sliding = false;
+					setTimeout(() => this.$element.trigger(slidEvent), 0);
+				}).emulateTransitionEnd(600);
 			} else {
 				$active.removeClass('active');
 				$next.addClass('active');
@@ -216,384 +191,328 @@ waitFor('jQuery', ($) => {
 				this.$element.trigger(slidEvent);
 			}
 
-			if (isCycling) this.cycle();
-
+			wasCycling && this.cycle();
 			return this;
+		}
+
+		getNext(direction, active) {
+			const activeIndex = this.$items.index(active);
+			const isGoingToWrap = (direction === 'prev' && activeIndex === 0)
+				|| (direction === 'next' && activeIndex === this.$items.length - 1);
+
+			if (isGoingToWrap && !this.options.wrap) return active;
+
+			const delta = direction === 'prev' ? -1 : 1;
+			const itemIndex = (activeIndex + delta) % this.$items.length;
+			return this.$items.eq(itemIndex);
 		}
 	}
 
-	// CAROUSEL PLUGIN DEFINITION
+	Carousel.DEFAULTS = {
+		interval: 5000,
+		pause: 'hover',
+		wrap: true,
+		keyboard: true,
+		touch: true
+	};
 
+	// Plugin definition
 	function Plugin(option) {
 		return this.each(function () {
 			const $this = $(this);
 			let data = $this.data('carousel');
-			const options = { ...Carousel.DEFAULTS, ...$this.data(), ...(typeof option === 'object' && option) };
-			const action = typeof option === 'string' ? option : options.slide;
+			const options = $.extend({}, Carousel.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
 			if (!data) $this.data('carousel', (data = new Carousel(this, options)));
 			if (typeof option === 'number') data.to(option);
-			else if (action) data[action]();
+			else if (typeof option === 'string') data[option]();
 			else if (options.interval) data.pause().cycle();
 		});
 	}
 
-	const old = $.fn.carousel;
-
 	$.fn.carousel = Plugin;
 	$.fn.carousel.Constructor = Carousel;
 
-	// CAROUSEL NO CONFLICT
-
-	$.fn.carousel.noConflict = function () {
-		$.fn.carousel = old;
-		return this;
-	};
-
-	const clickHandler = (e) => {
-		const $this = $(e.currentTarget);
+	// Data API
+	$(document).on('click.carousel.data-api', '[data-slide]', function (e) {
+		const $this = $(this);
 		const $target = $($this.attr('data-target') || $this.closest('.carousel'));
 		if (!$target.hasClass('carousel')) return;
 
-		const options = { ...$target.data(), ...$this.data() };
+		const options = $.extend({}, $target.data(), $(this).data());
 		const slideIndex = $this.attr('data-slide-to');
 
 		if (slideIndex) options.interval = false;
-
 		Plugin.call($target, options);
-
-		if (slideIndex) {
-			$target.data('carousel').to(slideIndex);
-		}
-
+		if (slideIndex) $target.data('carousel').to(slideIndex);
 		e.preventDefault();
-	};
+	});
 
-	$(document).on('click.carousel.data-api', '[data-slide], [data-slide-to]', clickHandler);
+	// Arrow controls
+	$(document).on('click.carousel.data-api', '[data-slide="prev"]', function (e) {
+		const $target = $($(this).attr('data-target') || $(this).closest('.carousel'));
+		if (!$target.hasClass('carousel')) return;
+		Plugin.call($target, 'prev');
+		e.preventDefault();
+	});
+
+	$(document).on('click.carousel.data-api', '[data-slide="next"]', function (e) {
+		const $target = $($(this).attr('data-target') || $(this).closest('.carousel'));
+		if (!$target.hasClass('carousel')) return;
+		Plugin.call($target, 'next');
+		e.preventDefault();
+	});
 
 	$(window).on('load', () => {
 		$('[data-ride="carousel"]').each(function () {
-			const $carousel = $(this);
-			Plugin.call($carousel, $carousel.data());
+			Plugin.call($(this), $(this).data());
 		});
 	});
-});
-
-/*
- * jQuery Context Menu
- * by LiteCart
- */
-
-waitFor('jQuery', ($) => {
-
-	$.fn.contextMenu = function(config){
-		this.each(function() {
-
-			$(this).css({
-				cursor: 'context-menu'
-			});
-
-			this.config = config;
-			self = this;
-
-			$(this).on('contextmenu').on({
-			});
-		});
-	}
 
 });
 
+
+
 waitFor('jQuery', ($) => {
-  "use strict";
+	"use strict";
 
-	$('<style>')
-		.prop('type', 'text/css')
-		.html('.grabbed { opacity: 0.5; }')
-		.appendTo('head');
+	$.fn.draggable = function(options) {
 
-  $.fn.draggable = function(options) {
+		$('<style>')
+			.html([
+				'[draggable="true"] .grabbed { opacity: 0.5; }',
+				'[draggable="true"] .grabbable { cursor: ns-resize; }',
+			].join('\n')
+		).appendTo('head');
 
-    // Default settings
-    var settings = $.extend({
-      handle: null,
-      cursor: 'ns-resize',
-      direction: 'vertical' // Default direction
-    }, options);
+		// Default settings
+		var settings = $.extend({
+			handle: '.grabbable',
+			cursor: 'ns-resize',
+			direction: 'vertical'
+		}, options);
 
-    return this.each(function() {
-      var $self = $(this),
-          $handle = settings.handle ? $self.find(settings.handle) : $self,
-          dragging = false,
-          startPos = null;
+		return this.each(function() {
+			var $self = $(this);
 
-      // Add basic styling
-      $self.css({
-        'position': 'relative',
-        'user-select': 'none'
-      });
-
-      $handle.css({
-        'cursor': settings.cursor
-      });
-
-      // Mouse down handler
-      $handle.on('mousedown', function(e) {
-        e.preventDefault();
-        dragging = true;
-        startPos = {
-          x: e.pageX,
-          y: e.pageY
-        };
-        $self.addClass('grabbed');
-        $self.parent().addClass('dragging');
-
-        // Store original position
-        $self.data('original-index', $self.index());
-      });
-
-      // Mouse move handler
-			$(document).on('mousemove', function(e) {
-        if (!dragging) return;
-        e.preventDefault();
-
-        var $siblings = $self.siblings().not('.grabbed'),
-            selfHeight = $self.outerHeight(),
-            selfWidth = $self.outerWidth(),
-            selfOffset = $self.offset(),
-            selfTopY = selfOffset.top,
-            selfBottomY = selfOffset.top + selfHeight,
-            selfLeftX = selfOffset.left,
-            selfRightX = selfOffset.left + selfWidth,
-            mouseX = e.pageX,
-            mouseY = e.pageY;
-
-        // Find the sibling to swap with
-        $siblings.each(function() {
-          var $sibling = $(this),
-              siblingOffset = $sibling.offset(),
-              siblingHeight = $sibling.outerHeight(),
-              siblingWidth = $sibling.outerWidth(),
-              siblingTop = siblingOffset.top,
-              siblingBottom = siblingOffset.top + siblingHeight,
-              siblingLeft = siblingOffset.left,
-              siblingRight = siblingOffset.left + siblingWidth;
-
-          if (settings.direction === 'vertical') {
-            // Moving up: use self's top Y position
-            if (mouseY < selfTopY && siblingBottom > selfTopY && siblingTop < selfTopY) {
-              $sibling.before($self);
-            }
-            // Moving down: use self's bottom Y position
-            else if (mouseY > selfBottomY && siblingTop < selfBottomY && siblingBottom > selfBottomY) {
-              $sibling.after($self);
-            }
-          } else if (settings.direction === 'horizontal') {
-            // Moving left: use self's left X position
-            if (mouseX < selfLeftX && siblingRight > selfLeftX && siblingLeft < selfLeftX) {
-              $sibling.before($self);
-            }
-            // Moving right: use self's right X position
-            else if (mouseX > selfRightX && siblingLeft < selfRightX && siblingRight > selfRightX) {
-              $sibling.after($self);
-            }
-          }
-        });
+			// Add basic styling
+			$self.css({
+				'position': 'relative',
+				'user-select': 'none'
 			});
 
-			// Mouse up handler
-			$(document).on('mouseup', function(e) {
-				if (!dragging) return;
-				dragging = false;
-				$self.removeClass('grabbed');
-        $self.parent().removeClass('dragging');
+			// Store settings
+			$self.data('draggable-settings', settings);
+
+			// Prevent text selection while dragging
+			$self.on('dragstart selectstart', function() {
+				return false;
 			});
+		});
+	};
 
-      // Prevent text selection while dragging
-      $self.on('dragstart selectstart', function() {
-        return false
-      });
-    });
-  };
+	// Global dragging state
+	var isDragging = false;
+	var dragElement = null;
 
-  // Initialize draggable elements
-  $('[draggable="true"]').draggable({
-		handle: '.grabbable',
-		cursor: 'ns-resize',
-    direction: 'vertical' // Default direction
+	// Use event delegation for mouse events to handle dynamic elements
+	$(document).on('mousedown', '[draggable="true"] .grabbable', function(e) {
+		e.preventDefault();
+
+		var $handle = $(this);
+		var $element = $handle.closest('[draggable="true"]');
+
+		// Initialize if needed
+		if (!$element.data('draggable-settings')) {
+			$element.draggable();
+		}
+
+		isDragging = true;
+		dragElement = $element;
+
+		$element.addClass('grabbed');
+		$element.parent().addClass('dragging');
 	});
 
-})
+	$(document).on('mousemove', function(e) {
+		if (!isDragging || !dragElement) return;
+		e.preventDefault();
+
+		var mouseY = e.pageY;
+		var $siblings = dragElement.siblings(':not(.grabbed)');
+
+		$siblings.each(function() {
+			var $sibling = $(this);
+			var siblingOffset = $sibling.offset();
+			var siblingHeight = $sibling.outerHeight();
+			var siblingTop = siblingOffset.top;
+			var siblingBottom = siblingOffset.top + siblingHeight;
+
+			// Move as soon as mouse enters sibling bounds
+			if (mouseY >= siblingTop && mouseY <= siblingBottom) {
+				if (dragElement.index() > $sibling.index()) {
+					// Moving up - place before sibling
+					$sibling.before(dragElement);
+				} else if (dragElement.index() < $sibling.index()) {
+					// Moving down - place after sibling
+					$sibling.after(dragElement);
+				}
+			}
+		});
+	});
+
+	$(document).on('mouseup', function(e) {
+		if (!isDragging) return;
+
+		isDragging = false;
+		if (dragElement) {
+			dragElement.removeClass('grabbed');
+			dragElement.parent().removeClass('dragging');
+			dragElement = null;
+		}
+	});
+
+	// Initialize existing elements
+	$('[draggable="true"]').draggable();
+});
 
 // Dropdown
 waitFor('jQuery', ($) => {
 
-	$('.dropdown [data-toggle="dropdown"]').on('click', function(e) {
-		$(this).closest('.dropdown').toggleClass('open')
-	})
+	$(document).on('click', '.dropdown [data-toggle="dropdown"]', function(e) {
+		$(this).closest('.dropdown').toggleClass('open');
+	});
 
-	$('.dropdown').on('click', 'a', function(e) {
-		$(this).closest('.dropdown').removeClass('open')
-	})
+	$(document).on('click', '.dropdown-item a,button,input[type="radio"]', function(e) {
+		$(this).closest('.dropdown').removeClass('open');
+	});
+
+	$(document).on('change', '.dropdown :input', function(e) {
+
+		let $dropdown = $(this).closest('.dropdown');
+
+		let values = [];
+		$dropdown.find(':input:checked').each(function() {
+			values.push( $(this).parent().text().trim() );
+		});
+
+		if (!values.length) {
+			values = [ $dropdown.find('.dropdown-toggle').data('placeholder') ];
+		}
+		$dropdown.find('.dropdown-toggle').text(values.join(', '));
+	});
 
 	// Listen for clicks outside the dropdown to uncheck the input
 	$(document).on('click', function(e) {
-		if (!$(e.target).closest('.dropdown').length) {
-			$('[data-toggle="dropdown"]').prop('checked', false);
+		// If click is on dropdown::before psuedo element, remove open class
+		if ($('.dropdown.open').length && !$(e.target).closest('.dropdown').length) {
+			$('.dropdown.open').removeClass('open');
 		}
 	});
 
 });
 
-/*!
- * jQuery Plugin developed by Mario Duarte
- * https://github.com/Mario-Duarte/image-zoom-plugin/
- * Simple jQuery plugin that converts an image into a click to zoom image
- */
+waitFor('jQuery', $ => {
+	$('.blob').on('mousemove', function (e) {
+		$(this).css('transform', `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`);
+	});
+});
+
+
+waitFor('jQuery', $ => {
+	$('form[data-track-changes]').each(function () {
+		$(this).data('originalData', $(this).serialize());
+	});
+
+	$(window).on('beforeunload', function () {
+		let hasChanges = false;
+
+		$('form[data-track-changes]').each(function () {
+			if ($(this).serialize() != $(this).data('originalData')) {
+				hasChanges = true;
+				return false; // Break out of the each loop
+			}
+		});
+
+		if (hasChanges) {
+			return true; // Show the confirmation dialog
+		}
+	});
+
+	// Initialize input groups for number and float inputs
+	$('.input-group').on('click', 'button[name="decrease"], button[name="increase"]', function () {
+		const $input = $(this).siblings('input[type="number"]'),
+			minValue = parseInt($input.attr('min')) || 0,
+			maxValue = parseInt($input.attr('max')) || Infinity;
+		if ($(this).attr('name') === 'decrease') {
+			$input.val(Math.max(minValue, parseInt($input.val()) - 1)).trigger('input');
+		} else {
+			$input.val(Math.min(maxValue, parseInt($input.val()) + 1)).trigger('input');
+		}
+	});
+
+	$('.input-group').on('click', '', function () {
+		const $input = $(this).siblings('input[type="number"]');
+		$input.val(parseInt($input.val()) - 1).trigger('input');
+	});
+});
+
+
 waitFor('jQuery', ($) => {
 
-  $.fn.imageZoom = function (options) {
-
-    // Default settings for the zoom level
-    const settings = $.extend({
-      zoom: 150
-    }, options)
-
-    // Main html template for the zoom in plugin
-    const $imageObj = $([
-			'<figure class="containerZoom">',
-			'	<img id="imageZoom">',
-			'</figure>',
-		].join('\n'))
-
-		$imageObj.css({
-			'background-image': `url('${$(this).attr('src')}')`,
-			'background-size': `${settings.zoom}%`,
-			'background-position': '50% 50%',
-			'position': 'relative',
-			'width': '100%',
-			'overflow': 'hidden',
-			'cursor': 'zoom-in',
-			'margin': 0,
-		})
-
-		$imageObj.find('img')
-			.attr('src', $(this).attr('src'))
-			.attr('alt', $(this).attr('alt'))
-			.css({
-				'transition':'opacity .5s',
-				'display':'block',
-				'width':'100%',
-			})
-
-    // Where all the magic happens, This will detect the position of your mouse
-    // in relation to the image and pan the zoomed in background image in the same direction
-    const zoomIn = (e) => {
-      const zoomer = e.currentTarget
-      let offsetX, offsetY
-
-			switch (e.type) {
-				case 'mousemove':
-					offsetX = e.offsetX || e.clientX - $(zoomer).offset().left
-					offsetY = e.offsetY || e.clientY - $(zoomer).offset().top
-					break
-
-				case 'touchmove':
-					e.preventDefault(); // Prevent default touch behavior (scrolling)
-					offsetX = Math.min(Math.max(0, e.originalEvent.touches[0].pageX - $(zoomer).offset().left), zoomer.offsetWidth)
-					offsetY = Math.min(Math.max(0, e.originalEvent.touches[0].pageY - $(zoomer).offset().top), zoomer.offsetHeight)
-					break
-      }
-
-      const x = offsetX / zoomer.offsetWidth * 100
-      const y = offsetY / zoomer.offsetHeight * 100
-
-      $(zoomer).css({
-        'background-position': `${x}% ${y}%`,
-      })
-    }
-
-    let newElm;
-
-    if (this[0].nodeName === 'IMG') {
-      newElm = $(this).replaceWith($imageObj)
-      $(this).on({
-
-				'click touchstart': function(e) {
-					if (!("zoom" in $imageObj)) {
-						$imageObj.zoom = false
-					}
-					if ($imageObj.zoom) {
-						$imageObj.zoom = false
-						$(this).removeClass('active')
-					} else {
-						$imageObj.zoom = true;
-						$(this).addClass('active')
-						$(this).find('img').css('opacity', 0)
-						zoomIn(e)
-					}
-				},
-
-				'mousemove touchmove': function(e) {
-					$imageObj.zoom ? zoomIn(e) : null
-				},
-
-				'mouseleave touchend': function() {
-					$imageObj.zoom = false
-					$(this).removeClass('active')
-				}
-			})
-    } else {
-      newElm = $(this)
-    }
-
-    return newElm;
-  };
-})
-
-// Form required asterix
-waitFor('jQuery', ($) => {
-
-	$(':input[required]').closest('.form-group').addClass('required')
+	// Form required asterix
+	$(':input[required]').closest('.form-group').addClass('required');
 
 	// Dropdown Select
 	$('.dropdown .form-select + .dropdown-menu :input').on('input', function(e) {
 
-		let $dropdown = $(this).closest('.dropdown')
-		let $input = $dropdown.find(':input:checked')
+		const $dropdown = $(this).closest('.dropdown');
 
-		if (!$dropdown.find(':input:checked').length) return
+		values = [];
 
-		$dropdown.find('li.active').removeClass('active')
+		$dropdown.find(':input:checked').each(function() {
 
-		if ($input.data('title')) {
-			$dropdown.find('.form-select').text( $input.data('title') )
-		} else if ($input.closest('.option').find('.title').length) {
-			$dropdown.find('.form-select').text( $input.closest('.option').find('.title').text() )
-		} else {
-			$dropdown.find('.form-select').text( $input.parent().text() )
+			let name;
+
+			if ($(this).data('name')) {
+				name = $(this).data('name');
+			} else {
+				name = $(this).parent().text();
+			}
+
+			if ($(this).is(':checkbox')) {
+				values.push(name);
+			} else {
+				values = [name];
+			}
+		});
+
+		if (values.length === 0) {
+			values = [$dropdown.data('placeholder')];
 		}
 
-		$input.closest('li').addClass('active')
-		$dropdown.trigger('click.bs.dropdown')
+		$dropdown.find('.form-select').text( values.join(', ') );
+		$dropdown.removeClass('open');
 
-	}).trigger('input')
+	}).trigger('input');
 
 	// Input Number Decimals
 	$('body').on('change', 'input[type="number"][data-decimals]', function() {
 		var value = parseFloat($(this).val()),
-			decimals = $(this).data('decimals')
+			decimals = $(this).data('decimals');
 		if (decimals != '') {
-			$(this).val(value.toFixed(decimals))
+			$(this).val(value.toFixed(decimals));
 		}
-	})
+	});
 
-})
+});
 
-// Form Input Tags
 waitFor('jQuery', ($) => {
+
+	// Form Input Tags
 	$('input[data-toggle="tags"]').each(function() {
 
-		let $originalInput = $(this)
+		let $originalInput = $(this);
 
 		let $tagField = $(
 			'<div class="form-input">\
@@ -601,77 +520,78 @@ waitFor('jQuery', ($) => {
 					<span class="input" contenteditable></span>\
 				</ul>\
 			</div>'
-		)
+		);
 
-		$tagField.tags = []
+		$tagField.tags = [];
 
 		$tagField.add = function(input){
 
-			input = input.trim()
+			input = input.trim();
 
-			if (!input) return
+			if (!input) return;
 
-			$tagField.tags.push(input)
+			$tagField.tags.push(input);
 
 			let $tag = $(
 				'<li class="tag">\
 					<span class="value"></span>\
 					<span class="remove">x</span>\
-				</li>')
+				</li>');
 
-			$('.value', $tag).text(input)
-			$('.input', $tagField).before($tag)
+			$('.value', $tag).text(input);
+			$('.input', $tagField).before($tag);
 
-			$tagField.trigger('change')
-		}
+			$tagField.trigger('change');
+		};
 
 		$tagField.remove = function(input){
 
 			$tagField.tags = $.grep($tagField.tags, function(value) {
-				return value != input
-			})
+				return value != input;
+			});
 
 			$('.tag .value', $tagField).each(function() {
 				if ($(this).text() == input) {
-					$(this).parent('.tag').remove()
+					$(this).parent('.tag').remove();
 				}
-			})
+			});
 
-			$tagField.trigger('change')
-		}
+			$tagField.trigger('change');
+		};
 
 		let tags = $.grep($originalInput.val().split(/\s*,\s*/), function(value) {
-			return value
-		})
+			return value;
+		});
 
 		$.each(tags, function() {
-			$tagField.add(this)
-		})
+			$tagField.add(this);
+		});
 
 		$tagField.on('keypress', '.input', function(e) {
 			if (e.which == 44 || e.which == 13) { // Comma or enter
-				e.preventDefault()
-				$tagField.add($(this).text())
-				$(this).text('')
+				e.preventDefault();
+				$tagField.add($(this).text());
+				$(this).text('');
 			}
-		})
+		});
 
 		$tagField.on('blur', '.input', function() {
-			$tagField.add($(this).text())
-			$(this).text('')
-		})
+			$tagField.add($(this).text());
+			$(this).text('');
+		});
 
 		$tagField.on('click', '.remove', function(e) {
-			$tagField.remove($(this).siblings('.value').text())
-		})
+			$tagField.remove($(this).siblings('.value').text());
+		});
 
 		$tagField.on('change', function() {
-			$originalInput.val($tagField.tags.join(','))
-		})
+			$originalInput.val($tagField.tags.join(','));
+		});
 
-		$(this).hide().after($tagField)
-	})
-})
+		$(this).hide().after($tagField);
+	});
+
+});
 
 waitFor('jQuery', ($) => {
 	'use strict';
@@ -714,29 +634,47 @@ waitFor('jQuery', ($) => {
 			this.$instance = $([
 				'<div class="litebox litebox-loading">',
 				`	<div class="litebox-modal${this.seamless ? ' litebox-seamless' : ''}">`,
-				`		<div class="litebox-inner">${this.loading}</div>`,
+				`		${this.loading}`,
 				'	</div>',
 				'</div>'
 			].join('\n'));
 
+			// Track mousedown and mouseup to ensure both happen outside modal before closing
+			let mousedownOutsideModal = false;
+
+			const isOutsideModal = (e) => {
+				const $modal = this.$instance.find('.litebox-modal');
+				if (!$modal.length) return true;
+				const rect = $modal[0].getBoundingClientRect();
+				return e.clientX < rect.left || e.clientX > rect.right ||
+					e.clientY < rect.top || e.clientY > rect.bottom;
+			};
+
+			this.$instance.on('mousedown.litebox', (e) => {
+				mousedownOutsideModal = isOutsideModal(e);
+			});
+
+			this.$instance.on('mouseup.litebox', (e) => {
+				if (mousedownOutsideModal && isOutsideModal(e) && this.closeOnClick === 'backdrop') {
+					if ($(e.target).closest('.litebox-previous, .litebox-next').length) return;
+					this.close(e);
+					e.preventDefault();
+				}
+			});
+
 			this.$instance.on('click.litebox', (e) => {
-				if (e.isDefaultPrevented() || !(
-						(this.closeOnClick === 'backdrop' && $(e.target).is('.litebox')) ||
-						this.closeOnClick === 'anywhere' ||
-						$(e.target).is('.litebox-close')
-					)
-				) return;
-				this.close(e);
-				e.preventDefault();
+				if (e.isDefaultPrevented()) return;
+				if (this.closeOnClick === 'anywhere' || $(e.target).is('.litebox-close')) {
+					this.close(e);
+					e.preventDefault();
+				}
 			});
 		}
 
 		// Attach Litebox to elements
 		static attach($source, $modal, options = {}) {
 
-			const tempOptions = { ...this.defaults, ...$source.data(), ...options };
 			const handler = (e) => {
-				const $target = $(e.currentTarget);
 				const gallery = $(e.currentTarget).data('gallery');
 				const $gallerySource = gallery ? $(`[data-gallery="${gallery}"]`) : $source;
 				const elementOptions = {
@@ -781,7 +719,6 @@ waitFor('jQuery', ($) => {
 			Litebox.opened.push(this);
 
 			this.$instance.show();
-			this.beforeContent(e);
 
 			return $.when($modal)
 				.always(($m) => {
@@ -815,13 +752,98 @@ waitFor('jQuery', ($) => {
 						const deferred = $.Deferred();
 						const $img = $('<img>', { src: url, alt: '' });
 						$img.on('load', () => deferred.resolve($img));
-						$img.on('error', () => deferred.reject());
+						$img.on('error', () => deferred.resolve($('<div>Failed to load image</div>')));
 						return deferred.promise();
 					}
 				},
 				html: {
 					regex: /^\s*<[\w!][^<]*>/,
 					process: (html) => $(html)
+				},
+				iframe: {
+					process: function (url) {
+						const deferred = $.Deferred();
+						const $iframe = $('<iframe/>', { src: url });
+						$iframe.on('load', () => {
+							$iframe.show().appendTo(this.$instance.find('.litebox-modal'));
+							deferred.resolve($iframe);
+						});
+						return deferred.promise();
+					}
+				},
+				video: {
+					regex: /\.(mp4|webm)(\?\S*)?(\?|$)/i,
+					process: function (url) {
+						const deferred = $.Deferred();
+						const ext = url.match(/\.(mp4|webm)(\?|$)/i)?.[1] || 'mp4';
+						const $video = $('<video controls>');
+						$video.append($('<source>', { src: url, type: `video/${ext}` }));
+						$video.on('loadeddata', () => deferred.resolve($video));
+						$video.on('error', () => deferred.resolve($('<div>Failed to load video</div>')));
+						return deferred.promise();
+					}
+				},
+				youtube: {
+					regex: /^(https?:\/\/)?(www\.)?(youtube\.com|youtube-nocookie\.com|youtu\.?be)\//,
+					process: function (url) {
+						// Improved videoId extraction for various YouTube URL formats
+						let videoId = null;
+						// youtu.be/VIDEOID
+						let match = url.match(/youtu\.be\/([\w-]{11})/);
+						if (match) videoId = match[1];
+						// youtube.com/watch?v=VIDEOID
+						if (!videoId) {
+							match = url.match(/[?&]v=([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						// youtube.com/embed/VIDEOID
+						if (!videoId) {
+							match = url.match(/embed\/([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						// youtube.com/v/VIDEOID
+						if (!videoId) {
+							match = url.match(/\/v\/([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						// fallback: try to extract last 11-char id
+						if (!videoId) {
+							match = url.match(/([\w-]{11})/);
+							if (match) videoId = match[1];
+						}
+						const deferred = $.Deferred();
+						let $iframe;
+						if (videoId) {
+							$iframe = $('<iframe/>', {
+								src: `https://www.youtube-nocookie.com/embed/${videoId}`,
+								allowfullscreen: true,
+								style: 'display: none; height: 50vh; aspect-ratio: 16/9;'
+							});
+						} else {
+							$iframe = $('<div>Failed to extract YouTube video ID</div>');
+						}
+						// Always append to modal before resolving
+						this.$instance.find('.litebox-modal').append($iframe);
+						if ($iframe.is('iframe')) {
+							$iframe.on('load', () => {
+								$iframe.show();
+								deferred.resolve($iframe);
+							});
+						} else {
+							$iframe.show();
+							deferred.resolve($iframe);
+						}
+						return deferred.promise();
+					}
+				},
+				raw: {
+					regex: /\.(log|md|txt)(\?\S*)?(\?|$)/i,
+					process: function(url) {
+						const deferred = $.Deferred();
+						const $content = $('<div>').css({ "white-space": 'pre-wrap', "max-width": '90vw' });
+						$.get(url, raw => $content.text(raw)).done(() => deferred.resolve($content)).fail(() => deferred.resolve($('<div>Failed to load file</div>')));
+						return deferred.promise();
+					}
 				},
 				ajax: {
 					regex: /./,
@@ -832,23 +854,6 @@ waitFor('jQuery', ($) => {
 							if (status === 'error') deferred.reject();
 							else deferred.resolve($container.contents());
 						});
-						return deferred.promise();
-					}
-				},
-				iframe: {
-					process: function (url) {
-						const deferred = $.Deferred();
-						const $iframe = $('<iframe/>', { src: url });
-						$iframe.on('load', () => { $iframe.show().appendTo(this.$instance.find('.litebox-modal')); deferred.resolve($iframe); });
-						return deferred.promise();
-					}
-				},
-				raw: {
-					regex: /\.(log|md|txt)(\?\S*)?$/i,
-					process: function(url) {
-						const deferred = $.Deferred();
-						const $content = $('<div>').css({ "white-space": 'pre-wrap', "max-width": '90vw' });
-						$.get(url, raw => $content.text(raw)).done(() => deferred.resolve($content));
 						return deferred.promise();
 					}
 				},
@@ -892,7 +897,6 @@ waitFor('jQuery', ($) => {
 
 		// Before opening the Litebox
 		beforeOpen(e) {
-
 			this._previouslyActive = document.activeElement;
 			this._$previouslyTabbable = $('a, input, select, textarea, iframe, button, [contentEditable=true]')
 				.not('[tabindex]').not(this.$instance.find('button'));
@@ -937,11 +941,6 @@ waitFor('jQuery', ($) => {
 			return true;
 		}
 
-		// Before setting content
-		beforeContent(e) {
-			return true;
-		}
-
 		// After setting content
 		afterContent(e) {
 
@@ -962,8 +961,6 @@ waitFor('jQuery', ($) => {
 					e.preventDefault();
 				}).appendTo(this.$instance.find('.litebox-modal'));
 			}
-
-			this.onResize(e);
 
 			return true;
 		}
@@ -1011,16 +1008,12 @@ waitFor('jQuery', ($) => {
 			}
 		}
 
-		onResize(e) {
-			return true;
-		}
-
 		beforeClose(e) {
 			return true;
 		}
 
 		afterClose(e) {
-			if (e.isDefaultPrevented()) return;
+			if (e?.isDefaultPrevented()) return;
 			this._$previouslyTabbable.removeAttr('tabindex');
 			this._$previouslyWithTabIndex.each((i, el) => $(el).attr('tabindex', this._previousWithTabIndices[i]));
 			if (this._previouslyActive instanceof $) {
@@ -1046,25 +1039,41 @@ waitFor('jQuery', ($) => {
 
 			const source = this.$source;
 			const len = source.length;
-			const $inner = this.$instance.find('.litebox-inner');
 			index = ((index % len) + len) % len;
 
 			this.$instance.addClass('litebox-loading');
 			this.$currentTarget = source.eq(index);
-			this.beforeContent();
+
 			return $.when(
 				this.getContent(),
-				$inner.fadeTo(this.galleryFadeOut, 0.2)
 			).always(($newContent) => {
 				this.setContent($newContent);
 				this.afterContent();
-				$newContent.fadeTo(this.galleryFadeIn, 1);
 			});
 		}
 	}
 
 	// jQuery plugin integration
-	$.litebox = Litebox;
+	$.litebox = function (url, options = {}) {
+		if (typeof url === 'string') {
+			const instance = new Litebox(url, options);
+			instance.open();
+			return instance;
+		}
+		console.error('Invalid argument passed to $.litebox. Expected a URL string.');
+	};
+
+	// Expose the Litebox.current method
+	$.litebox.current = Litebox.current.bind(Litebox);
+
+	// Expose the Litebox.attach method
+	$.litebox.opened = Litebox.opened;
+
+	// Expose the Litebox.close method
+	$.litebox.close = function(){
+		this.current()?.close();
+	}
+
 	$.fn.litebox = function ($modal, options) {
 		Litebox.attach(this, $modal, options);
 		return this;
@@ -1088,234 +1097,99 @@ waitFor('jQuery', ($) => {
 
 });
 
-/*
- * Momentum Scroll
- * by LiteCart
- */
 waitFor('jQuery', ($) => {
 
-	$.fn.momentumScroll = function() {
-		this.each(function() {
-
-			let $self = $(this),
-				$content = $self.find('.scroll-content')
-				direction = '',
-				velX = 0,
-				clickX = 0,
-				scrollX = 0,
-				clicked = false,
-				dragging = false,
-				momentumID = null
-
-			if ($(this).width() <= 768) {
-				$content.css('overflow', 'auto')
-			}
-
-			let momentumLoop = function() {
-
-				if (direction == 'left') {
-					$content.scrollLeft($content.scrollLeft() - velX); // Apply the velocity to the scroll position
-				} else {
-					$content.scrollLeft($content.scrollLeft() + velX)
-				}
-
-				velX *= 1 - 5 / 100; // Slow down the velocity 5%
-
-				if (Math.abs(velX) > 0.5) { // Still moving?
-					momentumID = requestAnimationFrame(momentumLoop); // Keep looping
-				}
-			}
-
-			$content.on({
-
-				'click': function(e) {
-					if (dragging) {
-						e.preventDefault()
-					}
-					dragging = false
-				},
-
-				'mousemove': function(e) {
-					if (!clicked) return
-
-					dragging = true
-
-					let prevScrollLeft = $content.scrollLeft(); // Store the previous scroll position
-						currentDrag = (clickX - e.pageX)
-
-					$content.scrollLeft(scrollX + (clickX - e.pageX))
-
-					if (currentDrag > 0) {
-						direction = 'right'
-					} else {
-						direction = 'left'
-					}
-
-					velX = Math.abs($content.scrollLeft() - prevScrollLeft); // Compare change in position to work out drag speed
-				},
-
-				'mousedown': function(e) {
-					e.preventDefault()
-					clicked = true
-					scrollX = $content.scrollLeft()
-					clickX = e.pageX
-					$content.css('cursor', 'grabbing')
-				},
-
-				'mouseup': function(e) {
-					e.preventDefault()
-					self = this
-					clicked = false
-					cancelAnimationFrame(momentumID)
-					momentumID = requestAnimationFrame(momentumLoop)
-					$content.css('cursor', '')
-				},
-
-				'mouseleave': function(e) {
-					clicked = false
-					$content.css('cursor', '')
-				}
-			})
-
-			$(window).on('resize', function() {
-
-				if ($content.prop('scrollWidth') > ($self.outerWidth() + 20)) {
-
-					if (!$self.find('button[name="left"], button[name="right"]').length) {
-
-						$self.append(
-							'<button name="left" class="btn btn-default" type="button"><i class="icon-chevron-left"></i></button>' +
-							'<button name="right" class="btn btn-default" type="button"><i class="icon-chevron-right"></i></button>'
-						)
-
-						$self.on('click', 'button[name="left"], button[name="right"]', function(e) {
-							if (direction != $(this).attr('name')) {
-								velX = 0
-							}
-							cancelAnimationFrame(momentumID)
-							velX += Math.round($self.outerWidth() * 0.03)
-							direction = $(this).attr('name')
-							momentumID = requestAnimationFrame(momentumLoop)
-
-						})
-					}
-
-				} else {
-					$self.find('button[name="left"], button[name="right"]').remove();
-				}
-
-				/*
-				if ($(window).width() > ($self.outerWidth() + 45)) {
-					$self.find('button[name="left"]').css('left', '')
-					$self.find('button[name="right"]').css('right', '')
-				} else {
-					$self.find('button[name="left"]').css('left', 0)
-					$self.find('button[name="right"]').css('right', 0)
-				}
-				*/
-
-			}).trigger('resize');
-		})
-	}
-
-	$('[data-toggle*="momentumScroll"]').momentumScroll();
-});
-
-// Alerts
-waitFor('jQuery', ($) => {
-
+	// Alerts
 	$('body').on('click', '.alert .close', function(e) {
-		e.preventDefault()
+		e.preventDefault();
 		$(this).closest('.alert').fadeOut('fast', function() {
-			$(this).remove()
-		})
-	})
+			$(this).remove();
+		});
+	});
 
-})
+});
 
 // Off-Canvas Sidebar (data-toggle="offcanvas-collapse")
 waitFor('jQuery', ($) => {
 
 	$('[data-toggle="offcanvas"]').on('click', function() {
-		$(this).closest('.navbar').toggleClass('expanded')
-		$('body').toggleClass('offcanvas-open', $(this).closest('.navbar').hasClass('expanded'))
-		$('body').css('overflow', $(this).closest('.navbar').hasClass('expanded') ? 'hidden' : '')
-	})
+		$(this).closest('.navbar').toggleClass('expanded');
+		$('body').toggleClass('offcanvas-open', $(this).closest('.navbar').hasClass('expanded'));
+		$('body').css('overflow', $(this).closest('.navbar').hasClass('expanded') ? 'hidden' : '');
+	});
 
-})
+});
 
-// Password Strength
 waitFor('jQuery', ($) => {
 
+	// Password Strength
 	$('form').on('input', 'input[type="password"][data-toggle="password-strength"]', function() {
 
-		$(this).siblings('meter').remove()
+		$(this).siblings('meter').remove();
 
-		if ($(this).val() == '') return
+		if (!$(this).val()) return;
 
 		let numbers = ($(this).val().match(/[0-9]/g) || []).length,
 			lowercases = ($(this).val().match(/[a-z]/g) || []).length,
 			uppercases = ($(this).val().match(/[A-Z]/g) || []).length,
 			symbols =   ($(this).val().match(/[^\w]/g) || []).length,
-
 			score = (numbers * 9) + (lowercases * 11.25) + (uppercases * 11.25) + (symbols * 15)
-						+ (numbers ? 10 : 0) + (lowercases ? 10 : 0) + (uppercases ? 10 : 0) + (symbols ? 10 : 0)
-
-		let meter = $('<meter min="0" low="80" high="120" optimum="150" max="150" value="'+ score +'"></meter>').css({
+						+ (numbers ? 10 : 0) + (lowercases ? 10 : 0) + (uppercases ? 10 : 0) + (symbols ? 10 : 0),
+			meter = $('<meter min="0" low="80" high="120" optimum="150" max="150" value="'+ score +'"></meter>').css({
 			position: 'absolute',
 			bottom: '-1em',
 			width: '100%',
 			height: '1em'
-		})
+		});
 
-		$(this).after(meter)
-	})
+		$(this).after(meter);
+	});
 
-})
+});
 
 
-// jQuery Placeholders by LiteCart
 waitFor('jQuery', ($) => {
 
-	let Placeholders = []
+	// jQuery Placeholders by LiteCart
+	let Placeholders = [];
 
 	$.fn.Placeholder = function(options){
 		this.each(function() {
 
-			this.$element = $(this)
+			this.$element = $(this);
 
 			this.settings = $.extend({
 				aspectRatio: "1:1",
-			}, options, this.$element.data())
+			}, options, this.$element.data());
 
 			this.refresh = function(){
 				let width = this.$element.width(),
-					height = width / this.settings.aspectRatio.replace(/^([0-9]*):[0-9]*$/, '$1') * this.settings.aspectRatio.replace(/^[0-9]*:([0-9]*)$/, '$1')
+					height = width / this.settings.aspectRatio.replace(/^([0-9]*):[0-9]*$/, '$1') * this.settings.aspectRatio.replace(/^[0-9]*:([0-9]*)$/, '$1');
 
-				width = Math.round(width)
-				height = Math.round(height)
+				width = Math.round(width);
+				height = Math.round(height);
 
 				this.$element.text(width + '\u00d7' + height + ' (' +  this.settings.aspectRatio + ')')
 					.css('font-size', Math.round(height/10) + 'px')
 					.width('100%')
-					.height(height)
-			}
+					.height(height);
+			};
 
-			this.refresh()
+			this.refresh();
 
-			Placeholders.push(this)
-		})
-	}
+			Placeholders.push(this);
+		});
+	};
 
-	$('.placeholder').Placeholder()
+	$('.placeholder').Placeholder();
 
 	$(window).on('resize', function() {
 		$.each(Placeholders, function(i, placeholder) {
-			placeholder.refresh()
-		})
-	})
+			placeholder.refresh();
+		});
+	});
 
-})
+});
 
 
 // Number Formatting
@@ -1327,13 +1201,13 @@ Number.prototype.toText = function(decimals = 0) {
 		s = n < 0 ? '-' : '',
 		i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + '',
 		f = n - i,
-		j = (j = i.length) > 3 ? j % 3 : 0
+		j = (j = i.length) > 3 ? j % 3 : 0;
 
-	return s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + ((c && f) ? d + Math.abs(f).toFixed(c).slice(2) : '')
-}
+	return s + (j ? i.substring(0, j) + t : '') + i.substring(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + ((c && f) ? d + Math.abs(f).toFixed(c).slice(2) : '');
+};
 
 // Money Formatting
-Number.prototype.toMoney = function() {
+Number.prototype.toMoney = function(auto_decimals = true) {
 	var n = this,
 		c = _env.currency.decimals || 2,
 		d = _env.language.decimal_point || '.',
@@ -1343,10 +1217,14 @@ Number.prototype.toMoney = function() {
 		s = n < 0 ? '-' : '',
 		i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + '',
 		f = n - i,
-		j = (j = i.length) > 3 ? j % 3 : 0
+		j = (j = i.length) > 3 ? j % 3 : 0;
 
-	return s + p + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + (c ? d + Math.abs(f).toFixed(c).slice(2) : '') + x
-}
+	if (auto_decimals && f === 0) {
+		c = 0;
+	}
+
+	return s + p + (j ? i.substring(0, j) + t : '') + i.substring(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + (c ? d + Math.abs(f).toFixed(c).slice(2) : '') + x;
+};
 
 // Escape HTML
 String.prototype.escapeHTML = function() {
@@ -1359,35 +1237,35 @@ String.prototype.escapeHTML = function() {
 		"'": '&#39;',
 		'/': '&#x2F;',
 		'`': '&#x60;',
-	}
+	};
 
 	return this.replace(/[&<>"'\/]/g, function (s) {
-		return entityMap[s]
-	})
-}
+		return entityMap[s];
+	});
+};
 
 // Escape Attribute
 String.prototype.escapeAttr = function() {
-	return this.escapeHTML().replace(/\r\n?|\n/g, '\\n')
-}
+	return this.escapeHTML().replace(/\r\n?|\n/g, '\\n');
+};
 
 // Scroll Up
 waitFor('jQuery', ($) => {
 
 	$(window).scroll(function() {
 		if ($(this).scrollTop() > 300) {
-			$('#scroll-up').fadeIn()
+			$('#scroll-up').fadeIn();
 		} else {
-			$('#scroll-up').fadeOut()
+			$('#scroll-up').fadeOut();
 		}
-	})
+	});
 
 	$('#scroll-up').on('click', function() {
-		$('html, body').animate({scrollTop: 0}, 1000, 'easeOutBounce')
-		return false
-	})
+		$('html, body').animate({scrollTop: 0}, 1000, 'easeOutBounce');
+		return false;
+	});
 
-})
+});
 
 // Data-Table Toggle Checkboxes
 waitFor('jQuery', ($) => {
@@ -1395,105 +1273,105 @@ waitFor('jQuery', ($) => {
 	// Data-Table Toggle Checkboxes
 	$('body').on('click', '.data-table *[data-toggle="checkbox-toggle"], .data-table .checkbox-toggle', function() {
 		$(this).closest('.data-table').find('tbody td:first-child :checkbox').each(function() {
-			$(this).prop('checked', !$(this).prop('checked')).trigger('change')
-		})
-		return false
-	})
+			$(this).prop('checked', !$(this).prop('checked')).trigger('change');
+		});
+		return false;
+	});
 
 	$('body').on('click', '.data-table tbody tr', function(e) {
-		if ($(e.target).is('a') || $(e.target).closest('a').length) return
-		if ($(e.target).is('.btn, :input, th, .icon-star, .icon-star-o')) return
-		$(this).find(':checkbox, :radio').first().trigger('click')
-	})
+		if ($(e.target).is('a') || $(e.target).closest('a').length) return;
+		if ($(e.target).is('.btn, :input, th, .icon-star, .icon-star-o')) return;
+		$(this).find(':checkbox, :radio').first().trigger('click');
+	});
 
 	// Data-Table Shift Check Multiple Checkboxes
-	let lastTickedCheckbox = null
+	let lastTickedCheckbox = null;
 	$('.data-table td:first-child :checkbox').on('click', function(e) {
 
-		let $chkboxes = $('.data-table td:first-child :checkbox')
+		let $chkboxes = $('.data-table td:first-child :checkbox');
 
 		if (!lastTickedCheckbox) {
-			lastTickedCheckbox = this
-			return
+			lastTickedCheckbox = this;
+			return;
 		}
 
 		if (e.shiftKey) {
-			let start = $chkboxes.index(this)
-			let end = $chkboxes.index(lastTickedCheckbox)
-			$chkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastTickedCheckbox.checked)
+			let start = $chkboxes.index(this);
+			let end = $chkboxes.index(lastTickedCheckbox);
+			$chkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', lastTickedCheckbox.checked);
 		}
 
-		lastTickedCheckbox = this
-	})
+		lastTickedCheckbox = this;
+	});
 
 	// Data-Table Sorting (Page Reload)
 	$('.table-sortable thead th[data-sort]').on('click', function() {
-		let params = {}
+		let params = {};
 
 		window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
-			params[key] = value
-		})
+			params[key] = value;
+		});
 
-		params.sort = $(this).data('sort')
+		params.sort = $(this).data('sort');
 
-		window.location.search = $.param(params)
-	})
+		window.location.search = $.param(params);
+	});
 
-})
+});
 
 // Tabs (data-toggle="tab")
 
 waitFor('jQuery', ($) => {
-	'use strict'
+	'use strict';
 
 	$.fn.tabs = function(){
 		this.each(function() {
 
-			const self = this
-			this.$element = $(this)
+			const self = this;
+			this.$element = $(this);
 
 			this.$element.find('[data-toggle="tab"]').each(function() {
-				const $link = $(this)
+				const $link = $(this);
 
 				$link.on('select', function() {
-					self.$element.find('.active').removeClass('active')
+					self.$element.find('.active').removeClass('active');
 
 					if ($link.hasClass('tab-item')) {
-						$link.addClass('active')
+						$link.addClass('active');
 					}
 
-					$link.closest('.tab-item').addClass('active')
-					$($link.attr('href')).show().siblings().hide()
-				})
+					$link.closest('.tab-item').addClass('active');
+					$($link.attr('href')).show().siblings().hide();
+				});
 
 				$link.on('click', function(e) {
-					e.preventDefault()
-					history.replaceState(null, null, $link[0].hash)
-					$link.trigger('select')
-				})
-			})
+					e.preventDefault();
+					history.replaceState(null, null, $link[0].hash);
+					$link.trigger('select');
+				});
+			});
 
-			const activeTab = this.$element.find('.active')
+			const activeTab = this.$element.find('.active');
 
 			if (!activeTab.length) {
-				this.$element.find('[data-toggle="tab"]').first().trigger('select')
+				this.$element.find('[data-toggle="tab"]').first().trigger('select');
 			} else {
-				activeTab.trigger('select')
+				activeTab.trigger('select');
 			}
-		})
-	}
+		});
+	};
 
-	$('.tabs').tabs()
+	$('.tabs').tabs();
 
 	if (document.location.hash && document.location.hash.match(/^#tab-/)) {
-		$('[data-toggle="tab"][href="' + document.location.hash +'"]').trigger('select')
+		$('[data-toggle="tab"][href="' + document.location.hash +'"]').trigger('select');
 	}
 
 	$(document).on('ajaxcomplete', function() {
-		$('.tabs').tabs()
-	})
+		$('.tabs').tabs();
+	});
 
-})
+});
 
 
 // Polyfill for easeOutBounce
@@ -1501,22 +1379,47 @@ waitFor('jQuery', ($) => {
 
 	$.extend($.easing, {
 		easeOutCubic: function (x) {
-			return 1 - Math.pow( 1 - x, 3 )
+			return 1 - Math.pow( 1 - x, 3 );
 		},
 		easeInCubic: function (x) {
-			return Math.pow(x, 3)
+			return Math.pow(x, 3);
 		},
 		easeOutBounce: function (x, t, b, c, d) {
 			if ((t/=d) < (1/2.75)) {
-				return c*(7.5625*t*t) + b
+				return c*(7.5625*t*t) + b;
 			} else if (t < (2/2.75)) {
-				return c*(7.5625*(t-=(1.5/2.75))*t + .75) + b
+				return c*(7.5625*(t-=(1.5/2.75))*t + .75) + b;
 			} else if (t < (2.5/2.75)) {
-				return c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b
+				return c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b;
 			} else {
-				return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b
+				return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
 			}
 		},
-	})
+	});
 
-})
+});
+
+/* Minimal waitFor() implementation
+ * Calls callback when objectName is defined in the global scope
+ * waitTime is the time between retries, in milliseconds (default 50ms)
+ * retries is the number of times to retry before giving up (default 100)
+ */
+window.waitFor = (objectName, callback, waitTime=50, retries=100) => {
+
+	if (typeof(objectName) !== 'string') {
+		throw new TypeError('First argument to waitFor() must be a string');
+	}
+
+	if (typeof(window[objectName]) !== 'undefined') {
+		callback(window[objectName]);
+
+	} else if (retries > 0) {
+
+		setTimeout(() => {
+			waitFor(objectName, callback, waitTime, --retries);
+		}, waitTime);
+
+	} else {
+		console.warn(`waitFor(${objectName}) timed out`);
+	}
+};

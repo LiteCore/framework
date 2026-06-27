@@ -7,6 +7,8 @@
 		public static function init() {
 		}
 
+		## Node specific methods
+
 		public static function reset() {
 			self::$data = [];
 		}
@@ -24,7 +26,7 @@
 				return '';
 			}
 
-			switch (fallback(route::$selected['endpoint'])) {
+			switch (route::$selected['endpoint'] ?? null) {
 
 				case 'backend':
 					$view = new ent_view('app://backend/template/partials/breadcrumbs.inc.php');

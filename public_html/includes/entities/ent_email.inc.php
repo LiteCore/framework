@@ -42,7 +42,7 @@
 
 		public function load($id) {
 
-			if (!preg_match('#^[0-9]+$#', $id)) {
+			if (!preg_match('#^\d+$#', $id)) {
 				throw new Exception('Invalid email (ID: '. $id .')');
 			}
 
@@ -88,12 +88,12 @@
 				set status = '". (!empty($this->data['status']) ? database::input($this->data['status']) : 'draft') ."',
 					code = '". database::input($this->data['code']) ."',
 					reference = '". database::input($this->data['reference']) ."',
-					sender = '". database::input(json_encode($this->data['sender'], JSON_UNESCAPED_SLASHES)) ."',
-					recipients = '". database::input(json_encode($this->data['recipients'], JSON_UNESCAPED_SLASHES)) ."',
-					ccs = '". database::input(json_encode($this->data['ccs'], JSON_UNESCAPED_SLASHES)) ."',
-					bccs = '". database::input(json_encode($this->data['bccs'], JSON_UNESCAPED_SLASHES)) ."',
+					sender = '". database::input(f::format_json($this->data['sender'])) ."',
+					recipients = '". database::input(f::format_json($this->data['recipients'])) ."',
+					ccs = '". database::input(f::format_json($this->data['ccs'])) ."',
+					bccs = '". database::input(f::format_json($this->data['bccs'])) ."',
 					subject = '". database::input($this->data['subject']) ."',
-					multiparts = '". database::input(json_encode($this->data['multiparts'], JSON_UNESCAPED_SLASHES), true) ."',
+					multiparts = '". database::input(f::format_json($this->data['multiparts'])) ."',
 					language_code = '". database::input($this->data['language_code']) ."',
 					scheduled_at = ". (!empty($this->data['scheduled_at']) ? "'". database::input($this->data['scheduled_at']) ."'" : "null") .",
 					sent_at = ". (!empty($this->data['sent_at']) ? "'". database::input($this->data['sent_at']) ."'" : "null") .",
@@ -102,8 +102,6 @@
 			);
 
 			$this->previous = $this->data;
-
-			$this->cleanup();
 
 			cache::clear_cache('email');
 		}
@@ -117,7 +115,7 @@
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)){
+			if (!f::validate_email($email)){
 				throw new Exception('Invalid email address ('. $email .')');
 			}
 
@@ -160,7 +158,7 @@
 			// Convert all line endings to RFC standard \r\n
 			$content = preg_replace('#\r\n?|\n#', "\r\n", $content);
 
-			$view = new ent_view('app://frontend/templates/'.settings::get('template').'/layouts/email.inc.php');
+			$view = new ent_view('app://frontend/template/layouts/email.inc.php');
 
 			$view->snippets = [
 				'content' => $content,
@@ -188,7 +186,7 @@
 			$data = $parse_as_string ? $file : file_get_contents($file);
 
 			if ($parse_as_string) {
-				$tmp_file = functions::file_create_tempfile();
+				$tmp_file = f::file_create_tempfile();
 				file_put_contents($tmp_file, $data);
 				$mime_type = mime_content_type($tmp_file);
 			} else {
@@ -216,7 +214,7 @@
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)) {
+			if (!f::validate_email($email)) {
 				throw new Exception('Invalid email address ('. $email .')');
 			}
 
@@ -237,7 +235,7 @@
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)) {
+			if (!f::validate_email($email)) {
 				throw new Exception('Invalid email address ('. $email .')');
 			}
 
@@ -258,7 +256,7 @@
 			$email = trim(preg_replace('#^.*\s<([^>]+)>$#', '$1', $email));
 			$name = trim(preg_replace('#(\R|\t|%0A|%0D)*#', '', $name));
 
-			if (!functions::validate_email($email)) {
+			if (!f::validate_email($email)) {
 				throw new Exception('Invalid email address ('. $email .')');
 			}
 
@@ -277,17 +275,6 @@
 			}
 
 			return mb_encode_mimeheader($contact['name']) .' <'. $contact['email'] .'>';
-		}
-
-		public function cleanup($time_ago='-30 days') {
-
-			database::query(
-				"delete from ". DB_TABLE_PREFIX ."emails
-				where status in ('sent', 'error')
-				and updated_at < '". date('Y-m-d H:i:s', strtotime($time_ago)) ."';"
-			);
-
-			cache::clear_cache('email');
 		}
 
 		public function queue($scheduled, $code=null) {
@@ -476,6 +463,17 @@
 			);
 
 			$this->reset();
+
+			cache::clear_cache('email');
+		}
+
+		public function cleanup($time_ago='-30 days') {
+
+			database::query(
+				"delete from ". DB_TABLE_PREFIX ."emails
+				where status in ('sent', 'error')
+				and updated_at < '". date('Y-m-d H:i:s', strtotime($time_ago)) ."';"
+			);
 
 			cache::clear_cache('email');
 		}

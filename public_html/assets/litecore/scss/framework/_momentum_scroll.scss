@@ -1,0 +1,42 @@
+[data-toggle="momentum-scroll"] {
+	position: relative;
+
+	.scroll-content {
+		padding: var(--gutter-x) var(--gutter-x);
+		overflow: hidden;
+		user-select: none;
+		touch-action: pan-x;
+		cursor: grab;
+
+		&::-webkit-scrollbar {
+			height: 0.5em;
+
+			* {
+				background: transparent;
+			}
+
+			&-thumb {
+				background: rgb(0 0 0 / 25%) !important;
+				border-radius: 6px;
+			}
+		}
+	}
+
+	button[name="left"],
+	button[name="right"] {
+		position: absolute;
+		top: 40%;
+		width: 3em;
+		height: 3em;
+		border-radius: var(--border-radius);
+		padding: 0;
+
+		&[name="left"] {
+			inset-inline-start: 1em;
+		}
+
+		&[name="right"] {
+			inset-inline-end: 1em;
+		}
+	}
+}

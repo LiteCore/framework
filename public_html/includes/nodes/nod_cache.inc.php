@@ -60,6 +60,8 @@
 			}
 		}
 
+		## Node specific methods
+
 		public static function token($keyword, $dependencies=[], $storage='memory', $ttl=900) {
 
 			if (!in_array($storage, ['file', 'memory'])) {
@@ -144,7 +146,7 @@
 						break;
 
 					case 'webpath':
-						$hash_string .= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+						$hash_string .= strtok($_SERVER['REQUEST_URI'], '?');
 						break;
 
 					default:
@@ -202,13 +204,12 @@
 							$token['storage'] = 'file';
 							stats::stop_watch('cache');
 							return self::get($token, $max_age, $force_cache);
-							break;
 					}
 
+					break;
+
 				default:
-
 					trigger_error('Invalid cache storage ('. $token['storage'] .')', E_USER_WARNING);
-
 					break;
 			}
 
@@ -239,7 +240,7 @@
 						}
 					}
 
-					return file_put_contents($cache_file, json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+					return file_put_contents($cache_file, f::format_json($data));
 
 				case 'memory':
 
@@ -361,11 +362,13 @@
 			}
 
 			if ($keyword) {
+
 				foreach (array_keys(self::$_data) as $token_id) {
 					if (strpos($keyword, $token_id) !== false) {
 						unset(self::$_data[$token_id]);
 					}
 				}
+
 			} else {
 				self::$_data = [];
 			}

@@ -50,8 +50,8 @@
 			'name' => $app['name'],
 			'link' => document::ilink($app['id'] .'/'. $app['default']),
 			'theme' => [
-				'icon' => !(empty($app['theme']['icon'])) ? $app['theme']['icon'] : 'icon-plus',
-				'color' => !(empty($app['theme']['color'])) ? $app['theme']['color'] : '#97a3b5',
+				'icon' => $app['theme']['icon'] ?? 'icon-plus',
+				'color' => $app['theme']['color'] ?? '#97a3b5',
 			],
 			'active' => (defined('__APP__') && __APP__ == $app['id']),
 			'menu' => [],
@@ -81,7 +81,7 @@
 				$app_item['menu'][] = [
 					'title' => $menu_item['title'],
 					'doc' => $menu_item['doc'],
-					'link' => document::ilink($app['id'] .'/'. $menu_item['doc'], fallback($menu_item['params'], [])),
+					'link' => document::ilink($app['id'] .'/'. $menu_item['doc'], $menu_item['params'] ?? []),
 					'active' => $selected,
 				];
 			}

@@ -1,10 +1,30 @@
 <?php
 
+
+	function format_json($data, $indent="\t") {
+
+		$json = json_encode($data, ($indent ? JSON_PRETTY_PRINT : 0) | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			throw new Exception('JSON encode error: '. json_last_error_msg());
+		}
+
+		if ($indent) {
+			$json = preg_replace_callback('#^( +)#m', function ($m) {
+				return str_repeat("\t", strlen($m[1]) / 4);
+			}, $json);
+		}
+
+		return $json;
+	}
+
 	function format_path_friendly($text, $language_code='') {
 
-		if (empty($text)) return '';
+		if (!$text) return '';
 
-		if (empty($language_code)) $language_code = language::$selected['code'];
+		if (!$language_code) {
+			$language_code = language::$selected['code'];
+		}
 
 		$text = strip_tags($text);  // Remove HTML tags
 		$text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');  // Decode special characters
@@ -125,14 +145,18 @@
 			$text = strtr($text, $characters);
 		}
 
-		// Strip non printable characters and symbols
-		$text = preg_replace(['#[[:cntrl:]]+#', '#&(amp;)?#', '#[!"\#$%\'()*+,./:;<=>?@\[\]\\^`{}|~]#'], '', $text);
+		// Remove all special characters except letters, numbers, spaces, hyphens, and underscores
+		$text = preg_replace('#[^\p{L}\p{N}\p{Han}\p{Hiragana}\p{Katakana}\-–—_ ]+#u', '', $text);
 
-		// Underscores and dashes
-		$text = trim(preg_replace('#[-_ ]+#', '-', $text), '-');
+		// Replace spaces, hyphens, and underscores
+		$text = trim(preg_replace('#[\-–—_ ]+#', '-', $text), '-');
 
 		// Convert to lowercases
 		$text = mb_strtolower($text);
 
 		return $text;
+	}
+
+	function format_number($number, $decimals=0) {
+		return language::number_format($number, $decimals);
 	}

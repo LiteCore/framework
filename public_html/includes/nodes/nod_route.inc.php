@@ -14,7 +14,7 @@
 			self::$request = self::strip_url_logic($_SERVER['REQUEST_URI']);
 
 			// Load cached links (URL rewrites)
-			self::$_links_cache_token = cache::token('links', ['site', 'endpoint', 'language'], 'file', 900);
+			self::$_links_cache_token = cache::token('links', ['site', 'endpoint', 'language'], 'memory', 900);
 
 			if (!self::$_links_cache = cache::get(self::$_links_cache_token)) {
 				self::$_links_cache = [];
@@ -43,9 +43,8 @@
 					limit 1;"
 				);
 
-				http_response_code($redirect['http_response_code']);
 				header('X-Redirect-Id: '. $redirect['id']);
-				redirect(preg_replace("'$redirect[pattern]'", $redirect['destination'], $requested_url)); // MySQL regex wrapper ''
+				redirect(preg_replace("'$redirect[pattern]'", $redirect['destination'], $requested_url), $redirect['http_response_code']); // MySQL regex wrapper ''
 				exit;
 			}
 
@@ -56,11 +55,11 @@
 			cache::set(self::$_links_cache_token, self::$_links_cache);
 		}
 
-		######################################################################
+		## Node specific methods
 
 		public static function load($pattern) {
 
-			foreach (functions::file_search($pattern) as $file) {
+			foreach (f::file_search($pattern) as $file) {
 
 				$routes = include $file;
 				if (!$routes) continue;
@@ -101,12 +100,12 @@
 
 			self::$_routes[] = [
 				'resource' => $resource,
-				'patterns' => fallback($route['patterns'], ''),
-				'endpoint' => fallback($route['endpoint'], 'frontend'),
-				'controller' => fallback($route['controller']),
-				'params' => fallback($route['params'], []),
-				'options' => fallback($route['options'], []),
-				'rewrite' => fallback($route['rewrite']),
+				'patterns' => $route['patterns'] ?? '',
+				'endpoint' => $route['endpoint'] ?? 'frontend',
+				'controller' => $route['controller'] ?? null,
+				'params' => $route['params'] ?? [],
+				'options' => $route['options'] ?? [],
+				'rewrite' => $route['rewrite'] ?? null,
 			];
 		}
 
@@ -124,7 +123,7 @@
 						// Resolve resource logic
 						if (preg_match('#\*#', $route['resource'])) {
 							$route['resource'] = preg_replace_callback('#^([a-z]:).*$#', function($matches){
-								return fallback($matches[1], 'f:') . preg_replace('#^'. trim(preg_quote(BACKEND_ALIAS, '#'), '/') .'/#', '', parse_url(self::$request, PHP_URL_PATH));
+								return ($matches[1] ?? 'f:') . preg_replace('#^'. trim(preg_quote(BACKEND_ALIAS, '#'), '/') .'/#', '', parse_url(self::$request, PHP_URL_PATH));
 							}, $route['resource']);
 						}
 
@@ -350,7 +349,7 @@
 			$link = new ent_link((string)$path);
 
 			if ($path === null && $inherit_params === null) {
-				$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+				$path = strtok($_SERVER['REQUEST_URI'], '?');
 				$inherit_params = true;
 			}
 

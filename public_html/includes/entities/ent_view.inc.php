@@ -13,15 +13,15 @@
 			if ($view) {
 
 				// Absolute path
-				if (preg_match('#^app://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
+				if (preg_match('#^(app|storage)://#', $view) || preg_match('#^([a-zA-Z]:)?/#', $view)) {
 					$this->view = $view;
 
 				// Relative path
 				} else {
-					// Fall back to relative path
 					$this->view = 'app://'. route::$selected['endpoint'] .'/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
 				}
 
+				// Use default view if not found
 				if (!is_file($this->view)) {
 					$this->view = 'app://frontend/template/'. $view;
 				}
@@ -75,7 +75,7 @@
 
 				// Escape Special HTML Characters
 				if (in_array('escape', $modifiers)) {
-					$output = functions::escape_html($output);
+					$output = f::escape_html($output);
 				}
 
 				return $output;
@@ -93,7 +93,7 @@
 
 			// Parser for Fonticons: {{fonticon "key"}}
 			$this->register_parser('fonticon "([^\"]+)"', function($matches) {
-				return functions::draw_fonticon($matches[1]);
+				return f::draw_fonticon($matches[1]);
 			});
 
 			// Parser for Includes: {{include "path/to/file.tpl"}}
@@ -114,7 +114,7 @@
 				$view->snippets = $this->snippets;
 				$view->snippets[$matches[2]] = $this->snippets[$matches[1]];
 
-				return $view->stitch();
+				return $view->render();
 			});
 
 			// Parser for If conditions: {if $var} {/if}
@@ -149,7 +149,6 @@
 
 				// Relative path
 				} else {
-					// Fall back to relative path
 					$this->view = 'app://'. route::$selected['endpoint'] .'/template/' . preg_replace('#\.inc\.php$#', '', $view) . '.inc.php';
 				}
 
