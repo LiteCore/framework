@@ -2,15 +2,13 @@
 
 	document::$title[] = t('title_scan_translations', 'Scan Translations');
 
+	breadcrumbs::add(t('title_localization', 'Localization'));
 	breadcrumbs::add(t('title_translations', 'Translations'), document::ilink('translations'));
 	breadcrumbs::add(t('title_scan_translations', 'Scan Translations'), document::ilink());
 
 	if (!empty($_POST['scan'])) {
 
 		ob_start();
-
-		$dir_iterator = new RecursiveDirectoryIterator('app:///'); // Root needs an additional / with RecursiveDirectoryIterator
-		$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
 		$files = 0;
 		$found = 0;
@@ -19,17 +17,16 @@
 		$translation_keys = [];
 		$orphan = [];
 
-		foreach ($iterator as $file) {
+		foreach (f::file_search('app://**/*.php') as $file) {
 
 			if (!preg_match('#\.php$#', $file)) continue;
-			if (!preg_match('#^app://(vendor|storage)/#', $file)) continue;
+			if (preg_match('#^app://(vendor|storage)/#', $file)) continue;
 
 			$files++;
 			$contents = file_get_contents($file);
 
 			$regexp = [
-				't\((?:(?!\$)',
-				'language::translate\((?:(?!\$)',
+				'(?:language::translate|(?<=[\s;(])t)\((?:(?!\$)',
 				'(?:(__CLASS__)?\.)?',
 				'(?:[\'"])([^\'"]+)(?:[\'"])',
 				'(?:,?\s+(?:[\'"])([^\'"]+)?(?:[\'"]))?',
@@ -128,14 +125,21 @@
 
 		cache::clear_cache('translations');
 
-		notices::add('notices', strtr(t('text_found_d_translations', 'Found {count} translations in {files} files'), ['{count}' => $found, '{files}' => $files]));
+		notices::add('notices', strtr(t('text_found_d_translations', 'Found {n} translations in {files} files'), [
+			'{n}' => $found,
+			'{files}' => $files
+		]));
 
 		if ($new_translations) {
-			notices::add('notices', strtr(t('text_added_d_new_translations', 'Added {count} new translations'), ['{count}' => $new_translations]));
+			notices::add('notices', strtr(t('text_added_d_new_translations', 'Added {n} new translations'), [
+				'{n}' => $new_translations
+			]));
 		}
 
 		if ($updated) {
-			notices::add('notices', strtr(t('text_updated_d_translations', 'Updated {count} translations'), ['{count}' => $updated]));
+			notices::add('notices', strtr(t('text_updated_d_translations', 'Updated {n} translations'), [
+				'{n}' => $updated
+			]));
 		}
 	}
 
@@ -155,7 +159,9 @@
 				);
 			}
 
-			notices::add('success', strtr(t('text_deleted_d_translations', 'Deleted {count} translations'), ['{count}' => count($_POST['translations'])]));
+			notices::add('success', strtr(t('text_deleted_d_translations', 'Deleted {n} translations'), [
+				'{n}' => count($_POST['translations'])
+			]));
 
 		} catch (Exception $e) {
 			notices::add('errors', $e->getMessage());
@@ -166,6 +172,7 @@
 pre {
 	white-space: pre-line;
 }
+
 table.data-table td {
 	white-space: normal;
 }
@@ -181,15 +188,15 @@ table.data-table td {
 	<div class="card-body">
 		<div class="grid">
 			<div class="col-md-4">
-				<?php echo functions::form_begin('scan_form', 'post'); ?>
+				<?php echo f::form_begin('scan_form', 'post'); ?>
 
 					<p><?php echo t('description_scan_for_translations', 'This will scan your files for translations. New translations will be added to the database.'); ?></p>
 
-					<p><label><?php echo functions::form_checkbox('update', ['1', t('text_update_empty_translations', 'Update empty translations if applicable')]); ?></label></p>
+					<p><label><?php echo f::form_checkbox('update', ['1', t('text_update_empty_translations', 'Update empty translations if applicable')]); ?></label></p>
 
-					<p><?php echo functions::form_button('scan', t('title_scan', 'Scan'), 'submit'); ?></p>
+					<p><?php echo f::form_button('scan', t('title_scan', 'Scan'), 'submit'); ?></p>
 
-				<?php echo functions::form_end(); ?>
+				<?php echo f::form_end(); ?>
 
 				<?php if (!empty($_POST['scan'])) { ?>
 				<pre id="log">
@@ -203,12 +210,12 @@ table.data-table td {
 
 				<h2><?php echo t('title_orphan_translations', 'Orphan Translations'); ?></h2>
 
-					<?php echo functions::form_begin('scan_form', 'post'); ?>
+					<?php echo f::form_begin('scan_form', 'post'); ?>
 
 					<table class="table data-table">
 						<thead>
 							<tr>
-								<th><?php echo functions::draw_fonticon('icon-square-check checkbox-toggle', 'data-toggle="checkbox-toggle"'); ?></th>
+								<th><?php echo f::draw_fonticon('icon-square-check checkbox-toggle', 'data-toggle="checkbox-toggle"'); ?></th>
 								<th><?php echo t('title_code', 'Code'); ?></th>
 								<th><?php echo t('title_translation', 'Translation'); ?></th>
 							</tr>
@@ -217,7 +224,7 @@ table.data-table td {
 						<tbody>
 							<?php foreach ($orphan as $row) { ?>
 							<tr>
-								<td><?php echo functions::form_checkbox('translations[]', $row['code'], true); ?></td>
+								<td><?php echo f::form_checkbox('translations[]', $row['code'], true); ?></td>
 								<td><?php echo $row['code']; ?></td>
 								<td><?php echo (mb_strlen($row['text_'.language::$selected['code']]) > 100) ? mb_substr($row['text_'.language::$selected['code']], 0, 100) . '...' : $row['text_'.language::$selected['code']]; ?></td>
 							</tr>
@@ -226,10 +233,10 @@ table.data-table td {
 					</table>
 
 					<div class="btn-group">
-						<?php echo functions::form_button_predefined('delete'); ?>
+						<?php echo f::form_button_predefined('delete'); ?>
 					</div>
 
-				<?php echo functions::form_end(); ?>
+				<?php echo f::form_end(); ?>
 
 			</div>
 			<?php } ?>

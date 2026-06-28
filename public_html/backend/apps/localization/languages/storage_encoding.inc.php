@@ -2,6 +2,7 @@
 
 	document::$title[] = t('title_storage_encoding', 'Storage Encoding');
 
+	breadcrumbs::add(t('title_localization', 'Localization'));
 	breadcrumbs::add(t('title_languages', 'Languages'), document::ilink(__APP__.'/languages'));
 	breadcrumbs::add(t('title_storage_encoding', 'Storage Encoding'), document::ilink());
 
@@ -41,22 +42,17 @@
 
 			foreach ($_POST['tables'] as $table) {
 				if (!in_array($table, $table_names)) {
-					throw new Exception(strtr(t('error_unknown_table_x', 'Unknown table ({table})'), [
+					throw new Exception(strtr(t('error_unknown_table_x', 'Unknown table "{table}"'), [
 						'{table}' => $table
 					]));
 				}
 			}
 
-			// Start transaction in case we need to rollback
-			database::query(
-				"start transaction;"
-			);
-
 			// Collect foreign keys, then drop them
 			$foreign_keys = [];
 
 			foreach ($_POST['tables'] as $table) {
-				$foreign_keys_query = database::query(
+				database::query(
 					"select
 						`TABLE_NAME`,
 						`CONSTRAINT_NAME`,
@@ -67,16 +63,14 @@
 					where TABLE_SCHEMA = '". DB_DATABASE ."'
 					and TABLE_NAME = '". database::input($table) ."'
 					and REFERENCED_TABLE_NAME is not null;"
-				);
-
-				while ($foreign_key = database::fetch($foreign_keys_query)) {
+				)->each(function($row) use (&$foreign_keys) {
 					$foreign_keys[] = $foreign_key;
 
 					database::query(
 						"alter table `". DB_DATABASE ."`.`". database::input($table) ."`
 						drop foreign key `". $foreign_key['CONSTRAINT_NAME'] ."`;"
 					);
-				}
+				});
 			}
 
 
@@ -117,22 +111,11 @@
 				);
 			}
 
-			// Commit the transaction
-			database::query(
-				"commit;"
-			);
-
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
 			reload();
 			exit;
 
 		} catch (Exception $e) {
-
-			// Rollback the transaction
-			database::query(
-				"rollback;"
-			);
-
 			notices::add('errors', $e->getMessage());
 		}
 	}
@@ -148,11 +131,11 @@
 		</div>
 	</div>
 
-	<?php echo functions::form_begin('mysql_collation_form', 'post'); ?>
+	<?php echo f::form_begin('mysql_collation_form', 'post'); ?>
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th><?php echo f::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th class="main"><?php echo t('title_table', 'Table'); ?></th>
 					<th><?php echo t('title_collation', 'Collation'); ?></th>
 					<th><?php echo t('title_engine', 'Engine'); ?></th>
@@ -162,7 +145,7 @@
 			<tbody>
 				<?php foreach ($tables as $table) { ?>
 				<tr>
-					<td><?php echo functions::form_checkbox('tables[]', $table['TABLE_NAME'], true); ?></td>
+					<td><?php echo f::form_checkbox('tables[]', $table['TABLE_NAME'], true); ?></td>
 					<td><?php echo $table['TABLE_NAME']; ?></td>
 					<td><?php echo $table['TABLE_COLLATION']; ?></td>
 					<td><?php echo $table['ENGINE']; ?></td>
@@ -173,7 +156,7 @@
 			<tfoot>
 				<tr>
 					<td colspan="99">
-						<?php echo t('title_tables', 'Tables'); ?>: <?php echo language::number_format($num_rows); ?>
+						<?php echo t('title_tables', 'Tables'); ?>: <?php echo f::format_number($num_rows); ?>
 					</td>
 				</tr>
 			</tfoot>
@@ -183,25 +166,25 @@
 			<div style="width: 640px;">
 				<label class="form-group">
 					<div class="form-label"><?php echo t('title_collation', 'Collation'); ?></div>
-					<?php echo functions::form_select_mysql_collation('collation', true); ?>
+					<?php echo f::form_select_mysql_collation('collation', true); ?>
 				</label>
 
 				<div class="form-group">
-					<?php echo functions::form_checkbox('set_database_default', ['1', t('text_also_set_as_database_default', 'Also set as database default (when new tables are created)')], true); ?>
+					<?php echo f::form_checkbox('set_database_default', ['1', t('text_also_set_as_database_default', 'Also set as database default (when new tables are created)')], true); ?>
 				</div>
 
 				<label class="form-group">
 					<div class="form-label"><?php echo t('title_engine', 'Engine'); ?></div>
-					<?php echo functions::form_select_mysql_engine('engine', true); ?>
+					<?php echo f::form_select_mysql_engine('engine', true); ?>
 				</label>
 			</div>
 
 			<p><?php echo t('description_set_mysql_collation', 'This will recursively convert the charset and collation for all selected database tables and belonging columns.'); ?></p>
 
 			<div class="btn-group">
-				<?php echo functions::form_button('convert', t('title_convert', 'Convert'), 'submit'); ?>
+				<?php echo f::form_button('convert', t('title_convert', 'Convert'), 'submit'); ?>
 			</div>
 		</div>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 </div>

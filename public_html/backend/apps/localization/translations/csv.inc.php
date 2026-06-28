@@ -2,9 +2,10 @@
 
 	document::$title[] = t('title_import_export_csv', 'Import/Export CSV');
 
+	breadcrumbs::add(t('title_localization', 'Localization'));
 	breadcrumbs::add(t('title_import_export_csv', 'Import/Export CSV'), document::ilink());
 
-	$collections = include __DIR__.'/collections.inc.php';
+	$collections = include 'app://backend/apps/localization/translations/collections.inc.php';
 
 	if (isset($_POST['import'])) {
 
@@ -20,7 +21,7 @@
 
 			$csv = file_get_contents($_FILES['file']['tmp_name']);
 
-			if (!$csv = functions::csv_decode($csv, $_POST['delimiter'], $_POST['enclosure'], $_POST['escapechar'], $_POST['charset'])) {
+			if (!$csv = f::csv_decode($csv, $_POST['delimiter'], $_POST['enclosure'], $_POST['escapechar'], $_POST['charset'])) {
 				throw new Exception(t('error_failed_decoding_csv', 'Failed decoding CSV'));
 			}
 
@@ -48,7 +49,7 @@
 			foreach ($csv as $row) {
 				$line++;
 
-				if (preg_match('#^\[([a-z_]+):([0-9]+)\](.*)$#', $row['code'], $matches)) {
+				if (preg_match('#^\[([a-z_]+):(\d+)\](.*)$#', $row['code'], $matches)) {
 
 					if (!$collection = $collections[array_search($matches[1], array_column($collections, 'entity'))]) {
 						throw new Exception('Unsupported entity on line '.$line);
@@ -105,7 +106,7 @@
 
 							database::query(
 								"update ". DB_TABLE_PREFIX ."translations
-								set `text_". database::input($language_code) ."` = '". database::input($row[$language_code], true) ."'
+								set `text_". database::identifier($language_code) ."` = '". database::input($row[$language_code], true) ."'
 								where code = '". database::input($row['code']) ."'
 								limit 1;"
 							);
@@ -142,8 +143,13 @@
 
 			cache::clear_cache();
 
-			notices::add($updated ? 'success' : 'notice', strtr(t('success_updated_n_existing_entries', 'Updated {n} existing entries'), ['{n}' => $updated]));
-			notices::add($inserted ? 'success' : 'notice', strtr(t('success_insert_n_new_entries', 'Inserted {n} new entries'), ['{n}' => $inserted]));
+			notices::add($updated ? 'success' : 'notice', strtr(t('success_updated_n_existing_entries', 'Updated {n} existing entries'), [
+				'{n}' => $updated
+			]));
+
+			notices::add($inserted ? 'success' : 'notice', strtr(t('success_insert_n_new_entries', 'Inserted {n} new entries'), [
+				'{n}' => $inserted
+			]));
 
 			reload();
 			exit;
@@ -167,10 +173,21 @@
 
 			$_POST['language_codes'] = array_filter($_POST['language_codes']);
 
+			// AC-5, AC-6: validate codes against configured allowlist before
+			// they are spliced into backtick-quoted column identifiers below.
+			$allowed_language_codes = array_keys(language::$languages);
+			foreach ($_POST['language_codes'] as $_lang_code) {
+				try {
+					database::identifier($_lang_code, $allowed_language_codes);
+				} catch (InvalidArgumentException $e) {
+					throw new Exception('Invalid language code');
+				}
+			}
+
 			if (in_array('translations', $_POST['collections'])) {
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
-					". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_POST['language_codes'])) ."
+					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 					from ". DB_TABLE_PREFIX ."translations
 					where code not regexp '^(settings_group:|settings_key:|cm|job|om|ot|pm|sm)_'"
 				);
@@ -179,7 +196,7 @@
 			if (in_array('modules', $_POST['collections'])) {
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
-					". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_POST['language_codes'])) ."
+					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 					from ". DB_TABLE_PREFIX ."translations
 					where code regexp '^(cm|job|om|ot|pm|sm)_'"
 				);
@@ -188,7 +205,7 @@
 			if (in_array('setting_groups', $_POST['collections'])) {
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
-					". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_POST['language_codes'])) ."
+					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 					from ". DB_TABLE_PREFIX ."translations
 					where code regexp '^settings_group:'"
 				);
@@ -197,7 +214,7 @@
 			if (in_array('settings', $_POST['collections'])) {
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
-					". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_POST['language_codes'])) ."
+					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 					from ". DB_TABLE_PREFIX ."translations
 					where code regexp '^settings_key:'"
 				);
@@ -206,15 +223,16 @@
 			$union_select = function($id, $entity, $column) {
 				return (
 					"select '$entity' as entity, '1' as frontend, '1' as backend, concat('[". database::input($entity) ."', ':', id, ']". database::input($column) ."') as code, '' as updated_at,
-						coalesce(". implode(', ', array_map(function($language_code) use($column) { return "if(json_value(`". database::input($column) ."`, '$.". database::input($language_code) ."') regexp '<', 1, null)"; }, $_POST['language_codes'])) .", 0) as html,
-						". implode(', ', array_map(function($language_code) use($column) { return "json_value(`". $column ."`, '$.". database::input($language_code) ."') as `text_". database::input($language_code) ."`"; }, $_POST['language_codes'])) ."
+						coalesce(". implode(', ', f::array_each($_POST['language_codes'], fn($language_code) => "if(json_value(`". database::input($column) ."`, '$.". database::input($language_code) ."') regexp '<', 1, null)")) .", 0) as html,
+						". implode(', ', f::array_each($_POST['language_codes'], fn($language_code) => "json_value(`". $column ."`, '$.". database::input($language_code) ."') as `text_". database::identifier($language_code) ."`")) ."
 					from ". DB_TABLE_PREFIX . database::input($id)
 				);
 			};
 
 			foreach ($collections as $collection) {
+				if (empty($collection['translatable'])) continue;
 				if (empty($_GET['collections']) || in_array($collection['id'], $_GET['collections'])) {
-					foreach ($collection['columns'] as $column) {
+					foreach ($collection['translatable'] as $column) {
 						$sql_union[] = $union_select($collection['id'], $collection['entity'], $column);
 					}
 				}
@@ -243,25 +261,21 @@
 				header('Content-Type: text/plain; charset='. $_POST['charset']);
 			} else {
 				header('Content-Type: application/csv; charset='. $_POST['charset']);
-				header('Content-Disposition: attachment; filename=translations-'. implode('-', $_POST['language_codes']) .'.csv');
+				// language_codes have already been allowlisted above, so they
+				// are safe for the filename slot — but a whitelist filter here
+				// protects against a future refactor that re-orders validation.
+				$_filename_codes = preg_replace('#[^A-Za-z0-9_-]#', '', implode('-', $_POST['language_codes']));
+				header('Content-Disposition: attachment; filename=translations-'. $_filename_codes .'.csv');
 			}
 
-			switch($_POST['eol']) {
+			$eol = match($_POST['eol']) {
+				'Linux' => "\r",
+				'Mac' => "\n",
+				'Win' => "\r\n",
+				default => throw new Exception('Unsupported EOL character'),
+			};
 
-				case 'Linux':
-					echo functions::csv_encode($csv, $_POST['delimiter'], $_POST['enclosure'], $_POST['escapechar'], $_POST['charset'], "\r");
-					break;
-
-				case 'Mac':
-					echo functions::csv_encode($csv, $_POST['delimiter'], $_POST['enclosure'], $_POST['escapechar'], $_POST['charset'], "\n");
-					break;
-
-				case 'Win':
-				default:
-					echo functions::csv_encode($csv, $_POST['delimiter'], $_POST['enclosure'], $_POST['escapechar'], $_POST['charset'], "\r\n");
-					break;
-			}
-
+					echo f::csv_encode($csv, $_POST['delimiter'], $_POST['enclosure'], $_POST['escapechar'], $_POST['charset'], "\r\n");
 			exit;
 
 		} catch (Exception $e) {
@@ -281,28 +295,28 @@
 		<div class="grid" style="max-width: 980px;">
 
 			<div class="col-xl-6">
-				<?php echo functions::form_begin('import_form', 'post', '', true); ?>
+				<?php echo f::form_begin('import_form', 'post', '', true); ?>
 
 					<fieldset>
 						<legend><?php echo t('title_import', 'Import'); ?></legend>
 
 						<label class="form-group">
 							<div class="form-label"><?php echo t('title_csv_file', 'CSV File'); ?></div>
-							<?php echo functions::form_input_file('file', 'accept=".csv, .dsv, .tab, .tsv"'); ?></label>
+							<?php echo f::form_input_file('file', ['accept' => '.csv, .dsv, .tab, .tsv']); ?></label>
 						</label>
 
 						<div class="grid">
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_delimiter', 'Delimiter'); ?></div>
-									<?php echo functions::form_select('delimiter', ['' => t('title_auto', 'Auto') .' ('. t('text_default', 'default') .')', ',' => ',',  ';' => ';', "\t" => 'TAB', '|' => '|'], true); ?>
+									<?php echo f::form_select('delimiter', ['' => t('title_auto', 'Auto') .' ('. t('text_default', 'default') .')', ',' => ',',  ';' => ';', "\t" => 'TAB', '|' => '|'], true); ?>
 								</label>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_enclosure', 'Enclosure'); ?></div>
-									<?php echo functions::form_select('enclosure', ['"' => '" ('. t('text_default', 'default') .')'], true); ?>
+									<?php echo f::form_select('enclosure', ['"' => '" ('. t('text_default', 'default') .')'], true); ?>
 								</label>
 							</div>
 						</div>
@@ -311,62 +325,62 @@
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_escape_character', 'Escape Character'); ?></div>
-									<?php echo functions::form_select('escapechar', ['"' => '" ('. t('text_default', 'default') .')', '\\' => '\\'], true); ?>
+									<?php echo f::form_select('escapechar', ['"' => '" ('. t('text_default', 'default') .')', '\\' => '\\'], true); ?>
 								</label>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_charset', 'Charset'); ?></div>
-									<?php echo functions::form_select_encoding('charset', !empty($_POST['charset']) ? true : 'UTF-8'); ?>
+									<?php echo f::form_select_encoding('charset', !empty($_POST['charset']) ? true : 'UTF-8'); ?>
 								</label>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<?php echo functions::form_checkbox('insert', ['1', t('text_insert_new_entries', 'Insert new entries')], true); ?>
-							<?php echo functions::form_checkbox('overwrite', ['1', t('text_overwrite_existing_entries', 'Overwrite existing entries')], true); ?>
-							<?php echo functions::form_checkbox('append', ['1', t('text_append_missing_entries', 'Append missing entries')], true); ?>
+							<?php echo f::form_checkbox('insert', ['1', t('text_insert_new_entries', 'Insert new entries')], true); ?>
+							<?php echo f::form_checkbox('overwrite', ['1', t('text_overwrite_existing_entries', 'Overwrite existing entries')], true); ?>
+							<?php echo f::form_checkbox('append', ['1', t('text_append_missing_entries', 'Append missing entries')], true); ?>
 						</div>
 
 						<p>
 							<?php echo t('description_scan_before_importing_translations', 'It is recommended to always scan your installation for unregistered translations before performing an import or export.'); ?>
 						</p>
 
-						<?php echo functions::form_button('import', t('title_import', 'Import'), 'submit'); ?>
+						<?php echo f::form_button('import', t('title_import', 'Import'), 'submit'); ?>
 					</fieldset>
 
-				<?php echo functions::form_end(); ?>
+				<?php echo f::form_end(); ?>
 			</div>
 
 			<div class="col-xl-6">
-				<?php echo functions::form_begin('export_form', 'post'); ?>
+				<?php echo f::form_begin('export_form', 'post'); ?>
 
 					<fieldset>
 						<legend><?php echo t('title_export', 'Export'); ?></legend>
 
 							<label class="form-group">
 								<div class="form-label"><?php echo t('title_collections', 'Collections'); ?></div>
-								<?php echo functions::form_select('collections[]', array_map(function($c) { return [$c['id'], $c['name']]; }, $collections), true); ?>
+							<?php echo f::form_select('collections[]', f::array_each($collections, fn($collection) => [$collection['id'], $collection['name']]), true); ?>
 							</label>
 
 						<label class="form-group">
 							<div class="form-label"><?php echo t('title_languages', 'Languages'); ?></div>
-							<?php echo functions::form_select_language('language_codes[]', true); ?></label>
+							<?php echo f::form_select_language('language_codes[]', true); ?></label>
 						</label>
 
 						<div class="grid">
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_delimiter', 'Delimiter'); ?></div>
-									<?php echo functions::form_select('delimiter', [',' => ', ('. t('text_default', 'default') .')', ';' => ';', "\t" => 'TAB', '|' => '|'], true); ?>
+									<?php echo f::form_select('delimiter', [',' => ', ('. t('text_default', 'default') .')', ';' => ';', "\t" => 'TAB', '|' => '|'], true); ?>
 								</label>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_enclosure', 'Enclosure'); ?></div>
-									<?php echo functions::form_select('enclosure', ['"' => '" ('. t('text_default', 'default') .')'], true); ?>
+									<?php echo f::form_select('enclosure', ['"' => '" ('. t('text_default', 'default') .')'], true); ?>
 								</label>
 							</div>
 						</div>
@@ -375,14 +389,14 @@
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_escape_character', 'Escape Character'); ?></div>
-									<?php echo functions::form_select('escapechar', ['"' => '" ('. t('text_default', 'default') .')', '\\' => '\\'], true); ?>
+									<?php echo f::form_select('escapechar', ['"' => '" ('. t('text_default', 'default') .')', '\\' => '\\'], true); ?>
 								</label>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_charset', 'Charset'); ?></div>
-									<?php echo functions::form_select_encoding('charset', !empty($_POST['charset']) ? true : 'UTF-8'); ?>
+									<?php echo f::form_select_encoding('charset', !empty($_POST['charset']) ? true : 'UTF-8'); ?>
 								</label>
 							</div>
 						</div>
@@ -391,22 +405,22 @@
 							<div class="col-sm-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_line_ending', 'Line Ending'); ?></div>
-									<?php echo functions::form_select('eol', ['Win', 'Mac', 'Linux'], true); ?>
+									<?php echo f::form_select('eol', ['Win', 'Mac', 'Linux'], true); ?>
 								</label>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-group">
 									<div class="form-label"><?php echo t('title_output', 'Output'); ?></div>
-									<?php echo functions::form_select('output', ['screen' => t('title_screen', 'Screen'), 'file' => t('title_file', 'File')], true); ?>
+									<?php echo f::form_select('output', ['screen' => t('title_screen', 'Screen'), 'file' => t('title_file', 'File')], true); ?>
 								</label>
 							</div>
 						</div>
 
-						<?php echo functions::form_button('export', t('title_export', 'Export'), 'submit'); ?>
+						<?php echo f::form_button('export', t('title_export', 'Export'), 'submit'); ?>
 					</fieldset>
 
-				<?php echo functions::form_end(); ?>
+				<?php echo f::form_end(); ?>
 			</div>
 		</div>
 	</div>

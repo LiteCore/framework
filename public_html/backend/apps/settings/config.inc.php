@@ -2,6 +2,7 @@
 
 	$app_config = [
 		'name' => t('title_settings', 'Settings'),
+		'group' => 'system',
 		'default' => 'site_info',
 		'priority' => 0,
 

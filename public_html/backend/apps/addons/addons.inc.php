@@ -3,7 +3,10 @@
 	if (isset($_POST['enable']) || isset($_POST['disable'])) {
 
 		try {
-			if (empty($_POST['addons'])) throw new Exception(t('error_must_select_addons', 'You must select add-ons'));
+
+			if (empty($_POST['addons'])) {
+				throw new Exception(t('error_must_select_addons', 'You must select add-ons'));
+			}
 
 			foreach ($_POST['addons'] as $addon) {
 
@@ -21,7 +24,7 @@
 			}
 
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
-			reload();
+			redirect(document::ilink());
 			exit;
 
 		} catch (Exception $e) {
@@ -32,6 +35,7 @@
 	if (isset($_POST['delete'])) {
 
 		try {
+
 			if (empty($_POST['addons'])) {
 				throw new Exception(t('error_must_select_addons', 'You must select add-ons'));
 			}
@@ -42,11 +46,11 @@
 					throw new Exception(t('error_invalid_addon_folder', 'Invalid add-on folder'));
 				}
 
-				functions::file_delete('storage://addons/' . basename($addon) .'/');
+				f::file_delete('storage://addons/' . basename($addon) .'/');
 			}
 
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
-			reload();
+			redirect(document::ilink());
 			exit;
 
 		} catch (Exception $e) {
@@ -57,6 +61,7 @@
 	if (isset($_POST['upload'])) {
 
 		try {
+
 			if (!isset($_FILES['addon']['tmp_name']) || !is_uploaded_file($_FILES['addon']['tmp_name'])) {
 				throw new Exception(t('error_must_select_file_to_upload', 'You must select a file to upload'));
 			}
@@ -83,17 +88,17 @@
 			}
 
 			if (is_dir($folder)) {
-				functions::file_delete($folder);
+				f::file_delete($folder);
 			}
 
-			if (!$zip->extractTo(functions::file_realpath($folder))) {
+			if (!$zip->extractTo(f::file_realpath($folder))) {
 				throw new Exception('Failed extracting contents from ZIP archive');
 			}
 
 			$zip->close();
 
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
-			reload();
+			redirect(document::ilink());
 			exit;
 
 		} catch (Exception $e) {
@@ -102,12 +107,12 @@
 	}
 
 	// Installed add-ons
-	$installed_addons = preg_split('#[\r\n]+#', file_get_contents('storage://addons/.installed'), -1, PREG_SPLIT_NO_EMPTY);
+	$installed_addons = f::string_split(file_get_contents('storage://addons/.installed'), "\r\n");
 
 	// Table Rows
 	$addons = [];
 
-	foreach (functions::file_search('storage://addons/*/') as $folder) {
+	foreach (f::file_search('storage://addons/*/') as $folder) {
 
 		if (preg_match('#/.cache/#', $folder)) continue;
 
@@ -200,15 +205,15 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo functions::form_button_link(document::ilink(__APP__.'/edit_addon'), t('title_create_new_addon', 'Create New Add-on'), '', 'add'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_addon'), t('title_create_new_addon', 'Create New Add-on'), '', 'add'); ?>
 	</div>
 
-	<?php echo functions::form_begin('addon_form', 'post', '', true); ?>
+	<?php echo f::form_begin('addon_form', 'post', '', true); ?>
 
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th><?php echo f::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th></th>
 					<th class="main"><?php echo t('title_name', 'Name'); ?> / <?php echo t('title_version', 'Version'); ?></th>
 					<th><?php echo t('title_vmod_health', 'vMod Health'); ?></th>
@@ -221,26 +226,26 @@
 			<tbody>
 				<?php foreach ($addons as $addon) { ?>
 				<tr class="<?php echo $addon['status'] ? null : 'semi-transparent'; ?>">
-					<td><?php echo functions::form_checkbox('addons[]', $addon['id']); ?></td>
-					<td><?php echo functions::draw_fonticon($addon['status'] ? 'on' : 'off'); ?></td>
+					<td><?php echo f::form_checkbox('addons[]', $addon['id']); ?></td>
+					<td><?php echo f::draw_fonticon($addon['status'] ? 'on' : 'off'); ?></td>
 					<td><a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_addon', ['addon_id' => $addon['id']]); ?>"><?php echo $addon['name']; ?> / <?php echo $addon['version']; ?></a></td>
 					<td class="text-center">
 						<?php if (empty($addon['errors'])) { ?>
-						<span style="color: #8c4"><?php echo functions::draw_fonticon('ok'); ?> <?php echo t('title_ok', 'OK'); ?></span>
+						<span style="color: #8c4"><?php echo f::draw_fonticon('ok'); ?> <?php echo t('title_ok', 'OK'); ?></span>
 						<?php } else { ?>
-						<span style="color: #c00"><?php echo functions::draw_fonticon('warning'); ?> <?php echo t('title_fail', 'Fail'); ?></span>
+						<span style="color: #c00"><?php echo f::draw_fonticon('warning'); ?> <?php echo t('title_fail', 'Fail'); ?></span>
 						<?php } ?>
 					</td>
-					<td class="text-center"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/download', ['addon_id' => $addon['id']]); ?>" title="<?php echo t('title_download', 'Download'); ?>"><?php echo functions::draw_fonticon('icon-download'); ?> <?php echo t('title_download', 'Download'); ?></a></td>
+					<td class="text-center"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/download', ['addon_id' => $addon['id']]); ?>" title="<?php echo t('title_download', 'Download'); ?>"><?php echo f::draw_fonticon('icon-download'); ?> <?php echo t('title_download', 'Download'); ?></a></td>
 					<td></td>
-					<td><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_addon', ['addon_id' => $addon['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_addon', ['addon_id' => $addon['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo f::draw_fonticon('edit'); ?></a></td>
 				</tr>
 				<?php } ?>
 			</tbody>
 
 			<tfoot>
 				<tr>
-					<td colspan="7"><?php echo t('title_addons', 'Add-ons'); ?>: <?php echo language::number_format($num_rows); ?></td>
+					<td colspan="99"><?php echo t('title_addons', 'Add-ons'); ?>: <?php echo f::format_number($num_rows); ?></td>
 				</tr>
 			</tfoot>
 		</table>
@@ -254,12 +259,12 @@
 						<ul class="flex flex-columns">
 							<li>
 								<div class="btn-group">
-									<?php echo functions::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-									<?php echo functions::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+									<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
+									<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
 								</div>
 							</li>
 							<li>
-								<?php echo functions::form_button_predefined('delete'); ?>
+								<?php echo f::form_button('delete', t('title_delete', 'Delete'), 'submit', 'class="btn btn-danger" onclick="'. f::escape_html('if(!confirm("'. t('text_are_you_sure', 'Are you sure?') .'")) return false;') .'"', 'delete'); ?>
 							</li>
 						</ul>
 					</fieldset>
@@ -270,14 +275,14 @@
 					<legend><?php echo t('title_upload_new_addon', 'Upload a New Add-on'); ?>:</legend>
 
 					<div class="input-group">
-						<?php echo functions::form_input_file('addon', 'accept="application/zip,application/xml"'); ?>
-						<?php echo functions::form_button('upload', t('title_upload', 'Upload'), 'submit'); ?>
+						<?php echo f::form_input_file('addon', 'accept="application/zip,application/xml"'); ?>
+						<?php echo f::form_button('upload', t('title_upload', 'Upload'), 'submit'); ?>
 					</div>
 				</fieldset>
 			</div>
 		</div>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 </div>
 
 <script>

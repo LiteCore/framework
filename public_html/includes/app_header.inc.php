@@ -5,7 +5,13 @@
 	define('SCRIPT_TIMESTAMP_START', microtime(true));
 
 	// Get config
-	require __DIR__.'/../storage/config.inc.php';
+	if (!defined('FS_DIR_APP')) {
+		if (!file_exists(__DIR__ . '/../storage/config.inc.php')) {
+			redirect('./install/', 302);
+			exit;
+		}
+		require_once __DIR__ . '/../storage/config.inc.php';
+	}
 
 	// Capture output to buffer
 	ob_start(null, 0, PHP_OUTPUT_HANDLER_CLEANABLE | PHP_OUTPUT_HANDLER_REMOVABLE);
@@ -18,7 +24,7 @@
 	stream_wrapper_register('storage', 'stream_storage');
 
 	// Virtual Modification System
-	require FS_DIR_APP .'includes/nodes/nod_vmod.inc.php';
+	require_once FS_DIR_APP .'includes/nodes/nod_vmod.inc.php';
 	vmod::init();
 
 	// Compatibility and Polyfills

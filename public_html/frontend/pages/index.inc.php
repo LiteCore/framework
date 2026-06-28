@@ -64,15 +64,15 @@ code::before {
 
 				<div class="card-body">
 					<ul class="list list-unstyled">
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Folder Structure</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> PHP Framework</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Web Frontend</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Web Backend</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> HTML Template</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> LESS & CSS Framework</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> Font Icon Kit</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> jQuery 4</li>
-						<li><?php echo functions::draw_fonticon('icon-check iconfx-shadow'); ?> vMod Ready</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> Folder Structure</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> PHP Framework</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> Web Frontend</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> Web Backend</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> HTML Template</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> LESS & CSS Framework</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> Font Icon Kit</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> jQuery 4</li>
+						<li><?php echo f::draw_fonticon('icon-check iconfx-shadow'); ?> vMod Ready</li>
 					</ul>
 				</div>
 

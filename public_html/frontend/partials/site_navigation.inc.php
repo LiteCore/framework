@@ -58,7 +58,7 @@
 
 		if (!empty($item['subitems'])) {
 			return implode(PHP_EOL, [
-				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'navbar-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
+				'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'navbar-item') .' dropdown'. (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. f::escape_attr($item['id']) .'"' : '') .'>',
 				'	<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">',
 				'		'. $item['name'],
 				!empty($item['badge']) ? '   <div class="badge">'. $item['badge'] .'</div>' : '',
@@ -71,8 +71,8 @@
 		}
 
 		return implode(PHP_EOL, [
-			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'navbar-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. functions::escape_attr($item['id']) .'"' : '') .'>',
-			'	<a class="nav-link" href="'. functions::escape_attr($item['link']) .'">',
+			'<li class="'. ($is_dropdown_item ? 'dropdown-item' : 'navbar-item') . (!empty($item['hidden-xs']) ? ' hidden-xs' : '') .'"'. (!empty($item['id']) ? ' data-id="'. f::escape_attr($item['id']) .'"' : '') .'>',
+			'	<a class="nav-link" href="'. f::escape_attr($item['link']) .'">',
 			'		'. $item['name'],
 			!empty($item['badge']) ? '		<div class="badge">'. $item['badge'] .'</div>' : '',
 			'	</a>',
@@ -102,7 +102,7 @@
 		<div id="offcanvas" class="offcanvas">
 			<div class="offcanvas-header">
 				<div class="offcanvas-title"><?php echo settings::get('site_name'); ?></div>
-				<button type="button" class="btn btn-default" data-toggle="dismiss"><?php echo functions::draw_fonticon('icon-times'); ?></button>
+				<button type="button" class="btn btn-default" data-toggle="dismiss"><?php echo f::draw_fonticon('icon-times'); ?></button>
 			</div>
 
 			<div class="offcanvas-body">

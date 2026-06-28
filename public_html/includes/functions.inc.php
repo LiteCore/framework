@@ -1,29 +1,5 @@
 <?php
 
-	// Short hand command for dumping variables to output and exiting
-	function x(&...$arrays) {
-
-		foreach ($arrays as $array) {
-			var_dump($array);
-		}
-
-		exit(1);
-	}
-
-	function backtrace() {
-
-		$trace = debug_backtrace();
-		$caller = array_shift($trace);
-
-		echo $caller['file'] .' on line '. $caller['line'];
-
-		foreach ($trace as $caller) {
-			echo "\n". $caller['file'] .' on line '. $caller['line'];
-		}
-
-		exit(1);
-	}
-
 	// Output any variable to the browser console
 	function console_dump(...$vars) { // ... as of PHP 5.6
 
@@ -44,8 +20,8 @@
 	}
 
 	// Return the first non-nil variable
-	function coalesce(&...$args) { // ... as of PHP 5.6
-		foreach ($args as $arg) {
+	function coalesce() {
+		foreach (func_get_args() as $arg) {
 			if (!nil($arg)) return $arg;
 		}
 	}

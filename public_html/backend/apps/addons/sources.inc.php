@@ -20,21 +20,19 @@
 			'#^storage/#',
 		];
 
-		$files = functions::file_search('app://' . $_GET['pattern'] .'*', GLOB_BRACE);
+		$files = f::file_search(FS_DIR_APP . $_GET['pattern'], GLOB_BRACE);
 
 		foreach ($files as $file) {
-
-			$relative_path = preg_replace('#^app://#', '', $file);
+			$relative_path = f::file_relative_path($file);
 
 			foreach ($skip_list as $pattern) {
 				if (preg_match($pattern, $relative_path)) continue 2;
 			}
 
-			$results[$relative_path] = file_get_contents($file);
+			$results[f::file_relative_path($file)] = file_get_contents($file);
 		}
 
 	} catch (Exception $e) {
-		http_response_code(500);
 		$results = [];
 	}
 

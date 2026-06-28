@@ -1,241 +1,233 @@
 <?php
 
-  if (!empty($_GET['third_party_id'])) {
-    $third_party = new ent_third_party($_GET['third_party_id']);
-  } else {
-    $third_party = new ent_third_party();
-  }
+	if (!empty($_GET['third_party_id'])) {
+		$third_party = new ent_third_party($_GET['third_party_id']);
+	} else {
+		$third_party = new ent_third_party();
+	}
 
-  if (!$_POST) {
-    $_POST = $third_party->data;
-  }
+	document::$title[] = !empty($third_party->data['id']) ? t('title_edit_third_party', 'Edit Third Party') : t('title_create_new_third_party', 'Create New Third Party');
 
-  breadcrumbs::add(!empty($third_party->data['id']) ? t('title_edit_third_party', 'Edit Third Party') : t('title_create_new_third_party', 'Create New Third Party'));
+	breadcrumbs::add(t('title_webtools', 'Webtools'));
+	breadcrumbs::add(t('title_third_parties', 'Third Parties'), document::ilink(__APP__.'/third_parties'));
+	breadcrumbs::add(!empty($third_party->data['id']) ? t('title_edit_third_party', 'Edit Third Party') : t('title_create_new_third_party', 'Create New Third Party'));
 
-  if (isset($_POST['save'])) {
+	if (!$_POST) {
+		$_POST = $third_party->data;
+	}
 
-    try {
+	if (isset($_POST['save'])) {
 
-      if (empty($_POST['privacy_classes'])) {
-        throw new Exception(t('error_must_provide_cookie_type', 'You must provide a cookie type'));
-      }
+		try {
 
-      if (empty($_POST['name'])) {
-        throw new Exception(t('error_must_provide_name', 'You must provide a name'));
-      }
+			if (empty($_POST['privacy_classes'])) {
+				throw new Exception(t('error_must_provide_cookie_type', 'You must provide a cookie type'));
+			}
 
-      foreach ([
-        'status',
-        'privacy_classes',
-        'name',
-        'description',
-        'collected_data',
-        'purposes',
-        'country_code',
-        'homepage',
-        'cookie_policy_url',
-        'privacy_policy_url',
-        'opt_out_url',
-        'do_not_sell_url',
-      ] as $field) {
-        if (isset($_POST[$field])) {
-          $third_party->data[$field] = $_POST[$field];
-        }
-      }
+			if (empty($_POST['name'])) {
+				throw new Exception(t('error_must_provide_name', 'You must provide a name'));
+			}
 
-      $third_party->save();
+			foreach ([
+				'status',
+				'privacy_classes',
+				'name',
+				'description',
+				'collected_data',
+				'purposes',
+				'country_code',
+				'homepage',
+				'cookie_policy_url',
+				'privacy_policy_url',
+				'opt_out_url',
+				'do_not_sell_url',
+			] as $field) {
+				if (isset($_POST[$field])) {
+					$third_party->data[$field] = $_POST[$field];
+				}
+			}
 
-      notices::add('success', t('success_changes_saved', 'Changes saved'));
-      redirect(document::ilink(__APP__.'/third_parties'));
-      exit;
+			$third_party->save();
 
-    } catch (Exception $e) {
-      notices::add('errors', $e->getMessage());
-    }
-  }
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::ilink(__APP__.'/third_parties'), 303);
+			exit;
 
-  if (isset($_POST['delete'])) {
+		} catch (Exception $e) {
+			notices::add('errors', $e->getMessage());
+		}
+	}
 
-    try {
+	if (isset($_POST['delete'])) {
 
-      if (empty($third_party->data['id'])) {
-        throw new Exception(t('error_must_provide_third_party', 'You must provide a third party'));
-      }
+		try {
 
-      $third_party->delete();
+			if (empty($third_party->data['id'])) {
+				throw new Exception(t('error_must_provide_third_party', 'You must provide a third party'));
+			}
 
-      notices::add('success', t('success_changes_saved', 'Changes saved'));
-      redirect(document::link(__APP__.'/third_parties'));
-      exit;
+			$third_party->delete();
 
-    } catch (Exception $e) {
-      notices::add('errors', $e->getMessage());
-    }
-  }
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			redirect(document::link(__APP__.'/third_parties'), 303);
+			exit;
 
-  $privacy_classes_options = [
+		} catch (Exception $e) {
+			notices::add('errors', $e->getMessage());
+		}
+	}
+
+	$privacy_classes_options = [
 		'necessary' => t('title_necessary', 'Necessary'),
 		'functionality' => t('title_functionality', 'Functionality'),
 		'personalization' => t('title_personalization', 'Personalization'),
+		'security' => t('title_security', 'Security'),
 		'measurement' => t('title_measurement', 'Measurement'),
 		'marketing' => t('title_marketing', 'Marketing'),
-		'security' => t('title_security', 'Security'),
-  ];
+	];
 ?>
 <style>
 .data-collected label {
-  display: block;
+	display: block;
 }
 </style>
 
 <div class="card">
-  <div class="card-header">
-    <div class="card-title">
-      <?php echo $app_icon; ?> <?php echo !empty($third_party->data['id']) ? t('title_edit_third_party', 'Edit Third Party') : t('title_create_new_third_party', 'Create New Third Party'); ?>
-    </div>
-  </div>
+	<div class="card-header">
+		<div class="card-title">
+			<?php echo $app_icon; ?> <?php echo !empty($third_party->data['id']) ? t('title_edit_third_party', 'Edit Third Party') : t('title_create_new_third_party', 'Create New Third Party'); ?>
+		</div>
+	</div>
 
-  <div class="card-body">
-    <?php echo functions::form_begin('third_party_form', 'post', false, false, 'autocomplete="off" style="max-width: 960px;"'); ?>
+	<div class="card-body">
+		<?php echo f::form_begin('third_party_form', 'post', false, false, ['autocomplete' => 'off', 'style' => 'max-width: 720px;']); ?>
 
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label><?php echo t('title_status', 'Status'); ?></label>
-            <?php echo functions::form_toggle('status', 'e/d', true); ?>
-          </div>
-        </div>
+			<div class="grid">
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="form-label"><?php echo t('title_status', 'Status'); ?></div>
+						<?php echo f::form_toggle('status', 'e/d', true); ?>
+					</div>
+				</div>
 
-        <div class="col-md-6">
-          <div class="form-group">
-            <label><?php echo t('title_name', 'Name'); ?></label>
-            <?php echo functions::form_input_text('name', true, 'required'); ?>
-          </div>
-        </div>
-      </div>
+				<div class="col-md-6">
+					<label class="form-group">
+						<div class="form-label"><?php echo t('title_name', 'Name'); ?></div>
+						<?php echo f::form_input_text('name', true, ['required' => '']); ?>
+					</label>
+				</div>
+			</div>
 
-      <div class="form-group">
-        <label><?php echo t('title_privacy_classes', 'Privacy Classes'); ?></label>
-        <?php echo functions::form_select('privacy_classes[]', $privacy_classes_options, true); ?>
-      </div>
+			<label class="form-group">
+				<div class="form-label"><?php echo t('title_privacy_classes', 'Privacy Classes'); ?></div>
+				<?php echo f::form_select('privacy_classes[]', $privacy_classes_options, true); ?>
+			</label>
 
-      <nav class="tabs">
-        <?php foreach (language::$languages as $language) { ?>
-        <a class="tab-item<?php if ($language['code'] == language::$selected['code']) echo ' active'; ?>" data-toggle="tab" href="#<?php echo $language['code']; ?>"><?php echo $language['name']; ?></a>
-        <?php } ?>
-      </nav>
+			<nav class="tabs">
+				<?php foreach (language::$languages as $language) { ?>
+				<a class="tab-item<?php if ($language['code'] == language::$selected['code']) echo ' active'; ?>" data-toggle="tab" href="#<?php echo $language['code']; ?>"><?php echo $language['name']; ?></a>
+				<?php } ?>
+			</nav>
 
-      <div class="tab-content">
+			<div class="tab-contents">
 
-        <?php foreach (array_keys(language::$languages) as $language_code) { ?>
-        <div id="<?php echo $language_code; ?>" class="tab-pane<?php if ($language_code == language::$selected['code']) echo ' active'; ?>">
+				<?php foreach (array_keys(language::$languages) as $language_code) { ?>
+				<div id="<?php echo $language_code; ?>" class="tab-pane<?php if ($language_code == language::$selected['code']) echo ' active'; ?>">
 
-          <div class="form-group">
-            <label><?php echo t('title_description', 'Description'); ?></label>
-            <?php echo functions::form_regional_wysiwyg('description['. $language_code .']', $language_code, true); ?>
-          </div>
+					<div class="form-group">
+						<div class="form-label"><?php echo t('title_description', 'Description'); ?></div>
+						<?php echo f::form_regional_wysiwyg('description['. $language_code .']', $language_code, true); ?>
+					</div>
 
-          <div class="form-group">
-            <label><?php echo t('title_collected_data', 'Collected Data'); ?></label>
-            <?php echo functions::form_regional_textarea('collected_data['. $language_code .']', $language_code, true); ?>
-          </div>
+					<label class="form-group">
+						<div class="form-label"><?php echo t('title_collected_data', 'Collected Data'); ?></div>
+						<?php echo f::form_regional_textarea('collected_data['. $language_code .']', $language_code, true); ?>
+					</label>
 
-          <div class="form-group">
-            <label><?php echo t('title_purposes', 'Purposes'); ?></label>
-            <?php echo functions::form_regional_textarea('purposes['. $language_code .']', $language_code, true); ?>
-          </div>
+					<label class="form-group">
+						<div class="form-label"><?php echo t('title_purposes', 'Purposes'); ?></div>
+						<?php echo f::form_regional_textarea('purposes['. $language_code .']', $language_code, true); ?>
+					</label>
 
-        </div>
-        <?php } ?>
-      </div>
+				</div>
+				<?php } ?>
+			</div>
 
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label><?php echo t('title_country_of_juristiction', 'Country of Juristiction'); ?></label>
-            <?php echo function_exists('form_select_country') ? functions::form_select_country('country_code', true) : functions::form_input_text('country_code', true, 'pattern="[A-Z]{2}" placeholder="Example: US"'); ?>
-          </div>
-        </div>
+			<div class="grid">
+				<div class="col-md-6">
+					<label class="form-group">
+						<div class="form-label"><?php echo t('title_country_of_juristiction', 'Country of Juristiction'); ?></div>
+						<?php echo f::form_select_country('country_code', true); ?>
+					</label>
+				</div>
 
-        <div class="col-md-6">
-          <div class="form-group">
-            <label><?php echo t('title_homepage', 'Homepage'); ?></label>
-            <?php echo functions::form_input_url('homepage', true, 'placeholder="https://..."'); ?>
-          </div>
-        </div>
-      </div>
+				<div class="col-md-6">
+					<label class="form-group">
+						<div class="form-label"><?php echo t('title_homepage', 'Homepage'); ?></div>
+						<?php echo f::form_input_url('homepage', true, ['placeholder' => 'https://...']); ?>
+					</label>
+				</div>
+			</div>
 
-      <div class="form-group">
-        <label><?php echo t('title_third_policy', 'Cookie Policy'); ?></label>
-        <?php echo functions::form_input_url('cookie_policy_url', true, 'placeholder="https://..."'); ?>
-      </div>
+			<label class="form-group">
+				<div class="form-label"><?php echo t('title_third_policy', 'Cookie Policy'); ?></div>
+				<?php echo f::form_input_url('cookie_policy_url', true, ['placeholder' => 'https://...']); ?>
+			</label>
 
-      <div class="form-group">
-        <label><?php echo t('title_privacy_policy', 'Privacy Policy'); ?></label>
-        <?php echo functions::form_input_url('privacy_policy_url', true, 'placeholder="https://..."'); ?>
-      </div>
+			<label class="form-group">
+				<div class="form-label"><?php echo t('title_privacy_policy', 'Privacy Policy'); ?></div>
+				<?php echo f::form_input_url('privacy_policy_url', true, ['placeholder' => 'https://...']); ?>
+			</label>
 
-      <div class="form-group">
-        <label><?php echo t('title_opt_out', 'Opt Out'); ?></label>
-        <?php echo functions::form_input_url('opt_out_url', true, 'placeholder="https://..."'); ?>
-      </div>
+			<label class="form-group">
+				<div class="form-label"><?php echo t('title_opt_out', 'Opt Out'); ?></div>
+				<?php echo f::form_input_url('opt_out_url', true, ['placeholder' => 'https://...']); ?>
+			</label>
 
-      <div class="form-group">
-        <label><?php echo t('title_do_not_sell', 'Do Not Sell'); ?></label>
-        <?php echo functions::form_input_url('do_not_sell_url', true, 'placeholder="https://..."'); ?>
-      </div>
+			<label class="form-group">
+				<div class="form-label"><?php echo t('title_do_not_sell', 'Do Not Sell'); ?></div>
+				<?php echo f::form_input_url('do_not_sell_url', true, ['placeholder' => 'https://...']); ?>
+			</label>
 
-      <div class="card-action">
-				<?php echo functions::form_button_predefined('save'); ?>
-				<?php echo (!empty($third_party->data['id'])) ? functions::form_button_predefined('delete') : ''; ?>
-				<?php echo functions::form_button_predefined('cancel'); ?>
-      </div>
+			<div class="card-action">
+				<?php echo f::form_button_predefined('save'); ?>
+				<?php echo (!empty($third_party->data['id'])) ? f::form_button_predefined('delete') : ''; ?>
+				<?php echo f::form_button_predefined('cancel'); ?>
+			</div>
 
-    <?php echo functions::form_end(); ?>
+		<?php echo f::form_end(); ?>
 
-    <?php if (!empty($third_party->data['id'])) { ?>
-    <div class="form-control" style="white-space: pre-line; filter: invert(.9);">
-    <?php echo functions::escape_html(implode(PHP_EOL, [
-      '<script type="application/privacy-script" data-privacy-class="..." data-third-party-id="'. $third_party->data['id'] .'">',
-      '  alert("Hello world");',
-      '</script>',
-    ])); ?>
-    </div>
+		<?php if (!empty($third_party->data['id'])) { ?>
+		<div class="form-code" style="min-height: unset;">
+		<?php echo f::escape_html(implode(PHP_EOL, [
+			'<script type="application/x-privacy-script" data-privacy-class="..." data-third-party-id="'. $third_party->data['id'] .'">',
+			'  ...',
+			'</script>',
+		])); ?>
+		</div>
 
-    <div class="form-control" style="white-space: pre-line; filter: invert(.9);">
-    <?php echo functions::escape_html(implode(PHP_EOL, [
-      '<script type="application/privacy-content" data-privacy-class="functional|experience|measuring|marketing" data-third-party-id="'. $third_party->data['id'] .'">',
-      '<![CDATA[',
-      '  <iframe>...</iframe>',
-      ']]>',
-      '</script>',
-    ])); ?>
-    </div>
+		<div class="form-code" style="min-height: unset;">
+		<?php echo f::escape_html(implode(PHP_EOL, [
+			'<script type="application/x-privacy-content" data-privacy-class="functional|personalization|security|measurement|marketing" data-third-party-id="'. $third_party->data['id'] .'">',
+			'<![CDATA[',
+			'  <iframe>...</iframe>',
+			']]>',
+			'</script>',
+		])); ?>
+		</div>
 
-    <div class="form-control" style="white-space: pre-line; filter: invert(.9);">
-    <?php echo functions::escape_html(implode(PHP_EOL, [
-      '<div class="require-consent" data-privacy-class="functional|experience|measuring|marketing" data-third-party-id="'. $third_party->data['id'] .'" data-content="&lt;iframe src=&quot;...&quot;&gt;&lt;/iframe&gt;"></div>',
-    ])); ?>
-    </div>
-
-    <div class="form-control" style="white-space: pre-line; filter: invert(.9);">
-    <?php echo functions::escape_html(implode(PHP_EOL, [
-      '<script>',
-      '  $(document).ready(function(){',
-      '    if (hasPrivacyConsent(\'functional|experience|measuring|marketing\', '. $third_party->data['id'] .')) {',
-      '      ...',
-      '    }',
-      '  });',
-      '</script>',
-    ])); ?>
-    </div>
-    <?php } ?>
-  </div>
+		<div class="form-code" style="min-height: unset;">
+		<?php echo f::escape_html(implode(PHP_EOL, [
+			'<div class="require-consent" data-privacy-class="functional|personalization|security|measurement|marketing" data-third-party-id="'. $third_party->data['id'] .'" data-content="&lt;iframe src=&quot;...&quot;&gt;&lt;/iframe&gt;"></div>',
+		])); ?>
+		</div>
+		<?php } ?>
+	</div>
 </div>
 
 <script>
-  $(':input[name^="purpose"]').on('input', function(e){
-    var language_code = $(this).attr('name').match(/\[(.*)\]$/)[1];
-    $('.tabs a[href="#'+language_code+'"]').css('opacity', $(this).val() ? 1 : .5);
-  }).trigger('input');
+	$(':input[name^="purpose"]').on('input', function(e){
+		var language_code = $(this).attr('name').match(/\[(.*)\]$/)[1];
+		$('.nav-tabs a[href="#'+language_code+'"]').css('opacity', $(this).val() ? 1 : .5);
+	}).trigger('input');
 </script>

@@ -109,22 +109,22 @@ table tbody .toggle {
 	</div>
 
 	<div class="card-action">
-		<?php echo functions::form_button_link(document::ilink(__APP__.'/edit_page'), t('title_create_new_page', 'Create New Page'), '', 'add'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_page'), t('title_create_new_page', 'Create New Page'), '', 'add'); ?>
 	</div>
 
-	<?php echo functions::form_begin('search_form', 'get'); ?>
+	<?php echo f::form_begin('search_form', 'get'); ?>
 		<div class="card-filter">
-			<div class="expandable"><?php echo functions::form_input_search('query', true, 'placeholder="'. t('text_search_phrase_or_keyword', 'Search phrase or keyword').'"'); ?></div>
-			<?php echo functions::form_button('filter', t('title_search', 'Search'), 'submit'); ?>
+			<div class="expandable"><?php echo f::form_input_search('query', true, 'placeholder="'. t('text_search_phrase_or_keyword', 'Search phrase or keyword').'"'); ?></div>
+			<?php echo f::form_button('filter', t('title_search', 'Search'), 'submit'); ?>
 		</div>
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 
-	<?php echo functions::form_begin('pages_form', 'post'); ?>
+	<?php echo f::form_begin('pages_form', 'post'); ?>
 
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th><?php echo f::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th></th>
 					<th><?php echo t('title_id', 'ID'); ?></th>
 					<th class="main" style="padding-inline-start: 30px;"><?php echo t('title_title', 'Title'); ?></th>
@@ -158,11 +158,11 @@ table tbody .toggle {
 
 ?>
 				<tr class="<?php echo empty($page['status']) ? 'semi-transparent' : ''; ?>">
-					<td><?php echo functions::form_checkbox('pages[]', $page['id']); ?></td>
-					<td><?php echo functions::draw_fonticon($page['status'] ? 'on' : 'off'); ?></td>
+					<td><?php echo f::form_checkbox('pages[]', $page['id']); ?></td>
+					<td><?php echo f::draw_fonticon($page['status'] ? 'on' : 'off'); ?></td>
 					<td><?php echo $page['id']; ?></td>
-					<td><?php echo functions::draw_fonticon('icon-file-o'); ?> <a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>"><?php echo $page['title']; ?></a></td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td><?php echo f::draw_fonticon('icon-file-o'); ?> <a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>"><?php echo $page['title']; ?></a></td>
+					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo f::draw_fonticon('edit'); ?></a></td>
 				</tr>
 <?php
 		}
@@ -194,11 +194,11 @@ table tbody .toggle {
 				if ($page['num_subpages']) {
 					if (!in_array($page['id'], $_GET['expanded'])) {
 						$expanded = array_merge($_GET['expanded'], [$page['id']]);
-						$icon = '<a class="toggle" href="'. document::href_ilink(null, ['expanded' => $expanded], true) .'">'. functions::draw_fonticon('icon-plus-square-o') . '</a>';
+						$icon = '<a class="toggle" href="'. document::href_ilink(null, ['expanded' => $expanded], true) .'">'. f::draw_fonticon('icon-plus-square-o') . '</a>';
 
 					} else {
 						$expanded = array_diff($_GET['expanded'], [$page['id']]);
-						$icon = '<a class="toggle" href="'. document::href_ilink(null, ['expanded' => $expanded], true) .'">'. functions::draw_fonticon('icon-minus-square-o') .'</a>';
+						$icon = '<a class="toggle" href="'. document::href_ilink(null, ['expanded' => $expanded], true) .'">'. f::draw_fonticon('icon-minus-square-o') .'</a>';
 					}
 
 				} else {
@@ -206,14 +206,14 @@ table tbody .toggle {
 				}
 ?>
 				<tr class="<?php echo empty($page['status']) ? 'semi-transparent' : ''; ?>">
-					<td><?php echo functions::form_checkbox('pages[]', $page['id']); ?></td>
-					<td><?php echo functions::draw_fonticon($page['status'] ? 'on' : 'off'); ?></td>
+					<td><?php echo f::form_checkbox('pages[]', $page['id']); ?></td>
+					<td><?php echo f::draw_fonticon($page['status'] ? 'on' : 'off'); ?></td>
 					<td><?php echo $page['id']; ?></td>
 					<td style="padding-inline-start: <?php echo $depth * 30; ?>px">
 						<?php echo $icon; ?>
 						<a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>"><?php echo $page['title']; ?></a>
 					</td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_page', ['page_id' => $page['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo f::draw_fonticon('edit'); ?></a></td>
 				</tr>
 <?php
 				if (in_array($page['id'], $_GET['expanded'])) {
@@ -248,29 +248,29 @@ table tbody .toggle {
 				<ul class="flex flex-columns">
 					<li>
 						<div class="btn-group">
-							<?php echo functions::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-							<?php echo functions::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+							<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
+							<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
 						</div>
 					</li>
 					<li>
-						<?php echo functions::form_select_page('page_id', true); ?>
+						<?php echo f::form_select_page('page_id', true); ?>
 					</li>
 					<li>
-						<?php echo functions::form_button('move', t('title_move', 'Move'), 'submit', 'onclick="if (!confirm(\''. str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) .'\')) return false;"'); ?>
+						<?php echo f::form_button('move', t('title_move', 'Move'), 'submit', 'onclick="if (!confirm(\''. str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) .'\')) return false;"'); ?>
 					</li>
 					<li>
-						<?php echo functions::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(\''. str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) .'\')) return false;"'); ?>
+						<?php echo f::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(\''. str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) .'\')) return false;"'); ?>
 					</li>
 				</ul>
 			</fieldset>
 		</div>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 
 
 	<?php if ($num_pages > 1) { ?>
 	<div class="card-footer">
-		<?php echo functions::draw_pagination($num_pages); ?>
+		<?php echo f::draw_pagination($num_pages); ?>
 	</div>
 	<?php } ?>
 </div>

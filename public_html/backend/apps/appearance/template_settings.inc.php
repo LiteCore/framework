@@ -3,8 +3,8 @@
 	document::$title[] = t('title_template_settings', 'Template Settings');
 
 	breadcrumbs::add(t('title_appearance', 'Appearance'));
-	breadcrumbs::add(t('title_template', 'Template'), document::ilink('appearance/template'));
-	breadcrumbs::add(t('title_template_settings', 'Template Settings'));
+	breadcrumbs::add(t('title_template', 'Template'), document::ilink(__APP__.'/template'));
+	breadcrumbs::add(t('title_template_settings', 'Template Settings'), document::ilink());
 
 	// Get template settings structure
 	$settings = include 'app://frontend/template/config.inc.php';
@@ -23,7 +23,7 @@
 			case (substr($setting['function'], 0, 8) == 'regional'):
 
 				foreach (array_keys(language::$languages) as $language_code) {
-					if (isset($saved_settings[$setting['key']][$language_code])) {
+					if (array_key_exists($setting['key'], $saved_settings) && array_key_exists($language_code, $saved_settings[$setting['key']])) {
 						$settings[$key]['value'][$language_code] = $saved_settings[$setting['key']][$language_code];
 					} else {
 						$settings[$key]['value'][$language_code] = $saved_settings[$setting['key']]['en'] ?? $setting['default_value'];
@@ -34,7 +34,7 @@
 
 			default:
 
-				if (isset($saved_settings[$setting['key']])) {
+				if (array_key_exists($setting['key'], $saved_settings)) {
 					$settings[$key]['value'] = $saved_settings[$setting['key']];
 				} else {
 					$settings[$key]['value'] = $setting['default_value'];
@@ -57,18 +57,12 @@
 			$new_settings = [];
 
 			foreach ($settings as $setting) {
-				$new_settings[$setting['key']] = $setting['value'];
-			}
-
-			foreach (array_keys($_POST['settings']) as $key) {
-				if (isset($new_settings[$key])) {
-					$new_settings[$key] = $_POST['settings'][$key];
-				}
+				$new_settings[$setting['key']] = $_POST['settings'][$setting['key']] ?? $setting['value'];
 			}
 
 			database::query(
 				"update ". DB_TABLE_PREFIX ."settings
-				set `value` = '". database::input(json_encode($new_settings, JSON_UNESCAPED_SLASHES)) ."',
+				set `value` = '". database::input(f::format_json($new_settings)) ."',
 					updated_at = '". date('Y-m-d H:i:s') ."'
 				where `key` = 'template_settings'
 				limit 1;"
@@ -76,7 +70,7 @@
 
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
 
-			redirect(document::ilink(null, [], true, ['action']));
+			redirect(document::ilink(null, [], true, ['action']), 303);
 			exit;
 
 		} catch (Exception $e) {
@@ -126,51 +120,34 @@
 		</div>
 	</div>
 
-	<?php echo functions::form_begin('template_settings_form', 'post'); ?>
+	<?php echo f::form_begin('template_settings_form', 'post'); ?>
 
 		<table class="table data-table">
-			<thead>
-				<tr>
-					<th style="width: 50%;"><?php echo t('title_key', 'Key'); ?></th>
-					<th><?php echo t('title_value', 'Value'); ?></th>
-					<th></th>
-				</tr>
-			</thead>
-
 			<tbody>
 				<?php foreach ($settings as $setting) { ?>
-				<?php if (isset($_GET['action']) && $_GET['action'] == 'edit' && $_GET['key'] == $setting['key']) { ?>
 				<tr>
 					<td style="white-space: normal;">
 						<u><?php echo t(settings::get('template').':title_'.$setting['key'], $setting['title']); ?></u><br>
 						<?php echo t(settings::get('template').':description_'.$setting['key'], $setting['description']); ?>
 					</td>
-					<td><?php echo functions::form_function('settings['.$setting['key'].']', $setting['function'], true); ?></td>
-					<td class="text-end">
-						<?php echo functions::form_button_predefined('save'); ?>
-						<?php echo functions::form_button_predefined('cancel'); ?>
-					</td>
+					<td><?php echo f::form_function('settings['.$setting['key'].']', $setting['function'], true); ?></td>
+
 				</tr>
-				<?php } else { ?>
-				<tr>
-					<td><?php echo t(settings::get('template').':title_'.$setting['key'], $setting['title']); ?></td>
-					<td>
-						<div style="max-height: 200px; overflow-y: auto;">
-							<?php echo nl2br($setting['value']); ?>
-						</div>
-					</td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink('appearance/template_settings', ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
-				</tr>
-				<?php } ?>
 				<?php } ?>
 
 				<?php if (!$settings) { ?>
 				<tr>
-					<td colspan="3"><?php echo t('text_no_frontend_template_settings', 'There are no settings available for the frontend template.'); ?></td>
+					<td colspan="99">
+						<?php echo t('text_no_frontend_template_settings', 'There are no settings available for the frontend template.'); ?>
+					</td>
 				</tr>
 				<?php } ?>
 			</tbody>
 		</table>
 
-	<?php echo functions::form_end(); ?>
+		<div class="card-action">
+			<?php echo f::form_button_predefined('save'); ?>
+		</div>
+
+	<?php echo f::form_end(); ?>
 </div>

@@ -2,6 +2,7 @@
 
 	return [
 		'name' => t('title_administrators', 'Administrators'),
+		'group' => 'system',
 		'default' => 'administrators',
 		'priority' => 0,
 

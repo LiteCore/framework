@@ -8,12 +8,16 @@
 			throw new Exception('Nothing to search for');
 		}
 
-		$apps = functions::admin_get_apps();
+		$apps = f::admin_get_apps();
 		$app_themes = array_column($apps, 'theme', 'code');
 
 		$search_results = [];
 
 		foreach (array_column($apps, 'search_results', 'id') as $app => $file) {
+
+			// Skip apps the administrator doesn't have access to.
+			// Empty apps map = unrestricted; non-empty = restricted to listed apps.
+			if (!empty(administrator::$data['permissions']['apps']) && empty(administrator::$data['permissions']['apps'][$app]['status'])) continue;
 
 			$results = (function($app, $file, $query) {
 				return include 'app://backend/apps/' . $app .'/' . $file;
@@ -37,5 +41,5 @@
 	}
 
 	header('Content-Type: application/json; charset='. mb_http_output());
-	echo json_encode($search_results, JSON_UNESCAPED_SLASHES);
+	echo f::format_json($search_results);
 	exit;

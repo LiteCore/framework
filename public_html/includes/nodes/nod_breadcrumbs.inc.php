@@ -4,38 +4,32 @@
 
 		public static $data = [];
 
-		public static function init() {
+		public static function init(): void {
 		}
 
 		## Node specific methods
 
-		public static function reset() {
+		public static function reset(): void {
 			self::$data = [];
 		}
 
-		public static function add($title, $link='') {
+		public static function add(string $title, ?string $link=''): void {
 			self::$data[] = [
 				'title' => $title,
 				'link' => ($link === true) ? document::link() : $link,
 			];
 		}
 
-		public static function render() {
+		public static function render(): string {
 
 			if (!count(self::$data)) {
 				return '';
 			}
 
-			switch (route::$selected['endpoint'] ?? null) {
-
-				case 'backend':
-					$view = new ent_view('app://backend/template/partials/breadcrumbs.inc.php');
-					break;
-
-				default:
-					$view = new ent_view('app://frontend/template/partials/breadcrumbs.inc.php');
-					break;
-			}
+			$view = match(route::$selected['endpoint'] ?? null) {
+				'backend' => new ent_view('app://backend/template/partials/breadcrumbs.inc.php'),
+				default => new ent_view('app://frontend/template/partials/breadcrumbs.inc.php'),
+			};
 
 			$view->snippets['breadcrumbs'] = self::$data;
 

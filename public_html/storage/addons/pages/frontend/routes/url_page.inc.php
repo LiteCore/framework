@@ -8,7 +8,7 @@
 			'options' => [
 				'redirect' => true,
 			],
-			'rewrite' => function(ent_link $link, $language_code) {
+			'rewrite' => function(type_url $link, $language_code) {
 
 				if (empty($link->query['page_id'])) return false;
 
@@ -17,7 +17,7 @@
 
 				if (empty($page)) return false;
 
-				$link->path = WS_DIR_APP .'pages/'. $page->id .'/'. functions::format_path_friendly($page->title, $language_code);
+				$link->path = WS_DIR_APP .'pages/'. $page->id .'/'. f::format_path_friendly($page->title, $language_code);
 				$link->unset_query('page_id');
 
 				return $link;

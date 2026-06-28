@@ -6,16 +6,11 @@
 
 	$module_id = basename($_GET['module_id']);
 
-	switch (true) {
-
-		case (preg_match('#^job_#', $module_id)):
-			$type = 'job';
-			$return_doc = 'jobs';
-			break;
-
-		default:
-			throw new Error('Unknown module type');
-	}
+	list($type, $return_doc) = match(true) {
+		str_starts_with($module_id, 'job_') => ['job', 'jobs'],
+		str_starts_with($module_id, 'tm_') => ['translation', 'translation'],
+		default => throw new Error('Unknown module type'),
+	};
 
 	$module = new ent_module($module_id);
 	$object = new $module_id();
@@ -35,13 +30,13 @@
 
 			foreach (array_keys($module->data['settings']) as $key) {
 				if (in_array($key, ['id', 'updated_at', 'created_at'])) continue;
-				$module->data['settings'][$key] = isset($_POST['settings'][$key]) ? $_POST['settings'][$key] : '';
+				$module->data['settings'][$key] = $_POST['settings'][$key] ?? '';
 			}
 
 			$module->save();
 
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
-			redirect(document::ilink(__APP__.'/'.$return_doc));
+			redirect(document::ilink(__APP__.'/'.$return_doc), 303);
 			exit;
 
 		} catch (Exception $e) {
@@ -55,7 +50,7 @@
 			$module->delete();
 
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
-			redirect(document::ilink(__APP__.'/'.$return_doc));
+			redirect(document::ilink(__APP__.'/'.$return_doc), 303);
 			exit;
 
 		} catch (Exception $e) {
@@ -89,7 +84,7 @@
 
 		<?php echo !empty($object->description) ? '<p style="max-width: 960px;">'. $object->description .'</p>' : ''; ?>
 
-		<?php echo functions::form_begin('module_form', 'post', false, false, 'autocomplete="off" style="max-width: 960px;"'); ?>
+		<?php echo f::form_begin('module_form', 'post', false, false, ['autocomplete' => 'off', 'style' => 'max-width: 960px;']); ?>
 
 			<table class="table">
 				<tbody>
@@ -102,9 +97,9 @@
 						<td style="width: 50%">
 							<?php
 								if (!empty($setting['multiple'])) {
-									echo functions::form_function('settings['.$setting['key'].'][]', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. functions::escape_attr($setting['placeholder']) .'"' : '');
+									echo f::form_function('settings['.$setting['key'].'][]', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. f::escape_attr($setting['placeholder']) .'"' : '');
 								} else {
-									echo functions::form_function('settings['.$setting['key'].']', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. functions::escape_attr($setting['placeholder']) .'"' : '');
+									echo f::form_function('settings['.$setting['key'].']', $setting['function'], true, !empty($setting['placeholder']) ? ' placeholder="'. f::escape_attr($setting['placeholder']) .'"' : '');
 								}
 							?>
 						</td>
@@ -122,12 +117,12 @@
 			</table>
 
 			<div class="card-action">
-				<?php echo functions::form_button_predefined('save'); ?>
-				<?php if (!empty($module->data['id'])) echo functions::form_button('uninstall', t('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete'); ?>
-				<?php echo functions::form_button_predefined('cancel'); ?>
+				<?php echo f::form_button_predefined('save'); ?>
+				<?php if (!empty($module->data['id'])) echo f::form_button('uninstall', t('title_uninstall', 'Uninstall'), 'submit', 'class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete'); ?>
+				<?php echo f::form_button_predefined('cancel'); ?>
 			</div>
 
-		<?php echo functions::form_end(); ?>
+		<?php echo f::form_end(); ?>
 
 		<?php if (!empty($module->data['last_log'])) { ?>
 		<div id="box-last-log">

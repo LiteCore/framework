@@ -1,22 +1,38 @@
 <?php
 
 
-	function draw_element($name, $parameters=[], $content='') {
 
-		$parameters = implode(' ', array_map(function($key, $value) {
+	function draw_element(string $tag, array $attributes=[], string $content=''): string {
 
-			if ($value == '') {
-				return $key;
-			} else {
-				return $key .'="'. f::escape_attr($value) .'"';
+		if (is_array($attributes)) {
+			$attributes = implode(' ', array_map(function($key, $value) {
+				if ($value == '') {
+					return $key;
+				} else {
+					return $key .'="'. f::escape_attr($value) .'"';
+				}
+			}, array_keys($attributes), $attributes));
+		}
+
+		if (in_array($tag, ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'])) {
+			if ($content) {
+				trigger_error('Self-closing tags should not have content', E_USER_WARNING);
 			}
+			return '<'. $tag . ($attributes ? ' '. $attributes : '') .'>';
+		}
 
-		}, array_keys($parameters, $parameters)));
+		if (preg_match('#^<[a-z]#i', $content, $m)) {
+			return implode(PHP_EOL, [
+				'<'. $tag . ($attributes ? ' '. $attributes : '') .'>',
+				'  '. $content,
+				'</'. $tag .'>',
+			]);
+		}
 
-		return '<'. $name . ($parameters ? ' ' . $parameters : '') .'>'. $content .'</'. $name .'>';
+		return '<'. $tag . ($attributes ? ' ' . $attributes : '') .'>'. $content .'</'. $tag .'>';
 	}
 
-	function draw_fonticon($icon, $parameters='') {
+	function draw_fonticon(string $icon, string $parameters=''): string {
 
 		if (!$icon) {
 			return '';
@@ -99,7 +115,7 @@
 			case 'true':        return draw_fonticon('icon-check', 'style="color: #8c4;"');
 			case 'user':        return draw_fonticon('icon-user', 'style="color: #888;"');
 			case 'warning':     return draw_fonticon('icon-exclamation-triangle', 'style="color: #c00;"');
-			default: trigger_error('Unknown font icon ('. $icon .')', E_USER_WARNING); return;
+			default: trigger_error('Unknown font icon ('. $icon .')', E_USER_WARNING); return false;
 		}
 	}
 
@@ -109,7 +125,7 @@
 			if (preg_match('#style="#', $parameters)) {
 				$parameters = preg_replace('#style="(.*?)"#', 'style="$1 aspect-ratio: '. f::image_aspect_ratio($width, $height) .';"', $parameters);
 			} else {
-				$parameters .= ' style="aspect-ratio: '. functions::image_aspect_ratio($width, $height) .';"';
+				$parameters .= ' style="aspect-ratio: '. f::image_aspect_ratio($width, $height) .';"';
 			}
 		}
 
@@ -150,41 +166,33 @@
 			$height = $entity->height;
 		}
 
+		$target_ratio = match($clipping) {
+			'product' => settings::get('product_image_ratio'),
+			'category' => settings::get('category_image_ratio'),
+			default => (new ent_image($image))->aspect_ratio
+		};
+
 		if (!$width) {
-			$aspect_ratio = (new ent_image($image))->aspect_ratio;
-			list($width, $height) = f::image_scale_by_height($height, $aspect_ratio);
+			[$width, $height] = f::image_scale_by_height($height, $target_ratio);
 		}
 
 		if (!$height) {
-			$aspect_ratio = (new ent_image($image))->aspect_ratio;
-			list($width, $height) = f::image_scale_by_width($width, $aspect_ratio);
+			[$width, $height] = f::image_scale_by_height($width, $target_ratio);
 		}
 
 		if (empty($aspect_ratio)) {
 			$aspect_ratio = f::image_aspect_ratio($width, $height);
 		}
 
-		switch (strtolower($clipping)) {
+		$clipping = match(strtolower($clipping)) {
+			'' => '',
+			'fit' => 'fit',
+			'crop' => 'crop',
+			default => trigger_error('Invalid clipping mode ('. $clipping .')', E_USER_WARNING),
+		};
 
-			case '':
-				$clipping = '';
-				break;
-
-			case 'fit':
-				$clipping = 'fit';
-				break;
-
-			case 'crop':
-				$clipping = 'crop';
-				break;
-
-			default:
-				trigger_error('Invalid clipping mode ('. $clipping .')', E_USER_WARNING);
-				break;
-		}
-
-		$thumbnail = f::image_thumbnail($image, $width, $height, $clipping);
-		$thumbnail_2x = f::image_thumbnail($image, $width*2, $height*2, $clipping);
+		$thumbnail = f::image_thumbnail($image, $width, $height);
+		$thumbnail_2x = f::image_thumbnail($image, $width*2, $height*2);
 
 		if ($width && $height) {
 			if (preg_match('#style="#', $parameters)) {
@@ -194,10 +202,10 @@
 			}
 		}
 
-		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="thumbnail '. functions::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($thumbnail) .'" srcset="'. document::href_rlink($thumbnail) .' 1x, '. document::href_rlink($thumbnail_2x) .' 2x"'. ($parameters ? ' '. $parameters : '') .'>';
+		return '<img '. (!preg_match('#class="([^"]+)?"#', $parameters) ? ' class="thumbnail '. f::escape_attr($clipping) .'"' : '') .' src="'. document::href_rlink($thumbnail) .'" srcset="'. document::href_rlink($thumbnail) .' 1x, '. document::href_rlink($thumbnail_2x) .' 2x"'. ($parameters ? ' '. $parameters : '') .'>';
 	}
 
-	function draw_lightbox($selector='', $parameters=[]) {
+	function draw_lightbox(string $selector='', array $parameters=[]): void {
 
 		if (!$selector && !$parameters) return;
 
@@ -245,7 +253,7 @@
 		document::add_script($js, 'litebox-'. $selector);
 	}
 
-	function draw_pagination($pages) {
+	function draw_pagination(int $pages): string|false {
 
 		$pages = ceil($pages);
 
@@ -330,8 +338,8 @@
 		return (string)$pagination;
 	}
 
-	// ??????????????? 25%
-	function draw_progress_bar($progress, $width=15) {
+	// ▮▮▮▯▯▯▯▯▯▯▯▯▯▯▯ 25%
+	function draw_progress_bar(float $progress, int $width=15): string {
 		$percentage = floor($progress);
 		return str_pad(str_repeat("\u{25AE}", floor(($width / 100) * $percentage)), $width, "\u{25AF}", STR_PAD_RIGHT) . ' '. $percentage .'%';
 	}

@@ -1,12 +1,13 @@
 <?php
 
+	document::$title[] = t('title_languages', 'Languages');
+
+	breadcrumbs::add(t('title_localization', 'Localization'));
+	breadcrumbs::add(t('title_languages', 'Languages'), document::ilink());
+
 	if (empty($_GET['page']) || !is_numeric($_GET['page']) || $_GET['page'] < 1) {
 		$_GET['page'] = 1;
 	}
-
-	document::$title[] = t('title_languages', 'Languages');
-
-	breadcrumbs::add(t('title_languages', 'Languages'), document::ilink());
 
 	if (isset($_POST['enable']) || isset($_POST['disable'])) {
 
@@ -41,7 +42,7 @@
 	}
 
 	// Table Rows, Total Number of Rows, Total Number of Pages
-	$languages = database::query(
+	$languages = database::prepare(
 		"select * from ". DB_TABLE_PREFIX ."languages
 		order by field(status, 1, -1, 0), priority, name;"
 	)->fetch_page(null, null, $_GET['page'], null, $num_rows, $num_pages);
@@ -55,15 +56,15 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo functions::form_button_link(document::ilink(__APP__.'/edit_language'), t('title_create_new_language', 'Create New Language'), '', 'add'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__.'/languages/edit_language'), t('title_create_new_language', 'Create New Language'), '', 'create'); ?>
 	</div>
 
-	<?php echo functions::form_begin('languages_form', 'post'); ?>
+	<?php echo f::form_begin('languages_form', 'post'); ?>
 
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th><?php echo f::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th></th>
 					<th><?php echo t('title_id', 'ID'); ?></th>
 					<th class="main"><?php echo t('title_name', 'Name'); ?></th>
@@ -80,50 +81,60 @@
 			<tbody>
 			<?php foreach ($languages as $language) { ?>
 				<tr class="<?php echo empty($language['status']) ? 'semi-transparent' : ''; ?>">
-					<td><?php echo functions::form_checkbox('languages[]', $language['code']); ?></td>
-					<td><?php echo functions::draw_fonticon(($language['status'] == 1) ? 'on' : (($language['status'] == -1) ? 'semi-off' : 'off')); ?></td>
+					<td><?php echo f::form_checkbox('languages[]', $language['code']); ?></td>
+					<td><?php echo f::draw_fonticon(($language['status'] == 1) ? 'on' : (($language['status'] == -1) ? 'semi-off' : 'off')); ?></td>
 					<td><?php echo $language['id']; ?></td>
-					<td><a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_language', ['language_code' => $language['code']]); ?>"><?php echo $language['name']; ?></a></td>
+					<td><a class="link" href="<?php echo document::href_ilink(__APP__.'/languages/edit_language', ['language_code' => $language['code']]); ?>"><?php echo $language['name']; ?></a></td>
 					<td class="text-center"><?php echo $language['code']; ?></td>
 					<td class="text-center"><?php echo $language['code2']; ?></td>
 					<td class="text-center"><?php echo $language['url_type']; ?></td>
-					<td class="text-center"><?php echo ($language['code'] == settings::get('default_language_code')) ? functions::draw_fonticon('icon-check') : ''; ?></td>
-					<td class="text-center"><?php echo ($language['code'] == settings::get('site_language_code')) ? functions::draw_fonticon('icon-check') : ''; ?></td>
+					<td class="text-center"><?php echo ($language['code'] == settings::get('default_language_code')) ? f::draw_fonticon('icon-check') : ''; ?></td>
+					<td class="text-center"><?php echo ($language['code'] == settings::get('site_language_code')) ? f::draw_fonticon('icon-check') : ''; ?></td>
 					<td class="text-center"><?php echo $language['priority']; ?></td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_language', ['language_code' => $language['code']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td class="text-end">
+						<a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/languages/edit_language', ['language_code' => $language['code']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>">
+							<?php echo f::draw_fonticon('edit'); ?>
+						</a>
+					</td>
 				</tr>
 				<?php } ?>
 			</tbody>
 
 			<tfoot>
 				<tr>
-					<td colspan="11"><?php echo t('title_languages', 'Languages'); ?>: <?php echo language::number_format($num_rows); ?></td>
+					<td colspan="99">
+						<?php echo t('title_languages', 'Languages'); ?>: <?php echo f::format_number($num_rows); ?>
+					</td>
 				</tr>
 			</tfoot>
 		</table>
 
 		<div class="card-body">
 			<fieldset id="actions">
-				<legend><?php echo t('text_with_selected', 'With selected'); ?>:</legend>
+
+				<legend>
+					<?php echo t('text_with_selected', 'With selected'); ?>:
+				</legend>
 
 				<div class="btn-group">
-					<?php echo functions::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-					<?php echo functions::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
+					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
 				</div>
+
 			</fieldset>
 		</div>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 
 	<?php if ($num_pages > 1) { ?>
 	<div class="card-footer">
-		<?php echo functions::draw_pagination($num_pages); ?>
+		<?php echo f::draw_pagination($num_pages); ?>
 	</div>
 	<?php } ?>
 </div>
 
 <script>
-	$('.data-table :checkbox').change(function() {
+	$('.data-table :checkbox').on('change', function() {
 		$('#actions').prop('disabled', !$('.data-table :checked').length);
 	}).first().trigger('change');
 </script>

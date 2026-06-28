@@ -9,7 +9,7 @@
 		public $website = 'https://litecore.dev/';
 		public $priority = 0;
 
-		public function process($force, $last_run) {
+		public function process(string $force, string $last_run): void {
 
 			$log_file = ini_get('error_log');
 
@@ -34,7 +34,7 @@
 					}
 
 					// Abort if the frequency for running this job is not met
-					if (strtotime($last_run) > functions::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
+					if (strtotime($last_run) > f::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
 				}
 			}
 
@@ -68,8 +68,10 @@
 
 			$buffer = '';
 			foreach ($errors as $checksum => $error) {
-				$buffer .= "[$error[last_occurrence]] ". ($occurrences[$checksum] > 1 ? "[$occurrences[$checksum] times] " : "") ."$error[error]\n"
-								. (!empty($error['backtrace']) ? "$error[backtrace]\n\n" : "\n");
+				$buffer .= implode(PHP_EOL, array_filter([
+					"[$error[last_occurrence]] ". ($occurrences[$checksum] > 1 ? "[$occurrences[$checksum] times] " : "") . $error['error'],
+					!empty($error['backtrace']) ? $error['backtrace'] : ''
+				]));
 			}
 
 			if (!$this->settings['email_recipient']) {
@@ -78,12 +80,13 @@
 
 			echo 'Sending report to '. $this->settings['email_recipient'];
 
-			$email = (new ent_email())
+			$result = (new ent_email())
 				->add_recipient($this->settings['email_recipient'])
 				->set_subject('[Error Report] '. settings::get('site_name'))
-				->add_body(PLATFORM_NAME .' '. PLATFORM_VERSION ."\r\n\r\n". $buffer);
+				->add_body(PLATFORM_NAME .' '. PLATFORM_VERSION ."\r\n\r\n". $buffer)
+				->send();
 
-			if ($email->send() !== true) {
+			if (!$result) {
 				echo ' [Failed]';
 				return;
 			}
@@ -91,7 +94,7 @@
 			file_put_contents($log_file, '');
 		}
 
-		function settings() {
+		public function settings(): array {
 
 			return [
 				[

@@ -8,7 +8,7 @@
 		$link_data = '//example.com/path/to/resource';
 
 		// Create a new entity
-		$link = new ent_link($link_data);
+		$link = new type_url($link_data);
 
 		// Check if the entity was created
 		if ((string)$link != 'http://example.com/path/to/resource') {

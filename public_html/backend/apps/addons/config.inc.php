@@ -3,6 +3,7 @@
 	return [
 		'name' => t('title_addons', 'Add-ons'),
 		'default' => 'addons',
+		'group' => 'system',
 		'priority' => 0,
 
 		'theme' => [

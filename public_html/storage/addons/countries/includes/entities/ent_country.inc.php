@@ -48,7 +48,7 @@
 			if ($country) {
 				$this->data = array_replace($this->data, array_intersect_key($country, $this->data));
 			} else {
-				throw new Exception('Could not find country ('. functions::escape_html($country_code) .') in database.');
+				throw new Exception('Could not find country ('. f::escape_html($country_code) .') in database.');
 			}
 
 			// Zones

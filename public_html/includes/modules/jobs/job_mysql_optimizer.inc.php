@@ -10,11 +10,11 @@
 		public $website = 'https://litecore.dev';
 		public $priority = 0;
 
-		public function process($force, $last_run) {
+		public function process(string $force, string $last_run): void {
 
 			if (!$force) {
 				if (!$this->settings['status']) return;
-				if (strtotime($last_run) > functions::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
+				if (strtotime($last_run) > f::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
 			}
 
 			echo 'Optimizing MySQL Tables...' . PHP_EOL . PHP_EOL;
@@ -32,7 +32,7 @@
 			echo PHP_EOL . 'Done!';
 		}
 
-		function settings() {
+		public function settings(): array {
 
 			return [
 				[

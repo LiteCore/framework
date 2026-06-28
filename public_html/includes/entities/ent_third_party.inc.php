@@ -4,7 +4,7 @@
 		public $data;
 		public $previous;
 
-		public function __construct($third_party_id=null) {
+		public function __construct(int|null $third_party_id = null) {
 
 			if ($third_party_id !== null) {
 				$this->load($third_party_id);
@@ -13,7 +13,7 @@
 			}
 		}
 
-		public function reset() {
+		public function reset(): void {
 
 			$this->data = [];
 
@@ -36,9 +36,9 @@
 			$this->previous = $this->data;
 		}
 
-		public function load($third_party_id) {
+		public function load(int $third_party_id): void {
 
-			if (!preg_match('#^[0-9]+$#', $third_party_id)) {
+			if (!preg_match('#^\d+$#', $third_party_id)) {
 				throw new Exception('Invalid third party (ID: '. $third_party_id .')');
 			}
 
@@ -54,7 +54,7 @@
 				throw new Exception('Could not find third party (ID: '. (int)$third_party_id .') in database.');
 			}
 
-			$this->data = array_replace($this->data, array_intersect_key($third_party, $this->data));
+			$this->data = f::array_update($this->data, $third_party);
 
 			foreach ([
 				'description',
@@ -65,12 +65,12 @@
 				$this->data[$column] += array_fill_keys(array_keys(language::$languages), '');
 				}
 
-			$this->data['privacy_classes'] = functions::string_split($this->data['privacy_classes']);
+			$this->data['privacy_classes'] = f::string_split($this->data['privacy_classes']);
 
 			$this->previous = $this->data;
 		}
 
-		public function save() {
+		public function save(): void {
 
 			if (!$this->data['id']) {
 
@@ -88,9 +88,9 @@
 				set status = ". (int)$this->data['status'] .",
 					privacy_classes = '". implode(',', database::input($this->data['privacy_classes'])) ."',
 					name = '". database::input($this->data['name']) ."',
-					description = '". database::input(json_encode($this->data['description'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ."',
-					collected_data = '". database::input(json_encode($this->data['collected_data'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ."',
-					purposes = '". database::input(json_encode($this->data['purposes'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ."',
+					description = '". database::input(f::format_json($this->data['description'])) ."',
+					collected_data = '". database::input(f::format_json($this->data['collected_data'])) ."',
+					purposes = '". database::input(f::format_json($this->data['purposes'])) ."',
 					country_code = '". database::input($this->data['country_code']) ."',
 					homepage = '". database::input($this->data['homepage']) ."',
 					cookie_policy_url = '". database::input($this->data['cookie_policy_url']) ."',
@@ -107,7 +107,7 @@
 			cache::clear_cache('third_parties');
 		}
 
-		public function delete() {
+		public function delete(): void {
 
 			database::query(
 				"delete tp

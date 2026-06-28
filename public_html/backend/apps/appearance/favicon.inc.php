@@ -13,7 +13,7 @@
 		try {
 
 			if (empty($_FILES['image'])) {
-				throw new Exception(t('error_missing_image', 'You must select an image'));
+				throw new Exception(t('error_must_select_image', 'You must select an image'));
 			}
 
 			if (!extension_loaded('imagick')) {
@@ -80,13 +80,16 @@
 .icons {
 	margin-bottom: 2em;
 }
+
 .icons .favicon {
 	display: inline-block;
 	text-align: center;
 }
+
 .icons .favicon:not(:first-child) {
 	margin-left: .5em;
 }
+
 .icons .thumbnail {
 	width: auto;
 	margin: 0;
@@ -103,7 +106,7 @@
 	</div>
 
 	<div class="card-body">
-		<?php echo functions::form_begin('favicon_form', 'post', false, true); ?>
+		<?php echo f::form_begin('favicon_form', 'post', false, true); ?>
 
 			<div class="icons">
 
@@ -128,13 +131,15 @@
 			<div class="form-group" style="max-width: 480px;">
 				<label><?php echo t('title_new_icon', 'New Icon'); ?></label>
 				<div class="input-group">
-					<?php echo functions::form_input_file('image', 'accept=".ico,.png,.svg"'); ?>
-					<?php echo functions::form_button('upload', t('title_upload', 'Upload'), 'submit'); ?>
+					<?php echo f::form_input_file('image', ['accept' => '.ico,.png,.svg']); ?>
+					<?php echo f::form_button('upload', t('title_upload', 'Upload'), 'submit'); ?>
 				</div>
 			</div>
 
-			<p><?php echo strtr(t('note_favicon_best_result_achieved', 'Note: Best results are achieved by uploading a {size} pixels PNG image with alpha transparency.'), ['{size}' => '256x256']); ?></p>
+			<p><?php echo strtr(t('note_favicon_best_result_achieved', 'Note: Best results are achieved by uploading a {size} pixels PNG image with alpha transparency.'), [
+				'{size}' => '256x256'
+			]); ?></p>
 
-		<?php echo functions::form_end(); ?>
+		<?php echo f::form_end(); ?>
 	</div>
 </div>

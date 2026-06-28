@@ -1,12 +1,12 @@
 <?php
 
-	if (empty($_GET['page']) || !is_numeric($_GET['page']) || $_GET['page'] < 1) {
-		$_GET['page'] = 1;
-	}
-
 	document::$title[] = t('title_settings', 'Settings');
 
 	breadcrumbs::add(t('title_settings', 'Settings'), document::ilink());
+
+	if (empty($_GET['page']) || !is_numeric($_GET['page']) || $_GET['page'] < 1) {
+		$_GET['page'] = 1;
+	}
 
 	if (isset($_POST['save'])) {
 
@@ -77,7 +77,7 @@
 			}
 
 			notices::add('success', t('success_changes_saved', 'Changes saved'));
-			redirect(document::ilink(null, [], true, ['action']));
+			redirect(document::ilink(null, [], true, ['action']), 303);
 			exit;
 
 		} catch (Exception $e) {
@@ -98,7 +98,7 @@
 	}
 
 	// Table Rows, Total Number of Rows, Total Number of Pages
-	$settings = database::query(
+	$settings = database::prepare(
 		"select * from ". DB_TABLE_PREFIX ."settings
 		where `group_key` = '". database::input($settings_group['key']) ."'
 		order by priority, `key` asc;"
@@ -165,7 +165,7 @@
 				break;
 
 			case 'json':
-				$_POST['settings'][$setting['key']] = json_decode($setting['value'], true);
+				$_POST['settings'][$setting['key']] = $setting['value'] ? json_decode($setting['value'], true) : [];
 				break;
 
 			case 'number':
@@ -193,7 +193,7 @@
 		</div>
 	</div>
 
-	<?php echo functions::form_begin('settings_form', 'post'); ?>
+	<?php echo f::form_begin('settings_form', 'post'); ?>
 
 		<table class="table data-table">
 			<thead>
@@ -212,32 +212,32 @@
 						<strong><?php echo t('settings_key:title_'.$setting['key'], $setting['title']); ?></strong><br>
 						<?php echo t('settings_key:description_'.$setting['key'], $setting['description']); ?>
 					</td>
-					<td><?php echo functions::form_function('settings['.$setting['key'].']', $setting['function'], true); ?></td>
+					<td><?php echo f::form_function('settings['.$setting['key'].']', $setting['function'], true); ?></td>
 					<td class="text-end">
-						<?php echo functions::form_button_predefined('save'); ?>
-						<?php echo functions::form_button_predefined('cancel'); ?>
+						<?php echo f::form_button_predefined('save'); ?>
+						<?php echo f::form_button_predefined('cancel'); ?>
 					</td>
 				</tr>
 				<?php } else { ?>
 				<tr>
 					<td class="text-start"><a class="link" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo t('settings_key:title_'.$setting['key'], $setting['title']); ?></a></td>
 					<td style="white-space: normal;">
-						<div style="max-height: 200px; overflow-y: auto;" title="<?php echo functions::escape_html(t('settings_key:description_'.$setting['key'], $setting['description'])); ?>">
+						<div style="max-height: 200px; overflow-y: auto;" title="<?php echo f::escape_html(t('settings_key:description_'.$setting['key'], $setting['description'])); ?>">
 							<?php echo nl2br($setting['display_value'], false); ?>
 						</div>
 					</td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(null, ['action' => 'edit', 'key' => $setting['key']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo f::draw_fonticon('edit'); ?></a></td>
 				</tr>
 				<?php } ?>
 				<?php } ?>
 			</tbody>
 		</table>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 
 	<?php if ($num_pages > 1) { ?>
 	<div class="card-footer">
-		<?php echo functions::draw_pagination($num_pages); ?>
+		<?php echo f::draw_pagination($num_pages); ?>
 	</div>
 	<?php } ?>
 </div>

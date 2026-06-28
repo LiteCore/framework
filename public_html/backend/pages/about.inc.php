@@ -3,6 +3,25 @@
 	breadcrumbs::add(t('title_dashboard', 'Dashboard'), WS_DIR_ADMIN);
 	breadcrumbs::add(t('title_about', 'About'), document::link());
 
+	if (!isset($_GET['page']) || !is_numeric($_GET['page']) || $_GET['page'] < 1) {
+		$_GET['page'] = 1;
+	}
+
+	if (isset($_POST['clear_all'])) {
+
+		try {
+
+			$log_file = ini_get('error_log');
+			file_put_contents($log_file, '');
+			notices::add('success', t('success_changes_saved', 'Changes saved'));
+			reload();
+			exit;
+
+		} catch (Exception $e) {
+			notices::add('errors', $e->getMessage());
+		}
+	}
+
 	if (isset($_POST['delete'])) {
 
 		try {
@@ -49,11 +68,11 @@
 
 			while ($line = fgets($fh)) {
 				$pieces = [];
-				if (preg_match('/^MemTotal:\s+(\d+)\skB$/', $line, $pieces)) {
+				if (preg_match('#^MemTotal:\s+(\d+)\skB$#', $line, $pieces)) {
 					$ram_usage = $pieces[1];
 					continue;
 				}
-				if (preg_match('/^MemFree:\s+(\d+)\skB$/', $line, $pieces)) {
+				if (preg_match('#^MemFree:\s+(\d+)\skB$#', $line, $pieces)) {
 					$ram_free = $pieces[1];
 					continue;
 				}
@@ -87,7 +106,6 @@
 	}
 
 	$machine = [
-
 			'name' => php_uname('n'),
 			'architecture' => php_uname('m'),
 			'os' => [
@@ -134,8 +152,8 @@
 	if ($log_file = ini_get('error_log')) {
 
 		if (($filesize = filesize($log_file)) > 1024e6) {
-			notices::add('warnings', t('warning_truncating_extremely_large_log_file', 'Truncating an extremely large log file') .' ('. language::number_format($filesize / (1024 * 1024)) .' Mbytes)');
-			file_put_contents($logfile, '');
+			notices::add('warnings', t('warning_truncating_extremely_large_log_file', 'Truncating an extremely large log file') .' ('. f::format_number($filesize / (1024 * 1024)) .' Mbytes)');
+			file_put_contents($log_file, '');
 		}
 
 		$iniatial_memory_limit = ini_get('memory_limit');
@@ -178,6 +196,11 @@
 			return ($a['last_occurrence'] > $b['last_occurrence']) ? -1 : 1;
 		});
 
+		$rows_per_page = settings::get('data_table_rows_per_page');
+		$num_pages = ceil(count($errors) / $rows_per_page);
+
+		$errors = array_slice($errors, ($_GET['page'] - 1) * $rows_per_page, $rows_per_page, true);
+
 		unset($entries);
 
 		ini_set('memory_limit', $iniatial_memory_limit); // Restore limit
@@ -189,29 +212,37 @@
 	background: transparent;
 	border-bottom: none;
 }
+
 .tabs .nav-link:not(.active) {
 	background: #eee;
 }
-.tab-content {
+
+.tab-contents {
 	margin: 0;
 	background: none;
 }
+
 #box-about {
 	position: relative;
 	overflow: hidden;
 }
+
 #box-about table + table {
 	margin-top: 2em;
 }
+
 #box-about tbody th {
 	text-align: left;
 }
+
 #box-about tr > *:first-child {
 	width: 250px;
 }
+
 #box-about meter {
 	width: 500px;
 }
+
 #box-about .credits-wrapper {
 	position: absolute;
 	top: 2em;
@@ -227,13 +258,16 @@
 	transform: translateY(0%);
 	z-index: 999;
 }
+
 #box-error-log tr.critical {
 	background: #c002;
 }
+
 #box-error-log td {
 	white-space: wrap !important;
 	cursor: default;
 }
+
 #box-error-log .backtrace {
 	background: #f8f8f8;
 	white-space: pre-wrap;
@@ -360,6 +394,7 @@
 						<th colspan="2">PHP</th>
 					</tr>
 				</thead>
+
 				<tbody>
 					<tr>
 						<th>Version</th>
@@ -379,7 +414,7 @@
 					</tr>
 					<tr>
 						<th>Memory Limit</th>
-						<td><?php echo $php['memory_limit'] ?? '<em>n/a</em>'; ?></td>
+						<td><?php echo ($php['memory_limit'] ?? '<em>n/a</em>'); ?></td>
 					</tr>
 				</tbody>
 			</table>
@@ -393,11 +428,11 @@
 				<tbody>
 					<tr>
 						<th>Server Name</th>
-						<td><?php echo $database['name']; ?></td>
+						<td><?php echo $database['name'] ?? '-'; ?></td>
 					</tr>
 					<tr>
 						<th>Client Library</th>
-						<td><?php echo $database['library']; ?></td>
+						<td><?php echo $database['library'] ?? '-'; ?></td>
 					</tr>
 					<tr>
 						<th>Hostname</th>
@@ -416,7 +451,7 @@
 		</div>
 	</div>
 
-	<div id="tab-php-ini" class="tab-content">
+	<div id="tab-php-ini" class="tab-contents">
 		<div class="card">
 			<div class="card-header">
 				<div class="card-title">
@@ -426,7 +461,7 @@
 			</div>
 
 			<div class="card-action">
-				<?php echo functions::form_input_search('filter', true, 'placeholder="'. t('title_filter', 'Filter') .'"'); ?>
+				<?php echo f::form_input_search('filter', true, 'placeholder="'. t('title_filter', 'Filter') .'"'); ?>
 			</div>
 
 			<table id="php-config" class="table data-table">
@@ -440,8 +475,8 @@
 				<tbody>
 					<?php foreach ($php['ini'] as $key => $value) { ?>
 					<tr>
-						<td><tt><?php echo functions::escape_html($key); ?></tt></td>
-						<td><?php echo functions::escape_html($value); ?></td>
+						<td><tt><?php echo f::escape_html($key); ?></tt></td>
+						<td><?php echo f::escape_html($value); ?></td>
 					</tr>
 					<?php } ?>
 				</tbody>
@@ -449,7 +484,7 @@
 		</div>
 	</div>
 
-	<div id="tab-errors" class="tab-content">
+	<div id="tab-errors" class="tab-contents">
 		<div id="box-error-log" class="card">
 			<div class="card-header">
 				<div class="card-title">
@@ -457,12 +492,16 @@
 				</div>
 			</div>
 
-			<?php echo functions::form_begin('errors_form', 'post'); ?>
+			<?php echo f::form_begin('errors_form', 'post'); ?>
+
+				<div class="card-action">
+					<?php echo f::form_button('clear_all', t('title_clear_all', 'Clear All'), 'submit', [], 'icon-broom'); ?>
+				</div>
 
 			<table class="table data-table">
 				<thead>
 					<tr>
-						<th><?php echo functions::draw_fonticon('icon-square-check checkbox-toggle', 'data-toggle="checkbox-toggle"'); ?></th>
+						<th><?php echo f::draw_fonticon('icon-square-check checkbox-toggle', 'data-toggle="checkbox-toggle"'); ?></th>
 						<th class="main"><?php echo t('title_error', 'Error'); ?></th>
 						<th><?php echo t('title_occurrences', 'Occurrences'); ?></th>
 						<th><?php echo t('title_last_occurrence', 'Last Occurrence'); ?></th>
@@ -472,25 +511,32 @@
 				<tbody>
 					<?php foreach ($errors as $error) { ?>
 					<tr<?php echo $error['critical'] ? ' class="critical"' : ''; ?>>
-						<td><?php echo functions::form_checkbox('errors[]', $error['error']); ?></td>
+						<td><?php echo f::form_checkbox('errors[]', $error['error']); ?></td>
 						<td style="white-space: normal;">
-							<?php echo functions::escape_html($error['error']); ?><br>
-							<div class="backtrace"><?php echo functions::escape_html($error['backtrace']); ?></div>
+							<?php echo f::escape_html($error['error']); ?><br>
+							<div class="backtrace"><?php echo f::escape_html($error['backtrace']); ?></div>
 						</td>
 						<td class="text-center"><?php echo $error['occurrences']; ?></td>
-						<td><?php echo functions::datetime_when($error['last_occurrence']); ?></td>
+						<td><?php echo f::datetime_when($error['last_occurrence']); ?></td>
 					</tr>
 					<?php } ?>
 				</tbody>
 			</table>
 
 			<div class="card-body">
-				<div id="actions">
-					<?php echo functions::form_button_predefined('delete'); ?>
+				<fieldset id="actions">
+					<legend><?php echo t('title_with_selected', 'With Selected'); ?></legend>
+					<?php echo f::form_button_predefined('delete'); ?>
+				</fieldset>
 				</div>
-			</div>
 
-			<?php echo functions::form_end(); ?>
+			<?php if ($num_pages > 1) { ?>
+			<div class="card-body">
+				<?php echo f::draw_pagination($num_pages); ?>
+			</div>
+			<?php } ?>
+
+			<?php echo f::form_end(); ?>
 		</div>
 	</div>
 </div>
@@ -524,7 +570,10 @@
 	});
 
 	// Checkbox toggle
-	$('.data-table :checkbox').on('change', function() {
-		$('#actions').prop('disabled', !$('.data-table :checked').length);
-	}).first().trigger('change');
+	$('#tab-errors .data-table :checkbox').on('change', function() {
+		$('#tab-errors #actions').prop('disabled', !$('#tab-errors .data-table :checked').length);
+	});
+
+	// Initial state
+	$('#tab-errors #actions').prop('disabled', !$('#tab-errors .data-table :checked').length);
 </script>

@@ -3,7 +3,7 @@
 		<?php if ($item['disabled']) { ?>
 		<li class="pagination-item disabled" data-page="<?php echo $item['page']; ?>"><span><?php echo $item['title']; ?></span></li>
 		<?php } else { ?>
-		<li class="pagination-item<?php echo ($item['active']) ? ' active' : ''; ?>" data-page="<?php echo $item['page']; ?>"><a href="<?php echo functions::escape_html($item['link']); ?>"><?php echo $item['title']; ?></a></li>
+		<li class="pagination-item<?php echo ($item['active']) ? ' active' : ''; ?>" data-page="<?php echo $item['page']; ?>"><a href="<?php echo f::escape_html($item['link']); ?>"><?php echo $item['title']; ?></a></li>
 		<?php } ?>
 	<?php } ?>
 </ul>

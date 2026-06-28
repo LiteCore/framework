@@ -1,7 +1,7 @@
 <?php
 
 
-	function format_json($data, $indent="\t") {
+	function format_json(mixed $data, string $indent="\t"): string {
 
 		$json = json_encode($data, ($indent ? JSON_PRETTY_PRINT : 0) | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
@@ -18,7 +18,7 @@
 		return $json;
 	}
 
-	function format_path_friendly($text, $language_code='') {
+	function format_path_friendly(string $text, string $language_code=''): string {
 
 		if (!$text) return '';
 
@@ -157,6 +157,7 @@
 		return $text;
 	}
 
-	function format_number($number, $decimals=0) {
+	function format_number(float|null $number, ?int $decimals=0): string {
+		if ($number == '') return '';
 		return language::number_format($number, $decimals);
 	}

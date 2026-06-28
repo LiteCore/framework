@@ -10,21 +10,17 @@
 		public $website = 'https://litecore.dev/';
 		public $priority = 0;
 
-		public function process($force, $last_run) {
+		public function process(string $force, string $last_run): void {
 
 			if (!$force) {
-				if (empty($this->settings['status'])) return;
+				if (!$this->settings['status']) return;
 
-				if (!empty($this->settings['working_hours'])) {
+				if ($this->settings['working_hours']) {
 					list($from_time, $to_time) = explode('-', $this->settings['working_hours']);
 					if (time() < strtotime("Today $from_time") || time() > strtotime("Today $to_time")) return;
 				}
 
-				switch ($this->settings['frequency']) {
-					case 'Hourly':
-						if (date('Ymdh', strtotime($last_run)) == date('Ymdh')) return;
-						break;
-				}
+				if (strtotime($last_run) > f::datetime_last_by_interval($this->settings['frequency'], $last_run)) return;
 			}
 
 			$sent = 0;
@@ -32,7 +28,7 @@
 			database::query(
 				"select * from ". DB_TABLE_PREFIX ."emails
 				where status = 'scheduled'
-				and scheduled_at < '". date('Y-m-d H:i:s') ."'
+				and (scheduled_at is null or scheduled_at < '". date('Y-m-d H:i:s') ."')
 				order by scheduled_at, id
 				limit ". (int)$this->settings['delivery_limit'] .";"
 			)->each(function($email) use (&$sent) {
@@ -55,7 +51,7 @@
 			}
 		}
 
-		function settings() {
+		public function settings(): array {
 
 			return [
 				[
@@ -70,7 +66,7 @@
 					'default_value' => 'Weekly',
 					'title' => t(__CLASS__.':title_frequency', 'Frequency'),
 					'description' => t(__CLASS__.':description_frequency', 'How often the job should be executed.'),
-					'function' => 'radio("Hourly")',
+					'function' => 'radio("5 Min")',
 				],
 				[
 					'key' => 'working_hours',
@@ -96,9 +92,9 @@
 			];
 		}
 
-		public function install() {
+		public function install(): void {
 		}
 
-		public function uninstall() {
+		public function uninstall(): void {
 		}
 	}

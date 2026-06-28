@@ -7,8 +7,13 @@
 		}
 	}
 
-	// Shorthand sql() for database::prepare() e.g. sql("SELECT * FROM table WHERE id = :id", [$id])->bind(...)->fetch();
+	// Shorthand sql() for database::query() e.g. sql("SELECT * FROM table WHERE id = :id", $input)->fetch_all();
 	function sql(...$args) {
+		return forward_static_call_array(['database', 'query'], $args);
+	}
+
+	// Shorthand sqlp() for database::prepare() e.g. sqlp("SELECT * FROM table WHERE id = :id")->bind(...)->fetch();
+	function sqlp(...$args) {
 		return forward_static_call_array(['database', 'prepare'], $args);
 	}
 
@@ -23,18 +28,11 @@
 	}
 
 	// Redirect to a URL and stop script execution
-	function redirect($url=null, $status_code=302) {
+	function redirect($url=null, $status_code=null) {
 
 		if (!$url) {
 			$url = $_SERVER['REQUEST_URI'];
 		}
-
-		header('Location: '. $url, $status_code);
-		exit;
-	}
-
-	// Stop script execution and reload the current page
-	function reload($status_code=null) {
 
 		if ($status_code === null) {
 			if (file_get_contents('php://input')) {
@@ -48,7 +46,13 @@
 			trigger_error('Unsupported response status code for redirect ('. (int)$status_code .')');
 		}
 
-		header('Location: '. $_SERVER['REQUEST_URI'], $status_code);
+		header('Location: '. $url, true, $status_code);
+		exit;
+	}
+
+	// Stop script execution and reload the current page
+	function reload($status_code=null) {
+		redirect($_SERVER['REQUEST_URI'], $status_code);
 		exit;
 	}
 

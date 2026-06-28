@@ -1,10 +1,15 @@
 <?php
 
-	if (is_file('app://frontend/template/less/variables.less')) {
-		$stylesheet = 'app://frontend/template/less/variables.less';
+	if (is_file($file = FS_DIR_APP . 'frontend/templates/'. settings::get('template') .'/.development')) {
+		$developement = file_get_contents($file);
+	} else {
+		$development = false;
+	}
 
-	} else if (is_file('app://frontend/template/css/variables.css')) {
-		$stylesheet = 'app://frontend/template/css/variables.css';
+	if ($development = 'advanced' && is_file(FS_DIR_APP . 'frontend/templates/'. settings::get('template') .'/scss/variables.scss')) {
+		$stylesheet = FS_DIR_APP . 'frontend/templates/'. settings::get('template') .'/scss/variables.scss';
+	} else if (is_file(FS_DIR_APP . 'frontend/templates/'. settings::get('template') .'/css/variables.css')) {
+		$stylesheet = FS_DIR_APP . 'frontend/templates/'. settings::get('template') .'/css/variables.css';
 
 	} else {
 		notices::add('errors', t('error_template_missing_variables_stylesheet', 'This template does not have an editable stylesheet with variables (e.g. variables.css)'));
@@ -42,13 +47,13 @@
 
 	<div class="card-body">
 
-		<?php if (preg_match('#\.less$#', $stylesheet)) { ?>
+		<?php if (preg_match('#\.scss$#', $stylesheet)) { ?>
 		<div class="notices">
-			<div class="notice notice-default"><?php echo functions::draw_fonticon('icon-info'); ?> <?php echo t('notice_detected_less_version_of_variables', 'We detected a LESS version present in this installation that will be used. A LESS compiler is needed to compile the CSS versions (e.g. Developer Kit add-on).'); ?></div>
+			<div class="notice notice-default"><?php echo f::draw_fonticon('icon-info'); ?> <?php echo t('notice_detected_scss_version_of_variables', 'We detected a SCSS version present in this installation that will be used. A SCSS compiler is needed to compile the CSS versions (e.g. Developer Kit add-on).'); ?></div>
 		</div>
 		<?php } ?>
 
-		<?php echo functions::form_begin('file_form', 'post'); ?>
+		<?php echo f::form_begin('file_form', 'post'); ?>
 
 			<label class="form-group" style="max-width: 800px;">
 				<div class="form-label"><?php echo t('title_file', 'File'); ?></div>
@@ -57,14 +62,14 @@
 
 			<label class="form-group">
 				<div class="form-label"><?php echo t('title_content', 'Content'); ?></div>
-				<?php echo functions::form_input_code('content', true); ?>
+				<?php echo f::form_input_code('content', true, ['style' => 'height: 600px;']); ?>
 			</label>
 
 			<div class="card-action">
-				<?php echo functions::form_button_predefined('save'); ?>
-				<?php echo functions::form_button_predefined('cancel'); ?>
+				<?php echo f::form_button_predefined('save'); ?>
+				<?php echo f::form_button_predefined('cancel'); ?>
 			</div>
 
-		<?php echo functions::form_end(); ?>
+		<?php echo f::form_end(); ?>
 	</div>
 </div>

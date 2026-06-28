@@ -5,7 +5,7 @@
 		public $data;
 		public $previous;
 
-		public function __construct($module_id) {
+		public function __construct(string $module_id) {
 
 			if (!$module_id) {
 				throw new Exception('First argument module_id cannot be empty');
@@ -13,15 +13,11 @@
 
 			preg_match('#^([^_]+)#', $module_id, $matches);
 
-			switch ($matches[1]) {
-
-				case 'job':
-					$type = 'job';
-					break;
-
-				default:
-					throw new Exception('Unknown module type for module '. $module_id);
-			}
+			$type = match ($matches[1]) {
+				'job' => 'job',
+				'tm' => 'translation',
+				default => throw new Exception('Unknown module type for module '. $module_id),
+			};
 
 			$this->load($module_id, $type);
 
@@ -37,7 +33,7 @@
 			return json_decode($data, true);
 		}
 
-		public function reset() {
+		public function reset(): void {
 
 			$this->data = [];
 
@@ -50,7 +46,7 @@
 			$this->data['settings'] = [];
 		}
 
-		public function load($module_id, $type) {
+		public function load(string $module_id, string $type): void {
 
 			if (!preg_match('#^[a-z0-9_]+$#', $module_id)) {
 				throw new Exception('Invalid module (ID: '. $module_id .')');
@@ -96,7 +92,7 @@
 			$this->previous = $this->data;
 		}
 
-		public function save() {
+		public function save(): void {
 
 			if (!$this->data['id']) {
 
@@ -144,7 +140,7 @@
 			cache::clear_cache('modules');
 		}
 
-		public function delete() {
+		public function delete(): void {
 
 			if (method_exists($this->_module, 'uninstall')) {
 				$this->_module->uninstall();

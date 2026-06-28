@@ -1,20 +1,35 @@
 <?php
 
+	document::$title[] = t('title_translations', 'Translations');
+
+	breadcrumbs::add(t('title_localization', 'Localization'));
+	breadcrumbs::add(t('title_translations', 'Translations'), document::ilink());
+
 	if (empty($_GET['page']) || !is_numeric($_GET['page']) || $_GET['page'] < 1) {
 		$_GET['page'] = 1;
 	}
 
 	if (empty($_GET['languages'])) {
 		$all_languages = array_column(language::$languages, 'code');
-		$defined_languages = [settings::get('site_language_code'), language::$selected['code'], settings::get('default_language_code')];
+		$defined_languages = [settings::get('store_language_code'), language::$selected['code'], settings::get('default_language_code')];
 		$_GET['languages'] = array_slice(array_unique(array_merge($defined_languages, $all_languages)), 0, 2);
 	}
 
-	document::$snippets['title'][] = t('title_translations', 'Translations');
+	// AC-3, AC-4: language codes flow into backtick-quoted SQL identifiers
+	// further down (text_<code> column references). Validate them once here
+	// against the configured language allowlist; reject the whole request
+	// if any entry is bogus — no query gets built with an injected token.
+	$allowed_language_codes = array_keys(language::$languages);
+	foreach ((array)$_GET['languages'] as $_lang_code) {
+		try {
+			database::identifier($_lang_code, $allowed_language_codes);
+		} catch (InvalidArgumentException $e) {
+			http_response_code(400);
+			exit('Invalid language code');
+		}
+	}
 
-	breadcrumbs::add(t('title_translations', 'Translations'), document::ilink());
-
-	$collections = include __DIR__.'/collections.inc.php';
+	$collections = include 'app://backend/apps/localization/translations/collections.inc.php';
 
 	if (isset($_POST['save'])) {
 		try {
@@ -34,7 +49,7 @@
 				if ($translation['entity'] == 'translation') {
 					database::query(
 						"update ". DB_TABLE_PREFIX ."translations
-						set ". implode(', ' . PHP_EOL, array_map(function($language_code) use($translation) { return "text_$language_code = '". database::input($translation['text_'.$language_code], !empty($translation['html'])) ."'"; }, $_GET['languages'])) .",
+						set ". implode(', ' . PHP_EOL, array_map(function($language_code) use($translation) { return "text_". database::identifier($language_code) ." = '". database::input($translation['text_'.$language_code], !empty($translation['html'])) ."'"; }, $_GET['languages'])) .",
 							html = ". (!empty($translation['html']) ? 1 : 0) ."
 						where code = '". database::input($translation['code']) ."'
 						limit 1;"
@@ -42,7 +57,7 @@
 
 				} else {
 
-					if (!preg_match('#^\[([a-z_]+):([0-9]+)\](.*)$#', $translation['code'], $matches)) {
+					if (!preg_match('#^\[([a-z_]+):(\d+)\](.*)$#', $translation['code'], $matches)) {
 						throw new Exception('Could not decode entity, id, and column from code');
 					}
 
@@ -104,7 +119,7 @@
 	if (empty($_GET['collections']) || in_array('translations', $_GET['collections'])) {
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
-			". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_GET['languages'])) ."
+				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 			from ". DB_TABLE_PREFIX ."translations
 			where code not regexp '^(settings_group:|settings_key:|cm|job|om|ot|pm|sm)_'"
 		);
@@ -113,7 +128,7 @@
 	if (empty($_GET['collections']) || in_array('modules', $_GET['collections'])) {
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
-			". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_GET['languages'])) ."
+				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 			from ". DB_TABLE_PREFIX ."translations
 			where code regexp '^(cm|job|om|ot|pm|sm)_'"
 		);
@@ -122,7 +137,7 @@
 	if (empty($_GET['collections']) || in_array('setting_groups', $_GET['collections'])) {
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
-			". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_GET['languages'])) ."
+				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 			from ". DB_TABLE_PREFIX ."translations
 			where code regexp '^settings_group:'"
 		);
@@ -131,7 +146,7 @@
 	if (empty($_GET['collections']) || in_array('settings', $_GET['collections'])) {
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
-			". implode(", ", array_map(function($language_code) { return "`text_". database::input($language_code) ."`"; }, $_GET['languages'])) ."
+				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
 			from ". DB_TABLE_PREFIX ."translations
 			where code regexp '^settings_key:'"
 		);
@@ -140,8 +155,8 @@
 	$union_select = function($id, $entity, $column) {
 		return (
 			"select '$entity' as entity, '1' as frontend, '1' as backend, concat('[". database::input($entity) ."', ':', id, ']". database::input($column) ."') as code, '' as updated_at,
-				coalesce(". implode(', ', array_map(function($language_code) use($column) { return "if(json_value(`". database::input($column) ."`, '$.". database::input($language_code) ."') regexp '<', 1, null)"; }, $_GET['languages'])) .", 0) as html,
-				". implode(', ', array_map(function($language_code) use($column) { return "json_value(`". $column ."`, '$.". database::input($language_code) ."') as `text_". database::input($language_code) ."`"; }, $_GET['languages'])) ."
+				coalesce(". implode(', ', f::array_each($_GET['languages'], fn($language_code) => "if(json_value(`". database::input($column) ."`, '$.". database::input($language_code) ."') regexp '<', 1, null)")) .", 0) as html,
+				". implode(', ', f::array_each($_GET['languages'], fn($language_code) => "json_value(`". $column ."`, '$.". database::input($language_code) ."') as `text_". database::identifier($language_code) ."`")) ."
 			from ". DB_TABLE_PREFIX . database::input($id)
 		);
 	};
@@ -157,15 +172,15 @@
 
 	// Table Rows
 
-	$translations = database::query(
+	$translations = database::prepare(
 		"select * from (
 			". implode(PHP_EOL . PHP_EOL . "union ", $sql_union) ."
 		) x
 		where x.code != ''
 		". ((!empty($_GET['endpoint']) && $_GET['endpoint'] == 'frontend') ? "and frontend = 1" : "") ."
 		". ((!empty($_GET['endpoint']) && $_GET['endpoint'] == 'backend') ? "and backend = 1" : "") ."
-		". (!empty($_GET['untranslated']) ? "and (". implode(" or ", array_map(function($language_code) { return "`text_$language_code` = ''"; }, $_GET['languages'])) .")" : "") ."
-		". (!empty($_GET['query']) ? "and (code like '%". addcslashes(database::input($_GET['query']), '%_') ."%' or ". implode(' or ', array_map(function($language_code) { return "`text_". database::input($language_code) ."` like '%". addcslashes(database::input($_GET['query']), '%_') ."%'"; }, $_GET['languages'])) .")" : "") ."
+		". (!empty($_GET['untranslated']) ? "and (". implode(" or ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."` = ''")) .")" : "") ."
+		". (!empty($_GET['query']) ? "and (code like '%". addcslashes(database::input($_GET['query']), '%_') ."%' or ". implode(' or ', f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."` like '%". addcslashes(database::input($_GET['query']), '%_') ."%'")) .")" : "") ."
 		order by x.updated_at desc;"
 	)->fetch_page(null, null, $_GET['page'], settings::get('data_table_rows_per_page'), $num_rows, $num_pages);
 
@@ -217,18 +232,18 @@
 		</div>
 	</div>
 
-	<?php echo functions::form_begin('filter_form', 'get'); ?>
+	<?php echo f::form_begin('filter_form', 'get'); ?>
 		<div class="card-filter">
 
-			<?php echo functions::form_dropdown('collections[]', $collection_options, true); ?>
+			<?php echo f::form_dropdown('collections[]', $collection_options, true); ?>
 
 			<div class="expandable">
-				<?php echo functions::form_input_search('query', true, 'placeholder="'. t('text_search_phrase_or_keyword', 'Search phrase or keyword') .'"'); ?>
+				<?php echo f::form_input_search('query', true, ['placeholder' => t('text_search_phrase_or_keyword', 'Search phrase or keyword')]); ?>
 			</div>
 
-			<?php echo functions::form_dropdown('languages[]', $language_options, true); ?>
+			<?php echo f::form_dropdown('languages[]', $language_options, true); ?>
 
-			<?php echo functions::form_dropdown('endpoint[]', $endpoint_options, true); ?>
+			<?php echo f::form_dropdown('endpoint[]', $endpoint_options, true); ?>
 
 			<div class="dropdown" data-placeholder="-- <?php echo t('title_filters', 'Filters'); ?> --">
 
@@ -239,7 +254,7 @@
 				<ul class="dropdown-menu">
 					<li class="dropdown-item">
 						<label>
-							<?php echo functions::form_checkbox('untranslated', '1', true); ?>
+							<?php echo f::form_checkbox('untranslated', '1', true); ?>
 							<?php echo t('text_untranslated_only', 'Untranslated only'); ?>
 						</label>
 					</li>
@@ -247,21 +262,21 @@
 			</div>
 
 			<div>
-				<?php echo functions::form_button('filter', t('title_search', 'Search'), 'submit'); ?>
+				<?php echo f::form_button('filter', t('title_search', 'Search'), 'submit'); ?>
 			</div>
 		</div>
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 
 	<div class="card-body">
 		<div id="tokens"></div>
 	</div>
 
-	<?php echo functions::form_begin('translations_form', 'post'); ?>
+	<?php echo f::form_begin('translations_form', 'post'); ?>
 
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th style="width: 50px;"><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th style="width: 50px;"><?php echo f::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th data-sort="id"><?php echo t('title_code', 'code'); ?></th>
 					<?php foreach ($_GET['languages'] as $language_code) { ?><th><?php echo language::$languages[$language_code]['name']; ?></th><?php } ?>
 				</tr>
@@ -271,16 +286,16 @@
 				<?php foreach ($translations as $key => $translation) { ?>
 				<tr>
 					<td>
-						<?php echo functions::form_checkbox('translations['.$key.'][checked]', $translation['code'], true, preg_match('#^\[#', $translation['code']) ? 'disabled' : ''); ?>
-						<?php echo functions::form_input_hidden('translations['.$key.'][entity]', true); ?>
-						<?php echo functions::form_input_hidden('translations['.$key.'][code]', true); ?>
+						<?php echo f::form_checkbox('translations['.$key.'][checked]', $translation['code'], true, preg_match('#^\[#', $translation['code']) ? 'disabled' : ''); ?>
+						<?php echo f::form_input_hidden('translations['.$key.'][entity]', true); ?>
+						<?php echo f::form_input_hidden('translations['.$key.'][code]', true); ?>
 					</td>
 					<td>
-						<pre><?php echo functions::escape_html($translation['code']); ?></pre>
-						<small style="color: #999;"><?php echo functions::form_checkbox('translations['.$key.'][html]', ['1', t('text_html_enabled', 'HTML enabled')], true); ?></small>
+						<pre><?php echo f::escape_html($translation['code']); ?></pre>
+						<small style="color: #999;"><?php echo f::form_checkbox('translations['.$key.'][html]', ['1', t('text_html_enabled', 'HTML enabled')], true); ?></small>
 					</td>
 					<?php foreach ($_GET['languages'] as $language_code) { ?>
-					<td><?php echo functions::form_textarea('translations['.$key.'][text_'. $language_code .']', true); ?></td>
+					<td><?php echo f::form_textarea('translations['.$key.'][text_'. $language_code .']', true); ?></td>
 					<?php } ?>
 				</tr>
 				<?php } ?>
@@ -302,21 +317,22 @@
 					<?php echo t('text_with_selected', 'With selected'); ?>:
 				</legend>
 
-				<?php echo functions::form_button_predefined('delete'); ?>
+				<?php echo f::form_button_predefined('delete'); ?>
 
 			</fieldset>
 		</div>
 
 		<div class="card-action">
-			<?php echo functions::form_button('translator_tool', t('title_translator_tool', 'Translator Tool'), 'button', 'class="btn btn-default translator-tool" data-toggle="lightbox" data-target="#translator-tool" data-width="980px"'); ?>
-			<?php echo functions::form_button_predefined('save'); ?>
+			<?php echo f::form_button('translate', f::draw_fonticon('icon-language') .' '. t('title_translate_missing', 'Translate Missing'), 'button'); ?>
+			<?php echo f::form_button('translator_tool', t('title_translator_tool', 'Translator Tool'), 'button', ['class' => 'btn btn-default translator-tool', 'data-toggle' => 'lightbox', 'data-target' => '#translator-tool', 'data-width' => '980px']); ?>
+			<?php echo f::form_button_predefined('save'); ?>
 		</div>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 
 	<?php if ($num_pages > 1) { ?>
 	<div class="card-footer">
-		<?php echo functions::draw_pagination($num_pages); ?>
+		<?php echo f::draw_pagination($num_pages); ?>
 	</div>
 	<?php } ?>
 </div>
@@ -328,12 +344,12 @@
 		<div class="col-md-6">
 			<label class="form-group">
 				<div class="form-label"><?php echo t('title_from_language', 'From Language'); ?></div>
-				<?php echo functions::form_select('from_language_code', $language_options, $_GET['languages'][0]); ?>
+				<?php echo f::form_select('from_language_code', $language_options, $_GET['languages'][0]); ?>
 			</label>
 
 			<label class="form-group">
 				<div class="form-label"><?php echo t('title_to_language', 'To Language'); ?></div>
-				<?php echo functions::form_select('to_language_code', $language_options); ?>
+				<?php echo f::form_select('to_language_code', $language_options); ?>
 			</label>
 
 			<label class="form-group">
@@ -344,11 +360,11 @@
 			<div class="btn-group btn-block">
 
 				<a class="btn btn-default" href="https://translate.google.com" target="_blank">
-					<?php echo functions::draw_fonticon('icon-square-out'); ?> Google Translate
+					<?php echo f::draw_fonticon('icon-square-out'); ?> Google Translate
 				</a>
 
 				<a class="btn btn-default" href="https://www.bing.com/translator" target="_blank">
-					<?php echo functions::draw_fonticon('icon-square-out'); ?> Bing Translate
+					<?php echo f::draw_fonticon('icon-square-out'); ?> Bing Translate
 				</a>
 
 			</div>
@@ -371,14 +387,15 @@
 	$('form[name="filter_form"]').on('input', ':input', function() {
 		$('#tokens').html('');
 
-		$.each($('form[name="filter_form"] input[type="checkbox"]:checked, form[name="filter_form"] input[type="radio"]:checked'), function(i,el) {
-			if (!$(this).val()) return;
+		$.each($('form[name="filter_form"] input[type="checkbox"]:checked, form[name="filter_form"] input[type="radio"]:checked'), function(i, $el) {
+			$el = $(this);
+			if (!$el.val()) return;
 
 			var $token = $('<span class="token"></span>');
 
-			$token.attr('data-name', $(el).attr('name'))
-				.attr('data-value', $(el).val())
-				.text($(el).next('.title').text())
+			$token.attr('data-name', $el.attr('name'))
+				.attr('data-value', $el.val())
+				.text($el.next('.title').text())
 				.append('<a href="#" class="remove">×</a></span>');
 
 			$('#tokens').append($token);
@@ -394,18 +411,18 @@
 	$('#tokens').on('click', '.remove', function(e) {
 
 		e.preventDefault();
-		var token = $(this).closest('.token');
+		var $token = $(this).closest('.token');
 
-		switch ($(':input[name="'+ $(token).data('name') +'"]').attr('type')) {
+		switch ($(':input[name="'+ $token.data('name') +'"]').attr('type')) {
 
 			case 'radio':
 			case 'checkbox':
-				$(':input[name="'+ $(token).data('name') +'"][value="'+ $(token).data('value') +'"]').prop('checked', false).trigger('input');
+				$(':input[name="'+ $token.data('name') +'"][value="'+ $token.data('value') +'"]').prop('checked', false).trigger('input');
 				break;
 
 			case 'text':
 			case 'search':
-				$(':input[name="'+ $(token).data('name') +'"]').val('').trigger('input');
+				$(':input[name="'+ $token.data('name') +'"]').val('').trigger('input');
 				break;
 		}
 
@@ -415,6 +432,67 @@
 	$('textarea[name^="translations"]').on('input', function() {
 		$(this).height('auto').height($(this).prop('scrollHeight') + 'px');
 	}).trigger('input');
+
+	$('button[name="translate"]').on('click', function(e){
+		e.preventDefault();
+
+		if (!$('textarea[name$="[en]"]').length) {
+			alert('Need english source for translating');
+			return;
+		}
+
+		var translationsQueue = [];
+
+		$('textarea[name~="translations\[\d+\]\[text_[a-z]{2}\]"]').each(function(){
+			if ($(this).val() == '') {
+
+				let $textarea = $(this),
+					language_code = $textarea.attr('name').match(/text_([a-z]{2})/)[1];
+					text = $textarea.closest('tr').find('textarea[name$="[en]"]').val();
+
+				if (translationsQueue[language_code] === undefined) {
+					translationsQueue[language_code] = [];
+				}
+
+				translationsQueue[language_code].push(text);
+			}
+		});
+
+		if (translationsQueue.length == 0) {
+			alert('Nothing to translate');
+			return;
+		}
+
+		$.each(translationsQueue, function(language_code, texts){
+			$.ajax({
+				url: '<?php echo document::href_ilink(__APP__.'translate.json'); ?>',
+				type: 'post',
+				dataType: 'json',
+				data: {
+					from: 'en',
+					to: language_code,
+					text: texts,
+				},
+				beforeSend: function(){
+					$('textarea[name^="translations\[\d+\]\[text_' + language_code + '\]"]').css('border', '1px dashed #f00');
+				},
+				success: function(result){
+
+					if (result.error) {
+						console.log(result.error);
+						return;
+					}
+
+					$('textarea[name^="translations\[\d+\]\[text_' + language_code + '\]"]').each(function(i){
+						$(this).val(data[i]).trigger('input').css('border', '1px solid #f00;');
+					});
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					console.log(textStatus, errorThrown);
+				},
+			});
+		});
+	});
 
 	// Translator Tool
 
@@ -453,7 +531,7 @@
 		var $modal = $(this).closest('.litebox'),
 			 translated = $modal.find(':input[name="result"]').val().trim();
 
-		translated = translated.split(/\n(?=\[[0-9]+\])/);
+		translated = translated.split(/\n(?=\[\d+\])/);
 
 		if ($modal.find('select[name="to_language_code"]').val() == '') {
 			alert('You must specify which language you are translating');
@@ -462,7 +540,7 @@
 
 		$.each(translated, function(i) {
 
-			var matches = translated[i].trim().match(/^\[([0-9]+)\] = (.*)$/),
+			var matches = translated[i].trim().match(/^\[(\d+)\] = (.*)$/),
 				index = matches[1],
 				translation = matches[2].trim();
 

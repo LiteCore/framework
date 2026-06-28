@@ -66,6 +66,12 @@
 				require 'app://includes/streams/' . $class . '.inc.php';
 				break;
 
+			// Types
+			case (preg_match('#^type_#', $class)):
+
+				require 'app://includes/types/' . $class . '.inc.php';
+				break;
+
 			// System nodes
 			default:
 

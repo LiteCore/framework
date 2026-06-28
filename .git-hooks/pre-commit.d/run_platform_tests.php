@@ -8,9 +8,9 @@
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
 
-	$directory = functions::file_resolve_path(__DIR__.'/../../tests/');
+	$directory = f::file_resolve_path(__DIR__.'/../../tests/');
 
-	$files = functions::file_search($directory . '/*.php');
+	$files = f::file_search($directory . '/*.php');
 
 	echo 'Found '. count($files) . ' test files' . PHP_EOL;
 	echo implode(PHP_EOL, array_map(function($file) {

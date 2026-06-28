@@ -151,6 +151,11 @@
 
 		public function stream_metadata(string $path, int $option, mixed $value): bool {
 
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Changing metadata for an app:// resource is prohibited', E_USER_WARNING);
+				return false;
+			}
+
 			$path = $this->_resolve_file($path);
 
 			switch ($option) {
@@ -230,8 +235,13 @@
 		}
 
 		public function unlink(string $path): bool {
-			$path = $this->_resolve_file($path);
-			return unlink($path);
+
+			if (!getenv('SUPER_MODE')) {
+				trigger_error('Removing an app:// resource is prohibited', E_USER_WARNING);
+				return false;
+			}
+
+			return unlink($this->_resolve_path($path));
 		}
 
 		public function url_stat(string $path, int $flags): array|false {
@@ -247,18 +257,20 @@
 
 		## Non-Standard StreamWrapper Methods
 
-		private function _resolve_path($path) {
+		private function _resolve_path(string $path): string {
 			return preg_replace('#^app://#', FS_DIR_APP, str_replace('\\', '/', $path));
 		}
 
-		private function _resolve_file($path) {
+		private function _resolve_file(string $path): string {
 
 			$path = $this->_resolve_path($path);
 			$relative_path = preg_replace('#^'. preg_quote(FS_DIR_APP, '#') .'#', '', $path);
+			$parent_folder = dirname($path).'/';
+			$basename = basename($path);
 
-			if (isset(self::$_cache[dirname($path).'/'])) {
-				if (isset(self::$_cache[dirname($path).'/'][basename($path)])) {
-					return self::$_cache[dirname($path).'/'][basename($path)];
+			if (isset(self::$_cache[$parent_folder])) {
+				if (isset(self::$_cache[$parent_folder][$basename])) {
+					return self::$_cache[$parent_folder][$basename];
 				}
 			}
 

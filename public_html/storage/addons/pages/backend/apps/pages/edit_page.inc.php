@@ -72,23 +72,23 @@
 	</div>
 
 	<div class="card-body">
-		<?php echo functions::form_begin('pages_form', 'post', false, false, 'style="max-width: 640px;"'); ?>
+		<?php echo f::form_begin('pages_form', 'post', false, false, 'style="max-width: 640px;"'); ?>
 
 			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo t('title_status', 'Status'); ?></label>
-					<?php echo functions::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
+					<?php echo f::form_toggle('status', 'e/d', (isset($_POST['status'])) ? $_POST['status'] : '1'); ?>
 				</div>
 				<div class="form-group col-md-6">
 					<label><?php echo t('title_priority', 'Priority'); ?></label>
-					<?php echo functions::form_input_number('priority', true); ?>
+					<?php echo f::form_input_number('priority', true); ?>
 				</div>
 			</div>
 
 			<div class="grid">
 				<div class="form-group col-md-6">
 					<label><?php echo t('title_parent', 'Parent'); ?></label>
-					<?php echo functions::form_select_page('parent_id', true); ?>
+					<?php echo f::form_select_page('parent_id', true); ?>
 				</div>
 			</div>
 
@@ -105,34 +105,34 @@
 				<div id="<?php echo $language_code; ?>" class="tab-pane fade in<?php echo ($language_code == language::$selected['code']) ? ' active' : ''; ?>">
 					<div class="form-group">
 						<label><?php echo t('title_title', 'Title'); ?></label>
-						<?php echo functions::form_regional_text('title['. $language_code .']', $language_code, true, ''); ?>
+						<?php echo f::form_regional_text('title['. $language_code .']', $language_code, true, ''); ?>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo t('title_content', 'Content'); ?></label>
-						<?php echo functions::form_regional_wysiwyg('content['. $language_code .']', $language_code, true, 'style="height: 400px;"'); ?>
+						<?php echo f::form_regional_wysiwyg('content['. $language_code .']', $language_code, true, 'style="height: 400px;"'); ?>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo t('title_head_title', 'Head Title'); ?></label>
-						<?php echo functions::form_regional_text('head_title['. $language_code .']', $language_code, true); ?>
+						<?php echo f::form_regional_text('head_title['. $language_code .']', $language_code, true); ?>
 					</div>
 
 					<div class="form-group">
 						<label><?php echo t('title_meta_description', 'Meta Description'); ?></label>
-						<?php echo functions::form_regional_text('meta_description['. $language_code .']', $language_code, true); ?>
+						<?php echo f::form_regional_text('meta_description['. $language_code .']', $language_code, true); ?>
 					</div>
 				</div>
 				<?php } ?>
 			</div>
 
 			<div class="card-action">
-				<?php echo functions::form_button('save', t('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
-				<?php echo !empty($page->data['id']) ? functions::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete') : false; ?>
-				<?php echo functions::form_button('cancel', t('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"', 'cancel'); ?>
+				<?php echo f::form_button('save', t('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
+				<?php echo !empty($page->data['id']) ? f::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete') : false; ?>
+				<?php echo f::form_button('cancel', t('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"', 'cancel'); ?>
 			</div>
 
-		<?php echo functions::form_end(); ?>
+		<?php echo f::form_end(); ?>
 	</div>
 </div>
 

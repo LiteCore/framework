@@ -141,7 +141,7 @@
 	}
 
 	// Returns a stfrftime-style formatted date-time string
-	function datetime_format($format, $timestamp=null) {
+	function datetime_format(string $format, int|string|\DateTimeInterface|null $timestamp=null): string {
 
 		if ($timestamp === null) {
 			$timestamp = new \DateTime();
@@ -317,7 +317,7 @@
 		return $out;
 	}
 
-	function datetime_when($timestamp=null) {
+	function datetime_when(int|string|\DateTimeInterface|null $timestamp=null): string {
 
 		if ($timestamp === null) {
 			$timestamp = new \DateTime();
@@ -371,7 +371,7 @@
 	}
 
 	// Returns the last point in time by step interval
-	function datetime_last_by_interval($interval, $timestamp=null) {
+	function datetime_last_by_interval(string $interval, int|string|\DateTimeInterface|null $timestamp=null): int|false {
 
 		if ($timestamp === null) {
 			$timestamp = time();
@@ -384,29 +384,26 @@
 		$m = date('m', $timestamp);
 		$d = date('d', $timestamp);
 
-		switch (true) {
-
-			case (!$interval): return false;
-
-			case (strcasecmp($interval, '5 min')):       return mktime(date('H'), floor(date('i', $timestamp) /5)  *5, 0, $m, $d, $y);
-			case (strcasecmp($interval, '10 min')):      return mktime(date('H'), floor(date('i', $timestamp) /10) *10, 0, $m, $d, $y);
-			case (strcasecmp($interval, '15 min')):      return mktime(date('H'), floor(date('i', $timestamp) /15) *15, 0, $m, $d, $y);
-			case (strcasecmp($interval, '30 min')):      return mktime(date('H'), floor(date('i', $timestamp) /30) *30, 0, $m, $d, $y);
-			case (strcasecmp($interval, 'Hourly')):      return mktime(date('H'), 0, 0, $m, $d, $y);
-			case (strcasecmp($interval, '2 hours')):     return mktime(floor(date('H', $timestamp) /2)  *2,  0, 0, $m, $d, $y);
-			case (strcasecmp($interval, '3 hours')):     return mktime(floor(date('H', $timestamp) /3)  *3,  0, 0, $m, $d, $y);
-			case (strcasecmp($interval, '6 hours')):     return mktime(floor(date('H', $timestamp) /6)  *6,  0, 0, $m, $d, $y);
-			case (strcasecmp($interval, '12 hours')):    return mktime(floor(date('H', $timestamp) /12) *12, 0, 0, $m, $d, $y);
-			case (strcasecmp($interval, 'Daily')):       return mktime(0, 0, 0, $m, $d, $y);
-			case (strcasecmp($interval, 'Weekly')):      return strtotime('This week 00:00:00', $timestamp);
-			case (strcasecmp($interval, 'Monthly')):     return mktime(0, 0, 0, null, 1, $y);
-			case (strcasecmp($interval, '3 months')):
-			case (strcasecmp($interval, 'Quarterly')):   return mktime(0, 0, 0, ((ceil(date('n', $timestamp) /3) -1) *3) +1, $d, $y);
-			case (strcasecmp($interval, '6 months')):
-			case (strcasecmp($interval, 'Half-Yearly')): return mktime(0, 0, 0, ((ceil(date('n', $timestamp) /6) -1) *6) +1, $d, $y);
-			case (strcasecmp($interval, '12 months')):
-			case (strcasecmp($interval, 'Yearly')):      return mktime(0, 0, 0, 1, 1, $y);
-
-			default: trigger_error('Unknown step interval ('. $interval .')', E_USER_WARNING); return false;
-		}
+		return match(true) {
+			!$interval => false,
+			strcasecmp($interval, '5 min') === 0       => mktime(date('H'), floor(date('i', $timestamp) /5)  *5, 0, $m, $d, $y),
+			strcasecmp($interval, '10 min') === 0      => mktime(date('H'), floor(date('i', $timestamp) /10) *10, 0, $m, $d, $y),
+			strcasecmp($interval, '15 min') === 0      => mktime(date('H'), floor(date('i', $timestamp) /15) *15, 0, $m, $d, $y),
+			strcasecmp($interval, '30 min') === 0      => mktime(date('H'), floor(date('i', $timestamp) /30) *30, 0, $m, $d, $y),
+			strcasecmp($interval, 'Hourly') === 0      => mktime(date('H'), 0, 0, $m, $d, $y),
+			strcasecmp($interval, '2 hours') === 0     => mktime(floor(date('H', $timestamp) /2)  *2,  0, 0, $m, $d, $y),
+			strcasecmp($interval, '3 hours') === 0     => mktime(floor(date('H', $timestamp) /3)  *3,  0, 0, $m, $d, $y),
+			strcasecmp($interval, '6 hours') === 0     => mktime(floor(date('H', $timestamp) /6)  *6,  0, 0, $m, $d, $y),
+			strcasecmp($interval, '12 hours') === 0    => mktime(floor(date('H', $timestamp) /12) *12, 0, 0, $m, $d, $y),
+			strcasecmp($interval, 'Daily') === 0       => mktime(0, 0, 0, $m, $d, $y),
+			strcasecmp($interval, 'Weekly') === 0      => strtotime('This week 00:00:00', $timestamp),
+			strcasecmp($interval, 'Monthly') === 0     => mktime(0, 0, 0, null, 1, $y),
+			strcasecmp($interval, '3 months') === 0,
+			strcasecmp($interval, 'Quarterly') === 0   => mktime(0, 0, 0, ((ceil(date('n', $timestamp) /3) -1) *3) +1, $d, $y),
+			strcasecmp($interval, '6 months') === 0,
+			strcasecmp($interval, 'Half-Yearly') === 0 => mktime(0, 0, 0, ((ceil(date('n', $timestamp) /6) -1) *6) +1, $d, $y),
+			strcasecmp($interval, '12 months') === 0,
+			strcasecmp($interval, 'Yearly') === 0      => mktime(0, 0, 0, 1, 1, $y),
+			default => !trigger_error('Unknown step interval ('. $interval .')', E_USER_WARNING)
+		};
 	}

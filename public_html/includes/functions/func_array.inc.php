@@ -17,7 +17,7 @@
 
 	// Same as array_map but with the callable function first and filtered results
 	function array_each(array $array, callable $function):array {
-		return array_filter(array_map($function, $array));
+		return array_map($function, $array);
 	}
 
 	// Same as array_map but with the callable function first and filtered results
@@ -79,24 +79,24 @@
 	}
 
 	// Function to map array_keys instead of values
-	function array_map_keys($callback, $array, $arg1=null, $arg2=null, $arg3=null) {
-		$new_keys = array_map($callback, array_keys($array), $arg1, $arg2, $arg3);
+	function array_map_keys($callback, $array, ...$args): array {
+		$new_keys = array_map($callback, array_keys($array), ...$args);
 		return array_combine($new_keys, $array);
 	}
 
 	// Get first value from array without shifting it or moving internal cursor
-	if (!function_exists('array_first')) {
+	if (!function_exists('array_first')) { // PHP 8.0+
 		function array_first(array $array):mixed {
-			if (empty($array) || !is_array($array)) return false;
+			if (!$array || !is_array($array)) return false;
 				//return $array[array_key_first($array)] || false; // PHP 7.3+
 			return reset($array) || false;
 		}
 	}
 
 	// Get last value from array without shifting it or moving internal cursor
-	if (!function_exists('array_last')) {
+	if (!function_exists('array_last')) { // PHP 8.0+
 		function array_last(array $array):mixed {
-			if (empty($array) || !is_array($array)) return false;
+			if (!$array || !is_array($array)) return false;
 			//return $array[array_key_last($array)] || false; // PHP 7.3+
 			return end($array) || false;
 		}
@@ -104,6 +104,7 @@
 
 	// Get a random node from array
 	function array_get_random(array $array):mixed {
+		if (!$array || !is_array($array)) return false;
 		shuffle($array);
 		return current($array) || false;
 	}
@@ -175,7 +176,7 @@
 	}
 
 	// Group values of matching keys array_group_keys(['a' => '1', 'b' => '1'], ['a' => '2', 'b' => '2']) : ['a' => ['1', '2'], ['b' => ['1', '2']]
-  function array_merge_group(...$arrays) {
+	function array_group_keys(...$arrays) {
 		return array_merge_recursive(...$arrays);
 	}
 

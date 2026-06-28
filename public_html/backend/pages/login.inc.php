@@ -27,12 +27,12 @@
 
 			$administrator = database::query(
 				"select * from ". DB_TABLE_PREFIX ."administrators
-				where lower(username) = '". database::input(strtolower($_POST['username'])) ."'
-				or lower(email) = '". database::input(strtolower($_POST['username'])) ."'
+				where username = '". database::input(strtolower($_POST['username'])) ."'
+				or email = '". database::input(strtolower($_POST['username'])) ."'
 				limit 1;"
 			)->fetch(function($administrator){
-				$administrator['known_ips'] = functions::string_split($administrator['known_ips']);
-				return $administrator;
+				$administrator['known_ips'] = f::string_split($administrator['known_ips']);
+				$administrator['known_fingerprints'] = f::string_split($administrator['known_fingerprints']);
 			});
 
 			if (!$administrator) {
@@ -45,13 +45,13 @@
 
 			if (!empty($administrator['valid_from']) && date('Y-m-d H:i:s') < $administrator['valid_from']) {
 				throw new Exception(strtr(t('error_account_is_blocked', 'The account is blocked until {datetime}'), [
-					'{datetime}' => functions::datetime_format('datetime', $administrator['valid_from'])
+					'{datetime}' => f::datetime_format('datetime', $administrator['valid_from'])
 				]));
 			}
 
 			if (!empty($administrator['valid_to']) && date('Y-m-d H:i:s') > $administrator['valid_to']) {
 				throw new Exception(strtr(t('error_account_expired', 'The account expired {datetime}'), [
-					'{datetime}' => functions::datetime_format('datetime', $administrator['valid_to'])
+					'{datetime}' => f::datetime_format('datetime', $administrator['valid_to'])
 				]));
 			}
 
@@ -81,8 +81,8 @@
 					if (!empty($administrator['email'])) {
 
 						$aliases = [
-							'{site_name}' => settings::get('site_name'),
-							'{site_link}' => document::ilink(''),
+							'{store_name}' => settings::get('store_name'),
+							'{store_link}' => document::ilink(''),
 							'{username}' => $administrator['username'],
 							'{expires}' => date('Y-m-d H:i:00', strtotime('+15 minutes')),
 							'{ip_address}' => $_SERVER['REMOTE_ADDR'],
@@ -133,9 +133,15 @@
 				]));
 			}
 
+			if (!empty(session::$data['fingerprint'])) {
+				array_unshift($administrator['known_fingerprints'], session::$data['fingerprint']);
+				$administrator['known_fingerprints'] = array_slice(array_unique($administrator['known_fingerprints']), 0, 10);
+			}
+
 			database::query(
 				"update ". DB_TABLE_PREFIX ."administrators
-				set last_ip_address = '". database::input($_SERVER['REMOTE_ADDR']) ."',
+				set known_fingerprints = '". database::input(implode(',', $administrator['known_fingerprints'])) ."',
+					last_ip_address = '". database::input($_SERVER['REMOTE_ADDR']) ."',
 					last_hostname = '". database::input(gethostbyaddr($_SERVER['REMOTE_ADDR'])) ."',
 					last_user_agent = '". database::input($_SERVER['HTTP_USER_AGENT']) ."',
 					login_attempts = 0,
@@ -147,15 +153,67 @@
 
 			administrator::load($administrator['id']);
 
-			session::$data['administrator_security_timestamp'] = time();
+			session::$data['security.administrator']['timestamp'] = time();
 			session::regenerate_id();
+			security::rotate_csrf_token();
 
-			unset(session::$data['security_verification']);
+			unset(session::$data['security.administrator']['verification']);
 
-			if (!in_array($_SERVER['REMOTE_ADDR'], $administrator['known_ips']) && !empty($administrator['two_factor_auth']) && !empty($administrator['email'])) {
+			// TOTP (opt-in per administrator). When enrolled, always challenge —
+			// independent of the known-IP check below. Email OTP remains the
+			// fallback for admins who haven't enrolled.
+			if (!empty($administrator['totp_secret'])) {
 
-				session::$data['security_verification'] = [
-					'code' => mt_rand(100000, 999999),
+				session::$data['security.administrator']['verification'] = [
+					'type' => 'totp',
+					'code' => random_int(100000, 999999), // Not used for TOTP, but required for the verification form.
+					'expires' => strtotime('+5 minutes'),
+					'attempts' => 0,
+				];
+
+				if (!empty($_POST['redirect_url'])) {
+					redirect(document::ilink('verify', ['redirect_url' => $_POST['redirect_url']]));
+				} else {
+					redirect(document::ilink('verify'));
+				}
+
+				exit;
+			}
+
+			$is_known_ip = false;
+			$is_known_range = false;
+
+			foreach ($administrator['known_ips'] as $known_ip) {
+				if ($_SERVER['REMOTE_ADDR'] == $known_ip) {
+					$is_known_ip = true;
+					$is_known_range = true;
+					break;
+				} else if (preg_replace('#[0-9]{1,3}\.[0-9]{1,3}$#', '', $_SERVER['REMOTE_ADDR']) == preg_replace('#[0-9]{1,3}\.[0-9]{1,3}$#', '', $known_ip)) {
+					$is_known_range = true;
+					break;
+				}
+			}
+
+			if (!$is_known_ip) {
+				if ($is_known_range) {
+
+					array_unshift($administrator['known_ips'], $_SERVER['REMOTE_ADDR']);
+					$administrator['known_ips'] = array_slice(array_unique($administrator['known_ips']), 0, 10);
+
+					database::query(
+						"update ". DB_TABLE_PREFIX ."administrators
+						set known_ips = '". database::input(implode(',', $administrator['known_ips'])) ."'
+						where id = ". (int)$administrator['id'] ."
+						limit 1;"
+					);
+
+				} else {
+
+					if (!empty($administrator['two_factor_auth']) && !empty($administrator['email'])) {
+
+						session::$data['security.administrator']['verification'] = [
+					'type' => 'eotp',
+					'code' => random_int(100000, 999999),
 					'expires' => strtotime('+15 minutes'),
 					'attempts' => 0,
 				];
@@ -164,7 +222,7 @@
 					->add_recipient($administrator['email'])
 					->set_subject(t('title_verification_code', 'Verification Code'))
 					->add_body(strtr(t('email_verification_code', 'Verification code: {code}'), [
-						'{code}' => session::$data['security_verification']['code']
+								'{code}' => session::$data['security.administrator']['verification']['code']
 					]))
 					->send();
 
@@ -177,33 +235,19 @@
 				}
 
 				exit;
-
-			} else {
-
-				array_unshift($administrator['known_ips'], $_SERVER['REMOTE_ADDR']);
-				$administrator['known_ips'] = array_unique($administrator['known_ips']);
-
-				if (count($administrator['known_ips']) > 5) {
-					array_pop($administrator['known_ips']);
 				}
-
-				database::query(
-					"update ". DB_TABLE_PREFIX ."administrators
-					set known_ips = '". database::input(implode(',', $administrator['known_ips'])) ."'
-					where id = ". (int)$administrator['id'] ."
-					limit 1;"
-				);
+				}
 			}
 
-			if (!empty($_POST['remember_me'])) {
-				$checksum = sha1($administrator['username'] . $administrator['password_hash'] . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
-				header('Set-Cookie: remember_me='. $administrator['username'] .':'. $checksum .'; Path='. WS_DIR_APP .'; Expires='. gmdate('r', strtotime('+3 months')) .'; HttpOnly; SameSite=Lax', false);
+			if (!empty($_POST['remember_me']) && defined('HMAC_KEY_REMEMBER_ME')) {
+				$token = f::token_create_remember($administrator['id'], $administrator['password_hash']);
+				header('Set-Cookie: remember_me='. $token .'; Path='. WS_DIR_APP .'; Expires='. gmdate('r', strtotime('+30 days')) .'; HttpOnly; SameSite=Lax' . (!empty($_SERVER['HTTPS']) ? '; Secure' : ''), false);
 			} else if (!empty($_COOKIE['remember_me'])) {
 				header('Set-Cookie: remember_me=; Path='. WS_DIR_APP .'; Max-Age=-1; HttpOnly; SameSite=Lax', false);
 			}
 
 			if (!empty($_POST['redirect_url'])) {
-				$redirect_url = new ent_link($_POST['redirect_url']);
+				$redirect_url = new type_url($_POST['redirect_url']);
 				$redirect_url->host = '';
 			} else {
 				$redirect_url = document::ilink('b:');
@@ -213,31 +257,23 @@
 				'{username}' => administrator::$data['username']
 			]));
 
-			redirect($redirect_url);
+			redirect($redirect_url, 303);
 			exit;
 
 		} catch (Exception $e) {
-			http_response_code(401); // Troublesome with HTTP Auth (e.g. .htpasswd)
+			security::$data['failed_authentications']++;
+			http_response_code(401); // Troublesome with HTTP Auth Basic (e.g. .htpasswd)
 			notices::add('errors', $e->getMessage());
 		}
 	}
 
 ?>
 <style>
-html {
-	background: #f8f8f8;
-}
-
 body {
 	display: flex;
 	flex-direction: column;
 	width: 100vw;
 	height: 100vh;
-	background: url(<?php echo document::href_rlink('app://backend/template/images/background.svg'); ?>);
-	background-size: cover;
-}
-html.dark-mode body {
-	background: #1a2133;
 }
 
 .loader-wrapper {
@@ -250,16 +286,18 @@ html.dark-mode body {
 }
 
 #box-login {
-	width: 400px;
+	width: 320px;
 	margin: auto;
 	border-radius: var(--border-radius);
 }
+
 #box-login .card-header a {
 	display: block;
 }
+
 #box-login .card-header img {
 	margin: 0 auto;
-	max-width: 250px;
+	max-width: 200px;
 	max-height: 100px;
 }
 
@@ -277,14 +315,14 @@ html.dark-mode body {
 
 <div id="box-login">
 
-	<?php echo functions::form_begin('login_form', 'post'); ?>
-		<?php echo functions::form_input_hidden('login', 'true'); ?>
-		<?php echo functions::form_input_hidden('redirect_url', true); ?>
+	<?php echo f::form_begin('login_form', 'post'); ?>
+		<?php echo f::form_input_hidden('login', 'true'); ?>
+		<?php echo f::form_input_hidden('redirect_url', true); ?>
 
 		<div class="card" style="margin: 0;">
 			<div class="card-header text-center">
 				<a href="<?php echo document::href_ilink(''); ?>">
-					<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('site_name'); ?>">
+					<img src="<?php echo document::href_rlink('storage://images/logotype.png'); ?>" alt="<?php echo settings::get('store_name'); ?>">
 				</a>
 			</div>
 
@@ -295,17 +333,17 @@ html.dark-mode body {
 				<h1><?php echo t('title_sign_in', 'Sign In'); ?></h1>
 
 				<label class="form-group">
-					<?php echo functions::form_input_username('username', true, 'placeholder="'. t('title_username_or_email_address', 'Username or Email Address') .'"'); ?>
+					<?php echo f::form_input_username('username', true, ['placeholder' => t('title_username_or_email_address', 'Username or Email Address')]); ?>
 					<div class="form-label"></div>
 				</label>
 
 				<label class="form-group">
-					<?php echo functions::form_input_password('password', '', 'placeholder="'. t('title_password', 'Password') .'" autocomplete="current-password"'); ?>
+					<?php echo f::form_input_password('password', '', ['placeholder' => t('title_password', 'Password') , 'autocomplete' => 'current-password']); ?>
 					<div class="form-label"></div>
 				</label>
 
 				<div class="form-group">
-					<?php echo functions::form_checkbox('remember_me', ['1', t('title_remember_me', 'Remember Me')], true); ?>
+					<?php echo f::form_checkbox('remember_me', ['1', t('title_remember_me', 'Remember Me')], true); ?>
 				</div>
 			</div>
 
@@ -313,18 +351,18 @@ html.dark-mode body {
 				<div class="grid">
 					<div class="col-md-6 text-start">
 						<a class="btn btn-unstyled btn-lg" href="<?php echo document::href_ilink('f:'); ?>">
-							<?php echo functions::draw_fonticon('icon-chevron-left'); ?> <?php echo t('title_go_to_frontend', 'Go To Frontend'); ?>
+							<?php echo f::draw_fonticon('icon-chevron-left'); ?> <?php echo t('title_frontend', 'Frontend'); ?>
 						</a>
 					</div>
 					<div class="col-md-6 text-end">
-						<?php echo functions::form_button('login', t('title_login', 'Login'), 'submit', 'class="btn btn-default btn-lg"'); ?>
+						<?php echo f::form_button('login', t('title_login', 'Login'), 'submit', ['class' => 'btn btn-default btn-lg']); ?>
 					</div>
 				</div>
 			</div>
 
 		</div>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 </div>
 
 <script>

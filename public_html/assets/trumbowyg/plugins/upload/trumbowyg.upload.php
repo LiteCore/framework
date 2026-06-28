@@ -1,9 +1,10 @@
 <?php
+
 	include '../../../../system/app_header.inc.php';
 
 	try {
 
-		if (!administrator::check_login()) {
+		if (empty(administrator::$data['id'])) {
 			throw new Exception('Not logged in');
 		}
 
@@ -17,7 +18,7 @@
 			$i=0; $filename='';
 
 			while (empty($filename) || is_file($upload_directory . $filename)) {
-				$filename = pathinfo($_FILES['fileToUpload']['name'], PATHINFO_FILENAME) . (!empty($i) ? '_'.$i : '') .'.'. $image->type;
+				$filename = pathinfo($_FILES['fileToUpload']['name'], PATHINFO_FILENAME) . ($i ? '_'.$i : '') .'.'. $image->type;
 				$i++;
 			}
 
@@ -26,11 +27,11 @@
 				$image->resample($width, $height, 'FIT_ONLY_BIGGER');
 			}
 
-			$image->save($upload_directory . $filename, 90);
+			$image->save($upload_directory . $filename, '', 90);
 
 			unlink($_FILES['fileToUpload']['tmp_name']);
 
-			echo json_encode([
+			echo f::format_json([
 				'success' => true,
 				'file' => preg_replace('#^'. preg_quote(FS_DIR_STORAGE, '#') .'#', '', $upload_directory . $filename),
 				'message' => 'uploadSuccess',
@@ -38,7 +39,7 @@
 		}
 
 	} catch (Exception $e) {
-		echo json_encode([
+		echo f::format_json([
 			'success' => false,
 			'message' => 'uploadError',
 		]);

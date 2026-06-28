@@ -64,12 +64,12 @@
 
 						<?php if (settings::get('site_phone')) { ?>
 						<p class="phone">
-							<?php echo functions::draw_fonticon('icon-phone'); ?> <a href="tel:<?php echo $phone_number; ?>"><?php echo $phone_number; ?></a>
+							<?php echo f::draw_fonticon('icon-phone'); ?> <a href="tel:<?php echo $phone_number; ?>"><?php echo $phone_number; ?></a>
 						<p>
 						<?php } ?>
 
 						<p class="email">
-							<?php echo functions::draw_fonticon('icon-envelope'); ?> <a href="mailto:<?php echo $email_address; ?>"><?php echo $email_address; ?></a>
+							<?php echo f::draw_fonticon('icon-envelope'); ?> <a href="mailto:<?php echo $email_address; ?>"><?php echo $email_address; ?></a>
 						</p>
 					</section>
 
@@ -84,7 +84,7 @@
 				<div class="social-bookmarks flex flex-inline flex-gap text-center">
 					<?php foreach ($social as $bookmark) { ?>
 					<a href="<?php echo htmlspecialchars($bookmark['link']); ?>">
-						<?php echo functions::draw_fonticon($bookmark['icon'] .'', 'title="'. htmlspecialchars($bookmark['title']) .'"'); ?>
+						<?php echo f::draw_fonticon($bookmark['icon'] .'', 'title="'. htmlspecialchars($bookmark['title']) .'"'); ?>
 					</a>
 					<?php } ?>
 				</div>

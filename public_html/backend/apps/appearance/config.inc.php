@@ -2,15 +2,26 @@
 
 	return [
 		'name' => t('title_appearance', 'Appearance'),
-		'default' => 'edit_styling',
+		'group' => 'system',
+		'default' => 'images',
 		'priority' => 0,
 
 		'theme' => [
 			'color' => '#e54d80',
-			'icon' => 'icon-adjust',
+			'icon' => 'icon-palette',
 		],
 
 		'menu' => [
+			[
+				'title' => t('title_images', 'Images'),
+				'doc' => 'images',
+				'params' => [],
+			],
+			[
+				'title' => t('title_favicon', 'Favicon'),
+				'doc' => 'favicon',
+				'params' => [],
+			],
 			[
 				'title' => t('title_edit_styling', 'Edit Styling'),
 				'doc' => 'edit_styling',
@@ -36,7 +47,7 @@
 		'docs' => [
 			'edit_styling' => 'edit_styling.inc.php',
 			'favicon' => 'favicon.inc.php',
-			'logotype' => 'logotype.inc.php',
+			'images' => 'images.inc.php',
 			'template_settings' => 'template_settings.inc.php',
 		],
 	];

@@ -1,19 +1,27 @@
 <?php
 
-	switch (__DOC__) {
+	extract(match(__DOC__) {
+		'jobs' => [
+			'title' => t('title_job_modules', 'Job Modules'),
+			'files' => f::file_search('app://includes/modules/jobs/*.inc.php'),
+			'mod_class' => new mod_jobs(),
+			'type' => 'job',
+			'edit_doc' => 'edit_job',
+		],
+		'translation' => [
+			'title' => language::translate('title_translation', 'Translation'),
+			'files' => glob(FS_DIR_APP . 'includes/modules/translation/tm_*.inc.php'),
+			'mod_class' => new mod_translation(),
+			'type' => 'translation',
+			'edit_doc' => 'edit_translation',
+		],
+		default => throw new Error('Unknown module type ('. __DOC__ .')'),
+	});
 
-		case 'jobs':
+	document::$title[] = $title;
 
-			$title = t('title_job_modules', 'Job Modules');
-			$files = functions::file_search('app://includes/modules/jobs/*.inc.php');
-			$mod_class = new mod_jobs();
-			$type = 'job';
-			$edit_doc = 'edit_job';
-			break;
-
-		default:
-			trigger_error('Unknown module type ('. __DOC__ .')', E_USER_ERROR);
-	}
+	breadcrumbs::add(t('title_modules', 'Modules'));
+	breadcrumbs::add($title, document::ilink());
 
 	if (isset($_POST['enable']) || isset($_POST['disable'])) {
 
@@ -37,11 +45,6 @@
 			notices::add('errors', $e->getMessage());
 		}
 	}
-
-	document::$title[] = $title;
-
-	breadcrumbs::add(t('title_modules', 'Modules'));
-	breadcrumbs::add($title, document::ilink());
 
 	// Installed Modules
 	$installed_modules = database::query(
@@ -69,19 +72,19 @@
 
 	foreach ($files as $file) {
 		$module_id = substr(basename($file), 0, -8);
-		if (in_array($module_id, $installed_modules)) continue;
 
-		$module = new $module_id;
+		$installed = in_array($module_id, $installed_modules);
+		$module = ($installed && isset($mod_class->modules[$module_id])) ? $mod_class->modules[$module_id] : new $module_id;
 
 		$modules[] = [
 			'id' => $module_id,
-			'status' => null,
+			'status' => $module->status,
 			'name' => $module->name,
 			'version' => $module->version,
-			'priority' => null,
+			'priority' => $module->priority,
 			'author' => $module->author,
 			'website' => $module->website,
-			'installed' => false,
+			'installed' => $installed,
 		];
 	}
 
@@ -98,19 +101,19 @@
 	<div class="card-action">
 
 		<?php if ($type == 'job') { ?>
-		<button id="cron-example" class="btn btn-default" type="button" style="margin-right: 1em;">
-			<?php echo functions::draw_fonticon('icon-info'); ?> <?php echo t('title_cron_job', 'Cron Job'); ?>
+		<button id="cron-example" class="btn btn-default" type="button" style="margin-inline-end: 1em;">
+			<?php echo f::draw_fonticon('icon-info'); ?> <?php echo t('title_cron_job', 'Cron Job'); ?>
 		</button>
 		<?php } ?>
 
 	</div>
 
-	<?php echo functions::form_begin('modules_form', 'post'); ?>
+	<?php echo f::form_begin('modules_form', 'post'); ?>
 
 		<table class="table data-table">
 			<thead>
 				<tr>
-					<th><?php echo functions::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
+					<th><?php echo f::draw_fonticon('icon-square-check', 'data-toggle="checkbox-toggle"'); ?></th>
 					<th></th>
 					<th class="main"><?php echo t('title_name', 'Name'); ?></th>
 					<th></th>
@@ -126,8 +129,8 @@
 				<?php foreach ($modules as $module) { ?>
 				<?php if (!empty($module['installed'])) { ?>
 				<tr class="<?php echo empty($module['status']) ? 'semi-transparent' : ''; ?>">
-					<td><?php echo functions::form_checkbox('modules[]', $module['id']); ?></td>
-					<td><?php echo functions::draw_fonticon($module['status'] ? 'on' : 'off'); ?></td>
+					<td><?php echo f::form_checkbox('modules[]', $module['id']); ?></td>
+					<td><?php echo f::draw_fonticon($module['status'] ? 'on' : 'off'); ?></td>
 					<td><a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_'.$type, ['module_id' => $module['id']]); ?>"><?php echo $module['name']; ?></a></td>
 					<?php if (__DOC__ == 'jobs' && !empty($module['status'])) { ?>
 					<td class="text-center">
@@ -140,21 +143,29 @@
 					<?php } ?>
 					<td><?php echo $module['id']; ?></td>
 					<td class="text-end"><?php echo $module['version']; ?></td>
-					<td><?php echo !empty($module['website']) ? '<a href="'. functions::escape_attr($module['website']) .'" target="_blank">'. $module['author'] .'</a>' : $module['author']; ?></td>
+					<td><?php echo !empty($module['website']) ? '<a href="'. f::escape_attr($module['website']) .'" target="_blank">'. $module['author'] .'</a>' : $module['author']; ?></td>
 					<td class="text-center"><?php echo $module['priority']; ?></td>
-					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/'.$edit_doc, ['module_id' => $module['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo functions::draw_fonticon('edit'); ?></a></td>
+					<td class="text-end"><a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/'.$edit_doc, ['module_id' => $module['id']]); ?>" title="<?php echo t('title_edit', 'Edit'); ?>"><?php echo f::draw_fonticon('edit'); ?></a></td>
 				</tr>
 				<?php } else { ?>
 				<tr class="semi-transparent">
 					<td></td>
 					<td></td>
-					<td><?php echo $module['name']; ?></td>
+					<td>
+						<a class="link" href="<?php echo document::href_ilink(__APP__.'/edit_'.$type, ['module_id' => $module['id']]); ?>">
+							<?php echo $module['name']; ?>
+						</a>
+					</td>
 					<td class="text-center"></td>
 					<td><?php echo $module['id']; ?></td>
 					<td class="text-end"><?php echo $module['version']; ?></td>
-					<td><?php echo !empty($module['website']) ? '<a href="'. functions::escape_attr($module['website']) .'" target="_blank">'. $module['author'] .'</a>' : $module['author']; ?></td>
+					<td><?php echo !empty($module['website']) ? '<a href="'. f::escape_attr($module['website']) .'" target="_blank">'. $module['author'] .'</a>' : $module['author']; ?></td>
 					<td class="text-center">-</td>
-					<td class="text-end"><a href="<?php echo document::href_ilink(__APP__.'/edit_'.$type, ['module_id' => $module['id']]); ?>"><?php echo functions::draw_fonticon('add'); ?> <?php echo t('title_install', 'Install'); ?></a></td>
+					<td class="text-end">
+						<a class="btn btn-default btn-sm" href="<?php echo document::href_ilink(__APP__.'/edit_'.$type, ['module_id' => $module['id']]); ?>">
+							<?php echo f::draw_fonticon('add'); ?> <?php echo t('title_install', 'Install'); ?>
+						</a>
+					</td>
 				</tr>
 				<?php } ?>
 				<?php } ?>
@@ -163,7 +174,7 @@
 			<tfoot>
 				<tr>
 					<td colspan="99">
-						<?php echo t('title_modules', 'Modules'); ?>: <?php echo language::number_format($num_rows); ?>
+						<?php echo t('title_modules', 'Modules'); ?>: <?php echo f::format_number($num_rows); ?>
 					</td>
 				</tr>
 			</tfoot>
@@ -171,24 +182,28 @@
 
 		<div class="card-body">
 			<fieldset id="actions" disabled>
-				<legend><?php echo t('text_with_selected', 'With selected'); ?>:</legend>
+
+				<legend>
+					<?php echo t('text_with_selected', 'With selected'); ?>:
+				</legend>
 
 				<div class="btn-group">
-					<?php echo functions::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-					<?php echo functions::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
+					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
 				</div>
+
 			</fieldset>
 		</div>
 
-	<?php echo functions::form_end(); ?>
+	<?php echo f::form_end(); ?>
 </div>
 
 <script>
-	$('#cron-example').on('click', function(){
-		prompt("<?php echo t('title_cron_job_configuration', 'Cron Job Configuration'); ?>", "*/5 * * * * curl --silent <?php echo document::ilink('f:push_jobs'); ?> &>/dev/null");
+	$('#cron-example').on('click', function() {
+		prompt("<?php echo t('title_cron_job_configuration', 'Cron Job Configuration'); ?>", "*/5 * * * * php <?php echo f::escape_js(FS_DIR_APP); ?>index.php push_jobs &>/dev/null");
 	});
 
-	$('.data-table :checkbox').change(function() {
+	$('.data-table :checkbox').on('change', function() {
 		$('#actions').prop('disabled', !$('.data-table :checked').length);
 	}).first().trigger('change');
 </script>

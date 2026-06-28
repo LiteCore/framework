@@ -42,6 +42,20 @@
 				require_once 'app://frontend/pages/push_jobs.inc.php';
 				exit;
 
+			case 'navigate':
+
+				// Navigate to a specific URI
+				if (empty($argv[2])) {
+					echo 'Error: Missing URI argument.' . PHP_EOL;
+					exit(1);
+				}
+
+				$_SERVER['REQUEST_URI'] = $argv[2];
+
+				customer::load(1);
+
+				break;
+
 			default:
 				echo 'Unknown command: '. $argv[1] . PHP_EOL;
 				echo 'Run "php '. basename(__FILE__) .' help" for a list of commands.' . PHP_EOL;

@@ -1,6 +1,6 @@
 <?php
 
-	function csv_encode($array, $delimiter=',', $enclosure='"', $escape='"', $charset='utf-8', $eol="\r\n") {
+	function csv_encode(array $array, string $delimiter=',', string $enclosure='"', string $escape='"', string $charset='utf-8', string $eol="\r\n"): string {
 
 		$output = '';
 
@@ -35,12 +35,12 @@
 		}
 
 		// Convert charset
-		$output = language::convert_characters($output, mb_http_output(), $charset);
+		mb_convert_variables($charset, mb_http_output(), $output);
 
 		return preg_replace('#(\r\n?|\n)#', $eol, $output);
 	}
 
-	function csv_decode($string, $delimiter='', $enclosure='"', $escape='"', $charset='utf-8') {
+	function csv_decode(string $string, string $delimiter='', string $enclosure='"', string $escape='"', string $charset='utf-8'): array {
 
 		$output = [];
 
@@ -51,7 +51,7 @@
 		$string = preg_replace('#(\r\n?|\n)#', PHP_EOL, $string);
 
 		// Convert charset
-		$string = language::convert_characters($string, $charset, mb_http_output());
+		mb_convert_variables(mb_http_output(), $charset, $string);
 
 		// Trim preceeding and trailing whitespace
 		$string = trim($string, "\r\n ");
@@ -60,7 +60,7 @@
 		if (empty($delimiter)) {
 			preg_match('#^.*$#m', $string, $matches);
 			foreach ([',', ';', "\t", '|', chr(124)] as $char) {
-				if (strpos($matches[0], $char) !== false) {
+				if (str_contains($matches[0], $char)) {
 					$delimiter = $char;
 					break;
 				}

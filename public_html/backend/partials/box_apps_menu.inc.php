@@ -28,14 +28,9 @@
 			'name' => t('title_other', 'Other'),
 			'apps' => [],
 		],
-		'addons' => [
-			'id' => 'addons',
-			'name' => t('title_addons', 'Addons'),
-			'apps' => [],
-		],
 	];
 
-	$apps = functions::admin_get_apps();
+	$apps = f::admin_get_apps();
 
 	foreach ($apps as $app) {
 
@@ -43,15 +38,17 @@
 			$app['group'] = 'other';
 		}
 
-		if (!empty(administrator::$data['apps']) && empty(administrator::$data['apps'][$app['id']]['status'])) continue;
+		if (!empty(administrator::$data['permissions']['apps'])) {
+			if (empty(administrator::$data['permissions']['apps'][$app['id']])) continue;
+		}
 
 		$app_item = [
 			'id' => $app['id'],
 			'name' => $app['name'],
 			'link' => document::ilink($app['id'] .'/'. $app['default']),
 			'theme' => [
-				'icon' => $app['theme']['icon'] ?? 'icon-plus',
-				'color' => $app['theme']['color'] ?? '#97a3b5',
+				'icon' => !(empty($app['theme']['icon'])) ? $app['theme']['icon'] : 'add',
+				'color' => !(empty($app['theme']['color'])) ? $app['theme']['color'] : '#97a3b5',
 			],
 			'active' => (defined('__APP__') && __APP__ == $app['id']),
 			'menu' => [],
@@ -60,7 +57,11 @@
 		if (!empty($app['menu'])) {
 			foreach ($app['menu'] as $menu_item) {
 
-				if (!empty(administrator::$data['apps']) && (empty(administrator::$data['apps'][$app['id']]['status']) || !in_array($menu_item['doc'], administrator::$data['apps'][$app['id']]['docs']))) continue;
+				if (!empty(administrator::$data['permissions']['apps'][$app['id']]) && !in_array($menu_item['doc'], administrator::$data['permissions']['apps'][$app['id']])) {
+					continue;
+				}
+
+				$selected = false;
 
 				$params = !empty($menu_item['params']) ? array_merge(['app' => $app['id'], 'doc' => $menu_item['doc']], $menu_item['params']) : ['app' => $app['id'], 'doc' => $menu_item['doc']];
 
@@ -74,8 +75,6 @@
 							}
 						}
 					}
-				} else {
-					$selected = false;
 				}
 
 				$app_item['menu'][] = [
