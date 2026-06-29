@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `lc_administrators` (
 	`email` VARCHAR(128) NOT NULL DEFAULT '',
 	`password_hash` VARCHAR(255) NOT NULL DEFAULT '',
 	`apps` VARCHAR(4096) NOT NULL DEFAULT '',
+	`permissions` CHAR(3) NOT NULL DEFAULT '',
 	`widgets` VARCHAR(512) NOT NULL DEFAULT '',
 	`two_factor_auth` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
 	`login_attempts` INT(10) UNSIGNED NOT NULL DEFAULT '0',
