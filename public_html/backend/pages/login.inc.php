@@ -30,10 +30,10 @@
 				where username = '". database::input(strtolower($_POST['username'])) ."'
 				or email = '". database::input(strtolower($_POST['username'])) ."'
 				limit 1;"
-			)->fetch(function($administrator){
-				$administrator['known_ips'] = f::string_split($administrator['known_ips']);
-				$administrator['known_fingerprints'] = f::string_split($administrator['known_fingerprints']);
-			});
+			)->fetch();
+
+			$administrator['known_ips'] = f::string_split($administrator['known_ips']);
+			$administrator['known_fingerprints'] = f::string_split($administrator['known_fingerprints']);
 
 			if (!$administrator) {
 				throw new Exception(t('error_administrator_not_found', 'The administrator could not be found in our database'));
@@ -159,7 +159,7 @@
 
 			unset(session::$data['security.administrator']['verification']);
 
-			// TOTP (opt-in per administrator). When enrolled, always challenge —
+			// TOTP (opt-in per administrator). When enrolled, always challenge
 			// independent of the known-IP check below. Email OTP remains the
 			// fallback for admins who haven't enrolled.
 			if (!empty($administrator['totp_secret'])) {
