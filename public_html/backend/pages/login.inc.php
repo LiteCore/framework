@@ -30,10 +30,10 @@
 				where username = '". database::input(strtolower($_POST['username'])) ."'
 				or email = '". database::input(strtolower($_POST['username'])) ."'
 				limit 1;"
-			)->fetch();
-
-			$administrator['known_ips'] = f::string_split($administrator['known_ips']);
-			$administrator['known_fingerprints'] = f::string_split($administrator['known_fingerprints']);
+			)->fetch(function($administrator){
+				$administrator['known_ips'] = f::string_split($administrator['known_ips']);
+				$administrator['known_fingerprints'] = f::string_split($administrator['known_fingerprints']);
+			});
 
 			if (!$administrator) {
 				throw new Exception(t('error_administrator_not_found', 'The administrator could not be found in our database'));
@@ -126,7 +126,7 @@
 			}
 
 			if (!empty($administrator['last_ip_address']) && $administrator['last_ip_address'] != $_SERVER['REMOTE_ADDR']) {
-				notices::add('warnings', strtr(t('warning_account_previously_used_by_another_ip', 'Your account was previously used by another IP address {ip_address} ({hostname}). If this was not you then your login credentials might be compromised.'), [
+				notices::add('warnings', strtr(t('warning_account_previously_used_by_another_ip', 'Your account was previously used by another IP address {ip_address} ({hostname}). If this was not you then y[...]
 					'{username}' => $administrator['username'],
 					'{ip_address}' => $administrator['last_ip_address'],
 					'{hostname}' => $administrator['last_hostname'],
@@ -159,7 +159,7 @@
 
 			unset(session::$data['security.administrator']['verification']);
 
-			// TOTP (opt-in per administrator). When enrolled, always challenge
+			// TOTP (opt-in per administrator). When enrolled, always challenge ✓
 			// independent of the known-IP check below. Email OTP remains the
 			// fallback for admins who haven't enrolled.
 			if (!empty($administrator['totp_secret'])) {
@@ -241,7 +241,7 @@
 
 			if (!empty($_POST['remember_me']) && defined('HMAC_KEY_REMEMBER_ME')) {
 				$token = f::token_create_remember($administrator['id'], $administrator['password_hash']);
-				header('Set-Cookie: remember_me='. $token .'; Path='. WS_DIR_APP .'; Expires='. gmdate('r', strtotime('+30 days')) .'; HttpOnly; SameSite=Lax' . (!empty($_SERVER['HTTPS']) ? '; Secure' : ''), false);
+				header('Set-Cookie: remember_me='. $token .'; Path='. WS_DIR_APP .'; Expires='. gmdate('r', strtotime('+30 days')) .'; HttpOnly; SameSite=Lax' . (!empty($_SERVER['HTTPS']) ? '; Secure' : ''),[...]
 			} else if (!empty($_COOKIE['remember_me'])) {
 				header('Set-Cookie: remember_me=; Path='. WS_DIR_APP .'; Max-Age=-1; HttpOnly; SameSite=Lax', false);
 			}
