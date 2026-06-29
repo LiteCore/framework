@@ -600,9 +600,9 @@ textarea.warning {
 											<label class="form-group">
 												<h4><?php echo t('title_find', 'Find'); ?></h4>
 												<?php if (isset($_POST['files'][$f]['operations'][$o]['type']) && in_array($_POST['files'][$f]['operations'][$o]['type'], ['inline', 'regex'])) { ?>
-												<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][content]', true, 'class="form-code" required'); ?>
+												<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][content]', true, ['class' => 'form-code', 'required' => '']); ?>
 												<?php } else { ?>
-												<?php echo f::form_input_code('files['.$f.'][operations]['.$o.'][find][content]', true, 'required'); ?>
+												<?php echo f::form_input_code('files['.$f.'][operations]['.$o.'][find][content]', true, ['required' => '']); ?>
 												<?php } ?>
 											</label>
 
@@ -610,21 +610,21 @@ textarea.warning {
 												<div class="col-md-2">
 													<label class="form-group">
 														<div class="form-label"><?php echo t('title_index', 'Index'); ?></div>
-														<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][index]', true, 'placeholder="1,3,.."'); ?>
+														<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][index]', true, ['placeholder' => '1,3,..']); ?>
 													</label>
 												</div>
 
 												<div class="col-md-2">
 													<label class="form-group">
 														<div class="form-label"><?php echo t('title_offset_before', 'Offset Before'); ?></div>
-														<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][offset-before]', true, 'placeholder="0"'); ?>
+														<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][offset-before]', true, ['placeholder' => '0']); ?>
 													</label>
 												</div>
 
 												<div class="col-md-2">
 													<label class="form-group">
 														<div class="form-label"><?php echo t('title_offset_after', 'Offset After'); ?></div>
-														<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][offset-after]', true, 'placeholder="0"'); ?>
+														<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][find][offset-after]', true, ['placeholder' => '0']); ?>
 													</label>
 												</div>
 											</div>
@@ -632,7 +632,7 @@ textarea.warning {
 											<label class="form-group">
 												<h4><?php echo t('title_insert', 'Insert'); ?></h4>
 												<?php if (isset($_POST['files'][$f]['operations'][$o]['type']) && in_array($_POST['files'][$f]['operations'][$o]['type'], ['inline', 'regex'])) { ?>
-												<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][insert][content]', true, 'class="form-code"'); ?>
+												<?php echo f::form_input_text('files['.$f.'][operations]['.$o.'][insert][content]', true, ['class' => 'form-code']); ?>
 												<?php } else { ?>
 												<?php echo f::form_input_code('files['.$f.'][operations]['.$o.'][insert][content]', true); ?>
 												<?php } ?>
@@ -717,7 +717,7 @@ textarea.warning {
 										<div class="form-label"><?php echo t('title_key', 'Key'); ?></div>
 										<div class="input-group">
 											<span class="input-group-text" style="font-family: monospace;">{setting:</span>
-											<?php echo f::form_input_text('settings['.$key.'][key]', true, 'required'); ?>
+											<?php echo f::form_input_text('settings['.$key.'][key]', true, ['required' => '']); ?>
 											<span class="input-group-text" style="font-family: monospace;">}</span>
 										</div>
 									</label>

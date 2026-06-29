@@ -57,7 +57,7 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_country'), t('title_create_new_country', 'Create New Country'), '', 'add'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_country'), t('title_create_new_country', 'Create New Country'), [], 'add'); ?>
 	</div>
 
 	<?php echo f::form_begin('countries_form', 'post'); ?>
@@ -105,8 +105,8 @@
 				<legend><?php echo t('text_with_selected', 'With selected'); ?></legend>
 
 				<div class="btn-group">
-					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', [], 'on'); ?>
+					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', [], 'off'); ?>
 				</div>
 			</fieldset>
 		</div>

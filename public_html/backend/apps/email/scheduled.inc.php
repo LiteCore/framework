@@ -70,7 +70,7 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo f::form_button_link(document::ilink(__APP__ . '/edit'), t('title_create_new_email', 'Create New Email'), '', 'create'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__ . '/edit'), t('title_create_new_email', 'Create New Email'), [], 'create'); ?>
 	</div>
 
 	<?php echo f::form_begin('emails_form', 'post'); ?>

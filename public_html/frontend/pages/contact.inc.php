@@ -99,28 +99,28 @@
 						<div class="grid">
 							<div class="form-group col-md-6">
 								<label><?php echo t('title_firstname', 'First Name'); ?></label>
-								<?php echo f::form_input_text('firstname', true, 'required'); ?>
+								<?php echo f::form_input_text('firstname', true, ['required' => '']); ?>
 							</div>
 
 							<div class="form-group col-md-6">
 								<label><?php echo t('title_lastname', 'Last Name'); ?></label>
-								<?php echo f::form_input_text('lastname', true, 'required'); ?>
+								<?php echo f::form_input_text('lastname', true, ['required' => '']); ?>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<label><?php echo t('title_email_address', 'Email Address'); ?></label>
-							<?php echo f::form_input_email('email', true, 'required'); ?>
+							<?php echo f::form_input_email('email', true, ['required' => '']); ?>
 						</div>
 
 						<div class="form-group">
 							<label><?php echo t('title_subject', 'Subject'); ?></label>
-							<?php echo f::form_input_text('subject', true, 'required'); ?>
+							<?php echo f::form_input_text('subject', true, ['required' => '']); ?>
 						</div>
 
 						<div class="form-group">
 							<label><?php echo t('title_message', 'Message'); ?></label>
-							<?php echo f::form_textarea('message', true, 'required style="height: 250px;"'); ?>
+							<?php echo f::form_textarea('message', true, ['required' => '', 'style' => 'height: 250px;']); ?>
 						</div>
 
 						<?php if (settings::get('captcha_enabled')) { ?>
@@ -130,7 +130,7 @@
 						</div>
 						<?php } ?>
 
-						<p><?php echo f::form_button('send', t('title_send', 'Send'), 'submit', 'style="font-weight: bold;"'); ?></p>
+						<p><?php echo f::form_button('send', t('title_send', 'Send'), 'submit', ['style' => 'font-weight: bold;']); ?></p>
 
 					<?php echo f::form_end(); ?>
 				</div>

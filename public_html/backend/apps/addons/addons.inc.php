@@ -205,7 +205,7 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_addon'), t('title_create_new_addon', 'Create New Add-on'), '', 'add'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_addon'), t('title_create_new_addon', 'Create New Add-on'), [], 'add'); ?>
 	</div>
 
 	<?php echo f::form_begin('addon_form', 'post', '', true); ?>
@@ -259,12 +259,12 @@
 						<ul class="flex flex-columns">
 							<li>
 								<div class="btn-group">
-									<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-									<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+									<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', [], 'on'); ?>
+									<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', [], 'off'); ?>
 								</div>
 							</li>
 							<li>
-								<?php echo f::form_button('delete', t('title_delete', 'Delete'), 'submit', 'class="btn btn-danger" onclick="'. f::escape_html('if(!confirm("'. t('text_are_you_sure', 'Are you sure?') .'")) return false;') .'"', 'delete'); ?>
+								<?php echo f::form_button('delete', t('title_delete', 'Delete'), 'submit', ['class' => 'btn btn-danger', 'onclick' => f::escape_html('if(!confirm("'. t('text_are_you_sure', 'Are you sure?') .'")) return false;')], 'delete'); ?>
 							</li>
 						</ul>
 					</fieldset>
@@ -275,7 +275,7 @@
 					<legend><?php echo t('title_upload_new_addon', 'Upload a New Add-on'); ?>:</legend>
 
 					<div class="input-group">
-						<?php echo f::form_input_file('addon', 'accept="application/zip,application/xml"'); ?>
+						<?php echo f::form_input_file('addon', ['accept' => 'application/zip,application/xml']); ?>
 						<?php echo f::form_button('upload', t('title_upload', 'Upload'), 'submit'); ?>
 					</div>
 				</fieldset>

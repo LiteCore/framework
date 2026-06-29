@@ -109,12 +109,12 @@ table tbody .toggle {
 	</div>
 
 	<div class="card-action">
-		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_page'), t('title_create_new_page', 'Create New Page'), '', 'add'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_page'), t('title_create_new_page', 'Create New Page'), [], 'add'); ?>
 	</div>
 
 	<?php echo f::form_begin('search_form', 'get'); ?>
 		<div class="card-filter">
-			<div class="expandable"><?php echo f::form_input_search('query', true, 'placeholder="'. t('text_search_phrase_or_keyword', 'Search phrase or keyword').'"'); ?></div>
+			<div class="expandable"><?php echo f::form_input_search('query', true, ['placeholder' => t('text_search_phrase_or_keyword', 'Search phrase or keyword')]); ?></div>
 			<?php echo f::form_button('filter', t('title_search', 'Search'), 'submit'); ?>
 		</div>
 	<?php echo f::form_end(); ?>
@@ -248,18 +248,18 @@ table tbody .toggle {
 				<ul class="flex flex-columns">
 					<li>
 						<div class="btn-group">
-							<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-							<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+							<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', [], 'on'); ?>
+							<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', [], 'off'); ?>
 						</div>
 					</li>
 					<li>
 						<?php echo f::form_select_page('page_id', true); ?>
 					</li>
 					<li>
-						<?php echo f::form_button('move', t('title_move', 'Move'), 'submit', 'onclick="if (!confirm(\''. str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) .'\')) return false;"'); ?>
+						<?php echo f::form_button('move', t('title_move', 'Move'), 'submit', ['onclick' => 'if (!confirm(\'' . str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) . '\')) return false;']); ?>
 					</li>
 					<li>
-						<?php echo f::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(\''. str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) .'\')) return false;"'); ?>
+						<?php echo f::form_button('delete', t('title_delete', 'Delete'), 'submit', ['formnovalidate' => '', 'class' => 'btn btn-danger', 'onclick' => 'if (!confirm(\'' . str_replace("'", "\\\'", t('text_are_you_sure', 'Are you sure?')) . '\')) return false;']); ?>
 					</li>
 				</ul>
 			</fieldset>

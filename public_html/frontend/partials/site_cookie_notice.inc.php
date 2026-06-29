@@ -29,7 +29,7 @@
 		</div>
 
 		<div class="buttons text-center">
-			<?php echo f::form_button('accept_cookies', ['1', t('text_accept_cookies', 'Accept Cookies')], 'button', 'style="font-weight: bold;"'); ?>
+			<?php echo f::form_button('accept_cookies', ['1', t('text_accept_cookies', 'Accept Cookies')], 'button', ['style' => 'font-weight: bold;']); ?>
 			<?php echo f::form_button('reject_cookies', ['0', t('text_reject', 'Reject')], 'button'); ?>
 		</div>
 	</div>

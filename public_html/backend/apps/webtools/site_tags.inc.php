@@ -48,7 +48,7 @@
 
 	<div class="card-action">
 		<ul class="list-inline">
-			<li><?php echo f::form_button_link(document::ilink(__APP__.'/edit_site_tag'), t('title_create_new_site_tag', 'Create New Site Tag'), '', 'create'); ?></li>
+			<li><?php echo f::form_button_link(document::ilink(__APP__.'/edit_site_tag'), t('title_create_new_site_tag', 'Create New Site Tag'), [], 'create'); ?></li>
 		</ul>
 	</div>
 
@@ -98,8 +98,8 @@
 				</legend>
 
 				<div class="btn-group">
-					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', [], 'on'); ?>
+					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', [], 'off'); ?>
 				</div>
 			</fieldset>
 		</div>

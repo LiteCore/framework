@@ -11,7 +11,7 @@
 {{head_tags}}
 <style>
 :root {
-	--default-text-size: <?php echo fallback($_COOKIE['font_size'], '13'); ?>px;
+	--default-text-size: <?php echo isset($_COOKIE['font_size']) ? (int)$_COOKIE['font_size'] : 13; ?>px;
 }
 </style>
 </head>
@@ -29,7 +29,7 @@
 		</a>
 
 		<div class="filter">
-			<?php echo f::form_input_search('filter', false, 'placeholder="'. f::escape_attr(t('title_filter', 'Filter')) .'&hellip;" autocomplete="off"'); ?>
+			<?php echo f::form_input_search('filter', false, ['placeholder' => f::escape_attr(t('title_filter', 'Filter')) . '&hellip;', 'autocomplete' => 'off']); ?>
 		</div>
 
 		<?php include 'app://backend/partials/box_apps_menu.inc.php'; ?>
@@ -41,7 +41,7 @@
 			</a>
 		</div>
 
-		<div class="copyright" class="text-center">Copyright &copy; <?php echo date('2012-Y'); ?><br>
+		<div class="copyright text-center">Copyright &copy; <?php echo date('2012-Y'); ?><br>
 			<a href="https://www.litecart.net" target="_blank">www.litecart.net</a>
 		</div>
 	</div>

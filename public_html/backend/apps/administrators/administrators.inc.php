@@ -80,7 +80,7 @@
 	</div>
 
 	<div class="card-action">
-		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_administrator'), t('title_create_new_administrator', 'Create New Administrator'), '', 'create'); ?>
+		<?php echo f::form_button_link(document::ilink(__APP__.'/edit_administrator'), t('title_create_new_administrator', 'Create New Administrator'), [], 'create'); ?>
 	</div>
 
 	<?php echo f::form_begin('administrators_form', 'post'); ?>
@@ -137,8 +137,8 @@
 				</legend>
 
 				<div class="btn-group">
-					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+					<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', [], 'on'); ?>
+					<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', [], 'off'); ?>
 				</div>
 
 			</fieldset>

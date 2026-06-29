@@ -72,7 +72,7 @@
 	</div>
 
 	<div class="card-body">
-		<?php echo f::form_begin('pages_form', 'post', false, false, 'style="max-width: 640px;"'); ?>
+		<?php echo f::form_begin('pages_form', 'post', false, false, ['style' => 'max-width: 640px;']); ?>
 
 			<div class="grid">
 				<div class="form-group col-md-6">
@@ -127,9 +127,9 @@
 			</div>
 
 			<div class="card-action">
-				<?php echo f::form_button('save', t('title_save', 'Save'), 'submit', 'class="btn btn-success"', 'save'); ?>
-				<?php echo !empty($page->data['id']) ? f::form_button('delete', t('title_delete', 'Delete'), 'submit', 'formnovalidate class="btn btn-danger" onclick="if (!confirm(&quot;'. t('text_are_you_sure', 'Are you sure?') .'&quot;)) return false;"', 'delete') : false; ?>
-				<?php echo f::form_button('cancel', t('title_cancel', 'Cancel'), 'button', 'onclick="history.go(-1);"', 'cancel'); ?>
+				<?php echo f::form_button('save', t('title_save', 'Save'), 'submit', ['class' => 'btn btn-success'], 'save'); ?>
+				<?php echo !empty($page->data['id']) ? f::form_button('delete', t('title_delete', 'Delete'), 'submit', ['formnovalidate' => '', 'class' => 'btn btn-danger', 'onclick' => 'if (!confirm(&quot;' . t('text_are_you_sure', 'Are you sure?') . '&quot;)) return false;'], 'delete') : false; ?>
+				<?php echo f::form_button('cancel', t('title_cancel', 'Cancel'), 'button', ['onclick' => 'history.go(-1);'], 'cancel'); ?>
 			</div>
 
 		<?php echo f::form_end(); ?>

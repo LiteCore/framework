@@ -74,7 +74,7 @@
 
 	<div class="card-action">
 		<ul class="list-inline pull-right">
-			<li><?php echo f::form_button_link(document::ilink(__APP__.'/edit_redirect'), t('title_create_new_redirect', 'Create New Redirect'), '', 'create'); ?></li>
+			<li><?php echo f::form_button_link(document::ilink(__APP__.'/edit_redirect'), t('title_create_new_redirect', 'Create New Redirect'), [], 'create'); ?></li>
 		</ul>
 	</div>
 
@@ -126,8 +126,8 @@
 				<div class="flex">
 
 					<div class="btn-group">
-						<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', '', 'on'); ?>
-						<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', '', 'off'); ?>
+						<?php echo f::form_button('enable', t('title_enable', 'Enable'), 'submit', [], 'on'); ?>
+						<?php echo f::form_button('disable', t('title_disable', 'Disable'), 'submit', [], 'off'); ?>
 					</div>
 
 					<?php echo f::form_button_predefined('delete'); ?>
