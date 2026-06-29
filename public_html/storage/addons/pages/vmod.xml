@@ -121,22 +121,22 @@
     <operation method="after" type="multiline" onerror="warning">
       <find><![CDATA[
 			case 'language':
-				return form_select_language($name, $input, $parameters);
+				return form_select_language($name, $input, $attributes);
       ]]></find>
 
       <insert><![CDATA[
 			case 'page':
-				return form_select_page($name, $input, $parameters);
+				return form_select_page($name, $input, $attributes);
       ]]></insert>
     </operation>
 
     <operation method="before" type="multiline" onerror="warning">
       <find><![CDATA[
-	function form_select_timezone($name, $input=true, $parameters='') {
+	function form_select_timezone(string $name, bool|array|string $input=true, array|string $attributes=[]): string {
       ]]></find>
 
       <insert><![CDATA[
-	function form_select_page($name, $input=true, $parameters='') {
+	function form_select_page($name, $input=true, $attributes='') {
 
 		$iterator = function($parent_id, $level) use (&$iterator) {
 
@@ -174,10 +174,10 @@
 		$options = $iterator(0, 1);
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $attributes);
 		} else {
 			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
-			return form_select($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $attributes);
 		}
 	}
       ]]></insert>
