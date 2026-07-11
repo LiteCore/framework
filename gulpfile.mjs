@@ -18,17 +18,52 @@ const sassOptions = { charset: false, silenceDeprecations: ['legacy-js-api'] };
 
 const banner = [
 	'/*!',
-	' * <%= pkg.title %> v<%= pkg.version %> - <%= pkg.description %>',
-	' * @link <%= pkg.homepage %>',
-	' * @license <%= pkg.license %>',
-	' * @author <%= pkg.author.name %>',
-	' */',
+	'	<%= pkg.title %> v<%= pkg.version %> - <%= pkg.description %>',
+	'	Link: <%= pkg.homepage %>',
+	'	License: <%= pkg.license %>',
+	'	Author: <%= pkg.author.name %>',
+	'*/',
 	'',
 	'',
 ].join('\n');
 
-gulp.task('scss-framework', function() {
+const tabify = function() {
+	const indentSize = 2;
+	return new Transform({
+		objectMode: true,
+		transform(file, _, cb) {
+			if (file.isBuffer()) {
+				let contents = file.contents.toString();
+				const newline = contents.indexOf('\r\n') !== -1 ? '\r\n' : '\n';
+				const lines = contents.split(/\r\n|\n/);
+				for (let i = 0; i < lines.length; i++) {
+					const line = lines[i];
+					const m = line.match(/^([ \t]*)/);
+					if (!m) continue;
+					const ws = m[1];
+					if (!ws) continue;
+					let spaceCount = 0;
+					for (const ch of ws) {
+						if (ch === '\t') spaceCount += indentSize;
+						else spaceCount += 1;
+					}
+					const tabs = Math.floor(spaceCount / indentSize);
+					let leftover = spaceCount % indentSize;
+					const rest = line.slice(ws.length);
+					// For comment lines that start with '*', ensure there is at least one space
+					// after the tabs so the asterisk remains separated ("\t * ...").
+					if (rest.startsWith('*') && leftover === 0) leftover = 1;
+					lines[i] = '\t'.repeat(tabs) + (leftover ? ' '.repeat(leftover) : '') + rest;
+				}
+				contents = lines.join(newline);
+				file.contents = Buffer.from(contents);
+			}
+			cb(null, file);
+		}
+	});
+}
 
+gulp.task('scss-framework', function() {
 	return gulp.src('public_html/assets/litecore/scss/{framework/main,email,printable}.scss', { allowEmpty: true })
 		.pipe(sourcemaps.init())
 		.pipe(sass(sassOptions).on('error', sass.logError))
@@ -39,9 +74,9 @@ gulp.task('scss-framework', function() {
 			}
 		}))
 		.pipe(header(banner, { pkg: packageData }))
+		.pipe(tabify()) // Use tab indentation
 		.pipe(gulp.dest('public_html/assets/litecore/css/', { overwrite: true }))
 		.pipe(cleancss())
-		.pipe(header(banner, { pkg: packageData }))
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(sourcemaps.write('.', { includeContent: false }))
 		.pipe(gulp.dest('public_html/assets/litecore/css/', { overwrite: true }));
@@ -61,18 +96,18 @@ gulp.task('js-framework', function() {
 		.pipe(gulp.dest('public_html/assets/litecore/js/', { overwrite: true }));
 });
 
-// Compile SCSS files
 gulp.task('scss-backend', function() {
-
 	gulp.src('public_html/backend/template/scss/vari*bles.scss')
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
+		.pipe(tabify())
 		.pipe(gulp.dest('public_html/backend/template/css/', { overwrite: true }));
 
 	return gulp.src(['public_html/backend/template/scss/*.scss', '!**/variables.scss'])
 		.pipe(sourcemaps.init())
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
+		.pipe(tabify()) // Use tab indentation
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(sourcemaps.write('.', { includeContent: false }))
@@ -85,6 +120,7 @@ gulp.task('js-backend', function() {
 		.src('public_html/backend/template/js/components/*.js')
 		.pipe(concat('app.js', {'newLine': '\r\n\r\n'}))
 		.pipe(header(banner, { pkg: packageData }))
+		.pipe(tabify()) // Use tab indentation
 		.pipe(gulp.dest('public_html/backend/template/js/', { overwrite: true }))
 		.pipe(sourcemaps.init())
 		.pipe(uglify())
@@ -109,11 +145,13 @@ gulp.task('scss-frontend', function() {
 	gulp.src('public_html/frontend/template/scss/variables*.scss', { allowEmpty: true })
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
+		.pipe(tabify()) // Use tab indentation
 		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }));
 
 	return gulp.src(['public_html/frontend/template/scss/*.scss', '!**/variables.scss'], { allowEmpty: true })
 		.pipe(sourcemaps.init())
 		.pipe(sass(sassOptions).on('error', sass.logError))
+		.pipe(tabify()) // Use tab indentation
 		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
 		.pipe(cleancss())
 		.pipe(header(banner, { pkg: packageData }))
@@ -140,6 +178,7 @@ gulp.task('scss-trumbowyg', function() {
 		.src('public_html/assets/trumbowyg/ui/*.scss')
 		.pipe(sass(sassOptions))
 		.on('error', sass.logError)
+		.pipe(tabify()) // Use tab indentation
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(gulp.dest('public_html/assets/trumbowyg/ui/'))
@@ -188,6 +227,7 @@ gulp.task('iconly', function() {
 			'',
 		].join('\n')))
 		.pipe(replace(/(\.icon-[^:]+:before)\s*\{\s*([^}]+?)\s*\}\s*/g, '$1 { $2 }\n'))
+		.pipe(tabify()) // Use tab indentation
 		.pipe(gulp.dest('public_html/assets/litecore/scss/framework/'));
 });
 

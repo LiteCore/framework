@@ -1,18 +1,20 @@
 /* Buttons */
 
-.btn(@type) {
-	background: ~"var(--button-@{type}-background)";
-	color: ~"var(--button-@{type}-text-color)";
-	border: var(--button-border-width) solid ~"var(--button-@{type}-border-color)";
+@mixin btn($type) {
+	background: var(--button-#{$type}-background);
+	color: var(--button-#{$type}-text-color);
+	border: var(--button-border-width) solid var(--button-#{$type}-border-color);
+
 	&:hover:not(.active, .disabled, [disabled]),
 	&:focus:not(.active, .disabled, [disabled]),
 	&:active:not(.active, .disabled, [disabled]) {
-		background: ~"var(--button-@{type}-background--hover)";
-		border-color: ~"var(--button-@{type}-border-color--hover)";
+		background: var(--button-#{$type}-background--hover);
+		border-color: var(--button-#{$type}-border-color--hover);
 	}
+
 	&.active {
-		background: ~"var(--button-@{type}-background--active)";
-		border-color: ~"var(--button-@{type}-border-color--active)";
+		background: var(--button-#{$type}-background--active);
+		border-color: var(--button-#{$type}-border-color--active);
 	}
 }
 
@@ -31,10 +33,10 @@
 	touch-action: manipulation;
 	user-select: none;
 
-	&.btn-default { .btn('default'); }
-	&.btn-success { .btn('success'); }
-	&.btn-danger { .btn('danger'); }
-	&.btn-outline { .btn('outline'); box-shadow: none; border: var(--button-outline-text-color) solid var(--button-outline-border-width); }
+	&.btn-default { @include btn('default'); }
+	&.btn-success { @include btn('success'); }
+	&.btn-danger { @include btn('danger'); }
+	&.btn-outline { @include btn('outline'); box-shadow: none; border: var(--button-outline-text-color) solid var(--button-outline-border-width); }
 
 	.btn-outline-gradient {
 		border: solid 2px transparent;
@@ -79,23 +81,29 @@
 	position: relative;
 	display: inline-flex;
 	border-radius: var(--border-radius);
+
 	+ .btn, + .btn-group {
 		margin-inline-start: .5em;
 	}
+
 	.btn {
 		flex: 1 0 auto;
 		margin-inline-start: -1px;
 	}
+
 	&:not(.btn-group-vertical) > .btn:not(:first-child) {
 		border-inline-start: var(--button-border-width) solid var(--button-border-color);
 	}
+
 	>.btn:first-child:not(:last-child, [data-toggle="dropdown"]) {
 			border-start-end-radius: 0;
 			border-end-end-radius: 0;
 	}
+
 	>.btn:not(:first-child):not(:last-child, [data-toggle="dropdown"]) {
 		border-radius: 0;
 	}
+
 	>.btn:last-child:not(:first-child),
 	>[data-toggle="dropdown"]:not(:first-child) {
 		border-start-start-radius: 0;

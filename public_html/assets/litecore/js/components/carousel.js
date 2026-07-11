@@ -1,7 +1,7 @@
 /*
- * Simplified Carousel with Swipe Support
- * Lightweight carousel with essential features
- */
+	Simplified Carousel with Swipe Support
+	Lightweight carousel with essential features
+*/
 
 waitFor('jQuery', ($) => {
 	'use strict';

@@ -10,12 +10,14 @@ body {
 	font-family: var(--default-text-font);
 	line-height: var(--default-line-height);
 	color: var(--default-text-color);
+	text-size-adjust: 100%;
 	-webkit-text-size-adjust: 100%;
 }
 
 a {
 	color: inherit;
 	text-decoration: none;
+
 	&:hover {
 		text-decoration: underline;
 	}
@@ -84,9 +86,11 @@ sub, sup {
 	line-height: 0;
 	position: relative;
 }
+
 sub {
 	bottom: -.25em;
 }
+
 sup {
 	top: -.5em;
 }
@@ -107,6 +111,7 @@ button, select {
 }
 
 button, input[type=button], input[type=reset], input[type=submit] {
+	appearance: button;
 	-webkit-appearance: button;
 }
 
@@ -114,9 +119,11 @@ fieldset {
 	padding: 1em 2em;
 	border: 1px solid var(--default-border-color);
 	border-radius: var(--border-radius);
+
 	&:has(+ *) {
 		margin-bottom: var(--gutter-y);
 	}
+
 	legend {
 		display: table;
 		max-width: 100%;
@@ -125,6 +132,7 @@ fieldset {
 		white-space: normal;
 		color: inherit;
 	}
+
 	&:disabled {
 		opacity: 0.5;
 	}
@@ -138,6 +146,7 @@ input, button, select, textarea {
 }
 
 input[type="number"] {
+	appearance: textfield;
 	-moz-appearance: textfield;
 	text-align: end;
 
@@ -147,18 +156,20 @@ input[type="number"] {
 	}
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
 	height: auto;
 }
 
-input[type=search] {
+input[type="search"] {
+	appearance: textfield;
 	-webkit-appearance: textfield;
 	outline-offset: -2px;
 }
 
 input::-webkit-file-upload-button {
 	-webkit-appearance: button;
+	appearance: button;
 	font: inherit;
 }
 
