@@ -245,9 +245,9 @@
 			$relative_path = preg_replace('#^'. preg_quote('storage://addons/'.$addon->data['id'].'/', '#') .'#', '', $directory . $file);
 
 			if (is_dir($directory.$file)) {
-				$output[] = '<li>'. f::draw_fonticon('icon-folder icon-lg', 'style="color: #7ccdff;"') .' <span class="item" data-path="'. $relative_path .'">'. $file .'/</span>'. $draw_folder_contents($directory.$file.'/') .'</li>';
+				$output[] = '<li>'. f::draw_fonticon('icon-folder icon-lg', 'style="color: #7ccdff;"') .' <span class="item" data-path="'. $relative_path .'">'. $file .'/</span>'. $draw_folder_contents($directory . $file . '/') .'</li>';
 			} else {
-				$output[] = '<li>'. f::draw_fonticon('icon-file-o') .' <span class="item" data-path="'. $relative_path .'">'. $file .'</span><li>';
+				$output[] = '<li>'. f::draw_fonticon('icon-file-o') .' <span class="item" data-path="'. $relative_path .'">'. $file .'</span></li>';
 			}
 		}
 
@@ -405,7 +405,7 @@ textarea[name*="[insert]"][name$="[content]"] {
 
 input.warning,
 textarea.warning {
-	box-shadow: 0 0 5px 3px rgba(255 0,0, 0.7);
+	box-shadow: 0 0 5px 3px rgba(255, 0, 0, 0.7);
 }
 </style>
 
@@ -470,7 +470,7 @@ textarea.warning {
 
 							<label class="form-group">
 								<div class="form-label"><?php echo t('title_storage_location', 'Storage Location'); ?></div>
-								<div class="form-input" readyonly><?php echo (($addon->data['location'] ?? '') ?: '<em>' . t('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage') . '</em>'); ?></div>
+								<div class="form-input" readonly><?php echo (($addon->data['location'] ?? '') ?: '<em>' . t('text_save_addon_to_establish_file_storage', 'Save the add-on to establish a file storage') . '</em>'); ?></div>
 							</label>
 							<?php if (!empty($addon->data['id'])) { ?>
 							<div class="grid">
@@ -534,7 +534,7 @@ textarea.warning {
 					<nav class="tabs">
 						<?php foreach (array_keys($addon->data['files']) as $f) { ?>
 						<a class="tab-item" data-toggle="tab" href="#tab-<?php echo $f; ?>">
-							<span class="file"><?php echo f::escape_html($_POST['files'][$f]['name']); ?></span> <span class="btn btn-default btn-sm remove" title="<?php t('title_remove', 'Remove'); ?>"><?php echo f::draw_fonticon('remove'); ?></span>
+							<span class="file"><?php echo f::escape_html($_POST['files'][$f]['name']); ?></span> <span class="btn btn-default btn-sm remove" title="<?php echo t('title_remove', 'Remove'); ?>"><?php echo f::draw_fonticon('remove'); ?></span>
 						</a>
 						<?php } ?>
 						<a class="tab-item add" href="#"><?php echo f::draw_fonticon('add'); ?></a>
@@ -585,7 +585,7 @@ textarea.warning {
 												<div class="col-md-6">
 													<label class="form-group">
 														<div class="form-label"><?php echo t('title_match_type', 'Match Type'); ?></div>
-														<?php echo f::form_toggle('files['.$f.'][operations]['.$o.'][type]', $type_options, (!isset($_POST['files'][$f]['operations'][$o]['type']) || $_POST['files'][$f]['operations'][$o]['type'] == '') ? 'multiline' : true); ?>
+														<?php echo f::form_toggle('files['.$f.'][operations]['.$o.'][type]', $type_options, (!isset($_POST['files'][$f]['operations'][$o]['type']) || $_POST['files'][$f]['operations'][$o]['type'] == 'multiline') ? 'multiline' : $_POST['files'][$f]['operations'][$o]['type']); ?>
 													</label>
 												</div>
 
@@ -687,9 +687,9 @@ textarea.warning {
 								</div>
 
 								<div class="col-md-2" style="align-self: center;">
-									<?php echo f::form_button('aliases[new_alias_index][move_up]', f::draw_fonticon('move-up'), 'button', ['class' => 'btn btn-default btn-sm', 'title' => f::escape_attr(t('title_move_up', 'Move Up'))]); ?>
-									<?php echo f::form_button('aliases[new_alias_index][move_down]', f::draw_fonticon('move-down'), 'button', ['class' => 'btn btn-default btn-sm', 'title' => f::escape_attr(t('title_move_down', 'Move Down'))]); ?>
-									<?php echo f::form_button('aliases[new_alias_index][remove]', f::draw_fonticon('remove'), 'button', ['class' => 'btn btn-default btn-sm', 'title' => f::escape_attr(t('title_remove', 'Remove'))]); ?>
+									<?php echo f::form_button('aliases['.$key.'][move_up]', f::draw_fonticon('move-up'), 'button', ['class' => 'btn btn-default btn-sm', 'title' => f::escape_attr(t('title_move_up', 'Move Up'))]); ?>
+									<?php echo f::form_button('aliases['.$key.'][move_down]', f::draw_fonticon('move-down'), 'button', ['class' => 'btn btn-default btn-sm', 'title' => f::escape_attr(t('title_move_down', 'Move Down'))]); ?>
+									<?php echo f::form_button('aliases['.$key.'][remove]', f::draw_fonticon('remove'), 'button', ['class' => 'btn btn-default btn-sm', 'title' => f::escape_attr(t('title_remove', 'Remove'))]); ?>
 								</div>
 							</div>
 						</fieldset>
@@ -954,7 +954,7 @@ textarea.warning {
 
 
 	$('.tabs').on('click', '[data-toggle="tab"]', function(e) {
-		let $target = $(this).attr('href');
+		let $target = $($(this).attr('href'));
 		$target.find(':input[name$="[content]"]').trigger('input');
 	});
 
@@ -966,13 +966,13 @@ textarea.warning {
 
 		let $tab = $([
 			'<a class="nav-link" data-toggle="tab" href="#tab-__index__">',
-			'	<span class="file">__index__</span> <span class="btn btn-default btn-sm remove" title="<?php t('title_remove', 'Remove'); ?>">',
-			'		<?php echo f::draw_fonticon('remove'); ?></span></a>',
+			'	<span class="file">__index__</span> <span class="btn btn-default btn-sm remove" title="<?php echo t('title_remove', 'Remove'); ?>">',
+			'		<?php echo f::escape_js(f::draw_fonticon('remove')); ?></span></a>',
 		].join('\n')
 			.replace(/__index__/g, 'new_' + __index__)
 		);
 
-		$tab_pane = $(
+		let $tab_pane = $(
 			$('#new-tab-content-template').html()
 			.replace(/__index__/g, __index__++)
 		).hide();
