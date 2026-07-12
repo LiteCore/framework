@@ -30,7 +30,7 @@
 				where username = '". database::input(strtolower($_POST['username'])) ."'
 				or email = '". database::input(strtolower($_POST['username'])) ."'
 				limit 1;"
-			)->fetch(function($administrator){
+			)->fetch(function(&$administrator){
 				$administrator['known_ips'] = f::string_split($administrator['known_ips']);
 				$administrator['known_fingerprints'] = f::string_split($administrator['known_fingerprints']);
 			});
@@ -126,7 +126,7 @@
 			}
 
 			if (!empty($administrator['last_ip_address']) && $administrator['last_ip_address'] != $_SERVER['REMOTE_ADDR']) {
-				notices::add('warnings', strtr(t('warning_account_previously_used_by_another_ip', 'Your account was previously used by another IP address {ip_address} ({hostname}). If this was not you then y[...]
+				notices::add('warnings', strtr(t('warning_account_previously_used_by_another_ip', 'Your account was previously used by another IP address {ip_address} ({hostname}). If this was not you then you should change your password immediately.'), [
 					'{username}' => $administrator['username'],
 					'{ip_address}' => $administrator['last_ip_address'],
 					'{hostname}' => $administrator['last_hostname'],

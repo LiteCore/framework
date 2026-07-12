@@ -23,8 +23,7 @@
 				$this->data[$field['Field']] = database::create_variable($field);
 			});
 
-			$this->data['apps'] = [];
-			$this->data['widgets'] = [];
+			$this->data['permissions'] = [];
 
 			$this->previous = $this->data;
 		}
@@ -51,8 +50,7 @@
 
 			$this->data = array_replace($this->data, array_intersect_key($administrator, $this->data));
 
-			$this->data['apps'] = !empty($this->data['apps']) ? json_decode($this->data['apps'], true) : [];
-			$this->data['widgets'] = !empty($this->data['widgets']) ? json_decode($this->data['widgets'], true) : [];
+			$this->data['permissions'] = !empty($this->data['permissions']) ? json_decode($this->data['permissions'], true) : [];
 
 			$this->previous = $this->data;
 		}
@@ -89,8 +87,7 @@
 					firstname = '". database::input($this->data['firstname']) ."',
 					lastname = '". database::input($this->data['lastname']) ."',
 					email = '". database::input(strtolower($this->data['email'])) ."',
-					apps = '". database::input(f::format_json($this->data['apps'])) ."',
-					widgets = '". database::input(f::format_json($this->data['widgets'])) ."',
+					permissions = '". database::input(f::format_json($this->data['permissions'])) ."',
 					two_factor_auth = ". (!empty($this->data['two_factor_auth']) ? 1 : 0) .",
 					valid_from = ". (empty($this->data['valid_from']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['valid_from'])) ."'") .",
 					valid_to = ". (empty($this->data['valid_to']) ? "null" : "'". date('Y-m-d H:i:s', strtotime($this->data['valid_to'])) ."'") .",

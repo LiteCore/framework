@@ -331,22 +331,22 @@
 		<operation method="after" type="multiline" onerror="warning">
 			<find><![CDATA[
 			case 'color':
-				return form_input_color($name, $input, $parameters);
+				return form_input_color($name, $input, $attributes);
 			]]></find>
 
 			<insert><![CDATA[
 			case 'country':
-				return form_select_country($name, true, $parameters);
+				return form_select_country($name, true, $attributes);
 			]]></insert>
 		</operation>
 
 		<operation method="before" type="multiline" onerror="warning">
 			<find><![CDATA[
-	function form_select_encoding($name, $input=true, $parameters='') {
+	function form_select_encoding(string $name, bool|array|string $input=true, array|string $attributes=[]): string {
 			]]></find>
 
 			<insert><![CDATA[
-	function form_select_country($name, $input=true, $parameters='') {
+	function form_select_country($name, $input=true, $attributes='') {
 
 		if ($input === true) {
 			$input = form_reinsert_value($name);
@@ -376,10 +376,10 @@
 		});
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $attributes);
 		} else {
 			array_unshift($options, ['', '-- '. t('title_select', 'Select') . ' --']);
-			return form_select($name, $options, $input, $parameters);
+			return form_select($name, $options, $input, $attributes);
 		}
 	}
 
@@ -387,7 +387,7 @@
 		</operation>
 		<operation method="bottom" type="multiline" onerror="warning">
 			<insert><![CDATA[
-	function form_select_zone($name, $country_code='', $input=true, $parameters='', $preamble='none') {
+	function form_select_zone($name, $country_code='', $input=true, $attributes='', $preamble='none') {
 
 		switch ($country_code) {
 
@@ -409,11 +409,11 @@
 		});
 
 		if (!$options) {
-			$parameters .= ' disabled';
+			$attributes .= ' disabled';
 		}
 
 		if (preg_match('#\[\]$#', $name)) {
-			return form_select_multiple($name, $options, $input, $parameters);
+			return form_select_multiple($name, $options, $input, $attributes);
 		}
 
 		switch ($preamble) {
@@ -427,7 +427,7 @@
 				break;
 		}
 
-		return form_select($name, $options, $input, $parameters);
+		return form_select($name, $options, $input, $attributes);
 	}
 
 			]]></insert>

@@ -18,7 +18,7 @@
 	breadcrumbs::add(t('title_administrators', 'Administrators'), document::href_ilink(__APP__.'/administrators'));
 	breadcrumbs::add(!empty($administrator->data['username']) ? t('title_edit_administrator', 'Edit Administrator') : t('title_create_new_administrator', 'Create New Administrator'));
 
-	// TOTP enroll/confirm/disable — handled before the main save so the sub-form
+	// TOTP enroll/confirm/disable â€” handled before the main save so the sub-form
 	// buttons (totp_setup, totp_confirm, totp_disable) don't have to go through
 	// the generic save validation.
 	if (!empty($administrator->data['id']) && (!empty($_POST['totp_setup']) || !empty($_POST['totp_confirm']) || !empty($_POST['totp_disable']))) {
@@ -428,6 +428,7 @@
 </div>
 
 <script>
+
 	// App permissions
 	$('input[name="apps_toggle"]').on('change', function() {
 		$('input[name^="permissions_structure[apps]"]').prop('disabled', !$(this).is(':checked'));
@@ -476,4 +477,5 @@
 			$(this).closest('ul').closest('[data-mcp-toolset-id]').children().not('ul').find(':input').prop('checked', true);
 		}
 	});
+
 </script>
