@@ -18,7 +18,7 @@
 	breadcrumbs::add(t('title_administrators', 'Administrators'), document::href_ilink(__APP__.'/administrators'));
 	breadcrumbs::add(!empty($administrator->data['username']) ? t('title_edit_administrator', 'Edit Administrator') : t('title_create_new_administrator', 'Create New Administrator'));
 
-	// TOTP enroll/confirm/disable — handled before the main save so the sub-form
+	// TOTP enroll/confirm/disable â€” handled before the main save so the sub-form
 	// buttons (totp_setup, totp_confirm, totp_disable) don't have to go through
 	// the generic save validation.
 	if (!empty($administrator->data['id']) && (!empty($_POST['totp_setup']) || !empty($_POST['totp_confirm']) || !empty($_POST['totp_disable']))) {
@@ -341,14 +341,14 @@
 							<label class="form-group">
 								<div class="form-label"><?php echo t('title_known_ip_addresses', 'Known IP Addresses'); ?></div>
 								<div class="form-input" readonly style="height: 80px;">
-							<?php echo implode(', ', $administrator->data['known_ips']); ?>
+							<?php echo implode(', ', [$administrator->data['known_ips']]); ?>
 								</div>
 							</label>
 
 					<label class="form-group">
 						<div class="form-label"><?php echo t('title_known_fingerprints', 'Known Fingerprints'); ?></div>
 						<div class="form-input" readonly style="height: 80px;">
-							<?php echo implode(', ', $administrator->data['known_fingerprints']); ?>
+							<?php echo implode(', ', [$administrator->data['known_fingerprints']]); ?>
 					</div>
 					</label>
 					<?php } ?>
