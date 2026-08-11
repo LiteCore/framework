@@ -7,32 +7,32 @@
 			// Abstract classes
 			case (preg_match('#^abs_#', $class)):
 
-				require 'app://includes/abstracts/' . $class . '.inc.php';
+				require 'app://shared/abstracts/' . $class . '.inc.php';
 				break;
 
 			// Clients and wrappers
 			case (preg_match('#_client$#', $class)):
 
-				require 'app://includes/clients/' . $class . '.inc.php';
+				require 'app://shared/clients/' . $class . '.inc.php';
 				break;
 
 			// Entities
 			case (preg_match('#^ent_#', $class)):
 
-				require 'app://includes/entities/' . $class . '.inc.php';
+				require 'app://shared/entities/' . $class . '.inc.php';
 				break;
 
 			// Modules
 			case (preg_match('#^mod_#', $class)):
 
-				require 'app://includes/modules/' . $class . '.inc.php';
+				require 'app://shared/modules/' . $class . '.inc.php';
 				break;
 
 			// Submodules
 			case (preg_match('#^job_#', $class)):
 				$file = match(strtok($class, '_')) {
-					'job' => FS_DIR_APP . 'includes/modules/jobs/' . $class . '.inc.php',
-					'tm' => FS_DIR_APP . 'includes/modules/translation/' . $class . '.inc.php',
+					'job' => FS_DIR_APP . 'shared/modules/jobs/' . $class . '.inc.php',
+					'tm' => FS_DIR_APP . 'shared/modules/translation/' . $class . '.inc.php',
 				};
 
 				// Patch modules for PHP 8.2 Compatibility
@@ -50,7 +50,7 @@
 			// References
 			case (preg_match('#^ref_#', $class)):
 
-				require 'app://includes/references/' . $class . '.inc.php';
+				require 'app://shared/references/' . $class . '.inc.php';
 				break;
 
 			// Routing modules
@@ -63,19 +63,19 @@
 			// Stream wrappers
 			case (preg_match('#^stream_#', $class)):
 
-				require 'app://includes/streams/' . $class . '.inc.php';
+				require 'app://shared/streams/' . $class . '.inc.php';
 				break;
 
 			// Types
 			case (preg_match('#^type_#', $class)):
 
-				require 'app://includes/types/' . $class . '.inc.php';
+				require 'app://shared/types/' . $class . '.inc.php';
 				break;
 
 			// System nodes
 			default:
 
-				if (is_file($file = 'app://includes/nodes/nod_' . $class . '.inc.php')) {
+				if (is_file($file = 'app://shared/nodes/nod_' . $class . '.inc.php')) {
 					require $file;
 
 					if (method_exists($class, 'init')) {

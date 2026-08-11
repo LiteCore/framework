@@ -116,7 +116,7 @@
     </operation>
   </file>
 
-  <file name="includes/functions/func_form.inc.php">
+  <file name="shared/functions/func_form.inc.php">
 
     <operation method="after" type="multiline" onerror="warning">
       <find><![CDATA[

@@ -365,8 +365,8 @@
 								return version_compare($a['version'], $b['version']);
 							});
 
-							require_once vmod::check(FS_DIR_APP . 'includes/compatibility.inc.php');
-							require_once vmod::check(FS_DIR_APP . 'includes/autoloader.inc.php');
+							require_once vmod::check(FS_DIR_APP . 'shared/compatibility.inc.php');
+							require_once vmod::check(FS_DIR_APP . 'shared/autoloader.inc.php');
 
 							// Execute upgrade scripts
 							foreach ($upgrades as $upgrade) {
@@ -410,9 +410,9 @@
 					// Exceute install script
 					if ($dom->getElementsByTagName('install')->length) {
 
-						require_once vmod::check(FS_DIR_APP . 'includes/shorthand.inc.php');
-						require_once vmod::check(FS_DIR_APP . 'includes/compatibility.inc.php');
-						require_once vmod::check(FS_DIR_APP . 'includes/autoloader.inc.php');
+						require_once vmod::check(FS_DIR_APP . 'shared/shorthand.inc.php');
+						require_once vmod::check(FS_DIR_APP . 'shared/compatibility.inc.php');
+						require_once vmod::check(FS_DIR_APP . 'shared/autoloader.inc.php');
 
 						$tmp_file = stream_get_meta_data(tmpfile())['uri'];
 						file_put_contents($tmp_file, "<?php\r\n" . $dom->getElementsByTagName('install')->item(0)->textContent);

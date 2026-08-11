@@ -2,29 +2,29 @@
 # Application Files #
 #####################
 
-!public_html/**/index.html
-!public_html/**/.htaccess
+!src/**/index.html
+!src/**/.htaccess
 
 migrations/.migrated
-public_html/.well-known/*
-public_html/cgi-bin/*
-public_html/storage/addons/.*
-public_html/storage/addons/.cache/*
-public_html/storage/backups/*
-public_html/storage/cache/*
-public_html/storage/data/*
-public_html/storage/logs/*
-public_html/storage/images/*
-public_html/vendor/*
+src/.well-known/*
+src/cgi-bin/*
+src/storage/addons/.*
+src/storage/addons/.cache/*
+src/storage/backups/*
+src/storage/cache/*
+src/storage/data/*
+src/storage/logs/*
+src/storage/images/*
+src/vendor/*
 
-public_html/storage/config.inc.php
-public_html/vendor/composer.lock
-public_html/.htaccess
-public_html/.user.ini
-public_html/favicon.ico
-public_html/google*.html
-public_html/php.ini
-public_html/robots.txt
+src/storage/config.inc.php
+src/vendor/composer.lock
+src/.htaccess
+src/.user.ini
+src/favicon.ico
+src/google*.html
+src/php.ini
+src/robots.txt
 package-lock.json
 
 google*.html

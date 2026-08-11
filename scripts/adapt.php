@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/includes/app_header.inc.php';
+require_once __DIR__ . '/shared/app_header.inc.php';
 
 header('Content-Type: text/plain; charset=utf-8');
 
@@ -9,7 +9,7 @@ try {
 /*
 	echo 'Checking for updates... ' . PHP_EOL . PHP_EOL;
 
-	require_once FS_DIR_APP . 'includes/clients/http_client.inc.php';
+	require_once FS_DIR_APP . 'shared/clients/http_client.inc.php';
 	$client = new http_client();
 
 	$get_remote_file = function ($file) use ($client) {

@@ -8,7 +8,7 @@
 
 			if (!function_exists($function)) {
 				$file = 'func_' . strtok($function, '_') .'.inc.php';
-				include_once 'app://includes/functions/' . $file;
+				include_once 'app://shared/functions/' . $file;
 			}
 
 			return call_user_func_array($function, $arguments);

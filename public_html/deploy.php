@@ -1,6 +1,6 @@
 <?php
 
-	require_once __DIR__.'/includes/app_header.inc.php';
+	require_once __DIR__.'/shared/app_header.inc.php';
 
 	ob_start();
 

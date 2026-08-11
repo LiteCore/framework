@@ -138,7 +138,7 @@
 
 				// Rename language code in entity collections
 
-				$collections = include 'app://includes/collections.inc.php';
+				$collections = include 'app://shared/collections.inc.php';
 
 				foreach ($collections as $collection) {
 					if (empty($collection['translatable'])) continue;
@@ -174,7 +174,7 @@
 
 				// Add new language to entity collections
 
-				$collections = include 'app://includes/collections.inc.php';
+				$collections = include 'app://shared/collections.inc.php';
 
 				foreach ($collections as $collection) {
 					if (empty($collection['translatable'])) continue;
@@ -216,7 +216,7 @@
 			);
 
 			// If the persisted code is a legacy/invalid identifier we still
-			// want the delete above to succeed — the bogus row is removed —
+			// want the delete above to succeed ï¿½ the bogus row is removed ï¿½
 			// but skip the column drop rather than crashing with a helper
 			// exception. A maligned code almost certainly never had a real
 			// text_<code> column anyway.
@@ -238,7 +238,7 @@
 				error_log('ent_language::delete: skipping text_<code> drop for invalid code ' . var_export($this->data['code'], true));
 			}
 
-			$collections = include 'app://includes/collections.inc.php';
+			$collections = include 'app://shared/collections.inc.php';
 
 			foreach ($collections as $collection) {
 				if (empty($collection['translatable'])) continue;

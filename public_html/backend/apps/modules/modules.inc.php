@@ -3,14 +3,14 @@
 	extract(match(__DOC__) {
 		'jobs' => [
 			'title' => t('title_job_modules', 'Job Modules'),
-			'files' => f::file_search('app://includes/modules/jobs/*.inc.php'),
+			'files' => f::file_search('app://shared/modules/jobs/*.inc.php'),
 			'mod_class' => new mod_jobs(),
 			'type' => 'job',
 			'edit_doc' => 'edit_job',
 		],
 		'translation' => [
 			'title' => language::translate('title_translation', 'Translation'),
-			'files' => glob(FS_DIR_APP . 'includes/modules/translation/tm_*.inc.php'),
+			'files' => glob(FS_DIR_APP . 'shared/modules/translation/tm_*.inc.php'),
 			'mod_class' => new mod_translation(),
 			'type' => 'translation',
 			'edit_doc' => 'edit_translation',

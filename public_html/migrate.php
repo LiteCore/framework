@@ -2,7 +2,7 @@
 
 	header('Content-Type: text/plain');
 
-	require_once __DIR__.'/includes/app_header.inc.php';
+	require_once __DIR__.'/shared/app_header.inc.php';
 
 	set_time_limit(0);
 	ini_set('display_errors', 'on');
