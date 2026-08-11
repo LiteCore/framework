@@ -64,7 +64,7 @@ const tabify = function() {
 }
 
 gulp.task('scss-framework', function() {
-	return gulp.src('public_html/assets/litecore/scss/{framework/main,email,printable}.scss', { allowEmpty: true })
+	return gulp.src('src/assets/litecore/scss/{framework/main,email,printable}.scss', { allowEmpty: true })
 		.pipe(sourcemaps.init())
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(rename(function(path) {
@@ -75,35 +75,35 @@ gulp.task('scss-framework', function() {
 		}))
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(tabify()) // Use tab indentation
-		.pipe(gulp.dest('public_html/assets/litecore/css/', { overwrite: true }))
+		.pipe(gulp.dest('src/assets/litecore/css/', { overwrite: true }))
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(sourcemaps.write('.', { includeContent: false }))
-		.pipe(gulp.dest('public_html/assets/litecore/css/', { overwrite: true }));
+		.pipe(gulp.dest('src/assets/litecore/css/', { overwrite: true }));
 });
 
 // Build and uglify JS files
 gulp.task('js-framework', function() {
 	return gulp
-		.src('public_html/assets/litecore/js/components/*.js')
+		.src('src/assets/litecore/js/components/*.js')
 		.pipe(concat('framework.js', {'newLine': '\r\n\r\n'}))
 		.pipe(header(banner, { pkg: packageData }))
-		.pipe(gulp.dest('public_html/assets/litecore/js/', { overwrite: true }))
+		.pipe(gulp.dest('src/assets/litecore/js/', { overwrite: true }))
 		.pipe(sourcemaps.init())
 		.pipe(uglify())
 		.pipe(rename({ extname: '.min.js' }))
 		//.pipe(sourcemaps.write('.', { includeContent: false }))
-		.pipe(gulp.dest('public_html/assets/litecore/js/', { overwrite: true }));
+		.pipe(gulp.dest('src/assets/litecore/js/', { overwrite: true }));
 });
 
 gulp.task('scss-backend', function() {
-	gulp.src('public_html/backend/template/scss/vari*bles.scss')
+	gulp.src('src/backend/template/scss/vari*bles.scss')
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(tabify())
-		.pipe(gulp.dest('public_html/backend/template/css/', { overwrite: true }));
+		.pipe(gulp.dest('src/backend/template/css/', { overwrite: true }));
 
-	return gulp.src(['public_html/backend/template/scss/*.scss', '!**/variables.scss'])
+	return gulp.src(['src/backend/template/scss/*.scss', '!**/variables.scss'])
 		.pipe(sourcemaps.init())
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
@@ -111,84 +111,84 @@ gulp.task('scss-backend', function() {
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(sourcemaps.write('.', { includeContent: false }))
-		.pipe(gulp.dest('public_html/backend/template/css', { overwrite: true }));
+		.pipe(gulp.dest('src/backend/template/css', { overwrite: true }));
 });
 
 // Build and uglify JS files
 gulp.task('js-backend', function() {
 	return gulp
-		.src('public_html/backend/template/js/components/*.js')
+		.src('src/backend/template/js/components/*.js')
 		.pipe(concat('app.js', {'newLine': '\r\n\r\n'}))
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(tabify()) // Use tab indentation
-		.pipe(gulp.dest('public_html/backend/template/js/', { overwrite: true }))
+		.pipe(gulp.dest('src/backend/template/js/', { overwrite: true }))
 		.pipe(sourcemaps.init())
 		.pipe(uglify())
 		.pipe(rename({ extname: '.min.js' }))
 		//.pipe(sourcemaps.write('.', { includeContent: false }))
-		.pipe(gulp.dest('public_html/backend/template/js/', { overwrite: true }));
+		.pipe(gulp.dest('src/backend/template/js/', { overwrite: true }));
 });
 
 // Build and uglify JS files
 gulp.task('js-trumbowyg', function() {
 	return gulp
-		.src('public_html/assets/trumbowyg/trumb*wyg.js')
+		.src('src/assets/trumbowyg/trumb*wyg.js')
 		.pipe(sourcemaps.init())
 		.pipe(uglify())
 		.pipe(rename({ extname: '.min.js' }))
 		//.pipe(sourcemaps.write('.', { includeContent: false }))
-		.pipe(gulp.dest('public_html/assets/trumbowyg/', { overwrite: true }));
+		.pipe(gulp.dest('src/assets/trumbowyg/', { overwrite: true }));
 });
 
 gulp.task('scss-frontend', function() {
 
-	gulp.src('public_html/frontend/template/scss/variables*.scss', { allowEmpty: true })
+	gulp.src('src/frontend/template/scss/variables*.scss', { allowEmpty: true })
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(tabify()) // Use tab indentation
-		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }));
+		.pipe(gulp.dest('src/frontend/template/css/', { overwrite: true }));
 
-	return gulp.src(['public_html/frontend/template/scss/*.scss', '!**/variables.scss'], { allowEmpty: true })
+	return gulp.src(['src/frontend/template/scss/*.scss', '!**/variables.scss'], { allowEmpty: true })
 		.pipe(sourcemaps.init())
 		.pipe(sass(sassOptions).on('error', sass.logError))
 		.pipe(tabify()) // Use tab indentation
-		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }))
+		.pipe(gulp.dest('src/frontend/template/css/', { overwrite: true }))
 		.pipe(cleancss())
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(sourcemaps.write('.', { includeContent: false }))
-		.pipe(gulp.dest('public_html/frontend/template/css/', { overwrite: true }));
+		.pipe(gulp.dest('src/frontend/template/css/', { overwrite: true }));
 });
 
 gulp.task('js-frontend', function() {
-	return gulp.src('public_html/frontend/template/js/components/*.js', { allowEmpty: true })
+	return gulp.src('src/frontend/template/js/components/*.js', { allowEmpty: true })
 		.pipe(sourcemaps.init())
 		.pipe(concat('app.js', {'newLine': '\r\n\r\n'}))
 		.pipe(header(banner, { pkg: packageData }))
-		.pipe(gulp.dest('public_html/frontend/template/js/', { overwrite: true }))
+		.pipe(gulp.dest('src/frontend/template/js/', { overwrite: true }))
 		.pipe(uglify())
 		.pipe(rename({ extname: '.min.js' }))
 		.pipe(sourcemaps.write('.', { includeContent: false }))
-		.pipe(gulp.dest('public_html/frontend/template/js/', { overwrite: true }));
+		.pipe(gulp.dest('src/frontend/template/js/', { overwrite: true }));
 });
 
 // Task to compile and minify Trumbowyg SCSS
 gulp.task('scss-trumbowyg', function() {
 	return gulp
-		.src('public_html/assets/trumbowyg/ui/*.scss')
+		.src('src/assets/trumbowyg/ui/*.scss')
 		.pipe(sass(sassOptions))
 		.on('error', sass.logError)
 		.pipe(tabify()) // Use tab indentation
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
-		.pipe(gulp.dest('public_html/assets/trumbowyg/ui/'))
+		.pipe(gulp.dest('src/assets/trumbowyg/ui/'))
 		.pipe(sourcemaps.write('.', { includeContent: false }));
 });
 
 // Lint PHP files
 gulp.task('phplint', function() {
 	return gulp
-		.src('public_html/**/*.php')
+		.src('src/**/*.php')
 		.pipe(phplint())
 		.pipe(phplint.reporter('fail'));
 });
@@ -196,7 +196,7 @@ gulp.task('phplint', function() {
 gulp.task('iconly', function() {
 
 	download({ url: 'https://dev.iconly.io/public/OoTc8FJRmnEY/iconly.woff2', filename: 'fonticons.woff2' })
-		.pipe(gulp.dest('public_html/assets/litecore/fonts/'));
+		.pipe(gulp.dest('src/assets/litecore/fonts/'));
 
 	return download({ url: 'https://dev.iconly.io/public/OoTc8FJRmnEY/iconly.css', filename: '_fonticons.scss' })
 		.pipe(replace(/^\/\*\!.*?(?=\n.icon-)/gs, [
@@ -228,19 +228,19 @@ gulp.task('iconly', function() {
 		].join('\n')))
 		.pipe(replace(/(\.icon-[^:]+:before)\s*\{\s*([^}]+?)\s*\}\s*/g, '$1 { $2 }\n'))
 		.pipe(tabify()) // Use tab indentation
-		.pipe(gulp.dest('public_html/assets/litecore/scss/framework/'));
+		.pipe(gulp.dest('src/assets/litecore/scss/framework/'));
 });
 
 // Watch files for changes
 gulp.task('watch', function() {
-	gulp.watch('public_html/assets/litecore/scss/**/*.scss', gulp.series('scss-framework'))
-	gulp.watch('public_html/assets/litecore/js/components/*.js', gulp.series('js-framework'))
-	gulp.watch('public_html/assets/trumbowyg/trumbowyg.js', gulp.series('js-trumbowyg'))
-	gulp.watch('public_html/assets/trumbowyg/**/*.scss', gulp.series('scss-trumbowyg'))
-	gulp.watch('public_html/backend/template/scss/**/*.scss', gulp.series('scss-backend'))
-	gulp.watch('public_html/backend/template/js/components/*.js', gulp.series('js-backend'))
-	gulp.watch('public_html/frontend/template/scss/**/*.scss', gulp.series('scss-frontend'))
-	gulp.watch('public_html/frontend/template/js/components/*.js', gulp.series('js-frontend'))
+	gulp.watch('src/assets/litecore/scss/**/*.scss', gulp.series('scss-framework'))
+	gulp.watch('src/assets/litecore/js/components/*.js', gulp.series('js-framework'))
+	gulp.watch('src/assets/trumbowyg/trumbowyg.js', gulp.series('js-trumbowyg'))
+	gulp.watch('src/assets/trumbowyg/**/*.scss', gulp.series('scss-trumbowyg'))
+	gulp.watch('src/backend/template/scss/**/*.scss', gulp.series('scss-backend'))
+	gulp.watch('src/backend/template/js/components/*.js', gulp.series('js-backend'))
+	gulp.watch('src/frontend/template/scss/**/*.scss', gulp.series('scss-frontend'))
+	gulp.watch('src/frontend/template/js/components/*.js', gulp.series('js-frontend'))
 });
 
 // Task aliases

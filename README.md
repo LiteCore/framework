@@ -36,7 +36,7 @@ standalone framework for custom projects.
 
 ## Installation
 
-1. Upload the contents of `public_html/` to your web root directory.
+1. Upload the contents of `src/` to your web root directory.
 
    Examples:
 
@@ -47,7 +47,7 @@ standalone framework for custom projects.
 2. Create a MySQL database and import `install/structure.sql`, then
    `install/data.sql`.
 
-3. Copy `install/public_html/storage/config.inc.php` to your `storage/`
+3. Copy `install/src/storage/config.inc.php` to your `storage/`
    folder and insert your database credentials.
 
 If everything is set up correctly, LiteCore should load without errors.

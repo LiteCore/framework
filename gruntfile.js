@@ -11,8 +11,8 @@ module.exports = function(grunt) {
 				//		'<%= grunt.template.today("yyyy-mm-dd") %> */',
 				//},
 				files: {
-					'public_html/backend/template/js/app.js': ['public_html/backend/template/js/components/*.js'],
-					'public_html/frontend/template/js/app.js': ['public_html/frontend/template/js/components/*.js']
+					'src/backend/template/js/app.js': ['src/backend/template/js/components/*.js'],
+					'src/frontend/template/js/app.js': ['src/frontend/template/js/components/*.js']
 				},
 			},
 		},
@@ -25,22 +25,22 @@ module.exports = function(grunt) {
 					compass: false
 				},
 				files: {
-					'public_html/assets/trumbowyg/ui/trumbowyg.min.css': 'public_html/assets/trumbowyg/ui/trumbowyg.scss'
+					'src/assets/trumbowyg/ui/trumbowyg.min.css': 'src/assets/trumbowyg/ui/trumbowyg.scss'
 				}
 			},
-			
+
 			framework: {
 				options: {
 					sourceMap: false,
 					compass: false
 				},
 				files: {
-					'public_html/assets/litecore/css/framework.css': 'public_html/assets/litecore/scss/framework/main.scss',
-					'public_html/assets/litecore/css/email.css': 'public_html/assets/litecore/scss/email.scss',
-					'public_html/assets/litecore/css/printable.css': 'public_html/assets/litecore/scss/printable.scss'
+					'src/assets/litecore/css/framework.css': 'src/assets/litecore/scss/framework/main.scss',
+					'src/assets/litecore/css/email.css': 'src/assets/litecore/scss/email.scss',
+					'src/assets/litecore/css/printable.css': 'src/assets/litecore/scss/printable.scss'
 				}
 			},
-			
+
 			framework_minified: {
 				options: {
 					sourceMap: false,
@@ -48,9 +48,9 @@ module.exports = function(grunt) {
 					compass: false
 				},
 				files: {
-					'public_html/assets/litecore/css/framework.min.css': 'public_html/assets/litecore/scss/framework/main.scss',
-					'public_html/assets/litecore/css/email.min.css': 'public_html/assets/litecore/scss/email.scss',
-					'public_html/assets/litecore/css/printable.min.css': 'public_html/assets/litecore/scss/printable.scss'
+					'src/assets/litecore/css/framework.min.css': 'src/assets/litecore/scss/framework/main.scss',
+					'src/assets/litecore/css/email.min.css': 'src/assets/litecore/scss/email.scss',
+					'src/assets/litecore/css/printable.min.css': 'src/assets/litecore/scss/printable.scss'
 				}
 			},
 
@@ -61,8 +61,8 @@ module.exports = function(grunt) {
 					relativeUrls: true
 				},
 				files: {
-					'public_html/backend/template/css/variables.css': 'public_html/backend/template/scss/variables.scss',
-					'public_html/frontend/template/css/variables.css': 'public_html/frontend/template/scss/variables.scss',
+					'src/backend/template/css/variables.css': 'src/backend/template/scss/variables.scss',
+					'src/frontend/template/css/variables.css': 'src/frontend/template/scss/variables.scss',
 				}
 			},
 
@@ -75,14 +75,14 @@ module.exports = function(grunt) {
 					relativeUrls: true
 				},
 				files: {
-					'public_html/backend/template/css/app.min.css': 'public_html/backend/template/scss/app.scss',
-					'public_html/backend/template/css/framework.min.css': 'public_html/backend/template/scss/framework.scss',
-					'public_html/backend/template/css/printable.min.css': 'public_html/backend/template/scss/printable.scss',
+					'src/backend/template/css/app.min.css': 'src/backend/template/scss/app.scss',
+					'src/backend/template/css/framework.min.css': 'src/backend/template/scss/framework.scss',
+					'src/backend/template/css/printable.min.css': 'src/backend/template/scss/printable.scss',
 
-					'public_html/frontend/template/css/app.min.css': 'public_html/frontend/template/scss/app.scss',
-					'public_html/frontend/template/css/email.min.css': 'public_html/frontend/template/scss/email.scss',
-					'public_html/frontend/template/css/framework.min.css': 'public_html/frontend/template/scss/framework.scss',
-					'public_html/frontend/template/css/printable.min.css': 'public_html/frontend/template/scss/printable.scss'
+					'src/frontend/template/css/app.min.css': 'src/frontend/template/scss/app.scss',
+					'src/frontend/template/css/email.min.css': 'src/frontend/template/scss/email.scss',
+					'src/frontend/template/css/framework.min.css': 'src/frontend/template/scss/framework.scss',
+					'src/frontend/template/css/printable.min.css': 'src/frontend/template/scss/printable.scss'
 				}
 			},
 		},
@@ -93,12 +93,12 @@ module.exports = function(grunt) {
 				limit: 10,
 				stdout: false
 			},
-			files: 'public_html/**/*.php'
+			files: 'src/**/*.php'
 		},
 
 		replace: {
 			app_header: {
-				src: ['public_html/includes/app_header.inc.php'],
+				src: ['src/shared/app_header.inc.php'],
 				overwrite: true,
 				replacements: [
 					{
@@ -110,9 +110,9 @@ module.exports = function(grunt) {
 
 			app: {
 				src: [
-					'public_html/index.php',
-					'public_html/install/install.php',
-					'public_html/install/upgrade.php'
+					'src/index.php',
+					'src/install/install.php',
+					'src/install/upgrade.php'
 				],
 				overwrite: true,
 				replacements: [
@@ -130,8 +130,8 @@ module.exports = function(grunt) {
 					sourceMap: true,
 				},
 				files: {
-					'public_html/backend/template/js/app.min.js': ['public_html/backend/template/js/app.js'],
-					'public_html/frontend/template/js/app.min.js': ['public_html/frontend/template/js/app.js'],
+					'src/backend/template/js/app.min.js': ['src/backend/template/js/app.js'],
+					'src/frontend/template/js/app.min.js': ['src/frontend/template/js/app.js'],
 				}
 			},
 		},
@@ -146,17 +146,17 @@ module.exports = function(grunt) {
 
 			scss: {
 				files: [
-					'public_html/assets/trumbowyg/ui/trumbowyg.scss',
-					'public_html/backend/template/**/scss/*.scss',
-					'public_html/frontend/template/**/scss/*.scss',
+					'src/assets/trumbowyg/ui/trumbowyg.scss',
+					'src/backend/template/**/scss/*.scss',
+					'src/frontend/template/**/scss/*.scss',
 				],
 				tasks: ['scss']
 			},
 
 			javascripts: {
 				files: [
-					'public_html/backend/template/**/js/components/*.js',
-					'public_html/frontend/template/**/js/components/*.js',
+					'src/backend/template/**/js/components/*.js',
+					'src/frontend/template/**/js/components/*.js',
 					'!**/*.min.js',
 				],
 				tasks: ['concat', 'uglify']
