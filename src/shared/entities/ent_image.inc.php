@@ -23,8 +23,8 @@
 			ImageFill($imgCropped, 0, 0, ImageColorAllocateAlpha($imgCropped, $whiteSpace[0], $whiteSpace[1], $whiteSpace[2], 127));
 			ImageCopy($imgCropped, $src_im, 0, 0, $srcX, $srcY, $iSrcWidth-$srcX, $iSrcHeight-$srcY);
 			$result = ImageCopyResampled($dst_im, $imgCropped, 0, 0, 0, 0, $dstW, $dstH, $srcW, $srcH);
-			if (PHP_VERSION < '8.0.0') {
-			ImageDestroy($imgCropped);
+			if (PHP_VERSION_ID < 80000) {
+				ImageDestroy($imgCropped);
 			}
 			return $result;
 		}
@@ -58,6 +58,10 @@
 			}
 
 			$this->_data[$name] = null;
+
+			if (!$this->_file && $name !== 'library') {
+				return $this->_data[$name];
+			}
 
 			switch ($name) {
 
@@ -554,7 +558,7 @@
 					$this->_data['height'] = $new_height;
 					unset($this->_data['aspect_ratio']);
 
-					if (PHP_VERSION < '8.0.0') {
+					if (PHP_VERSION_ID < 80000) {
 						ImageDestroy($this->_image);
 					}
 
@@ -829,7 +833,7 @@
 					$result = ImageCopy($this->_image, $_watermark->_image, $offset_x, $offset_y, 0, 0, $_watermark->width, $_watermark->height);
 
 					// Free memory
-					if (PHP_VERSION < '8.0.0') {
+					if (PHP_VERSION_ID < 80000) {
 						ImageDestroy($_watermark->_image);
 					}
 
@@ -1031,7 +1035,7 @@
 							throw new Exception('Unknown output format');
 					}
 
-					if (PHP_VERSION < '8.0.0') {
+					if (PHP_VERSION_ID < 80000) {
 						ImageDestroy($new_image);
 					}
 

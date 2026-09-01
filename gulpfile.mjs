@@ -1,4 +1,5 @@
 import gulp from 'gulp';
+import { Transform } from 'stream';
 import cleancss from '@sequencemedia/gulp-clean-css';
 import concat from 'gulp-concat';
 import download from 'gulp-fetch';
@@ -243,8 +244,7 @@ gulp.task('watch', function() {
 	gulp.watch('src/frontend/template/js/components/*.js', gulp.series('js-frontend'))
 });
 
-// Task aliases
-gulp.task('build', gulp.series(
+const buildSeries = [
 	'js-framework',
 	'js-backend',
 	'js-frontend',
@@ -253,8 +253,13 @@ gulp.task('build', gulp.series(
 	'scss-backend',
 	'scss-frontend',
 	'scss-trumbowyg',
-	'watch',
-));
+];
+
+if (process.argv.includes('--watch')) {
+	buildSeries.push('watch');
+}
+
+gulp.task('build', gulp.series(buildSeries));
 
 gulp.task('default', gulp.series(
 	'build',

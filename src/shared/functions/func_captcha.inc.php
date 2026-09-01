@@ -54,7 +54,7 @@
 		$base64_image = base64_encode(ob_get_clean());
 
 		// Free memory
-		if (PHP_VERSION < '8.0.0') {
+		if (PHP_VERSION_ID < 80000) {
 			imagedestroy($image);
 		}
 
