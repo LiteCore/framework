@@ -85,7 +85,7 @@ gulp.task('scss-framework', function() {
 // Build and uglify JS files
 gulp.task('js-framework', function() {
 	return gulp
-		.src('src/assets/litecore/js/components/*.js')
+		.src('src/assets/litecore/js/framework/*.js')
 		.pipe(concat('framework.js', {'newLine': '\r\n\r\n'}))
 		.pipe(header(banner, { pkg: packageData }))
 		.pipe(gulp.dest('src/assets/litecore/js/', { overwrite: true }))
@@ -234,7 +234,7 @@ gulp.task('iconly', function() {
 // Watch files for changes
 gulp.task('watch', function() {
 	gulp.watch('src/assets/litecore/scss/**/*.scss', gulp.series('scss-framework'))
-	gulp.watch('src/assets/litecore/js/components/*.js', gulp.series('js-framework'))
+	gulp.watch('src/assets/litecore/js/framework/*.js', gulp.series('js-framework'))
 	gulp.watch('src/assets/trumbowyg/trumbowyg.js', gulp.series('js-trumbowyg'))
 	gulp.watch('src/assets/trumbowyg/**/*.scss', gulp.series('scss-trumbowyg'))
 	gulp.watch('src/backend/template/scss/**/*.scss', gulp.series('scss-backend'))

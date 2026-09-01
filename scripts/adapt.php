@@ -13,7 +13,7 @@ try {
 	$client = new http_client();
 
 	$get_remote_file = function ($file) use ($client) {
-		$response = $client->call('GET', 'https://raw.githubusercontent.com/litecart/litecart/refs/heads/dev-major/public_html/' . $file);
+		$response = $client->call('GET', 'https://raw.githubusercontent.com/litecart/litecart/refs/heads/dev-major/src/' . $file);
 		if ($client->last_response['status_code'] != 200) {
 			throw new Exception('Could not fetch remote file: ' . $file . ' (HTTP ' . $client->last_response['status_code'] . ')');
 		}

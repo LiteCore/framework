@@ -3251,7 +3251,7 @@ img.crop {
 }
 
 .container {
-	box-sizing: content-box;
+	box-sizing: border-box;
 	max-width: 1440px;
 	margin: 0 auto;
 	width: 100%;
@@ -3529,44 +3529,6 @@ body.litebox-open {
 	content: "";
 }
 
-[data-toggle=momentum-scroll] {
-	position: relative;
-}
-[data-toggle=momentum-scroll] .scroll-content {
-	padding: var(--gutter-x) var(--gutter-x);
-	overflow: hidden;
-	user-select: none;
-	touch-action: pan-x;
-	cursor: grab;
-}
-[data-toggle=momentum-scroll] .scroll-content::-webkit-scrollbar {
-	height: 0.5em;
-}
-[data-toggle=momentum-scroll] .scroll-content::-webkit-scrollbar * {
-	background: transparent;
-}
-[data-toggle=momentum-scroll] .scroll-content::-webkit-scrollbar-thumb {
-	background: rgba(0, 0, 0, 0.25) !important;
-	border-radius: 6px;
-}
-[data-toggle=momentum-scroll] button[name=left],
-[data-toggle=momentum-scroll] button[name=right] {
-	position: absolute;
-	top: 40%;
-	width: 3em;
-	height: 3em;
-	border-radius: var(--border-radius);
-	padding: 0;
-}
-[data-toggle=momentum-scroll] button[name=left][name=left],
-[data-toggle=momentum-scroll] button[name=right][name=left] {
-	inset-inline-start: 1em;
-}
-[data-toggle=momentum-scroll] button[name=left][name=right],
-[data-toggle=momentum-scroll] button[name=right][name=right] {
-	inset-inline-end: 1em;
-}
-
 /* Navigation */
 .nav {
 	display: flex;
@@ -3792,7 +3754,9 @@ body.litebox-open {
 .navbar .navbar-toggle .btn {
 	padding: 0.75em;
 }
-.navbar .navbar-toggle .navbar-toggler-bar {
+.navbar .navbar-toggle .navbar-toggler-bar,
+.navbar .navbar-toggle .icon-bar,
+.navbar .navbar-toggle .navbar-toggle-btn .icon-bar {
 	position: relative;
 	background-color: var(--navbar-text-color);
 	display: block;
@@ -3800,25 +3764,61 @@ body.litebox-open {
 	height: 2px;
 	transition: all 250ms ease-in-out;
 }
-.navbar .navbar-toggle .navbar-toggler-bar + .navbar-toggler-bar {
+.navbar .navbar-toggle .navbar-toggler-bar + .navbar-toggler-bar,
+.navbar .navbar-toggle .navbar-toggler-bar + .icon-bar,
+.navbar .navbar-toggle .icon-bar + .navbar-toggler-bar,
+.navbar .navbar-toggle .icon-bar + .icon-bar,
+.navbar .navbar-toggle .navbar-toggle-btn .icon-bar + .navbar-toggler-bar,
+.navbar .navbar-toggle .navbar-toggle-btn .icon-bar + .icon-bar {
 	margin-top: 4px;
 }
-.navbar .navbar-toggle .navbar-toggler-bar:nth-of-type(2) {
+.navbar .navbar-toggle .navbar-toggler-bar:nth-of-type(2),
+.navbar .navbar-toggle .icon-bar:nth-of-type(2),
+.navbar .navbar-toggle .navbar-toggle-btn .icon-bar:nth-of-type(2) {
 	top: 1px;
 }
-.navbar .navbar-toggle .navbar-toggler-bar:nth-of-type(3) {
+.navbar .navbar-toggle .navbar-toggler-bar:nth-of-type(3),
+.navbar .navbar-toggle .icon-bar:nth-of-type(3),
+.navbar .navbar-toggle .navbar-toggle-btn .icon-bar:nth-of-type(3) {
 	top: 2px;
 }
-.navbar.expanded .navbar-toggle .navbar-toggler-bar:nth-of-type(1) {
-	top: 6px;
-	transform: rotate(45deg);
+.navbar .navbar .navbar-toggle-btn .icon-bar {
+	position: relative;
+	background-color: var(--navbar-text-color);
+	display: block;
+	width: 22px;
+	height: 2px;
+	transition: all 250ms ease-in-out;
 }
-.navbar.expanded .navbar-toggle .navbar-toggler-bar:nth-of-type(2) {
+.navbar .navbar .navbar-toggle-btn .icon-bar + .icon-bar {
+	margin-top: 4px;
+}
+.navbar.expanded .navbar-toggle .navbar-toggler-bar:nth-of-type(1),
+.navbar.expanded .navbar-toggle .icon-bar:nth-of-type(1),
+.navbar.expanded .navbar-toggle .navbar-toggle-btn .icon-bar:nth-of-type(1) {
+	transform: translateY(10px) rotate(45deg);
+}
+.navbar.expanded .navbar-toggle .navbar-toggler-bar:nth-of-type(2),
+.navbar.expanded .navbar-toggle .icon-bar:nth-of-type(2),
+.navbar.expanded .navbar-toggle .navbar-toggle-btn .icon-bar:nth-of-type(2) {
 	background-color: transparent;
 }
-.navbar.expanded .navbar-toggle .navbar-toggler-bar:nth-of-type(3) {
-	top: -6px;
-	transform: rotate(-45deg);
+.navbar.expanded .navbar-toggle .navbar-toggler-bar:nth-of-type(3),
+.navbar.expanded .navbar-toggle .icon-bar:nth-of-type(3),
+.navbar.expanded .navbar-toggle .navbar-toggle-btn .icon-bar:nth-of-type(3) {
+	transform: translateY(-10px) rotate(-45deg);
+}
+.navbar.expanded {
+	/* X animation when the menu is opened (CSS-only via :has() on the checkbox) */
+}
+.navbar.expanded .navbar-toggle-btn .icon-bar:nth-of-type(1) {
+	transform: translateY(10px) rotate(45deg);
+}
+.navbar.expanded .navbar-toggle-btn .icon-bar:nth-of-type(2) {
+	background-color: transparent;
+}
+.navbar.expanded .navbar-toggle-btn .icon-bar:nth-of-type(3) {
+	transform: translateY(-10px) rotate(-45deg);
 }
 @media (max-width: 767px) {
 	.navbar.expanded .navbar-menu {
@@ -3895,6 +3895,148 @@ body.navbar-expanded {
 	overflow: hidden;
 }
 
+.navbar-toggle-btn {
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 4px;
+	padding: 0.5em;
+	cursor: pointer;
+}
+
+@media (min-width: 768px) {
+	.navbar-toggle-btn,
+	.navbar-toggle {
+		display: none !important;
+	}
+}
+@media (max-width: 767px) {
+	.navbar-toggle {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+		opacity: 0;
+		pointer-events: none;
+	}
+	/* Push the hamburger toggle to the right edge of the navbar header */
+	.navbar-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+	.navbar-brand {
+		flex: 0 0 auto;
+	}
+	/* Slide-in menu from the left edge of the viewport.
+		 CSS-only implementation via :has() since the framework's JS binding
+		 (offcanvas.js) targets [data-toggle="offcanvas"] which this navbar
+		 doesn't use. */
+	.navbar .navbar-menu {
+		left: 0;
+		margin-left: -100%;
+		overflow-y: auto;
+	}
+	.navbar:has(.navbar-toggle:checked) .navbar-menu {
+		margin-left: 0;
+		opacity: 1;
+		z-index: 1000;
+	}
+	body:has(.navbar .navbar-toggle:checked) {
+		overflow: hidden;
+	}
+	/* Themed scrollbar (light mode) */
+	.navbar .navbar-menu {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+	}
+	.navbar .navbar-menu::-webkit-scrollbar {
+		width: 6px;
+	}
+	.navbar .navbar-menu::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	.navbar .navbar-menu::-webkit-scrollbar-thumb {
+		background: rgba(0, 0, 0, 0.25);
+		border-radius: 3px;
+	}
+	.navbar .navbar-menu::-webkit-scrollbar-thumb:hover {
+		background: rgba(0, 0, 0, 0.4);
+	}
+	/* Themed scrollbar (dark mode) */
+	html[data-theme=dark] .navbar .navbar-menu {
+		scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+	}
+	html[data-theme=dark] .navbar .navbar-menu::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.3);
+	}
+	html[data-theme=dark] .navbar .navbar-menu::-webkit-scrollbar-thumb:hover {
+		background: rgba(255, 255, 255, 0.5);
+	}
+}
+@media (max-width: 767px) and (prefers-color-scheme: dark) {
+	html:not([data-theme=light]) .navbar .navbar-menu {
+		scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+	}
+	html:not([data-theme=light]) .navbar .navbar-menu::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.3);
+	}
+	html:not([data-theme=light]) .navbar .navbar-menu::-webkit-scrollbar-thumb:hover {
+		background: rgba(255, 255, 255, 0.5);
+	}
+}
+@media (max-width: 767px) {
+	/* Dark mode background for the offcanvas menu */
+	html[data-theme=dark] .navbar .navbar-menu {
+		background: var(--card-background);
+		color: var(--default-text-color);
+	}
+}
+@media (max-width: 767px) and (prefers-color-scheme: dark) {
+	html:not([data-theme=light]) .navbar .navbar-menu {
+		background: var(--card-background);
+		color: var(--default-text-color);
+	}
+}
+@media (max-width: 767px) {
+	.navbar .navbar-menu .dropdown > .dropdown-menu,
+	.navbar .navbar-menu .dropdown-start > .dropdown-menu,
+	.navbar .navbar-menu .dropdown-end > .dropdown-menu {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
+	.navbar .navbar-menu .dropdown.open > .dropdown-menu,
+	.navbar .navbar-menu .dropdown-start.open > .dropdown-menu,
+	.navbar .navbar-menu .dropdown-end.open > .dropdown-menu {
+		visibility: visible;
+		opacity: 1;
+		display: block;
+	}
+}
+@media (max-width: 767px) {
+	/* app.css has #site-navigation [data-id=languages] .dropdown-menu {
+		 display: block; } which forces the 1000+px tall languages list to
+		 always render. On mobile it should behave like other collapsed dropdowns. */
+	#site-navigation [data-id=languages] .dropdown-menu,
+	.navbar .navbar-menu [data-id=languages] .dropdown-menu {
+		visibility: hidden;
+		opacity: 0;
+		display: none !important;
+	}
+	#site-navigation [data-id=languages].open .dropdown-menu,
+	.navbar .navbar-menu [data-id=languages].open .dropdown-menu {
+		visibility: visible;
+		opacity: 1;
+		display: block !important;
+	}
+}
 /* Notices */
 .notices {
 	margin-bottom: 2em;
@@ -4026,30 +4168,30 @@ body.navbar-expanded {
 	color: var(--pill-item-text-color--active);
 	border-color: var(--pill-item-border-color--active);
 }
-.pills ul {
+.pills:is(ul), .pills ul {
 	display: flex;
 	flex-direction: column;
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
-.pills ul li {
+.pills:is(ul) li, .pills ul li {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
 }
-.pills ul li ul {
+.pills:is(ul) li ul, .pills ul li ul {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
 }
-.pills ul li ul li {
+.pills:is(ul) li ul li, .pills ul li ul li {
 	padding-inline-start: 3em;
 }
-.pills ul li ul li ul li {
+.pills:is(ul) li ul li ul li, .pills ul li ul li ul li {
 	padding-inline-start: 4.5em;
 }
-.pills ul li ul li ul li ul li {
+.pills:is(ul) li ul li ul li ul li, .pills ul li ul li ul li ul li {
 	padding-inline-start: 6em;
 }
 .pills a {
@@ -4434,7 +4576,7 @@ body.navbar-expanded {
 .table.data-table a.link {
 	display: inline-block;
 	background: var(--table-link-background);
-	padding: 0.15em 0.5em;
+	padding: 0.15em 0.75em;
 	line-height: 1.5;
 	border-radius: var(--border-radius);
 	box-shadow: var(--table-link-shadow);

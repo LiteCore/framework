@@ -32,7 +32,7 @@ jobs:
               php -l "$file"
               errors=$((errors + 1))
             fi
-          done < <(find public_html -name '*.php' -type f)
+          done < <(find src -name '*.php' -type f)
           if [ $errors -gt 0 ]; then
             echo "::error::$errors file(s) with PHP syntax errors"
             exit 1
@@ -97,8 +97,8 @@ jobs:
 
       - name: Create storage directories
         run: |
-          mkdir -p public_html/storage/{cache,data,logs}
-          mkdir -p public_html/storage/vmods/.cache
+          mkdir -p src/storage/{cache,data,logs}
+          mkdir -p src/storage/vmods/.cache
 
       - name: Generate config file
         run: |
@@ -106,8 +106,8 @@ jobs:
             -e "s|define('DB_USERNAME', '');|define('DB_USERNAME', 'litecore');|" \
             -e "s|define('DB_PASSWORD', '');|define('DB_PASSWORD', 'litecore');|" \
             -e "s|define('DB_DATABASE', '');|define('DB_DATABASE', 'litecore');|" \
-            install/public_html/storage/config.inc.php \
-            > public_html/storage/config.inc.php
+            install/src/storage/config.inc.php \
+            > src/storage/config.inc.php
           echo "Config file generated"
 
       - name: Import database schema and seed data
@@ -115,7 +115,7 @@ jobs:
 
       - name: Verify installation
         run: |
-          test -f public_html/storage/config.inc.php && echo "config exists"
+          test -f src/storage/config.inc.php && echo "config exists"
           mysql -h 127.0.0.1 -u litecore -plitecore litecore \
             -e "SELECT COUNT(*) as tables FROM information_schema.tables WHERE table_schema='litecore' AND table_name LIKE 'lc_%';"
 

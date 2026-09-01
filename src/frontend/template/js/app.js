@@ -1,9 +1,9 @@
 /*!
- * LiteCore v1.0.0 - Lightweight website core framework built with PHP, jQuery and HTML.
- * @link https://www.litecore.dev/
- * @license CC-BY-ND-4.0
- * @author T. Almroth
- */
+	LiteCore v1.0.0 - Lightweight website core framework built with PHP, jQuery and HTML.
+	Link: https://www.litecore.dev/
+	License: CC-BY-ND-4.0
+	Author: T. Almroth
+*/
 
 waitFor('jQuery', ($) => {
 

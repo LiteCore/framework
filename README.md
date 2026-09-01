@@ -42,6 +42,7 @@ standalone framework for custom projects.
 
    - /var/www/html/
    - /home/username/public_html/
+   - /home/username/domains/mydomain.tld/public_html/
    - C:\xampp\htdocs\
 
 2. Create a MySQL database and import `install/structure.sql`, then
