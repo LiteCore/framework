@@ -8,7 +8,7 @@
 
   <install><![CDATA[
 	database::query(
-		"CREATE TABLE `". DB_TABLE_PREFIX ."pages` (
+		"CREATE TABLE `". DB_PREFIX ."pages` (
 			`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 			`status` TINYINT(1) NOT NULL DEFAULT '0',
 			`parent_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -23,7 +23,7 @@
 	);
 
 	database::query(
-		"CREATE TABLE `". DB_TABLE_PREFIX ."pages_info` (
+		"CREATE TABLE `". DB_PREFIX ."pages_info` (
 			`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 			`page_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
 			`language_code` CHAR(2) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
@@ -41,11 +41,11 @@
 
   <uninstall><![CDATA[
 	database::query(
-		"DROP TABLE IF EXISTS `". DB_TABLE_PREFIX ."pages`;"
+		"DROP TABLE IF EXISTS `". DB_PREFIX ."pages`;"
 	);
 
 	database::query(
-		DROP TABLE IF EXISTS `". DB_TABLE_PREFIX ."pages_info`;"
+		DROP TABLE IF EXISTS `". DB_PREFIX ."pages_info`;"
 	);
   ]]></uninstall>
 
@@ -65,16 +65,16 @@
       <insert><![CDATA[
 		// Pages
 		database::query(
-			"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
-			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
+			"select p.id, p.priority, pi.title from ". DB_PREFIX ."pages p
+			left join ". DB_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
 			where status
 			and parent_id = 0
 			order by p.priority, pi.title;"
 		)->each(function($page) use ($_partial) {
 
 			$subitems = database::query(
-				"select p.id, p.priority, pi.title from ". DB_TABLE_PREFIX ."pages p
-				left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
+				"select p.id, p.priority, pi.title from ". DB_PREFIX ."pages p
+				left join ". DB_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". language::$selected['code'] ."')
 				where status
 				and parent_id = ". (int)$page['id'] ."
 				order by p.priority, pi.title;"
@@ -147,8 +147,8 @@
 			}
 
 			$pages_query = database::query(
-				"select p.id, pi.title from ". DB_TABLE_PREFIX ."pages p
-				left join ". DB_TABLE_PREFIX ."pages_info pi on (pi.page_id = p.id and pi.language_code = '". database::input(language::$selected['code']) ."')
+				"select p.id, pi.title from ". DB_PREFIX ."pages p
+				left join ". DB_PREFIX ."pages_info pi on (pi.page_id = p.id and pi.language_code = '". database::input(language::$selected['code']) ."')
 				where p.parent_id = '". (int)$parent_id ."'
 				order by p.priority asc, pi.title asc;"
 			);
@@ -158,7 +158,7 @@
 				$options[] = [$page['id'], str_repeat('&nbsp;&nbsp;&nbsp;', $level) . $page['title']];
 
 				$sub_pages_query = database::query(
-					"select id from ". DB_TABLE_PREFIX ."pages
+					"select id from ". DB_PREFIX ."pages
 					where parent_id = '". (int)$page['id'] ."'
 					limit 1;"
 				);
@@ -193,8 +193,8 @@
 
       <insert><![CDATA[
 		$_partial->snippets['pages'] = database::query(
-			"select p.id, pi.title from ". DB_TABLE_PREFIX ."pages p
-			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
+			"select p.id, pi.title from ". DB_PREFIX ."pages p
+			left join ". DB_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
 			where status
 			order by p.priority, pi.title;"
 		)->fetch_all(function($page){

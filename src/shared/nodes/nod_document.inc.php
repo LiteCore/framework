@@ -336,7 +336,18 @@
 					self::$title = [self::$title];
 				}
 
-				self::$title = array_filter(self::$title);
+				$language_code = !empty(language::$selected['code']) ? language::$selected['code'] : '';
+				self::$title = array_values(array_filter(array_map(function($item) use ($language_code) {
+					if (is_string($item)) return $item;
+					if (is_array($item)) {
+						foreach ([$item[$language_code] ?? null, reset($item) ?: null] as $candidate) {
+							if (is_string($candidate) && $candidate !== '') {
+								return $candidate;
+							}
+						}
+					}
+					return '';
+				}, self::$title)));
 				$_layout->snippets['title'] = implode(' � ', array_reverse(self::$title));
 			}
 

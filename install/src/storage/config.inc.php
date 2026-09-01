@@ -26,7 +26,7 @@
 	define('DB_USERNAME', '');
 	define('DB_PASSWORD', '');
 	define('DB_DATABASE', '');
-	define('DB_TABLE_PREFIX', 'lc_');
+	define('DB_PREFIX', 'lc_');
 
 	######################################################################
 	## System ############################################################

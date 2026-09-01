@@ -142,11 +142,11 @@ table tbody .toggle {
 
 		$pages = database::query(
 			"select p.*, pi.title, p2.num_subpages
-			from ". DB_TABLE_PREFIX ."pages p
-			left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
+			from ". DB_PREFIX ."pages p
+			left join ". DB_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
 			left join (
 				select parent_id as id, count(id) as num_subpages
-				from ". DB_TABLE_PREFIX ."pages
+				from ". DB_PREFIX ."pages
 			) p2 on (p2.id = p.id)
 			where p.id
 			". (empty($_GET['query']) ? "and parent_id = 0" : "") ."
@@ -173,11 +173,11 @@ table tbody .toggle {
 
 			$pages_query = database::query(
 				"select p.*, pi.title, p2.num_subpages
-				from ". DB_TABLE_PREFIX ."pages p
-				left join ". DB_TABLE_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
+				from ". DB_PREFIX ."pages p
+				left join ". DB_PREFIX ."pages_info pi on (p.id = pi.page_id and pi.language_code = '". database::input(language::$selected['code']) ."')
 				left join (
 					select parent_id as id, count(id) as num_subpages
-					from ". DB_TABLE_PREFIX ."pages
+					from ". DB_PREFIX ."pages
 				) p2 on (p2.id = p.id)
 				where p.parent_id = ". (int)$parent_id ."
 				order by p.priority, pi.title;"
@@ -226,8 +226,8 @@ table tbody .toggle {
 			}
 		};
 
-		$num_rows = database::query("select id from ". DB_TABLE_PREFIX ."pages;")->num_rows;
-		$num_root_rows = database::query("select id from ". DB_TABLE_PREFIX ."pages where parent_id = 0;")->num_rows;
+		$num_rows = database::query("select id from ". DB_PREFIX ."pages;")->num_rows;
+		$num_root_rows = database::query("select id from ". DB_PREFIX ."pages where parent_id = 0;")->num_rows;
 		$num_pages = $num_root_rows / settings::get('data_table_rows_per_page');
 		$iterator(0, 0);
 	}

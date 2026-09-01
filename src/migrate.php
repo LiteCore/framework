@@ -57,7 +57,7 @@
 
 					database::query("start transaction;");
 					$sql = file_get_contents($file);
-					$sql = preg_replace('#``(lchq|lc)_#', '`' . DB_TABLE_PREFIX, $sql);
+					$sql = preg_replace('#``(lchq|lc)_#', '`' . DB_PREFIX, $sql);
 					$sql = preg_split('#(^|\R)-- -----+(\R|$)#', $sql, -1, PREG_SPLIT_NO_EMPTY);
 
 					foreach ($sql as $query) {
@@ -106,12 +106,12 @@
 
 		// Assign table name with table prefix
 		foreach ($structure['tables'] as $key => $table) {
-			$structure['tables'][$key]['name'] = DB_TABLE_PREFIX . $key;
+			$structure['tables'][$key]['name'] = DB_PREFIX . $key;
 
 			// Assign table prefix to foreign key references
 			if (!empty($table['foreign_keys'])) {
 				foreach ($table['foreign_keys'] as $fk_key => $fk) {
-					$structure['tables'][$key]['foreign_keys'][$fk_key]['references']['table'] = DB_TABLE_PREFIX . $fk['references']['table'];
+					$structure['tables'][$key]['foreign_keys'][$fk_key]['references']['table'] = DB_PREFIX . $fk['references']['table'];
 				}
 			}
 		}

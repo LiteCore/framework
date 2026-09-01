@@ -33,8 +33,8 @@
 					 . 'Wiping data...' . PHP_EOL . PHP_EOL;
 
 				database::multi_query(
-					"truncate ". DB_TABLE_PREFIX ."pages;
-					truncate ". DB_TABLE_PREFIX ."pages_info;"
+					"truncate ". DB_PREFIX ."pages;
+					truncate ". DB_PREFIX ."pages_info;"
 				);
 			}
 
@@ -46,7 +46,7 @@
 				$line++;
 
 				// Find page
-				if (!empty($row['id']) && $page = database::query("select id from ". DB_TABLE_PREFIX ."pages where id = ". (int)$row['id'] ." limit 1;")->fetch()) {
+				if (!empty($row['id']) && $page = database::query("select id from ". DB_PREFIX ."pages where id = ". (int)$row['id'] ." limit 1;")->fetch()) {
 					$page = new ent_page($page['id']);
 				}
 
@@ -72,7 +72,7 @@
 
 					if (!empty($row['id'])) {
 						database::query(
-							"insert into ". DB_TABLE_PREFIX ."pages (id, created_at)
+							"insert into ". DB_PREFIX ."pages (id, created_at)
 							values (". (int)$row['id'] .", '". date('Y-m-d H:i:s') ."');"
 						);
 						$page = new ent_page($row['id']);
@@ -122,8 +122,8 @@
 
 			$csv = database::query(
 				"select p.*, pi.title, pi.content, pi.head_title, pi.meta_description, '". database::input($_POST['language_code']) ."' as language_code
-				from ". DB_TABLE_PREFIX ."pages p
-				left join ". DB_TABLE_PREFIX ."pages_info pi on (pi.page_id = p.id and pi.language_code = '". database::input($_POST['language_code']) ."')
+				from ". DB_PREFIX ."pages p
+				left join ". DB_PREFIX ."pages_info pi on (pi.page_id = p.id and pi.language_code = '". database::input($_POST['language_code']) ."')
 				order by pid;"
 			)->export($result)->fetch_all();
 

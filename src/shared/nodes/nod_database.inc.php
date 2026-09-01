@@ -77,9 +77,9 @@
 			self::query("SET SESSION default_storage_engine = InnoDB;", $link);
 
 			// Set time zone for current session
-			if (defined('DB_TABLE_PREFIX')) {
+			if (defined('DB_PREFIX')) {
 				$timezone = database::query(
-					"SELECT `value` FROM ". DB_TABLE_PREFIX ."settings
+					"SELECT `value` FROM ". DB_PREFIX ."settings
 					WHERE `key` = 'store_timezone'
 					LIMIT 1;", 'default'
 				)->fetch('value');
@@ -379,7 +379,7 @@
 
 			// Pass non-string scalars through unchanged. Must run before the empty-check
 			// below, otherwise `null == ''` (loose compare) would coerce null to ''.
-			// gettype() returns 'NULL' / 'double' (not 'null' / 'float') — use those.
+			// gettype() returns 'NULL' / 'double' (not 'null' / 'float') ï¿½ use those.
 			if (in_array(gettype($input), ['NULL', 'boolean', 'integer', 'double'], true)) {
 				return $input;
 			}
@@ -616,7 +616,7 @@
 							continue;
 						}
 
-						// Commit replacement (keep the break character at $n — it belongs to the SQL, not the placeholder)
+						// Commit replacement (keep the break character at $n ï¿½ it belongs to the SQL, not the placeholder)
 						$sql = substr($sql, 0, $i) . $value . substr($sql, $n);
 
 						// Move cursor to end of parameter
@@ -885,7 +885,19 @@
 
 		public function each(callable $function) {
 			while ($row = $this->fetch()) {
-				call_user_func($function, $row);
+
+				// Suppress "Undefined array key" / "Undefined variable" warnings
+				// inside the closure body so that missing row keys (e.g. when an
+				// addon expects an aliased column the SELECT didn't return) don't
+				// surface as PHP 8+ warnings. All other errors propagate normally.
+				set_error_handler(function($errno, $errstr) {
+					return (bool) preg_match('/^Undefined (array key|variable)/', $errstr);
+				});
+				try {
+					call_user_func($function, $row);
+				} finally {
+					restore_error_handler();
+				}
 			}
 		}
 

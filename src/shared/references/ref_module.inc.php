@@ -12,7 +12,7 @@
 			$this->_data['module_id'] = $module_id;
 
 			$module = database::query(
-				"select * from ". DB_TABLE_PREFIX ."modules
+				"select * from ". DB_PREFIX ."modules
 				where module_id = '". database::input($module_id) ."';"
 			)->fetch();
 

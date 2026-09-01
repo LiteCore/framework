@@ -7,7 +7,7 @@
 	<author>LiteCore Dev Team</author>
 	<install><![CDATA[
 	database::query(
-		"CREATE TABLE `". DB_TABLE_PREFIX ."countries` (
+		"CREATE TABLE `". DB_PREFIX ."countries` (
 			`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 			`status` TINYINT(4) NOT NULL DEFAULT '0',
 			`name` VARCHAR(64) NOT NULL DEFAULT '',
@@ -33,7 +33,7 @@
 	);
 
 	database::query(
-		"INSERT INTO `". DB_TABLE_PREFIX ."countries` (`id`, `status`, `name`, `domestic_name`, `iso_code_1`, `iso_code_2`, `iso_code_3`, `tax_id_format`, `address_format`, `postcode_format`, `postcode_required`, `language_code`, `currency_code`, `phone_code`, `updated_at`, `created_at`) VALUES
+		"INSERT INTO `". DB_PREFIX ."countries` (`id`, `status`, `name`, `domestic_name`, `iso_code_1`, `iso_code_2`, `iso_code_3`, `tax_id_format`, `address_format`, `postcode_format`, `postcode_required`, `language_code`, `currency_code`, `phone_code`, `updated_at`, `created_at`) VALUES
 		(1, 1, 'Afghanistan', '', '004', 'AF', 'AFG', '', '{company}\r\n{firstname} {lastname}\r\n{address1}\r\n{address2}\r\n{postcode} {city}\r\n{zone_name}\r\n{country_name}', '', 0, 'fa', 'AFN', '93', NOW(), NOW()),
 		(2, 1, 'Albania', '', '008', 'AL', 'ALB', '', '{company}\r\n{firstname} {lastname}\r\n{address1}\r\n{address2}\r\n{postcode} {city}\r\n{zone_name}\r\n{country_name}', '', 0, 'sq', 'ALL', '355', NOW(), NOW()),
 		(3, 1, 'Algeria', '', '012', 'DZ', 'DZA', '', '{company}\r\n{firstname} {lastname}\r\n{address1}\r\n{address2}\r\n{postcode} {city}\r\n{zone_name}\r\n{country_name}', '[0-9]{5}', 0, 'ar', 'DZD', '213', NOW(), NOW()),
@@ -280,7 +280,7 @@
 	);
 
 	database::query(
-		"CREATE TABLE `". DB_TABLE_PREFIX ."zones` (
+		"CREATE TABLE `". DB_PREFIX ."zones` (
       `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       `country_code` CHAR(2) NOT NULL DEFAULT '',
       `code` VARCHAR(8) NOT NULL DEFAULT '',
@@ -294,7 +294,7 @@
 	);
 
 	database::query(
-		"INSERT INTO `". DB_TABLE_PREFIX ."settings`
+		"INSERT INTO `". DB_PREFIX ."settings`
 		(`group_key`, `type`, `title`, `description`, `key`, `value`, `datatype`, `function`, `required`, `priority`)
 		VALUES ('site_info', 'local', 'Site Country', 'The country of your organization.', 'site_country_code', 'US', 'string', 'country()', 1, 21);
 	);
@@ -302,15 +302,15 @@
 
 	<uninstall><![CDATA[
 	database::query(
-		"DROP TABLE `". DB_TABLE_PREFIX ."countries`;"
+		"DROP TABLE `". DB_PREFIX ."countries`;"
 	);
 
 	database::query(
-		"DROP TABLE `". DB_TABLE_PREFIX ."zones`;"
+		"DROP TABLE `". DB_PREFIX ."zones`;"
 	);
 
 	database::query(
-		"DELETE FROM `". DB_TABLE_PREFIX ."settings`
+		"DELETE FROM `". DB_PREFIX ."settings`
 		WHERE `key` = 'site_country_code'
 		LIMIT 1;"
 	);
@@ -368,7 +368,7 @@
 		}
 
 		$options = database::query(
-			"select * from ". DB_TABLE_PREFIX ."countries
+			"select * from ". DB_PREFIX ."countries
 			where status
 			order by name asc;"
 		)->fetch_all(function($country){
@@ -401,7 +401,7 @@
 		}
 
 		$options = database::query(
-			"select * from ". DB_TABLE_PREFIX ."zones
+			"select * from ". DB_PREFIX ."zones
 			where country_code = '". database::input($country_code) ."'
 			order by name asc;"
 		)->fetch_all(function($zone){

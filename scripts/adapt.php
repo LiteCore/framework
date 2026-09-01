@@ -83,7 +83,7 @@ try {
 
 	// Assign table name with table prefix
 	foreach ($structure['tables'] as $i => $table) {
-		$structure['tables'][$i]['name'] = DB_TABLE_PREFIX . $i;
+		$structure['tables'][$i]['name'] = DB_PREFIX . $i;
 	}
 
 	if ($structure === null) {

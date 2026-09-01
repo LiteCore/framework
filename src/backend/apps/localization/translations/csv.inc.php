@@ -30,7 +30,7 @@
 			}
 
 			$installed_language_codes = database::query(
-				"select code from ". DB_TABLE_PREFIX ."languages
+				"select code from ". DB_PREFIX ."languages
 				order by priority;"
 			)->fetch_all('code');
 
@@ -61,7 +61,7 @@
 
 						$translation = database::query(
 							"select id, json_value(`". database::input($column) ."`, '$.". database::input($language_code) ."') as ". database::input($column) ."
-							from `". DB_TABLE_PREFIX . database::input($collection['id']) ."`
+							from `". DB_PREFIX . database::input($collection['id']) ."`
 							where id = '". database::input($id) ."'
 							limit 1;"
 						)->fetch();
@@ -75,7 +75,7 @@
 							if (!in_array($language_code, $installed_language_codes)) continue;
 
 							database::query(
-								"update `". DB_TABLE_PREFIX . database::input($collection['id']) ."`
+								"update `". DB_PREFIX . database::input($collection['id']) ."`
 								set json_set(`". database::input($column) ."`, '$.". database::input($language_code) ."', '". database::input($row[$language_code], true) ."')
 								where id = '". database::input($translation['id']) ."'
 								limit 1;"
@@ -89,7 +89,7 @@
 				} else {
 
 					$translation = database::query(
-						"select * from ". DB_TABLE_PREFIX ."translations
+						"select * from ". DB_PREFIX ."translations
 						where code = '". database::input($row['code']) ."'
 						limit 1;"
 					)->fetch();
@@ -105,7 +105,7 @@
 							if (!in_array($language_code, $installed_language_codes)) continue;
 
 							database::query(
-								"update ". DB_TABLE_PREFIX ."translations
+								"update ". DB_PREFIX ."translations
 								set `text_". database::identifier($language_code) ."` = '". database::input($row[$language_code], true) ."'
 								where code = '". database::input($row['code']) ."'
 								limit 1;"
@@ -119,7 +119,7 @@
 						if (empty($_POST['insert'])) continue;
 
 						database::query(
-							"insert into ". DB_TABLE_PREFIX ."translations
+							"insert into ". DB_PREFIX ."translations
 							(code) values ('". database::input($row['code']) ."');"
 						);
 
@@ -129,7 +129,7 @@
 							if (!in_array($language_code, $installed_language_codes)) continue;
 
 							database::query(
-								"update ". DB_TABLE_PREFIX ."translations
+								"update ". DB_PREFIX ."translations
 								set text_". $language_code ." = '". database::input($row[$language_code], true) ."'
 								where code = '". database::input($row['code']) ."'
 								limit 1;"
@@ -188,7 +188,7 @@
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
 					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-					from ". DB_TABLE_PREFIX ."translations
+					from ". DB_PREFIX ."translations
 					where code not regexp '^(settings_group:|settings_key:|cm|job|om|ot|pm|sm)_'"
 				);
 			}
@@ -197,7 +197,7 @@
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
 					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-					from ". DB_TABLE_PREFIX ."translations
+					from ". DB_PREFIX ."translations
 					where code regexp '^(cm|job|om|ot|pm|sm)_'"
 				);
 			}
@@ -206,7 +206,7 @@
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
 					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-					from ". DB_TABLE_PREFIX ."translations
+					from ". DB_PREFIX ."translations
 					where code regexp '^settings_group:'"
 				);
 			}
@@ -215,7 +215,7 @@
 				$sql_union[] = (
 					"select 'translation' as entity, frontend, backend, code, updated_at, html,
 					". implode(", ", f::array_each($_POST['language_codes'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-					from ". DB_TABLE_PREFIX ."translations
+					from ". DB_PREFIX ."translations
 					where code regexp '^settings_key:'"
 				);
 			}
@@ -225,7 +225,7 @@
 					"select '$entity' as entity, '1' as frontend, '1' as backend, concat('[". database::input($entity) ."', ':', id, ']". database::input($column) ."') as code, '' as updated_at,
 						coalesce(". implode(', ', f::array_each($_POST['language_codes'], fn($language_code) => "if(json_value(`". database::input($column) ."`, '$.". database::input($language_code) ."') regexp '<', 1, null)")) .", 0) as html,
 						". implode(', ', f::array_each($_POST['language_codes'], fn($language_code) => "json_value(`". $column ."`, '$.". database::input($language_code) ."') as `text_". database::identifier($language_code) ."`")) ."
-					from ". DB_TABLE_PREFIX . database::input($id)
+					from ". DB_PREFIX . database::input($id)
 				);
 			};
 
@@ -262,7 +262,7 @@
 			} else {
 				header('Content-Type: application/csv; charset='. $_POST['charset']);
 				// language_codes have already been allowlisted above, so they
-				// are safe for the filename slot — but a whitelist filter here
+				// are safe for the filename slot ï¿½ but a whitelist filter here
 				// protects against a future refactor that re-orders validation.
 				$_filename_codes = preg_replace('#[^A-Za-z0-9_-]#', '', implode('-', $_POST['language_codes']));
 				header('Content-Disposition: attachment; filename=translations-'. $_filename_codes .'.csv');

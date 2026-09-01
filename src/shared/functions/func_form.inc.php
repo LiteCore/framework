@@ -1258,7 +1258,7 @@
 	function form_select_administrator(string $name, bool|array|string $input=true, array|string $attributes=[]): string {
 
 		$options = database::query(
-			"select id, username from ". DB_TABLE_PREFIX ."administrators
+			"select id, username from ". DB_PREFIX ."administrators
 			order by username;"
 		)->fetch_all(function($administrator){
 			return [$administrator['id'], $administrator['username']];

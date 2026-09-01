@@ -46,7 +46,7 @@
 				// column reference below. If it isn't a safe identifier
 				// (legacy data from before PROJ-22 hardening), fall back
 				// to text_en so the storefront still renders instead of
-				// crashing — and leave a trace in errors.log.
+				// crashing ï¿½ and leave a trace in errors.log.
 				try {
 					$selected_column = 'text_' . database::identifier(self::$selected['code']);
 				} catch (InvalidArgumentException $e) {
@@ -56,7 +56,7 @@
 
 				database::query(
 					"select id, code, if($selected_column != '', $selected_column, text_en) as text
-					from ". DB_TABLE_PREFIX ."translations
+					from ". DB_PREFIX ."translations
 					where ". ((isset(route::$request['endpoint']) && route::$request['endpoint'] == 'backend') ? "backend = 1" : "frontend = 1") ."
 					having text != '';"
 				)->each(function($translation){
@@ -75,7 +75,7 @@
 		public static function shutdown() {
 
 			database::query(
-				"update ". DB_TABLE_PREFIX ."translations
+				"update ". DB_PREFIX ."translations
 				set ". ((isset(route::$request['endpoint']) && route::$request['endpoint'] == 'backend') ? "backend = 1" : "frontend = 1") .",
 					last_accessed = '". date('Y-m-d H:i:s') ."'
 				where code in ('". implode("', '", database::input(self::$_accessed_translations)) ."');"
@@ -88,7 +88,7 @@
 
 		public static function load() {
 			self::$languages = database::query(
-				"select * from ". DB_TABLE_PREFIX ."languages
+				"select * from ". DB_PREFIX ."languages
 				where status
 				order by priority, name;"
 			)->fetch_all(null, 'code');
@@ -190,7 +190,7 @@
 			if (preg_match('#\.([a-z]{2})$#', $_SERVER['HTTP_HOST'], $matches)) {
 
 				$country = database::query(
-					"select * from ". DB_TABLE_PREFIX ."countries
+					"select * from ". DB_PREFIX ."countries
 					where iso_code_2 = '". database::input(strtoupper($matches[1])) ."'
 					limit 1;"
 				)->fetch();
@@ -253,7 +253,7 @@
 
 			// Get translation from database
 			$translation = database::query(
-				"select id, text_en, `text_". $language_code ."` from ". DB_TABLE_PREFIX ."translations
+				"select id, text_en, `text_". $language_code ."` from ". DB_PREFIX ."translations
 				where code = '". database::input($code) ."'
 				limit 1;"
 			)->fetch();
@@ -261,7 +261,7 @@
 			// Create translation if it doesn't exist
 			if (!$translation) {
 				database::query(
-					"insert into ". DB_TABLE_PREFIX ."translations
+					"insert into ". DB_PREFIX ."translations
 					(code, text_en, html, updated_at, created_at)
 					values ('". database::input($code) ."', '". database::input($default, true) ."', '". (($default != strip_tags($default)) ? 1 : 0) ."', '". date('Y-m-d H:i:s') ."', '". date('Y-m-d H:i:s') ."');"
 				);
@@ -277,7 +277,7 @@
 
 				// Find same english translation by different key
 				$secondary_translation = database::query(
-					"select id, text_en, `text_". $language_code ."` from ". DB_TABLE_PREFIX ."translations
+					"select id, text_en, `text_". $language_code ."` from ". DB_PREFIX ."translations
 					where text_en = '". database::input($translation['text_en']) ."'
 					and (text_en is not null and text_en != '')
 					and (text_". self::$selected['code'] ." is not null and text_". self::$selected['code'] ." != '')
@@ -286,7 +286,7 @@
 
 				if ($secondary_translation) {
 					database::query(
-						"update ". DB_TABLE_PREFIX ."translations
+						"update ". DB_PREFIX ."translations
 						set `text_". $language_code ."` = '". database::input($translation['text_'.$language_code], true) ."',
 						updated_at = '". date('Y-m-d H:i:s') ."'
 						where text_en = '". database::input($translation['text_en']) ."'

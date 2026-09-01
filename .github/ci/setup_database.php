@@ -11,7 +11,7 @@
 
 	$link->set_charset('utf8mb4');
 
-	$prefix = getenv('DB_TABLE_PREFIX') ?: 'lc_';
+	$prefix = getenv('DB_PREFIX') ?: 'lc_';
 
 	// Create tables from structure.json
 	$structure = json_decode(file_get_contents(__DIR__ . '/../../install/structure.json'), true);

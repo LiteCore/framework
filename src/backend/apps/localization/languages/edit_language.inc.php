@@ -25,7 +25,7 @@
 			}
 
 			// AC-7: server-side validation of the language code. The HTML
-			// input has a pattern attribute, but that is client-side only —
+			// input has a pattern attribute, but that is client-side only ï¿½
 			// an attacker can POST any value. The code is persisted and
 			// later spliced into `text_<code>` column names in DDL, so it
 			// must match a strict locale pattern before we accept it.
@@ -39,7 +39,7 @@
 
 			if (!empty($_POST['url_type']) && $_POST['url_type'] == 'root') {
 				if (database::query(
-					"select id from ". DB_TABLE_PREFIX ."languages
+					"select id from ". DB_PREFIX ."languages
 					where url_type = 'root'
 					and id != ". (int)$language->data['id'] ."
 					limit 1;"
@@ -56,7 +56,7 @@
 
 				if (!empty($language->data['id'])) {
 					if (database::query(
-						"select id from ". DB_TABLE_PREFIX ."languages
+						"select id from ". DB_PREFIX ."languages
 						where domain_name = '". database::input($_POST['domain_name']) ."'
 						and id != ". (int)$language->data['id'] ."
 						limit 1;"
@@ -140,7 +140,7 @@
 
 			if (!empty($_POST['set_default'])) {
 				database::query(
-					"update ". DB_TABLE_PREFIX ."settings
+					"update ". DB_PREFIX ."settings
 					set `value` = '". database::input($_POST['code']) ."'
 					where `key` = 'default_language_code'
 					limit 1;"
@@ -149,7 +149,7 @@
 
 			if (!empty($_POST['set_store'])) {
 				database::query(
-					"update ". DB_TABLE_PREFIX ."settings
+					"update ". DB_PREFIX ."settings
 					set `value` = '". database::input($_POST['code']) ."'
 					where `key` = 'siet_language_code'
 					limit 1;"
@@ -175,7 +175,7 @@
 
 					foreach ($csv as $row) {
 						database::query(
-							"insert into ". DB_TABLE_PREFIX ."translations
+							"insert into ". DB_PREFIX ."translations
 							(`code`, `text_". database::identifier($language->data['code']) ."`)
 							values ('". database::input($row['code']) ."', '". database::input($row['text_'.$language->data['code']]) ."')
 							on duplicate key update `text_". database::identifier($language->data['code']) ."` = '". database::input($row['text_'.$language->data['code']]) ."');"
@@ -313,7 +313,7 @@
 
 		// Get all existing languages
 		$existing_languages = database::query(
-			"select code from ". DB_TABLE_PREFIX ."languages;"
+			"select code from ". DB_PREFIX ."languages;"
 		)->fetch_all('code');
 
 		// Get languages from i18n repository

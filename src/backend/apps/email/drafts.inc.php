@@ -12,12 +12,8 @@
 	if (!empty($_POST['delete'])) {
 		if (!empty($_POST['emails'])) {
 			database::query(
-				'delete from ' .
-					DB_TABLE_PREFIX .
-					"emails
-					where id in ('" .
-					implode("', '", database::input($_POST['emails'])) .
-					"');",
+				"delete from ". DB_PREFIX ."emails
+				where id in ('". implode("', '", database::input($_POST['emails'])) ."');",
 			);
 		}
 
@@ -28,7 +24,7 @@
 
 	// Table Rows, Total Number of Rows, Total Number of Pages
 	$emails = database::query(
-		"select * from ". DB_TABLE_PREFIX . "emails
+		"select * from ". DB_PREFIX . "emails
 		where status = 'draft'
 		". (!empty($_GET['query']) ? 'and ('. implode(PHP_EOL . 'or ', ["recipients like '%" . database::input_like($_GET['query']) . "%'", "subject like '%" . database::input_like($_GET['query']) . "%'", "multiparts like '%" . database::input_like($_GET['query']) . "%'"]) .')' : '') ."
 		order by created_at desc;",

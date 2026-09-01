@@ -13,7 +13,7 @@
 
 	// Rows, Total Number of Rows, Total Number of Pages
 	$countries = database::query(
-		"select id, iso_code_2, name from ". DB_TABLE_PREFIX ."countries
+		"select id, iso_code_2, name from ". DB_PREFIX ."countries
 		". (!empty($sql_find) ? "where (". implode(" or ", $sql_find) .")" : "") ."
 		order by name
 		limit 15;"

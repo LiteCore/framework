@@ -48,7 +48,7 @@
 
 				if ($translation['entity'] == 'translation') {
 					database::query(
-						"update ". DB_TABLE_PREFIX ."translations
+						"update ". DB_PREFIX ."translations
 						set ". implode(', ' . PHP_EOL, array_map(function($language_code) use($translation) { return "text_". database::identifier($language_code) ." = '". database::input($translation['text_'.$language_code], !empty($translation['html'])) ."'"; }, $_GET['languages'])) .",
 							html = ". (!empty($translation['html']) ? 1 : 0) ."
 						where code = '". database::input($translation['code']) ."'
@@ -65,7 +65,7 @@
 
 					foreach ($_GET['languages'] as $language_code) {
 						database::query(
-							"update `". DB_TABLE_PREFIX . database::input($collection['id']) ."`
+							"update `". DB_PREFIX . database::input($collection['id']) ."`
 							set `". database::input($column) ."` = json_set(`". database::input($column) ."`, '$.". database::input($language_code) ."', '". database::input($translation['text_'.$language_code], !empty($translation['html'])) ."')
 							where id = '". database::input($id) ."'
 							limit 1;"
@@ -97,7 +97,7 @@
 				}
 
 				database::query(
-					"delete from ". DB_TABLE_PREFIX ."translations
+					"delete from ". DB_PREFIX ."translations
 					where code = '". database::input($translation['code']) ."'
 					limit 1;"
 				);
@@ -120,7 +120,7 @@
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
 				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-			from ". DB_TABLE_PREFIX ."translations
+			from ". DB_PREFIX ."translations
 			where code not regexp '^(settings_group:|settings_key:|cm|job|om|ot|pm|sm)_'"
 		);
 	}
@@ -129,7 +129,7 @@
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
 				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-			from ". DB_TABLE_PREFIX ."translations
+			from ". DB_PREFIX ."translations
 			where code regexp '^(cm|job|om|ot|pm|sm)_'"
 		);
 	}
@@ -138,7 +138,7 @@
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
 				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-			from ". DB_TABLE_PREFIX ."translations
+			from ". DB_PREFIX ."translations
 			where code regexp '^settings_group:'"
 		);
 	}
@@ -147,7 +147,7 @@
 		$sql_union[] = (
 			"select 'translation' as entity, frontend, backend, code, updated_at, html,
 				". implode(", ", f::array_each($_GET['languages'], fn($language_code) => "`text_". database::identifier($language_code) ."`")) ."
-			from ". DB_TABLE_PREFIX ."translations
+			from ". DB_PREFIX ."translations
 			where code regexp '^settings_key:'"
 		);
 	}
@@ -157,7 +157,7 @@
 			"select '$entity' as entity, '1' as frontend, '1' as backend, concat('[". database::input($entity) ."', ':', id, ']". database::input($column) ."') as code, '' as updated_at,
 				coalesce(". implode(', ', f::array_each($_GET['languages'], fn($language_code) => "if(json_value(`". database::input($column) ."`, '$.". database::input($language_code) ."') regexp '<', 1, null)")) .", 0) as html,
 				". implode(', ', f::array_each($_GET['languages'], fn($language_code) => "json_value(`". $column ."`, '$.". database::input($language_code) ."') as `text_". database::identifier($language_code) ."`")) ."
-			from ". DB_TABLE_PREFIX . database::input($id)
+			from ". DB_PREFIX . database::input($id)
 		);
 	};
 

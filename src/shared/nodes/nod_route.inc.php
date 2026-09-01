@@ -24,7 +24,7 @@
 
 			// Process an Immediate Redirect Rule (if any)
 			$redirect = database::query(
-				"select * from ". DB_TABLE_PREFIX ."redirects
+				"select * from ". DB_PREFIX ."redirects
 				where status
 				and immediate = 1
 				and '". database::input($requested_url) ."' regexp pattern
@@ -36,7 +36,7 @@
 			if ($redirect) {
 
 				database::query(
-					"update ". DB_TABLE_PREFIX ."redirects
+					"update ". DB_PREFIX ."redirects
 					set total_redirects = total_redirects + 1,
 						last_redirected = '". database::input(date('Y-m-d H:i:s')) ."'
 					where id = ". (int)$redirect['id'] ."
@@ -219,7 +219,7 @@
 							header('HTTP/1.1 304 Not Modified');
 							exit;
 						}
-		
+
 						if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
 							foreach (preg_split('#\s*,\s*#', $_SERVER['HTTP_IF_NONE_MATCH'], -1, PREG_SPLIT_NO_EMPTY) as $potential_match) {
 								if (trim($potential_match, '"') == md5_file('app://'.$static_path)) {
@@ -228,22 +228,22 @@
 								}
 							}
 						}
-		
+
 						switch (pathinfo($static_path, PATHINFO_EXTENSION)) {
-		
+
 							case 'css': // Not supported by mime_content_type()
 								header('Content-Type: text/css; charset='. mb_http_output());
 								break;
-		
+
 							case 'js': // Not supported by mime_content_type()
 								header('Content-Type: text/javascript; charset='. mb_http_output());
 								break;
-		
+
 							default:
 								header('Content-Type: '. mime_content_type('app://'.$static_path));
 								break;
 						}
-		
+
 						header('Content-Length: '. filesize('app://'.$static_path));
 						header('Etag: '. md5_file('app://'.$static_path));
 						header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime('app://'.$static_path)) .' GMT');
@@ -252,7 +252,7 @@
 						header('Expires: '. gmdate('D, d M Y H:i:s', strtotime('+7 days')) .' GMT');
 						header('X-Content-Type-Options: nosniff');
 						header('X-Frame-Options: SAMEORIGIN');
-		
+
 						readfile('app://'.$static_path);
 						exit;
 					}
@@ -261,7 +261,7 @@
 
 			// Redirect (Last Destination)
 			$redirect = database::query(
-				"select * from ". DB_TABLE_PREFIX ."redirects
+				"select * from ". DB_PREFIX ."redirects
 				where status
 				and immediate = 0
 				and '". database::input($requested_url) ."' regexp pattern
@@ -273,7 +273,7 @@
 			if ($redirect) {
 
 				database::query(
-					"update ". DB_TABLE_PREFIX ."redirects
+					"update ". DB_PREFIX ."redirects
 					set redirects = redirects + 1,
 						last_redirected = '". database::input(date('Y-m-d H:i:s')) ."'
 					where id = ". (int)$redirect['id'] ."
@@ -290,7 +290,7 @@
 
 			// Log not found URL
 			database::query(
-				"insert into ". DB_TABLE_PREFIX ."not_found
+				"insert into ". DB_PREFIX ."not_found
 				(url, hits, last_requested, last_referrer, last_ip_address, last_hostname)
 				values (
 					'". database::input(strtok($requested_url, '?')) ."',

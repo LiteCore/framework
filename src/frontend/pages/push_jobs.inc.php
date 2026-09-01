@@ -14,7 +14,7 @@
 	session::close();
 
 	database::query(
-		"update ". DB_TABLE_PREFIX ."settings
+		"update ". DB_PREFIX ."settings
 		set value = '". date('Y-m-d H:i:s') ."'
 		where `key` in ('jobs_last_push', 'jobs_last_run')
 		limit 1;"
